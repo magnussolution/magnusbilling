@@ -1,8 +1,0 @@
-composer.phar
-composer.lock
-vendor/
-phpunit.phar
-phpunit.php
-coverage/
-build/
-.idea/

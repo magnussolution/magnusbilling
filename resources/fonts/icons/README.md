@@ -1,1 +1,0 @@
-Ícones gerados em http://icomoon.io/app/, para alterar ou remover ícones, importar o arquivo selection.json na app de icomoon.

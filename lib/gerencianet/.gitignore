@@ -1,6 +1,0 @@
-composer.phar
-composer.lock
-phpunit.phar
-phpunit.php
-coverage/
-build/
