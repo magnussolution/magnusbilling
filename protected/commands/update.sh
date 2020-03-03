@@ -25,7 +25,7 @@ fi
 
 cd /var/www/html/mbilling
 rm -rf master.tar.gz
-wget https://github.com/magnussolution/magnusbilling/archive/master.tar.gz
+wget https://github.com/magnussolution/magnusbilling7/archive/master.tar.gz
 tar xzf master.tar.gz --strip-components=1
 
 
