@@ -1,0 +1,50 @@
+/**
+ * @class Ext.grid.HeaderContainer
+ */
+
+/**
+ * @var {number}
+ * Header container border-width
+ */
+$headercontainer-border-width: dynamic(null);
+
+/**
+ * @var {string}
+ * Header container border-style
+ */
+$headercontainer-border-style: dynamic(null);
+
+/**
+ * @var {color}
+ * Header container border-color
+ */
+$headercontainer-border-color: dynamic(null);
+
+/**
+ * Creates a visual theme for a grid header container.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {number} $border-width
+ * Header container border-width
+ *
+ * @param {string} $border-style
+ * Header container border-style
+ *
+ * @param {color} $border-color
+ * Header container border-color
+ */
+@mixin headercontainer-ui(
+    $ui: null,
+    $border-width: null,
+    $border-style: null,
+    $border-color: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}headercontainer#{$ui-suffix} {
+        @include border($border-width, $border-style, $border-color);
+    }
+}

@@ -1,0 +1,11 @@
+$spinnerfield-button-font-size: dynamic(px-to-rem(14px, 12px));
+$spinnerfield-button-font-size-big: dynamic(px-to-rem(16px, 14px));
+$spinnerfield-button-size: dynamic(px-to-rem(20px, 12px));
+$spinnerfield-button-size-big: dynamic(px-to-rem(24px, 14px));
+$spinnerfield-button-border-radius: dynamic(50%);
+$spinnerfield-button-color: dynamic($reverse-color);
+
+$spinnerfield-button-disabled-color: dynamic($reverse-color);
+$spinnerfield-button-disabled-background-color: dynamic($disabled-color);
+
+$spinnerfield-button-spacing: dynamic(8px);

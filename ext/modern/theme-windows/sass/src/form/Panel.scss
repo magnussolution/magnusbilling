@@ -1,0 +1,47 @@
+/**
+ * @class Ext.form.Panel
+ */
+
+// Label
+.x-field .x-label-el {
+    color: $foreground-color;
+    padding: 0 10px 10px 0;
+
+    .x-label-text-el {
+        font-size: $font-size-normal;
+        font-weight: normal;
+    }
+}
+
+// Clear icon
+.x-input {
+    .x-cleartrigger .x-icon-el {
+        top: 0;
+        right: 0;
+        bottom: 0;
+        height: auto;
+        width: 32px;
+
+        &:before {
+            @include absolute-position;
+            color: #000;
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 22px;
+            content: '×';
+        }
+
+        &:hover {
+            background: #DEDEDE;
+        }
+
+        &.x-pressing {
+            background: #000;
+
+            &:before {
+                color: #fff;
+            }
+        }
+    }
+}

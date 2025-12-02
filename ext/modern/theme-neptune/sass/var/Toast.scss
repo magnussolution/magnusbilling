@@ -1,0 +1,17 @@
+$toast-color: dynamic(null);
+$toast-background-color: dynamic(mix($base-light-color, #fff, 25%));
+$toast-margin: dynamic(.5em);
+$toast-border-width: dynamic(.15em);
+$toast-border-style: dynamic(solid);
+$toast-border-color: dynamic($base-color);
+$toast-shadow: dynamic(rgba(#000, .4) 0 .1em .5em);
+$toast-padding: dynamic(6px 0);
+
+$toast-font-size: dynamic(null);
+$toast-font-weight: dynamic(null);
+$toast-line-height: dynamic(1.4em);
+$toast-font-family: dynamic($font-family);
+
+$toast-font-size-big: dynamic(null);
+$toast-line-height-big: dynamic(null);
+$toast-padding-big: dynamic(6px 0);

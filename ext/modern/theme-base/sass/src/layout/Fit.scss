@@ -1,0 +1,23 @@
+/**
+ * @class Ext.layout.Fit
+ */
+
+.x-layout-fit.x-stretched > .x-layout-fit-item {
+    @include st-box();
+    @include st-box-flex(1);
+}
+
+.x-layout-fit {
+    position: relative;
+}
+
+.x-layout-fit-item {
+    &.x-sized {
+        @include absolute-position();
+    }
+
+    &.x-unsized {
+        width: 100%;
+        height: 100%;
+    }
+}

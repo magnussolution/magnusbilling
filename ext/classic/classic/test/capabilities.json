@@ -1,0 +1,69 @@
+[
+//    {
+//        "platform": "OS X 10.10",
+//        "browserName": "iPad",
+//        "version": "8.1",
+//        "device-orientation": "landscape",
+//        "chunks": 13
+//    }
+//    ,
+    {
+        "platform": "Windows XP",
+        "browserName": "internet explorer",
+        "version": "8",
+        "prerun": {
+            "executable": "http://saucelabs-tunnel:1841/js-timeout-fix.bat"
+        },
+        "chunks": 20
+    }
+    ,
+    {
+        "platform": "Windows 7",
+        "browserName": "internet explorer",
+        "version": "9",
+        "chunks": 10
+    }
+    ,
+    {
+        "platform": "Windows 7",
+        "browserName": "internet explorer",
+        "version": "10",
+        "chunks": 5
+    }
+    ,
+    {
+        "platform": "Windows 7",
+        "browserName": "internet explorer",
+        "version": "11",
+        "chunks": 5
+    }
+    ,
+    {
+        "platform": "Windows 7",
+        "browserName": "chrome",
+        "version": "43",
+        "chunks": 5
+    }
+    ,
+    {
+        "platform": "OS X 10.9",
+        "browserName": "safari",
+        "version": "7",
+        "chunks": 10
+    }
+    ,
+    {
+        "platform": "OS X 10.10",
+        "browserName": "safari",
+        "version": "8",
+        "chunks": 10
+    }
+    ,
+    {
+        "platform": "Windows 7",
+        "browserName": "firefox",
+        "version": "38",
+        "chunks": 15
+    }
+]
+

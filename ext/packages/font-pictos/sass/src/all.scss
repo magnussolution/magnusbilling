@@ -1,0 +1,124 @@
+//// Icons used with permission from Drew Wilson
+//// http://pictos.drewwilson.com/
+//// Pictos icons are (c) 2010 Drew Wilson
+
+$pictos-font-path: get-resource-path('fonts');
+
+@font-face {
+    font-family: 'Pictos';
+    src: url('#{$pictos-font-path}/pictos-web.eot');
+    src: url('#{$pictos-font-path}/pictos-web.eot?#iefix') format('embedded-opentype'),
+    url('#{$pictos-font-path}/pictos-web.woff') format('woff'),
+    url('#{$pictos-font-path}/pictos-web.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.pictos {
+    font-family: Pictos !important;
+}
+
+.pictos-anchor:before { content: $pictos-var-anchor !important; }
+.pictos-box:before { content: $pictos-var-box !important; }
+.pictos-upload:before { content: $pictos-var-upload !important; }
+.pictos-forbidden:before { content: $pictos-var-forbidden !important; }
+.pictos-lightning:before { content: $pictos-var-lightning !important; }
+.pictos-rss:before { content: $pictos-var-rss !important; }
+.pictos-team:before { content: $pictos-var-team !important; }
+.pictos-help:before { content: $pictos-var-help !important; }
+.pictos-info:before { content: $pictos-var-info !important; }
+.pictos-attachment:before { content: $pictos-var-attachment !important; }
+.pictos-heart:before { content: $pictos-var-heart !important; }
+.pictos-list:before { content: $pictos-var-list !important; }
+.pictos-music:before { content: $pictos-var-music !important; }
+.pictos-table:before { content: $pictos-var-table !important; }
+.pictos-folder:before { content: $pictos-var-folder !important; }
+.pictos-pencil:before { content: $pictos-var-pencil !important; }
+.pictos-chat2:before { content: $pictos-var-chat2 !important; }
+.pictos-retweet:before { content: $pictos-var-retweet !important; }
+.pictos-search:before { content: $pictos-var-search !important; }
+.pictos-time:before { content: $pictos-var-time !important; }
+.pictos-switch:before { content: $pictos-var-switch !important; }
+.pictos-camera:before { content: $pictos-var-camera !important; }
+.pictos-chat:before { content: $pictos-var-chat !important; }
+.pictos-settings2:before { content: $pictos-var-settings2 !important; }
+.pictos-settings:before { content: $pictos-var-settings !important; }
+.pictos-tags:before { content: $pictos-var-tags !important; }
+.pictos-attachment2:before { content: $pictos-var-attachment2 !important; }
+.pictos-bird:before { content: $pictos-var-bird !important; }
+.pictos-cloud:before { content: $pictos-var-cloud !important; }
+.pictos-delete_black1:before { content: $pictos-var-delete_black1 !important; }
+.pictos-eye:before { content: $pictos-var-eye !important; }
+.pictos-file:before { content: $pictos-var-file !important; }
+.pictos-browser:before { content: $pictos-var-browser !important; }
+.pictos-home:before { content: $pictos-var-home !important; }
+.pictos-inbox:before { content: $pictos-var-inbox !important; }
+.pictos-network:before { content: $pictos-var-network !important; }
+.pictos-key:before { content: $pictos-var-key !important; }
+.pictos-radio:before { content: $pictos-var-radio !important; }
+.pictos-mail:before { content: $pictos-var-mail !important; }
+.pictos-news:before { content: $pictos-var-news !important; }
+.pictos-case:before { content: $pictos-var-case !important; }
+.pictos-photos:before { content: $pictos-var-photos !important; }
+.pictos-power:before { content: $pictos-var-power !important; }
+.pictos-action:before { content: $pictos-var-action !important; }
+.pictos-favorites:before { content: $pictos-var-favorites !important; }
+.pictos-plane:before { content: $pictos-var-plane !important; }
+.pictos-user:before { content: $pictos-var-user !important; }
+.pictos-video:before { content: $pictos-var-video !important; }
+.pictos-compose:before { content: $pictos-var-compose !important; }
+.pictos-truck:before { content: $pictos-var-truck !important; }
+.pictos-chart2:before { content: $pictos-var-chart2 !important; }
+.pictos-chart:before { content: $pictos-var-chart !important; }
+.pictos-expand:before { content: $pictos-var-expand !important; }
+.pictos-refresh:before { content: $pictos-var-refresh !important; }
+.pictos-check:before { content: $pictos-var-check !important; }
+.pictos-check2:before { content: $pictos-var-check2 !important; }
+.pictos-play:before { content: $pictos-var-play !important; }
+.pictos-pause:before { content: $pictos-var-pause !important; }
+.pictos-stop:before { content: $pictos-var-stop !important; }
+.pictos-forward:before { content: $pictos-var-forward !important; }
+.pictos-rewind:before { content: $pictos-var-rewind !important; }
+.pictos-play2:before { content: $pictos-var-play2 !important; }
+.pictos-refresh2:before { content: $pictos-var-refresh2 !important; }
+.pictos-minus:before { content: $pictos-var-minus !important; }
+.pictos-battery:before { content: $pictos-var-battery !important; }
+.pictos-left:before { content: $pictos-var-left !important; }
+.pictos-right:before { content: $pictos-var-right !important; }
+.pictos-calendar:before { content: $pictos-var-calendar !important; }
+.pictos-shuffle:before { content: $pictos-var-shuffle !important; }
+.pictos-wireless:before { content: $pictos-var-wireless !important; }
+.pictos-speedometer:before { content: $pictos-var-speedometer !important; }
+.pictos-more:before { content: $pictos-var-more !important; }
+.pictos-print:before { content: $pictos-var-print !important; }
+.pictos-download:before { content: $pictos-var-download !important; }
+.pictos-warning_black:before { content: $pictos-var-warning_black !important; }
+.pictos-locate:before { content: $pictos-var-locate !important; }
+.pictos-trash:before { content: $pictos-var-trash !important; }
+.pictos-cart:before { content: $pictos-var-cart !important; }
+.pictos-bank:before { content: $pictos-var-bank !important; }
+.pictos-flag:before { content: $pictos-var-flag !important; }
+.pictos-add:before { content: $pictos-var-add !important; }
+.pictos-delete:before { content: $pictos-var-delete !important; }
+.pictos-lock:before { content: $pictos-var-lock !important; }
+.pictos-unlock:before { content: $pictos-var-unlock !important; }
+.pictos-minus2:before { content: $pictos-var-minus2 !important; }
+.pictos-add2:before { content: $pictos-var-add2 !important; }
+.pictos-up:before { content: $pictos-var-up !important; }
+.pictos-down:before { content: $pictos-var-down !important; }
+.pictos-screens:before { content: $pictos-var-screens !important; }
+.pictos-bell:before { content: $pictos-var-bell !important; }
+.pictos-quote:before { content: $pictos-var-quote !important; }
+.pictos-volume_mute:before { content: $pictos-var-volume_mute !important; }
+.pictos-volume:before { content: $pictos-var-volume !important; }
+.pictos-question:before { content: $pictos-var-question !important; }
+.pictos-arrow_left:before { content: $pictos-var-arrow_left !important; }
+.pictos-arrow_right:before { content: $pictos-var-arrow_right !important; }
+.pictos-arrow_up:before { content: $pictos-var-arrow_up !important; }
+.pictos-arrow_down:before { content: $pictos-var-arrow_down !important; }
+.pictos-organize:before { content: $pictos-var-organize !important; }
+.pictos-bookmarks:before { content: $pictos-var-bookmarks !important; }
+.pictos-loop2:before { content: $pictos-var-loop2 !important; }
+.pictos-star:before { content: $pictos-var-star !important; }
+.pictos-maps:before { content: $pictos-var-maps !important; }
+.pictos-reply:before { content: $pictos-var-reply !important; }

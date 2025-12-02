@@ -1,0 +1,29 @@
+/**
+ * @class Ext.grid.RowBody
+ */
+
+/**
+ * @var {number/list}
+ * Row body padding
+ */
+$rowbody-padding: dynamic($gridcell-padding);
+
+/**
+ * Creates a visual theme for a row body.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ */
+@mixin rowbody-ui(
+    $ui: null,
+    $padding: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}rowbody#{$ui-suffix} {
+        .#{$prefix}content-el {
+            padding: $padding;
+        }
+    }
+}

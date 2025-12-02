@@ -1,0 +1,41 @@
+/**
+ * @class Ext.slider.Slider
+ */
+
+.#{$prefix}slider {
+    @include st-box();
+    @include st-box-align(center);
+
+    .#{$prefix}track-el {
+        width: 100%;
+        position: relative;
+        @include st-box();
+        @include st-box-align(center);
+    }
+
+    .#{$prefix}thumb-wrap-el {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+    }
+
+    .#{$prefix}fill-el {
+        position: absolute;
+        top: 0;
+        left: 0;
+        // important is needed here to override more specific styles applied by the slider-ui mixin
+        border-right-width: 0 !important;
+
+        &:not(:first-child) {
+            border-left-width: 0 !important;
+        }
+    }
+}
+
+.#{$prefix}slider:not(.#{$prefix}toggleslider) .#{$prefix}fill-el {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+

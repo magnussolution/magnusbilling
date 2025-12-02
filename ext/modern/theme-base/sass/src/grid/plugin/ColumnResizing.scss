@@ -1,0 +1,15 @@
+.#{$prefix}gridcolumn .#{$prefix}resizer-el {
+    content: '';
+    position: absolute;
+    right: -($grid-column-resizer-width/2);
+    width: $grid-column-resizer-width;
+    height: 100%;
+    background-color: transparent;
+    z-index: 1;
+    cursor: col-resize;
+    display: none;
+}
+
+.#{$prefix}grid.#{$prefix}has-columnresizing .#{$prefix}gridcolumn.#{$prefix}resizable .#{$prefix}resizer-el {
+    display: block;
+}

@@ -1,0 +1,39 @@
+/**
+ * Creates a theme UI for tabbar/tab components.
+ *
+ *     // SCSS
+ *     @include sencha-tabbar-ui('pink', #333, 'matte', #AE537A);
+ *
+ *     // JS
+ *     var tabs = new Ext.tab.Panel({
+ *        tabBar: {
+ *          ui: 'pink',
+ *          dock: 'bottom',
+ *          layout: { pack: 'center' }
+ *        },
+ *        ...
+ *     });
+ *
+ * @param {string} $ui-label The name of the UI being created.
+ *   Can not included spaces or special punctuation (used in class names)
+ * @param {color} $bar-color Base color for the tab bar.
+ * @param {string} $bar-gradient Background gradient style for the tab bar.
+ * @param {color} $tab-active-color Background-color for active tab icons.
+ *
+ * @member Ext.tab.Bar
+ * @deprecated Use {@link Ext.tab.Bar#tabbar-ui} and {@link Ext.tab.Tab#tab-ui} instead
+ */
+@mixin sencha-tabbar-ui($ui-label, $bar-color, $bar-gradient, $tab-active-color) {
+
+    @include tabbar-ui(
+        $ui: $ui-label,
+        $background-color: $bar-color
+    );
+
+    @include tab-ui(
+        $ui: $ui-label,
+        $background-color: $bar-color,
+        $active-background-color: $tab-active-color
+    );
+}
+

@@ -1,0 +1,210 @@
+/**
+ * @class Ext.field.trigger.Reveal
+ */
+
+/**
+ * @var {number}
+ * Reveal Trigger width
+ */
+$revealtrigger-width: dynamic(null);
+
+/**
+ * @var {number}
+ * Reveal Trigger width in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$revealtrigger-width-big: dynamic(null);
+
+/**
+ * @var {color}
+ * Reveal Trigger background-color
+ */
+$revealtrigger-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Reveal Trigger background-color when hovered
+ */
+$revealtrigger-hovered-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Reveal Trigger background-color when pressed
+ */
+$revealtrigger-pressed-background-color: dynamic(null);
+
+/**
+ * @var {string}
+ * Reveal Trigger icon
+ */
+$revealtrigger-icon: dynamic($fa-var-eye);
+
+/**
+ * @var {color}
+ * Reveal Trigger icon color
+ */
+$revealtrigger-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Reveal Trigger icon color when hovered
+ */
+$revealtrigger-hovered-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Reveal Trigger icon color when pressed
+ */
+$revealtrigger-pressed-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Reveal Trigger icon background-color
+ */
+$revealtrigger-icon-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Reveal Trigger icon background-color when hovered
+ */
+$revealtrigger-hovered-icon-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Reveal Trigger icon background-color when pressed
+ */
+$revealtrigger-pressed-icon-background-color: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Reveal Trigger icon border-radius
+ */
+$revealtrigger-icon-border-radius: dynamic(null);
+
+/**
+ * @var {number}
+ * Reveal Trigger icon size
+ */
+$revealtrigger-icon-size: dynamic(null);
+
+/**
+ * @var {number}
+ * Reveal Trigger icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$revealtrigger-icon-size-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Reveal Trigger icon font-size
+ */
+$revealtrigger-icon-font-size: dynamic($revealtrigger-icon-size);
+
+/**
+ * @var {number}
+ * Reveal Trigger icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$revealtrigger-icon-font-size-big: dynamic($revealtrigger-icon-size-big);
+
+/**
+ * Creates a visual theme for a Reveal Trigger.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=revealtrigger] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {number} $width
+ * Reveal Trigger width
+ *
+ * @param {number} $width-big
+ * Reveal Trigger width in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $background-color
+ * Reveal Trigger background-color
+ *
+ * @param {color} $hovered-background-color
+ * Reveal Trigger background-color when hovered
+ *
+ * @param {color} $pressed-background-color
+ * Reveal Trigger background-color when pressed
+ *
+ * @param {string} $icon
+ * Reveal Trigger icon
+ *
+ * @param {color} $icon-color
+ * Reveal Trigger icon color
+ *
+ * @param {color} $hovered-icon-color
+ * Reveal Trigger icon color when hovered
+ *
+ * @param {color} $pressed-icon-color
+ * Reveal Trigger icon color when pressed
+ *
+ * @param {color} $icon-background-color
+ * Reveal Trigger icon background-color
+ *
+ * @param {color} $hovered-icon-background-color
+ * Reveal Trigger icon background-color when hovered
+ *
+ * @param {color} $pressed-icon-background-color
+ * Reveal Trigger icon background-color when pressed
+ *
+ * @param {number/list} $icon-border-radius
+ * Reveal Trigger icon border-radius
+ *
+ * @param {number} $icon-size
+ * Reveal Trigger icon size
+ *
+ * @param {number} $icon-size-big
+ * Reveal Trigger icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $icon-font-size
+ * Reveal Trigger icon font-size
+ *
+ * @param {number} $icon-font-size-big
+ * Reveal Trigger icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin revealtrigger-ui(
+    $ui: null,
+    $xtype: revealtrigger,
+    $width: null,
+    $width-big: null,
+    $background-color: null,
+    $hovered-background-color: null,
+    $pressed-background-color: null,
+    $icon: null,
+    $icon-color: null,
+    $hovered-icon-color: null,
+    $pressed-icon-color: null,
+    $icon-background-color: null,
+    $hovered-icon-background-color: null,
+    $pressed-icon-background-color: null,
+    $icon-border-radius: null,
+    $icon-size: null,
+    $icon-size-big: null,
+    $icon-font-size: null,
+    $icon-font-size-big: null
+) {
+    @include trigger-ui(
+        $ui: $ui,
+        $xtype: $xtype,
+        $width: $width,
+        $width-big: $width-big,
+        $background-color: $background-color,
+        $hovered-background-color: $hovered-background-color,
+        $pressed-background-color: $pressed-background-color,
+        $icon: $icon,
+        $icon-color: $icon-color,
+        $hovered-icon-color: $hovered-icon-color,
+        $pressed-icon-color: $pressed-icon-color,
+        $icon-background-color: $icon-background-color,
+        $hovered-icon-background-color: $hovered-icon-background-color,
+        $pressed-icon-background-color: $pressed-icon-background-color,
+        $icon-border-radius: $icon-border-radius,
+        $icon-size: $icon-size,
+        $icon-size-big: $icon-size-big,
+        $icon-font-size: $icon-font-size,
+        $icon-font-size-big: $icon-font-size-big
+    );
+}

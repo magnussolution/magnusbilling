@@ -1,0 +1,42 @@
+{
+    "name": "touch-sizing",
+    "type": "code",
+    "alternateName": [
+        "ext-touch-sizing"
+    ],
+
+    "framework": "ext",
+    "toolkit": "classic",
+    //"requires": [
+    //    ...
+    //],
+
+    "creator": "Sencha",
+    "summary": "Adds Touch Sizing to a Theme",
+    "detailedDescription": "This package sets all the required sass variables to make a theme touch-friendly.",
+
+    "version": "6.2.0.981",
+    "compatVersion": "6.0.0",
+    "format": "1",
+
+    "output": "${workspace.subpkg.prefix}/${package.name}",
+    "local": true,
+
+    "sass": {
+        "namespace": "Ext",
+
+        "etc": "${package.dir}/sass/etc/all.scss",
+
+        "var": "${package.dir}/sass/var",
+
+        "src": "${package.dir}/sass/src"
+    },
+
+    "classpath": "${package.dir}/src",
+
+    "overrides": "${package.dir}/overrides",
+
+    "slicer": {
+        "js": []
+    }
+}

@@ -1,0 +1,11 @@
+$menu-background-color: dynamic(#414551);
+$menu-text-color: dynamic(#fff);
+$menu-border-color: dynamic(darken($panel-border-color, 15%));
+$menu-item-active-background-color: dynamic($orange);
+$menu-item-active-border-color: dynamic(darken($orange, 5));
+$menu-separator-border-color: dynamic(#222233);
+$menu-separator-background-color: dynamic(#666666);
+
+$menu-scroller-opacity: dynamic(1);
+$menu-scroller-opacity-over: dynamic(.8);
+$menu-scroller-opacity-pressed: dynamic(.6);

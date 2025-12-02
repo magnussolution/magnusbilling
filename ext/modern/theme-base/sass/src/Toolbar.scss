@@ -1,0 +1,33 @@
+.#{$prefix}toolbar {
+    z-index: 1;
+    position: relative;
+    overflow: visible;
+}
+
+.#{$prefix}title {
+    text-align: center;
+    max-width: 100%;
+    line-height: 1.3;
+
+    .#{$prefix}innerhtml {
+        @include ellipsis;
+    }
+}
+
+.#{$prefix}navigation-bar {
+    .#{$prefix}container {
+        overflow: visible;
+    }
+}
+
+.#{$prefix}toolbar-inner {
+    .#{$prefix}field {
+        .#{$prefix}body-el {
+            @include st-box-flex(1);
+        }
+    }
+}
+
+.#{$prefix}ie .#{$prefix}toolbar-inner {
+    height: 100% !important;
+}

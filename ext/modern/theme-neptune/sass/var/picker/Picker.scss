@@ -1,0 +1,56 @@
+/**
+ * @class Ext.picker.Picker
+ */
+
+$picker-background-color: dynamic($background-color);
+
+$picker-item-display: dynamic(null);
+$picker-item-align-items: dynamic(null);
+$picker-item-justify-content: dynamic(null);
+$picker-item-color: dynamic(null);
+$picker-item-height: dynamic(1.85em);
+$picker-item-height-big: dynamic(2.46em);
+$picker-item-padding: dynamic(0 .6em);
+$picker-item-font-weight: dynamic(null);
+$picker-item-font-size: dynamic(null);
+$picker-item-font-size-big: dynamic(null);
+$picker-item-font-line-height: dynamic(null);
+$picker-item-font-line-height-big: dynamic(null);
+$picker-item-font-family: dynamic(null);
+
+$picker-bar-border-width: dynamic(null);
+$picker-bar-border-style: dynamic(null);
+$picker-bar-border-color: dynamic(null);
+$picker-bar-background-color: dynamic(mix(#fff, $base-light-color, 25%));
+
+$picker-title-height: dynamic(1.5em);
+$picker-title-color: dynamic($toolbar-title-color);
+
+/**
+ * @var {Box<Size>} $picker-title-border-width
+ */
+$picker-title-border-width: dynamic(null null 1px null);
+
+/**
+ * @var {Box<BorderStyle>} $picker-title-border-style
+ */
+$picker-title-border-style: dynamic(null null solid null);
+
+/**
+ * @var {Box<Color>} $picker-title-border-color
+ */
+$picker-title-border-color: dynamic(null null $neutral-color null);
+$picker-title-padding: dynamic(0.2em 1.02em);
+$picker-with-title-bar-margin: dynamic($picker-title-height 0 0 0);
+
+$picker-title-font-weight: dynamic(null);
+$picker-title-font-size: dynamic(null);
+$picker-title-font-size-big: dynamic(null);
+$picker-title-font-line-height: dynamic(null);
+$picker-title-font-line-height-big: dynamic(null);
+$picker-title-font-family: dynamic(null);
+
+$picker-item-selected-color: dynamic(null);
+$picker-item-selected-font-weight: dynamic($font-weight-bold);
+$picker-item-selected-font-size: dynamic(null);
+$picker-item-selected-font-size-big: dynamic(null);

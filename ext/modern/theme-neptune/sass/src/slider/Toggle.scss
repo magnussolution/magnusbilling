@@ -1,0 +1,25 @@
+@include toggleslider-ui(
+    $width: $toggleslider-width,
+    $width-big: $toggleslider-width-big,
+
+    $track-height: $toggleslider-track-height,
+    $track-height-big: $toggleslider-track-height-big,
+    $track-background-color: $toggleslider-track-background-color,
+    $track-border-width: $toggleslider-track-border-width,
+    $track-border-style: $toggleslider-track-border-style,
+    $track-border-color: $toggleslider-track-border-color,
+    $track-border-radius: $toggleslider-track-border-radius,
+    $track-border-radius-big: $toggleslider-track-border-radius-big,
+
+    $fill-background-color: $toggleslider-fill-background-color,
+    $disabled-fill-background-color: $toggleslider-disabled-fill-background-color,
+    $fill-border-color: $toggleslider-fill-border-color,
+    $disabled-fill-border-color: $toggleslider-disabled-fill-border-color,
+
+    $disabled-opacity: $toggleslider-disabled-opacity,
+    $thumb-inset: $toggleslider-thumb-inset
+);
+
+@include thumb-toggle-on-ui;
+@include thumb-toggle-off-ui;
+

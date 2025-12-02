@@ -1,0 +1,12 @@
+@include dataview-ui(
+    $background-color: $dataview-background-color,
+    $empty-text-color: $dataview-empty-text-color,
+    $empty-text-font-weight: $dataview-empty-text-font-weight,
+    $empty-text-font-size: $dataview-empty-text-font-size,
+    $empty-text-font-size-big: $dataview-empty-text-font-size-big,
+    $empty-text-line-height: $dataview-empty-text-line-height,
+    $empty-text-line-height-big: $dataview-empty-text-line-height-big,
+    $empty-text-font-family: $dataview-empty-text-font-family,
+    $empty-text-padding: $dataview-empty-text-padding,
+    $empty-text-padding-big: $dataview-empty-text-padding-big
+);

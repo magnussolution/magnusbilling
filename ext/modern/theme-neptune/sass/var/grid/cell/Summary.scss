@@ -1,0 +1,119 @@
+/**
+ * @class Ext.grid.cell.Base
+ */
+
+//# fashion replaces $grid-summary-row-cell-font-weight
+/**
+ * @var {string/number}
+ * Summary cell font-weight
+ */
+$summarycell-font-weight: dynamic($font-weight-bold);
+
+//# fashion replaces $grid-summary-row-cell-font-size
+/**
+ * @var {number}
+ * Summary cell font-size
+ */
+$summarycell-font-size: dynamic(null);
+
+//# fashion replaces $grid-summary-row-cell-font-size-big
+/**
+ * @var {number}
+ * Summary cell font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$summarycell-font-size-big: dynamic(null);
+
+//# fashion replaces $grid-summary-row-cell-line-height
+/**
+ * @var {number}
+ * Summary cell line-height
+ */
+$summarycell-line-height: dynamic(null);
+
+//# fashion replaces $grid-summary-row-cell-line-height-big
+/**
+ * @var {number}
+ * Summary cell line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$summarycell-line-height-big: dynamic(null);
+
+//# fashion replaces $grid-summary-row-cell-font-family
+/**
+ * @var {string}
+ * Summary cell font-family
+ */
+$summarycell-font-family: dynamic(null);
+
+//# fashion replaces $grid-summary-row-cell-padding
+/**
+ * @var {number/list}
+ * Summary cell padding
+ */
+$summarycell-padding: dynamic(null);
+
+//# fashion replaces $grid-summary-row-cell-padding-big
+/**
+ * @var {number/list}
+ * Summary cell padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$summarycell-padding-big: dynamic(null);
+
+/**
+ * Creates a visual theme for a summary cell.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=summarycell] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {string/number} $font-weight
+ * Summary cell font-weight
+ *
+ * @param {number} $font-size
+ * Summary cell font-size
+ *
+ * @param {number} $font-size-big
+ * Summary cell font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $line-height
+ * Summary cell line-height
+ *
+ * @param {number} $line-height-big
+ * Summary cell line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $font-family
+ * Summary cell font-family
+ *
+ * @param {number/list} $padding
+ * Summary cell padding
+ *
+ * @param {number/list} $padding-big
+ * Summary cell padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin summarycell-ui(
+    $ui: null,
+    $xtype: summarycell,
+    $font-weight: null,
+    $font-size: null,
+    $font-size-big: null,
+    $line-height: null,
+    $line-height-big: null,
+    $font-family: null,
+    $padding: null,
+    $padding-big: null
+) {
+    @include gridcell-ui(
+        $ui: $ui,
+        $xtype: $xtype,
+        $font-weight: $font-weight,
+        $font-size: $font-size,
+        $font-size-big: $font-size-big,
+        $line-height: $line-height,
+        $line-height-big: $line-height-big,
+        $font-family: $font-family,
+        $padding: $padding,
+        $padding-big: $padding-big
+    );
+}

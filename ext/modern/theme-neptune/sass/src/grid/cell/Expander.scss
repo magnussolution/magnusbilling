@@ -1,0 +1,11 @@
+@include expandercell-ui(
+    $padding: $expandercell-padding,
+    $padding-big: $expandercell-padding-big,
+    $icon-size: $expandercell-icon-size,
+    $icon-size-big: $expandercell-icon-size-big,
+    $icon-font-size: $expandercell-icon-font-size,
+    $icon-font-size-big: $expandercell-icon-font-size-big,
+    $expand-icon: $expandercell-expand-icon,
+    $collapse-icon: $expandercell-collapse-icon,
+    $icon-color: $expandercell-icon-color
+);

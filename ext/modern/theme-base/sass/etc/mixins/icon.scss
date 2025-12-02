@@ -1,0 +1,85 @@
+/**
+ * @class Global_CSS
+ */
+
+require('icon');
+
+/**
+ * Generates style rules for an icon element
+ *
+ * @param {list/string} $glyph
+ * A unicode character to use as the icon, or a list specifying the character to use
+ * followed by font-family and degrees of rotation (90, 180, or 270).
+ * All parameters in the list are optional except for glyph.  For example, each of the
+ * following is valid:
+ *
+ * Use the letter "A" as the icon and use the default font-family
+ *
+ *     @include font-icon('\0041');
+ *
+ * Use the letter "A" as the icon and use FontAwesome as the font-family
+ *
+ *     @include font-icon('\0041' FontAwesome);
+ *
+ * Use the letter "A" as the icon and rotate the icon 90 degrees clockwise.
+ *
+ *     @include font-icon('\0041' 90);
+ *
+ * Use the letter "A" as the icon, use FontAwesome as the font-family, and rotate the icon
+ * 90 degrees clockwise.
+ *
+ *     @include font-icon('\0041' FontAwesome 90);
+ *
+ * @param {color} $color
+ *
+ * @param {number} $size
+ * The size of the icon element
+ *
+ * @param {number} $size-big
+ * The size of the icon element in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $font-size
+ * The font-size of the icon. Applied to the :before pseudo element so that it does not affect
+ * `$size` when `$size` is specified in `em` units.
+ *
+ * @param {number} $font-size-big
+ * The font-size of the icon in the {@link Global_CSS#$enable-big big} sizing scheme.
+ * Applied to the :before pseudo element so that it does not affect `$size-big` when
+ * `$size-big` is specified in `em` units.
+ *
+ * @private
+ */
+@mixin icon(
+    $icon,
+    $font-size,
+    $font-size-big
+) {
+    $args: parseIconArgs($icon);
+
+    $char: nth($args, 1);
+    $font-family: nth($args, 2);
+    $rotation: nth($args, 3);
+
+    &:before {
+        content: $char;
+        font-family: $font-family;
+        font-size: $font-size;
+
+        @if $rotation != null {
+            $rotation-origin: 50% 50%;
+            $angle: rotate(#{$rotation}deg);
+
+            display: inline-block;
+            -webkit-transform: $angle;
+            -webkit-transform-origin: $rotation-origin;
+            transform: $angle;
+            transform-origin: $rotation-origin;
+        }
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                font-size: $font-size-big;
+            }
+        }
+    }
+}

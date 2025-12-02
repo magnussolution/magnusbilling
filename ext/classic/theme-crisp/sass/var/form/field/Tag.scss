@@ -1,0 +1,7 @@
+$tag-field-item-background-color: dynamic($panel-base-color);
+$tag-field-item-border-color: dynamic(darken($panel-base-color, 10%));
+$tag-field-item-over-background-color: dynamic(darken($tag-field-item-background-color, 6.66%));
+$tag-field-item-over-border-color: dynamic(darken($tag-field-item-border-color, 26.27%));
+$tag-field-item-selected-background-color: dynamic(desaturate(lighten($base-color, 43%), 2%));
+$tag-field-item-selected-color: dynamic(#000);
+$tag-field-item-selected-border-color: dynamic($base-color);

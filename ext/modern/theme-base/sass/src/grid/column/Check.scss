@@ -1,0 +1,8 @@
+.#{$prefix}checkcolumn {
+    @include st-box-orient(vertical);
+    @include st-box-align(center);
+
+    &.#{$prefix}no-header-checkbox .#{$prefix}checkbox-el {
+        display: none;
+    }
+}

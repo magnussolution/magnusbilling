@@ -1,0 +1,20 @@
+.#{$prefix}viewport,
+.#{$prefix}viewport > .#{$prefix}body {
+    margin: 0;
+    padding: 0;
+    border: 0 none;
+    position: static;
+}
+
+.#{$prefix}viewport {
+    // the viewport must have an explicit height so that we can make the body fill the
+    // viewport height (see below)
+    height: 100%;
+}
+
+.#{$prefix}viewport > .#{$prefix}body {
+    // min-height ensures that the body element fills the viewport if its content is smaller
+    // than the viewport (when using an auto layout on the viewport), while allowing the
+    // body element to expand in height if the content does not fit within the viewport.
+    min-height: 100%;
+}

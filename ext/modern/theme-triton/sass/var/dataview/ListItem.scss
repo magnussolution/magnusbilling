@@ -1,0 +1,10 @@
+$listitem-line-height: dynamic(1.2308em);
+$listitem-padding: dynamic(0.6154em 0.77em);
+$listitem-line-height-big: dynamic(1.25em);
+$listitem-padding-big: dynamic(0.75em 0.9735em);
+$listitem-selected-background-color: dynamic(#ffefbb);
+$listitem-hovered-background-color: dynamic(ext-mix($neutral-light-color, $base-highlight-color, 90%));
+$listitem-alt-background-color: dynamic($neutral-light-color);
+$listitem-border-color: dynamic(ext-mix(#000, $neutral-light-color, 5%));
+$listitem-hovered-border-color: dynamic(ext-mix(#000, $listitem-hovered-background-color, 5%));
+$listitem-selected-border-color: dynamic(ext-mix(#000, $listitem-selected-background-color, 5%));

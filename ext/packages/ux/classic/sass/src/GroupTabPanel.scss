@@ -1,0 +1,174 @@
+/* Main GroupTabPanel style */
+.#{$prefix}grouptabpanel {
+    background-color: #4E78B1;
+    border: solid 15px #4E78B1;
+}
+/* End of GroupTabPanel style */
+
+/* Card Layout container */
+.#{$prefix}grouptabcontainer {
+    background-color: white;
+    border-top: 1px solid #d9d9d9 !important;
+    border-bottom: 1px solid #d9d9d9 !important;
+    border-right: 1px solid #d9d9d9 !important;
+}
+/* End of Card Layout container */
+
+.#{$prefix}grouptabpanel .#{$prefix}grouptab .#{$prefix}grid-cell-inner  {
+    font-family: tahoma, arial, sans-serif;
+    text-decoration: none!important;
+}
+
+.#{$prefix}grouptabpanel .#{$prefix}grouptab-first .#{$prefix}grid-cell-inner  {
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: bold;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}grid-row .#{$prefix}grid-cell {
+    background-color: transparent;
+    padding-left: 6px;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}grid-cell-inner  {
+    color: #DFE8F6;
+}
+
+.#{$prefix}grouptabpanel .#{$prefix}active-group .#{$prefix}grid-cell-inner  {
+    color: #395B8E;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}grouptab {
+    line-height: 24px;
+    background-color: transparent;
+    font-size: 12px;
+    position: relative;
+    padding-left: 6px;
+    padding-bottom: 2px;
+    overflow: visible; /* To allow round corner blobs (.x-grouptabs-corner) to occlude the element border */
+}
+
+.#{$prefix}grouptabbar .#{$prefix}grouptab-first {
+    padding-top: 6px;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}grouptab-last {
+    margin-bottom: 3px;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}active-tab .#{$prefix}grid-cell-inner  {
+    background-color: #EDEEF0;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}tree-elbow-line,
+.#{$prefix}grouptabbar .#{$prefix}tree-elbow-empty {
+    width: 0;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}active-group .#{$prefix}grouptab {
+    background-color: white!important;
+    border: 0 none!important;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}active-group .#{$prefix}grouptab-first {
+    border-top: 1px solid #d9d9d9!important;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}active-group .#{$prefix}grouptab-center {
+    border-left: 1px solid #d9d9d9!important;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}active-group .#{$prefix}grouptab-last {
+    border-bottom: 1px solid #d9d9d9!important;
+    padding-bottom: 3px;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}active-group .#{$prefix}grouptab-first,
+.#{$prefix}grouptabbar .#{$prefix}active-group .#{$prefix}grouptab-last {
+    border-left: 1px solid #d9d9d9!important;
+}
+
+.#{$prefix}grouptab-cell {
+    border: 0 none!important;
+}
+
+/* Tab corners */
+.#{$prefix}grouptabbar .#{$prefix}grouptabs-corner {
+    background-image: theme-background-image('grouptabpanel/corners', 'gif');
+    display: none;
+    width: 11px;
+    height: 11px;
+    position: absolute;
+    font-size: 1px;
+    line-height: 6px;
+    overflow: hidden;
+    zoom:1;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}grouptabs-corner {
+    display: none;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}active-group .#{$prefix}grouptab-first .#{$prefix}grouptabs-corner-top-left,
+.#{$prefix}grouptabbar .#{$prefix}active-group .#{$prefix}grouptab-last .#{$prefix}grouptabs-corner-bottom-left {
+    display: block;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}grouptabs-corner-top-left {
+    background-position: top left;
+    left: 0; top: 0;
+}
+.#{$prefix}grouptabbar .#{$prefix}grouptabs-corner-bottom-left {
+    background-position: bottom left;
+    left: 0; bottom: 0;
+}
+.#{$prefix}grouptabbar .#{$prefix}grouptabs-corner-top-right {
+    background-position: top right;
+    right: 0; top: 0;
+}
+.#{$prefix}grouptabbar .#{$prefix}grouptabs-corner-bottom-right {
+    background-position: bottom right;
+    right: 0; bottom: 0;
+}
+.#{$prefix}grouptabbar .#{$prefix}active-group .#{$prefix}grouptabs-corner-bottom-left{
+    bottom: -4px; left: -4px;
+}
+.#{$prefix}grouptabbar .#{$prefix}active-group .#{$prefix}grouptabs-corner-bottom-right{
+    bottom: -4px; right: -4px;
+}
+.#{$prefix}grouptabbar .#{$prefix}active-group .#{$prefix}grouptabs-corner-top-left{
+    top: -4px; left: -4px;
+}
+.#{$prefix}grouptabbar .#{$prefix}active-group .#{$prefix}grouptabs-corner-top-right{
+    top: -4px; right: -4px;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}tree-panel .#{$prefix}grid-cell {
+    overflow: visible;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}panel-body  {
+    background-color: #4E78B1;
+}
+
+.#{$prefix}grouptabbar {
+    top: 0 !important;
+    margin-top: -1px !important;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}grouptab .#{$prefix}tree-icon-parent {
+    display: none;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}grouptab .#{$prefix}tree-elbow,
+.#{$prefix}grouptabbar .#{$prefix}grouptab .#{$prefix}tree-elbow-end {
+    display: none;
+}
+
+.#{$prefix}grouptabbar .#{$prefix}grouptab .#{$prefix}tree-expander {
+    background-image: theme-background-image('grouptabpanel/plus', 'gif');
+}
+
+.#{$prefix}grouptabbar .#{$prefix}grid-tree-node-expanded .#{$prefix}grouptab .#{$prefix}tree-expander {
+    background-image: theme-background-image('grouptabpanel/minus', 'gif');
+}

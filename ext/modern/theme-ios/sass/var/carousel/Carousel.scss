@@ -1,0 +1,15 @@
+@mixin carousel-light-ui {
+  @include sencha-carousel-indicator-ui(
+  $ui-label: 'light',
+  $color: rgba(#fff, .15),
+  $active-color: rgba(#fff, .8)
+  )
+}
+
+@mixin carousel-dark-ui {
+  @include sencha-carousel-indicator-ui(
+  $ui-label: 'dark',
+  $color: rgba(#000, .3),
+  $active-color: rgba(#000, .8)
+  );
+}

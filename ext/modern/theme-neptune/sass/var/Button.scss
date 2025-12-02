@@ -1,0 +1,980 @@
+/**
+ * @class Ext.Button
+ */
+
+/**
+ * @var {color}
+ * Button background-color
+ */
+$button-background-color: dynamic($neutral-light-color);
+
+/**
+ * @var {color}
+ * Button background-color when pressed
+ */
+$button-pressed-background-color: dynamic(button-pressed-background-color($button-background-color));
+
+
+/**
+ * @var {list}
+ * Button shadow
+ */
+$button-shadow: dynamic(null);
+
+/**
+ * @var {list}
+ * Button shadow when pressed
+ */
+$button-pressed-shadow: dynamic(null);
+
+/**
+ * @var {string/list}
+ * Button background-gradient.  Can be either the name of a gradient defined by
+ * {@link Global_CSS#background-gradient} or a list of color stops.
+ */
+$button-background-gradient: dynamic(button-background-gradient($button-background-color));
+
+/**
+ * @var {string/list}
+ * Button background-gradient when pressed.  Can be either the name of a gradient
+ * defined by {@link Global_CSS#background-gradient} or a list of color stops.
+ */
+$button-pressed-background-gradient: dynamic(button-pressed-background-gradient($button-pressed-background-color));
+
+/**
+ * @var {color}
+ * Button text color
+ */
+$button-color: dynamic($highlight-color);
+
+/**
+ * @var {color}
+ * Button text color when pressed
+ */
+$button-pressed-color: dynamic($button-color);
+
+/**
+ * @var {color/list}
+ * Button border-color
+ */
+$button-border-color: dynamic(button-border-color($button-background-color));
+
+/**
+ * @var {color/list}
+ * Button border-color when pressed
+ */
+$button-pressed-border-color: dynamic(button-pressed-border-color($button-pressed-background-color));
+
+/**
+ * @var {number/list}
+ * Button border-width
+ */
+$button-border-width: dynamic(1px);
+
+/**
+ * @var {string/list}
+ * Button border-style
+ */
+$button-border-style: dynamic(solid);
+
+/**
+ * @var {number}
+ * Button border-radius
+ */
+$button-border-radius: dynamic(.25em);
+
+/**
+ * @var {number}
+ * Button border-radius in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$button-border-radius-big: dynamic(.2em);
+
+/**
+ * @var {string/number}
+ * Button font-weight
+ */
+$button-font-weight: dynamic($font-weight-bold);
+
+/**
+ * @var {number}
+ * Button font-size
+ */
+$button-font-size: dynamic(1rem);
+
+/**
+ * @var {number}
+ * Button font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$button-font-size-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Button line-height
+ */
+$button-line-height: dynamic(1.2308em);
+
+/**
+ * @var {number}
+ * Button line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$button-line-height-big: dynamic(1.6em);
+
+/**
+ * @var {string}
+ * Button font-family
+ */
+$button-font-family: dynamic($font-family);
+
+/**
+ * @var {number/list}
+ * Button padding
+ */
+$button-padding: dynamic(.2308em .6em);
+
+/**
+ * @var {number/list}
+ * Button padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$button-padding-big: dynamic(.2em .6em);
+
+/**
+ * @var {color}
+ * Button icon color.
+ */
+$button-icon-color: dynamic($button-color);
+
+/**
+ * @var {color}
+ * Button icon color when pressed.
+ */
+$button-pressed-icon-color: dynamic($button-pressed-color);
+
+/**
+ * @var {color}
+ * Button icon color when disabled.
+ */
+$button-disabled-icon-color: dynamic($button-disabled-color);
+
+/**
+ * @var {number}
+ * Button icon size.
+ */
+$button-icon-size: dynamic($button-line-height);
+
+/**
+ * @var {number}
+ * Button icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$button-icon-size-big: dynamic($button-line-height-big);
+
+/**
+ * @var {number}
+ * Button icon font-size.  Used for configuring the size of font icons
+ */
+$button-icon-font-size: dynamic($button-icon-size);
+
+/**
+ * @var {number}
+ * Button icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$button-icon-font-size-big: dynamic($button-icon-size-big);
+
+/**
+ * @var {number}
+ * The space between the button icon and text when the icon is horizontally aligned
+ */
+$button-icon-horizontal-spacing: dynamic(.6em);
+
+/**
+ * @var {number}
+ * The space between the button icon and text when the icon is horizontally aligned
+ * in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$button-icon-horizontal-spacing-big: dynamic($button-icon-horizontal-spacing);
+
+/**
+ * @var {number}
+ * The space between the button icon and text when the icon is vertically aligned
+ */
+$button-icon-vertical-spacing: dynamic(.2em);
+
+/**
+ * @var {number}
+ * The space between the button icon and text when the icon is vertically aligned
+ * in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$button-icon-vertical-spacing-big: dynamic($button-icon-vertical-spacing);
+
+/**
+ * @var {color}
+ * Button color when disabled
+ */
+$button-disabled-color: dynamic(null);
+
+/**
+ * @var {number}
+ * Button opacity when disabled
+ */
+$button-disabled-opacity: dynamic(.5);
+
+/**
+ * @var {color}
+ * The background-color of the button's {@link #badgeText badge}
+ */
+$button-badge-background-color: dynamic(darken($alert-color, 10%));
+
+/**
+ * @var {string/list}
+ * The background-gradient of the button's {@link #badgeText badge} Can be either the name
+ * of a gradient defined by {@link Global_CSS#background-gradient} or a list of color stops.
+ */
+$button-badge-background-gradient: dynamic($base-background-gradient);
+
+/**
+ * @var {color}
+ * The text color of the button's {@link #badgeText badge}
+ */
+$button-badge-color: dynamic(color-by-background($button-badge-background-color));
+
+/**
+ * @var {color}
+ * The border-color of the button's {@link #badgeText badge}
+ */
+$button-badge-border-color: dynamic(darken($button-badge-background-color, 10%));
+
+/**
+ * @var {number/list}
+ * The border-radius of the button's {@link #badgeText badge}
+ */
+$button-badge-border-radius: dynamic(.2em);
+
+/**
+ * @var {number}
+ * The min-width of the button's {@link #badgeText badge}
+ */
+$button-badge-min-width: dynamic(2em);
+
+/**
+ * @var {number}
+ * The max-width of the button's {@link #badgeText badge}
+ */
+$button-badge-max-width: dynamic(95%);
+
+/**
+ * @var {string/number}
+ * The font-weight of the button's {@link #badgeText badge}
+ */
+$button-badge-font-weight: dynamic(null);
+
+/**
+ * @var {number}
+ * The font-size of the button's {@link #badgeText badge}
+ */
+$button-badge-font-size: dynamic(1em);
+
+/**
+ * @var {string}
+ * The font-family of the button's {@link #badgeText badge}
+ */
+$button-badge-font-family: dynamic($button-font-family);
+
+/**
+ * @var {number}
+ * The line-height of the button's {@link #badgeText badge}
+ */
+$button-badge-line-height: dynamic($button-line-height);
+
+/**
+ * @var {number}
+ * Offset of the {@link #badgeText badge} from the top of the button
+ */
+$button-badge-top: dynamic(-.2em);
+
+/**
+ * @var {number}
+ * Offset of the {@link #badgeText badge} from the right of the button
+ */
+$button-badge-right: dynamic(0);
+
+/**
+ * @var {number}
+ * Offset of the {@link #badgeText badge} from the bottom of the button
+ */
+$button-badge-bottom: dynamic(null);
+
+/**
+ * @var {number}
+ * Offset of the {@link #badgeText badge} from the left of the button
+ */
+$button-badge-left: dynamic(null);
+
+/**
+ * @var {number}
+ * The padding of the button's {@link #badgeText badge}
+ */
+$button-badge-padding: dynamic(.1em .3em);
+
+/**
+ * @var {boolean}
+ * `true` to include the "action" button UI
+ */
+$button-action-ui: dynamic($enable-default-uis);
+
+/**
+ * @var {boolean}
+ * `true` to include the "alt" button UI
+ */
+$button-alt-ui: dynamic($enable-default-uis);
+
+/**
+ * @var {boolean}
+ * `true` to include the "confirm" button UI
+ */
+$button-confirm-ui: dynamic($enable-default-uis);
+
+/**
+ * @var {boolean}
+ * `true` to include the "decline" button UI
+ */
+$button-decline-ui: dynamic($enable-default-uis);
+
+/**
+ * @var {boolean}
+ * `true` to include the "round" button UI
+ */
+$button-round-ui: dynamic($enable-default-uis);
+
+/**
+ * @var {boolean}
+ * `true` to include the "small" button UI
+ */
+$button-small-ui: dynamic($enable-default-uis);
+
+/**
+ * @var {boolean}
+ * `true` to include the "flat" button UI
+ */
+$button-flat-ui: dynamic($enable-default-uis);
+
+/**
+ * @var {boolean}
+ * `true` to include the "plain" button UI
+ */
+$button-plain-ui: dynamic($enable-default-uis);
+
+/**
+ * @var {boolean}
+ * `true` to include the "segmented" button UI
+ */
+$button-segmented-ui: dynamic($enable-default-uis);
+
+/**
+ * Creates a visual theme for a Button.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {color} $background-color
+ * Button background-color
+ *
+ * @param {color} $pressed-background-color
+ * Button background-color when pressed
+ *
+ * @param {list} $shadow
+ * Button shadow
+ *
+ * @param {list} $pressed-shadow
+ * Button shadow when pressed
+ *
+ * @param {string/list} $background-gradient
+ * Button background-gradient.  Can be either the name of a gradient defined by
+ * {@link Global_CSS#background-gradient} or a list of color stops.
+ *
+ * @param {string/list} $pressed-background-gradient
+ * Button background-gradient when pressed.  Can be either the name of a gradient
+ * defined by {@link Global_CSS#background-gradient} or a list of color stops.
+ *
+ * @param {color} $color
+ * Button text color
+ *
+ * @param {color} $pressed-color
+ * Button text color when pressed
+ *
+ * @param {color/list} $border-color
+ * Button border-color
+ *
+ * @param {color/list} $pressed-border-color
+ * Button border-color when pressed
+ *
+ * @param {number/list} $border-width
+ * Button border-width
+ *
+ * @param {number/list} $border-style
+ * Button border-style
+ *
+ * @param {number} $border-radius
+ * Button border-radius
+ *
+ * @param {number} $border-radius-big
+ * Button border-radius in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string/number} $font-weight
+ * Button font-weight
+ *
+ * @param {number} $font-size
+ * Button font-size
+ *
+ * @param {number} $font-size-big
+ * Button font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $line-height
+ * Button line-height
+ *
+ * @param {number} $line-height-big
+ * Button line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {font-family} $font-family
+ * Button font-family
+ *
+ * @param {number/list} $padding
+ * Button padding
+ *
+ * @param {number/list} $padding-big
+ * Button padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $icon-color
+ * Button icon color.
+ *
+ * @param {color} $pressed-icon-color
+ * Button icon color when pressed.
+ *
+ * @param {color} $disabled-icon-color
+ * Button icon color when disabled.
+ *
+ * @param {number} $icon-size
+ * Button icon size
+ *
+ * @param {number} $icon-size-big
+ * Button icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $icon-font-size
+ * Button icon font-size.  Used for configuring the size of font icons
+ *
+ * @param {number} $icon-font-size-big
+ * Button icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $icon-horizontal-spacing
+ * The space between the button icon and text when the icon is horizontally aligned
+ *
+ * @param {number} $icon-horizontal-spacing-big
+ * The space between the button icon and text when the icon is horizontally aligned
+ * in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $icon-vertical-spacing
+ * The space between the button icon and text when the icon is vertically aligned
+ *
+ * @param {number} $icon-vertical-spacing-big
+ * The space between the button icon and text when the icon is vertically aligned
+ * in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $disabled-color
+ * Button color when disabled
+ *
+ * @param {number} $disabled-opacity
+ * Button opacity when disabled
+ *
+ * @param {color} $badge-background-color
+ * The background-color of the button's {@link #badgeText badge}
+ *
+ * @param {string/list} $badge-background-gradient
+ * The background-gradient of the button's {@link #badgeText badge} Can be either the name
+ * of a gradient defined by {@link Global_CSS#background-gradient} or a list of color stops.
+ *
+ * @param {color} $badge-color
+ * The text color of the button's {@link #badgeText badge}
+ *
+ * @param {color} $badge-border-color
+ * The border-color of the button's {@link #badgeText badge}
+ *
+ * @param {number/list} $badge-border-radius
+ * The border-radius of the button's {@link #badgeText badge}
+ *
+ * @param {number} $badge-min-width
+ * The min-width of the button's {@link #badgeText badge}
+ *
+ * @param {number} $badge-max-width
+ * The max-width of the button's {@link #badgeText badge}
+ *
+ * @param {string/number} $badge-font-weight
+ * The font-weight of the button's {@link #badgeText badge}
+ *
+ * @param {number} $badge-font-size
+ * The font-size of the button's {@link #badgeText badge}
+ *
+ * @param {string} $badge-font-family
+ * The font-family of the button's {@link #badgeText badge}
+ *
+ * @param {number} $badge-line-height
+ * The line-height of the button's {@link #badgeText badge}
+ *
+ * @param {number} $badge-top
+ * Offset of the {@link #badgeText badge} from the top of the button
+ *
+ * @param {number} $badge-right
+ * Offset of the {@link #badgeText badge} from the right of the button
+ *
+ * @param {number} $badge-bottom
+ * Offset of the {@link #badgeText badge} from the bottom of the button
+ *
+ * @param {number} $badge-left
+ * Offset of the {@link #badgeText badge} from the left of the button
+ *
+ * @param {number} $badge-padding
+ * The padding of the button's {@link #badgeText badge}
+ *
+ * @member Ext.Button
+ */
+@mixin button-ui(
+    $ui: null,
+
+    $background-color: null,
+    $pressed-background-color: null,
+
+    $shadow: null,
+    $pressed-shadow: null,
+
+    $background-gradient: null,
+    $pressed-background-gradient: null,
+
+    $color: null,
+    $pressed-color: null,
+
+    $border-color: null,
+    $pressed-border-color: null,
+
+    $border-width: null,
+    $border-style: null,
+
+    $border-radius: null,
+    $border-radius-big: null,
+
+    $font-weight: null,
+    $font-size: null,
+    $font-size-big: null,
+    $line-height: null,
+    $line-height-big: null,
+    $font-family: null,
+
+    $padding: null,
+    $padding-big: null,
+
+    $icon-color: null,
+    $pressed-icon-color: null,
+    $disabled-icon-color: null,
+    $icon-size: null,
+    $icon-size-big: null,
+    $icon-font-size: null,
+    $icon-font-size-big: null,
+    $icon-horizontal-spacing: null,
+    $icon-horizontal-spacing-big: null,
+    $icon-vertical-spacing: null,
+    $icon-vertical-spacing-big: null,
+
+    $disabled-color: null,
+    $disabled-opacity: null,
+
+    $badge-background-color: null,
+    $badge-background-gradient: null,
+    $badge-color: null,
+    $badge-border-color: null,
+    $badge-border-radius: null,
+    $badge-min-width: null,
+    $badge-max-width: null,
+    $badge-font-weight: null,
+    $badge-font-size: null,
+    $badge-font-family: null,
+    $badge-line-height: null,
+    $badge-top: null,
+    $badge-right: null,
+    $badge-bottom: null,
+    $badge-left: null,
+    $badge-padding: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    @if $background-color != null and $background-color != transparent {
+        @if $pressed-background-color == null {
+            $pressed-background-color: button-pressed-background-color($background-color);
+        }
+
+        @if $border-color == null {
+            $border-color: button-border-color($background-color);
+        }
+
+        @if $color == null {
+            $color: button-color($background-color);
+        }
+
+        @if $background-gradient == null {
+            $background-gradient: button-background-gradient($background-color);
+        }
+    }
+
+    @if $pressed-background-color != null {
+        @if $pressed-border-color == null {
+            $pressed-border-color: button-pressed-border-color($pressed-background-color);
+        }
+
+        @if $pressed-color == null {
+            $pressed-color: button-pressed-color($pressed-background-color);
+        }
+
+        @if $pressed-background-gradient == null {
+            $pressed-background-gradient: button-pressed-background-gradient($pressed-background-color);
+        }
+    }
+
+    @if $icon-color == null {
+        $icon-color: $color;
+    }
+
+    @if $pressed-icon-color == null {
+        @if $pressed-color == null and $pressed-background-color != null {
+            $pressed-icon-color: button-pressed-color($pressed-background-color);
+        } @else {
+            $pressed-icon-color: $pressed-color;
+        }
+    }
+
+    .#{$prefix}button#{$ui-suffix} {
+        color: $color;
+        padding: $padding;
+        box-shadow: $shadow;
+        @include font($font-weight, $font-size, $line-height, $font-family);
+        @include border($border-width, $border-style, $border-color);
+
+        @if $enable-border-radius {
+            @include border-radius($border-radius);
+        }
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                padding: $padding-big;
+                font-size: $font-size-big;
+                line-height: $line-height-big;
+                @include border-radius($border-radius-big);
+            }
+        }
+
+        @include background-gradient($background-color, $background-gradient);
+
+        &.#{$prefix}button-pressing, &.#{$prefix}button-pressed {
+            color: $pressed-color;
+            box-shadow: $pressed-shadow;
+            @include background-gradient($pressed-background-color, $pressed-background-gradient);
+            border-color: $pressed-border-color;
+        }
+
+        .#{$prefix}button-icon {
+            width: $icon-size;
+            height: $icon-size;
+            @include icon($font-size: $icon-font-size, $font-size-big: $icon-font-size-big);
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    width: $icon-size-big;
+                    height: $icon-size-big;
+                }
+            }
+
+
+            color: $icon-color;
+        }
+
+        &.#{$prefix}button-pressing, &.#{$prefix}button-pressed {
+            .#{$prefix}button-icon {
+                color: $pressed-icon-color;
+            }
+        }
+
+        &.#{$prefix}disabled .#{$prefix}button-icon {
+            color: $disabled-icon-color;
+        }
+
+        &.#{$prefix}iconalign-left .#{$prefix}button-icon {
+            margin-right: $icon-horizontal-spacing;
+
+            @if $enable-big and $icon-horizontal-spacing-big != $icon-horizontal-spacing {
+                .#{$prefix}big & {
+                    margin-right: $icon-horizontal-spacing-big;
+                }
+            }
+        }
+
+        &.#{$prefix}iconalign-right .#{$prefix}button-icon {
+            margin-left: $icon-horizontal-spacing;
+
+            @if $enable-big and $icon-horizontal-spacing-big != $icon-horizontal-spacing {
+                .#{$prefix}big & {
+                    margin-left: $icon-horizontal-spacing-big;
+                }
+            }
+        }
+
+        &.#{$prefix}iconalign-top .#{$prefix}button-icon {
+            margin-bottom: $icon-vertical-spacing;
+
+            @if $enable-big and $icon-vertical-spacing-big != $icon-vertical-spacing {
+                .#{$prefix}big & {
+                    margin-bottom: $icon-vertical-spacing-big;
+                }
+            }
+        }
+
+        &.#{$prefix}iconalign-bottom .#{$prefix}button-icon {
+            margin-top: $icon-vertical-spacing;
+
+            @if $enable-big and $icon-vertical-spacing-big != $icon-vertical-spacing {
+                .#{$prefix}big & {
+                    margin-top: $icon-vertical-spacing-big;
+                }
+            }
+        }
+
+        .#{$prefix}button-label {
+            // prevents the button height from shrinking when it has no text
+            min-height: $line-height;
+        }
+
+        @if $icon-size != null or $icon-horizontal-spacing != null {
+
+            $horz-spacing: $icon-horizontal-spacing;
+            @if $horz-spacing == null {
+                $horz-spacing: $button-icon-horizontal-spacing;
+            }
+
+            $size: $icon-size;
+            @if $size == null {
+                $size: $button-icon-size;
+            }
+
+            &.#{$prefix}iconalign-right > .#{$prefix}button-label {
+                padding-left: calc(#{$size or $default-calc-value} + #{$horz-spacing or $default-calc-value});
+            }
+
+            &.#{$prefix}iconalign-left > .#{$prefix}button-label {
+                padding-right: calc(#{$size or $default-calc-value} + #{$horz-spacing or $default-calc-value});
+            }
+        }
+
+        @if $enable-big and ($icon-size-big != null or $icon-horizontal-spacing != null) {
+
+            $horz-spacing: $icon-horizontal-spacing-big;
+            @if $horz-spacing == null {
+                $horz-spacing: $button-icon-horizontal-spacing-big;
+            }
+
+            $size: $icon-size-big;
+            @if $size == null {
+                $size: $button-icon-size-big;
+            }
+
+            &.#{$prefix}iconalign-right > .#{$prefix}button-label {
+                .#{$prefix}big & {
+                    padding-left: calc(#{$size or $default-calc-value} + #{$horz-spacing or $default-calc-value});
+                }
+            }
+
+            &.#{$prefix}iconalign-left > .#{$prefix}button-label {
+                .#{$prefix}big & {
+                    padding-right: calc(#{$size or $default-calc-value} + #{$horz-spacing or $default-calc-value});
+                }
+            }
+        }
+
+        &.#{$prefix}disabled {
+            opacity: $disabled-opacity;
+            color: $disabled-color;
+        }
+
+        .#{$prefix}badge {
+            border-color: $badge-border-color;
+            min-width: $badge-min-width;
+
+            @include font($badge-font-weight, $badge-font-size, $badge-line-height, $badge-font-family);
+
+            top: $badge-top;
+            right: $badge-right;
+            bottom: $badge-bottom;
+            left: $badge-left;
+            padding: $badge-padding;
+            max-width: $badge-max-width;
+            color: $badge-color;
+
+            @include background-gradient($badge-background-color, $badge-background-gradient);
+
+            @if $enable-border-radius {
+                @include border-radius($badge-border-radius);
+            }
+        }
+    }
+}
+
+/**
+ * Generates style rules for the "alt" button UI. This mixin is invoked automatically
+ * when {@link #$button-alt-ui} is `true`.
+ *
+ * Can be overridden in derived themes to customize the look and feel of the "alt" UI.
+ *
+ * @member Ext.Button
+ * @protected
+ */
+@mixin button-alt-ui {
+    @include button-ui(
+        $ui: 'alt',
+        $color: $panel-tool-color,
+        $background-color: transparent,
+        $border-width: 0,
+        $pressed-background-color: transparent
+    );
+}
+
+/**
+ * Generates style rules for the "action" button UI. This mixin is invoked automatically
+ * when {@link #$button-action-ui} is `true`.
+ *
+ * Can be overridden in derived themes to customize the look and feel of the "action" UI.
+ *
+ * @member Ext.Button
+ * @protected
+ */
+@mixin button-action-ui {
+    @include button-ui(
+        $ui: 'action',
+        $background-color: $base-highlight-color
+    );
+}
+
+/**
+ * Generates style rules for the "confirm" button UI. This mixin is invoked automatically
+ * when {@link #$button-confirm-ui} is `true`.
+ *
+ * Can be overridden in derived themes to customize the look and feel of the "confirm" UI.
+ *
+ * @member Ext.Button
+ * @protected
+ */
+@mixin button-confirm-ui {
+    @include button-ui(
+        $ui: 'confirm',
+        $background-color: desaturate(darken($confirm-color, 10%), 5%)
+    );
+}
+
+/**
+ * Generates style rules for the "decline" button UI. This mixin is invoked automatically
+ * when {@link #$button-decline-ui} is `true`.
+ *
+ * Can be overridden in derived themes to customize the look and feel of the "decline" UI.
+ *
+ * @member Ext.Button
+ * @protected
+ */
+@mixin button-decline-ui {
+    @include button-ui(
+        $ui: 'decline',
+        $background-color: desaturate(darken($alert-color, 10%), 5%)
+    );
+}
+
+/**
+ * Generates style rules for the "round" button UI. This mixin is invoked automatically
+ * when {@link #$button-round-ui} is `true`.
+ *
+ * Can be overridden in derived themes to customize the look and feel of the "round" UI.
+ *
+ * @member Ext.Button
+ * @protected
+ */
+@mixin button-round-ui {
+    @include button-ui(
+        $ui: 'round',
+        $border-radius: 10000px,
+        $border-radius-big: 20000px
+    );
+}
+
+/**
+ * Generates style rules for the "flat" button UI. This mixin is invoked automatically
+ * when {@link #$button-flat-ui} is `true`.
+ *
+ * Can be overridden in derived themes to customize the look and feel of the "flat" UI.
+ *
+ * @member Ext.Button
+ * @protected
+ */
+@mixin button-flat-ui {
+    @include button-ui(
+        $ui: 'flat',
+        $border-width: 0,
+        $background-color: transparent
+    );
+}
+
+/**
+ * Generates style rules for the "flat" button UI. This mixin is invoked automatically
+ * when {@link #$button-flat-ui} is `true`.
+ *
+ * Can be overridden in derived themes to customize the look and feel of the "flat" UI.
+ *
+ * @member Ext.Button
+ * @protected
+ */
+@mixin button-plain-ui {
+    @include button-ui(
+        $ui: 'plain',
+        $border-width: 0,
+        $background-color: transparent
+    );
+}
+
+/**
+ * Generates style rules for the "segmented" button UI. This mixin is invoked automatically
+ * when {@link #$button-segmented-ui} is `true`. This UI will be applied to
+ * buttons that are used inside `Ext.SegmentedButton`.
+ *
+ * Can be overridden in derived themes to customize the look and feel of the "segmented" UI.
+ *
+ * @member Ext.Button
+ * @protected
+ */
+@mixin button-segmented-ui {
+    // Do nothing by default
+}
+
+/**
+ * Creates a theme UI for buttons.
+ * Also automatically generates UIs for {ui-label}-round and {ui-label}-small.
+ *
+ *     // SCSS
+ *     @include sencha-button-ui('secondary', #99A4AE, 'glossy');
+ *
+ *     // JS
+ *     var cancelBtn = new Ext.Button({text: 'Cancel', ui: 'secondary'});
+ *
+ * @param {string} $ui-label The name of the UI being created.
+ *   Can not included spaces or special punctuation (used in class names)
+ * @param {color} $color Base color for the UI.
+ * @param {string} $gradient Default gradient for the UI.
+ *
+ * @member Ext.Button
+ * @deprecated 6.0 Use {@link #button-ui} instead
+ */
+@mixin sencha-button-ui($ui-label, $color, $gradient: $button-background-gradient) {
+    @include button-ui(
+        $ui: $ui-label,
+        $background-color: $color,
+        $background-gradient: $gradient
+    );
+}

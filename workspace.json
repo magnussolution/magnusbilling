@@ -1,0 +1,60 @@
+{
+    /**
+     *  An array of the paths to all the applications present in this workspace
+     */
+    "apps": [
+        "packages/local/magnusbilling/.sencha/temp/Themer"
+    ],
+
+    /**
+     * An object containing key value pair framework descriptors.
+     * 
+     * The value can be a string or an object containing at least one of "dir" or "pkg",
+     * where "dir" can be a filesystem path to the framework sources and "pkg" can be a 
+     * package name. For example:
+     *
+     *      "frameworks": {
+     *          "ext": "ext",
+     *          "ext-x": "/absolute/path/to/ext",
+     *          "ext-y": {
+     *              "source": "../relative/path/to/ext",
+     *              "path": "ext"
+     *          },
+     *          "ext-z": {
+     *              "package": "ext@n.n.n",
+     *              "path": "ext-n.n.n"
+     *          },
+     *          "touch": "touch"
+     *      }
+     *
+     */
+    "frameworks": {
+        "ext": {
+            "path":"ext",
+            "version":"6.2.0.981"
+        }
+    },
+
+    /**
+     * This is the folder for build outputs in the workspace.
+     */
+    "build": {
+        "dir": "${workspace.dir}/build"
+    },
+
+    /**
+     * These configs determine where packages are generated and extracted to (when downloaded).
+     */
+    "packages": {
+        /**
+         * This folder contains all local packages.
+         * If a comma-separated string is used as value the first path will be used as the path to generate new packages.
+         */
+        "dir": "${workspace.dir}/packages/local,${workspace.dir}/packages",
+
+        /**
+         * This folder contains all extracted (remote) packages.
+         */
+        "extract": "${workspace.dir}/packages/remote"
+    }
+}

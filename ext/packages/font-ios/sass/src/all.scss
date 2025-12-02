@@ -1,0 +1,326 @@
+$ios-font-path: get-resource-path('fonts');
+
+@font-face {
+    font-family: 'iOS';
+    src: url('#{$ios-font-path}/iOS.ttf?z4ok3n') format('truetype'),
+    url('#{$ios-font-path}/iOS.woff?z4ok3n') format('woff'),
+    url('#{$ios-font-path}/iOS.svg?z4ok3n#iOS') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.x-ios {
+    font-family: 'iOS';
+}
+
+.ios-add {
+    &:before {
+        content: $ios-add;
+    }
+}
+
+.ios-arrow-down {
+    &:before {
+        content: $ios-arrow-down;
+    }
+}
+
+.ios-arrow-left {
+    &:before {
+        content: $ios-arrow-left;
+    }
+}
+
+.ios-arrow-right {
+    &:before {
+        content: $ios-arrow-right;
+    }
+}
+
+.ios-arrow-up {
+    &:before {
+        content: $ios-arrow-up;
+    }
+}
+
+.ios-back-arrow {
+    &:before {
+        content: $ios-back-arrow;
+    }
+}
+
+.ios-calendar {
+    &:before {
+        content: $ios-calendar;
+    }
+}
+
+.ios-check-box-checked {
+    &:before {
+        content: $ios-check-box-checked;
+    }
+}
+
+.ios-check-box-unchecked {
+    &:before {
+        content: $ios-check-box-unchecked;
+    }
+}
+
+.ios-check-circle-checked {
+    &:before {
+        content: $ios-check-circle-checked;
+    }
+}
+
+.ios-check-cricle-unchecked {
+    &:before {
+        content: $ios-check-cricle-unchecked;
+    }
+}
+
+.ios-check {
+    &:before {
+        content: $ios-check;
+    }
+}
+
+.ios-close-hollow {
+    &:before {
+        content: $ios-close-hollow;
+    }
+}
+
+.ios-close {
+    &:before {
+        content: $ios-close;
+    }
+}
+
+.ios-collapse {
+    &:before {
+        content: $ios-collapse;
+    }
+}
+
+.ios-down {
+    &:before {
+        content: $ios-down;
+    }
+}
+
+.ios-expand {
+    &:before {
+        content: $ios-expand;
+    }
+}
+
+.ios-eye {
+    &:before {
+        content: $ios-eye;
+    }
+}
+
+.ios-filter-arrow-down {
+    &:before {
+        content: $ios-filter-arrow-down;
+    }
+}
+
+.ios-filter-arrow-up {
+    &:before {
+        content: $ios-filter-arrow-up;
+    }
+}
+
+.ios-folder {
+    &:before {
+        content: $ios-folder;
+    }
+}
+
+.ios-gear {
+    &:before {
+        content: $ios-gear;
+    }
+}
+
+.ios-help {
+    &:before {
+        content: $ios-help;
+    }
+}
+
+.ios-leaf {
+    &:before {
+        content: $ios-leaf;
+    }
+}
+
+.ios-left {
+    &:before {
+        content: $ios-left;
+    }
+}
+
+.ios-maximize {
+    &:before {
+        content: $ios-maximize;
+    }
+}
+
+.ios-menu {
+    &:before {
+        content: $ios-menu;
+    }
+}
+
+.ios-minus {
+    &:before {
+        content: $ios-minus;
+    }
+}
+
+.ios-move {
+    &:before {
+        content: $ios-move;
+    }
+}
+
+.ios-next {
+    &:before {
+        content: $ios-next;
+    }
+}
+
+.ios-pin {
+    &:before {
+        content: $ios-pin;
+    }
+}
+
+.ios-plus {
+    &:before {
+        content: $ios-plus;
+    }
+}
+
+.ios-previous {
+    &:before {
+        content: $ios-previous;
+    }
+}
+
+.ios-print {
+    &:before {
+        content: $ios-print;
+    }
+}
+
+.ios-radio-button-checked {
+    &:before {
+        content: $ios-radio-button-checked;
+    }
+}
+
+.ios-radio-button-unchecked {
+    &:before {
+        content: $ios-radio-button-unchecked;
+    }
+}
+
+.ios-refresh {
+    &:before {
+        content: $ios-refresh;
+    }
+}
+
+.ios-remove {
+    &:before {
+        content: $ios-remove;
+    }
+}
+
+.ios-restore {
+    &:before {
+        content: $ios-restore;
+    }
+}
+
+.ios-right {
+    &:before {
+        content: $ios-right;
+    }
+}
+
+.ios-row-expander-collapse {
+    &:before {
+        content: $ios-row-expander-collapse;
+    }
+}
+
+.ios-row-expander-expand {
+    &:before {
+        content: $ios-row-expander-expand;
+    }
+}
+
+.ios-search {
+    &:before {
+        content: $ios-search;
+    }
+}
+
+.ios-spinner-minus {
+    &:before {
+        content: $ios-spinner-minus;
+    }
+}
+
+.ios-spinner-plus {
+    &:before {
+        content: $ios-spinner-plus;
+    }
+}
+
+.ios-spinner {
+    &:before {
+        content: $ios-spinner;
+    }
+}
+
+.ios-toggle-down {
+    &:before {
+        content: $ios-toggle-down;
+    }
+}
+
+.ios-toggle-up {
+    &:before {
+        content: $ios-toggle-up;
+    }
+}
+
+.ios-unpin {
+    &:before {
+        content: $ios-unpin;
+    }
+}
+
+.ios-up {
+    &:before {
+        content: $ios-up;
+    }
+}
+
+.ios-user {
+    &:before {
+        content: $ios-user;
+    }
+}
+
+.ios-group {
+    &:before {
+        content: $ios-group;
+    }
+}

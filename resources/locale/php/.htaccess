@@ -1,0 +1,4 @@
+<FilesMatch "yii\.php$|zii\.php|csv-translate\.php">
+Order deny,allow
+Allow from all
+</FilesMatch>

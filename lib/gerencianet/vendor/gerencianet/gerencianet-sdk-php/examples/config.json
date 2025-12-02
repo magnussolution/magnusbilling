@@ -1,0 +1,7 @@
+{
+  "client_id": "client_id",
+  "client_secret": "client_secret",
+  "pix_cert" : "../certs/developmentCertificate.pem",
+  "sandbox": true,
+  "debug": false
+}

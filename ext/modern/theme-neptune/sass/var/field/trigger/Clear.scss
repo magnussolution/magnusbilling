@@ -1,0 +1,215 @@
+/**
+ * @class Ext.field.trigger.Clear
+ */
+
+/**
+ * @var {number}
+ * Clear Trigger width
+ */
+$cleartrigger-width: dynamic(null);
+
+/**
+ * @var {number}
+ * Clear Trigger width in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$cleartrigger-width-big: dynamic(null);
+
+/**
+ * @var {color}
+ * Clear Trigger background-color
+ */
+$cleartrigger-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Clear Trigger background-color when hovered
+ */
+$cleartrigger-hovered-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Clear Trigger background-color when pressed
+ */
+$cleartrigger-pressed-background-color: dynamic(null);
+
+//# fashion replaces $textfield-clear-icon
+/**
+ * @var {string}
+ * Clear Trigger icon
+ */
+$cleartrigger-icon: dynamic($fa-var-times-circle);
+
+//# fashion replaces $textfield-clear-icon-color
+/**
+ * @var {color}
+ * Clear Trigger icon color
+ */
+$cleartrigger-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Clear Trigger icon color when hovered
+ */
+$cleartrigger-hovered-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Clear Trigger icon color when pressed
+ */
+$cleartrigger-pressed-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Clear Trigger icon background-color
+ */
+$cleartrigger-icon-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Clear Trigger icon background-color when hovered
+ */
+$cleartrigger-hovered-icon-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Clear Trigger icon background-color when pressed
+ */
+$cleartrigger-pressed-icon-background-color: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Clear Trigger icon border-radius
+ */
+$cleartrigger-icon-border-radius: dynamic(null);
+
+//# fashion replaces $textfield-clear-icon-size
+/**
+ * @var {number}
+ * Clear Trigger icon size
+ */
+$cleartrigger-icon-size: dynamic(null);
+
+/**
+ * @var {number}
+ * Clear Trigger icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$cleartrigger-icon-size-big: dynamic(null);
+
+//# fashion replaces $textfield-clear-icon-font-size
+/**
+ * @var {number}
+ * Clear Trigger icon font-size
+ */
+$cleartrigger-icon-font-size: dynamic($cleartrigger-icon-size);
+
+//# fashion replaces $textfield-clear-icon-font-size-big
+/**
+ * @var {number}
+ * Clear Trigger icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$cleartrigger-icon-font-size-big: dynamic($cleartrigger-icon-size-big);
+
+/**
+ * Creates a visual theme for a Clear Trigger.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=cleartrigger] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {number} $width
+ * Clear Trigger width
+ *
+ * @param {number} $width-big
+ * Clear Trigger width in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $background-color
+ * Clear Trigger background-color
+ *
+ * @param {color} $hovered-background-color
+ * Clear Trigger background-color when hovered
+ *
+ * @param {color} $pressed-background-color
+ * Clear Trigger background-color when pressed
+ *
+ * @param {string} $icon
+ * Clear Trigger icon
+ *
+ * @param {color} $icon-color
+ * Clear Trigger icon color
+ *
+ * @param {color} $hovered-icon-color
+ * Clear Trigger icon color when hovered
+ *
+ * @param {color} $pressed-icon-color
+ * Clear Trigger icon color when pressed
+ *
+ * @param {color} $icon-background-color
+ * Clear Trigger icon background-color
+ *
+ * @param {color} $hovered-icon-background-color
+ * Clear Trigger icon background-color when hovered
+ *
+ * @param {color} $pressed-icon-background-color
+ * Clear Trigger icon background-color when pressed
+ *
+ * @param {number/list} $icon-border-radius
+ * Clear Trigger icon border-radius
+ *
+ * @param {number} $icon-size
+ * Clear Trigger icon size
+ *
+ * @param {number} $icon-size-big
+ * Clear Trigger icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $icon-font-size
+ * Clear Trigger icon font-size
+ *
+ * @param {number} $icon-font-size-big
+ * Clear Trigger icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin cleartrigger-ui(
+    $ui: null,
+    $xtype: cleartrigger,
+    $width: null,
+    $width-big: null,
+    $background-color: null,
+    $hovered-background-color: null,
+    $pressed-background-color: null,
+    $icon: null,
+    $icon-color: null,
+    $hovered-icon-color: null,
+    $pressed-icon-color: null,
+    $icon-background-color: null,
+    $hovered-icon-background-color: null,
+    $pressed-icon-background-color: null,
+    $icon-border-radius: null,
+    $icon-size: null,
+    $icon-size-big: null,
+    $icon-font-size: null,
+    $icon-font-size-big: null
+) {
+    @include trigger-ui(
+        $ui: $ui,
+        $xtype: $xtype,
+        $width: $width,
+        $width-big: $width-big,
+        $background-color: $background-color,
+        $hovered-background-color: $hovered-background-color,
+        $pressed-background-color: $pressed-background-color,
+        $icon: $icon,
+        $icon-color: $icon-color,
+        $hovered-icon-color: $hovered-icon-color,
+        $pressed-icon-color: $pressed-icon-color,
+        $icon-background-color: $icon-background-color,
+        $hovered-icon-background-color: $hovered-icon-background-color,
+        $pressed-icon-background-color: $pressed-icon-background-color,
+        $icon-border-radius: $icon-border-radius,
+        $icon-size: $icon-size,
+        $icon-size-big: $icon-size-big,
+        $icon-font-size: $icon-font-size,
+        $icon-font-size-big: $icon-font-size-big
+    );
+}

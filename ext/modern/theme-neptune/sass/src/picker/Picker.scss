@@ -1,0 +1,88 @@
+/**
+ * @class Ext.picker.Picker
+ */
+
+.#{$prefix}picker {
+    .#{$prefix}dataview {
+        background: transparent;
+    }
+}
+
+.#{$prefix}picker-inner {
+    background-color: $picker-background-color;
+    overflow: hidden;
+}
+
+.#{$prefix}picker-mask {
+    z-index: 0;
+}
+
+.#{$prefix}picker-bar {
+    height: $picker-item-height;
+    background-color: $picker-bar-background-color;
+    @include border($picker-bar-border-width, $picker-bar-border-style, $picker-bar-border-color);
+
+    @if $enable-big {
+        .#{$prefix}big & {
+            height: $picker-item-height-big;
+        }
+    }
+}
+
+.#{$prefix}use-titles {
+    .#{$prefix}picker-bar {
+        margin: $picker-with-title-bar-margin;
+    }
+}
+
+.#{$prefix}picker-slot-title {
+    height: $picker-title-height;
+    color: $picker-title-color;
+    @include border($picker-title-border-width, $picker-title-border-style, $picker-title-border-color);
+    padding: $picker-title-padding;
+    @include font($picker-title-font-weight, $picker-title-font-size, $picker-title-font-line-height, $picker-title-font-family);
+
+    .#{$prefix}big & {
+        @include font($picker-title-font-weight, $picker-title-font-size-big, $picker-title-font-line-height-big, $picker-title-font-family);
+    }
+
+    > div {
+        color: $picker-title-color;
+    }
+}
+
+.#{$prefix}picker-slot {
+    .#{$prefix}dataview-item {
+        z-index: 1;
+
+        display: $picker-item-display;
+        align-items: $picker-item-align-items;
+        justify-content: $picker-item-justify-content;
+        height: $picker-item-height;
+        line-height: $picker-item-height;
+        padding: $picker-item-padding;
+        color: $picker-item-color;
+        @include font($picker-item-font-weight, $picker-item-font-size, $picker-item-font-line-height, $picker-item-font-family);
+
+        .#{$prefix}big & {
+            @include font($picker-item-font-weight, $picker-item-font-size-big, $picker-item-font-line-height-big, $picker-item-font-family);
+        }
+
+        &.#{$prefix}selected {
+            color: $picker-item-selected-color;
+            font-size: $picker-item-selected-font-size;
+            font-weight: $picker-item-selected-font-weight;
+        }
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                height: $picker-item-height-big;
+                line-height: $picker-item-height-big;
+
+                &.#{$prefix}selected {
+                    font-size: $picker-item-selected-font-size-big;
+                }
+            }
+        }
+    }
+}

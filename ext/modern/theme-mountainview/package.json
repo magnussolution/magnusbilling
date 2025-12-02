@@ -1,0 +1,44 @@
+{
+    /**
+     * The namespace of this package.
+     *
+     * As a general rule, all classes that belong to this package should be under this namespace
+     * if multiple namespaces are part of this package, set this to "".
+     */
+    "namespace": "Ext",
+
+    "name": "theme-mountainview",
+    "type": "theme",
+    "extend": "theme-device-base",
+
+    "framework": "ext",
+    "toolkit": "modern",
+    //"requires": [
+    //    ...
+    //],
+
+    "creator": "Sencha",
+    "summary": "Ext JS Mountainview Theme",
+    "detailedDescription": "This theme provides a look and feel to match Android",
+
+    "version": "6.2.0.981",
+    "compatVersion": "6.0.0",
+    "format": "1",
+
+    "output": "${workspace.subpkg.prefix}/${package.name}",
+    "local": true,
+
+    "sass": {
+        "namespace": "Ext",
+
+        "etc": "${package.dir}/sass/etc/all.scss",
+
+        "var": "${package.dir}/sass/var",
+
+        "src": "${package.dir}/sass/src"
+    },
+
+    "classpath": "${package.dir}/src",
+
+    "overrides": "${package.dir}/overrides"
+}

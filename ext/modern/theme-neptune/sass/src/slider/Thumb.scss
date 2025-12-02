@@ -1,0 +1,23 @@
+@include thumb-ui(
+    $height: $thumb-height,
+    $height-big: $thumb-height-big,
+    $width: $thumb-width,
+    $width-big: $thumb-width-big,
+    $background-color: $thumb-background-color,
+    $hovered-background-color: $thumb-hovered-background-color,
+    $pressed-background-color: $thumb-pressed-background-color,
+    $disabled-background-color: $thumb-disabled-background-color,
+    $border-width: $thumb-border-width,
+    $border-style: $thumb-border-style,
+    $border-color: $thumb-border-color,
+    $border-radius: $thumb-border-radius,
+    $border-radius-big: $thumb-border-radius-big,
+    $icon: $thumb-icon,
+    $icon-color: $thumb-icon-color,
+    $icon-size: $thumb-icon-size,
+    $icon-size-big: $thumb-icon-size-big,
+    $icon-font-size: $thumb-icon-font-size,
+    $icon-font-size-big: $thumb-icon-font-size-big,
+    $box-shadow: $thumb-box-shadow,
+    $box-shadow-big: $thumb-box-shadow-big
+);

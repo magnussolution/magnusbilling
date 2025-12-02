@@ -1,0 +1,51 @@
+@if $ext-trial or $ext-beta {
+    @font-face {
+        font-family: 'ext-watermark';
+        src:url(get-resource-path('ext-watermark/fonts/ext-watermark.eot?n6lnws', $packageName:'ext'));
+        src:url(get-resource-path('ext-watermark/fonts/ext-watermark.eot?#iefixn6lnws', $packageName:'ext')) format('embedded-opentype'),
+        url(get-resource-path('ext-watermark/fonts/ext-watermark.woff?n6lnws', $packageName:'ext')) format('woff'),
+        url(get-resource-path('ext-watermark/fonts/ext-watermark.ttf?n6lnws', $packageName:'ext')) format('truetype'),
+        url(get-resource-path('ext-watermark/fonts/ext-watermark.svg?n6lnws#ext-watermark', $packageName:'ext')) format('svg');
+        font-weight: normal;
+        font-style: normal;
+    }
+}
+
+@if $ext-trial {
+    #ext-viewport:after {
+        font-family: ext-watermark;
+        text-shadow: 1px 1px #fff;
+        font-size: 2em;
+        content: 'd';
+        position: absolute;
+        bottom: .5em;
+        right: .5em;
+        opacity: .5;
+        pointer-events: none;
+    }
+}
+
+@if $ext-beta {
+    #ext-viewport:after {
+        font-family: ext-watermark;
+        text-shadow: 1px 1px #fff;
+        font-size: 2em;
+        content: 'b';
+        position: absolute;
+        bottom: .5em;
+        right: .5em;
+        opacity: .5;
+        pointer-events: none;
+    }
+}
+
+#ext-viewport {
+    margin: 0;
+
+    @if $enable-font-smoothing {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+

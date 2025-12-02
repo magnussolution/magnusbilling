@@ -1,0 +1,27 @@
+/**
+ * @class Ext.Sheet
+ */
+
+/**
+ * @var {color} $sheet-background-color
+ * Background-color for action sheets.
+ */
+$sheet-background-color: dynamic($background-color);
+
+/**
+ * @var {color} $sheet-border-color
+ * Border color for action sheets.
+ */
+$sheet-border-color: dynamic($neutral-color);
+
+/**
+ * @var {measurement} $sheet-button-spacing
+ * Vertical spacing between sheet buttons.
+ */
+$sheet-button-spacing: dynamic(.5em);
+
+/**
+ * @var {measurement} $sheet-padding
+ * Overall padding in a sheet.
+ */
+$sheet-padding: dynamic(.6em);

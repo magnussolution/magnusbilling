@@ -1,0 +1,14 @@
+.#{$prefix}trigger {
+    @include st-box;
+    @include st-box-align(center);
+    @include st-box-pack(center);
+
+    &.#{$prefix}interactive {
+        cursor: pointer;
+    }
+}
+
+// tag name added to increase specificity over both .x-trigger and .x-big .x-trigger selectors
+div.#{$prefix}trigger.#{$prefix}grouped {
+    width: auto;
+}

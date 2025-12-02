@@ -1,0 +1,9 @@
+.#{$prefix}simplelistitem {
+    @include st-box-orient(horizontal);
+
+    .#{$prefix}listitem-body {
+        @include st-box-flex;
+        @include st-box;
+        @include st-box-align(center);
+    }
+}

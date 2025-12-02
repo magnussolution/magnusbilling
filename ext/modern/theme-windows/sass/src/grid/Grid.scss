@@ -1,0 +1,80 @@
+.x-gridrow {
+	border-color: #d7d7d7;
+
+    &.x-grid-item-odd {
+        background-color: #222222;
+    }
+
+    &.x-selected {
+        background-color: #910091;
+    }
+}
+
+.x-gridviewoptions {
+    background-color: #000;
+
+	.x-listitem.x-simplelistitem {
+		color: #aaa;
+	}
+
+    .x-column-options-text {
+        margin: 5px 50px 5px 80px;
+    }
+
+    .x-list-item-dragging {
+		background-color: #000 !important;
+		border-color: #000 !important;
+    }
+
+    .x-listitem.x-selected.x-simplelistitem  {
+        .x-column-options-text {
+            color: #fff;
+        }
+
+        .x-column-options-visibleindicator:after {
+            color: #910091;
+        }
+
+        .x-column-options-sortablehandle:after {
+            color: #fff;
+        }
+
+        .x-column-options-folder:after,
+        .x-column-options-leaf:after {
+            color: #fff;
+        }
+    }
+}
+
+.x-selectioncolumn {
+    &.x-grid-multiselection-allselected:after {
+        color: #910091 !important;
+    }
+}
+
+.x-pagingtoolbar {
+    > .x-body {
+        padding: 0 50px;
+    }
+
+    .x-button {
+    	margin: 6px 6px 0;
+    }
+}
+
+.x-summaryrow {
+    background-color: #505050;
+
+    .x-gridcell {
+        border-color: #C0C0C0;
+    }
+}
+
+.x-rowheader {
+    background-color: $base-color;
+    color: $foreground-color;
+    border: 0;
+    padding-left: 5px;
+    font-weight: normal;
+    font-size: 17pt;
+}

@@ -1,0 +1,24 @@
+@include panel-ui(
+    $ui: 'tooltip',
+    $header-color: $tip-header-color,
+    $header-background-color: $tip-background-color,
+    $border-color: $tip-border-color,
+    $header-border-color: $tip-border-color,
+    $header-font-size: $tip-header-font-size,
+    $header-font-weight: $tip-header-font-weight,
+    $header-padding: $tip-header-padding,
+    $body-border-color: $tip-border-color,
+
+    $tool-color: $tip-tool-color,
+    $tool-spacing: $tip-tool-spacing,
+
+    $border-width: $tip-border-width,
+    $body-background-color: $tip-background-color,
+    $body-color: $tip-body-color,
+    $body-font-size: $tip-body-font-size,
+    $body-font-weight: $tip-body-font-weight,
+    $body-padding: $tip-body-padding,
+
+    $anchor-width: $tip-anchor-width,
+    $anchor-height: $tip-anchor-height
+);

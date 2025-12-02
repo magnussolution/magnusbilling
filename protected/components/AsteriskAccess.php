@@ -1,0 +1,1245 @@
+<?php
+
+/**
+ * Classe de com funcionalidades globais
+ *
+ * MagnusBilling <info@magnusbilling.com>
+ * 08/06/2013
+ */
+
+class AsteriskAccess
+{
+
+    private $asmanager;
+    private static $instance;
+    private static $config;
+
+    public static function instance($host = 'localhost', $user = 'magnus', $pass = 'magnussolution')
+    {
+        if (is_null(self::$instance)) {
+            self::$instance = new AsteriskAccess();
+        }
+        self::$instance->connectAsterisk($host, $user, $pass);
+        return self::$instance;
+    }
+
+    private function __construct()
+    {
+        $this->asmanager = new AGI_AsteriskManager;
+        $this->config    = LoadConfig::getConfig();
+    }
+
+    private function connectAsterisk($host, $user, $pass)
+    {
+        if ($host == 'localhost' && file_exists('/etc/asterisk/asterisk2.conf')) {
+            $configFile = '/etc/asterisk/asterisk2.conf';
+            $array      = parse_ini_file($configFile);
+            $host       = $array['host'];
+        }
+        $this->asmanager->connect($host, $user, $pass);
+    }
+
+    public function queueAddMember($member, $queue)
+    {
+        $this->asmanager->Command("queue add member PJSIP/" . $member . " to " . preg_replace("/ /", "\ ", $queue));
+    }
+
+    public function queueRemoveMember($member, $queue)
+    {
+        $this->asmanager->Command("queue remove member PJSIP/" . $member . " from " . preg_replace("/ /", "\ ", $queue));
+    }
+
+    public function queuePauseMember($member, $queue, $reason = 'normal')
+    {
+        $this->asmanager->Command("queue pause member PJSIP/" . $member . " queue " . preg_replace("/ /", "\ ", $queue) . " reason " . $reason);
+    }
+
+    public function queueUnPauseMember($member, $queue, $reason = 'normal')
+    {
+        $this->asmanager->Command("queue unpause member PJSIP/" . $member . " queue " . preg_replace("/ /", "\ ", $queue) . " reason " . $reason);
+    }
+
+    public function queueShow($queue)
+    {
+        return $this->asmanager->Command("queue show " . $queue);
+    }
+
+    public function reload()
+    {
+        return $this->asmanager->Command("reload");
+    }
+
+    public function queueReload()
+    {
+        return $this->asmanager->Command("queue reload all");
+    }
+
+    public function queueReseteStats($queue)
+    {
+        return $this->asmanager->Command("queue reset stats " . $queue);
+    }
+
+    public function generateQueueFile()
+    {
+
+        $select = '`name`, `language`, `musiconhold`, `announce`, `context`, `timeout`, `announce-frequency`, `announce-round-seconds`, `announce-holdtime`, `announce-position`, `retry`, `wrapuptime`, `maxlen`, `servicelevel`, `strategy`, `joinempty`, `leavewhenempty`, `eventmemberstatus`, `eventwhencalled`, `reportholdtime`, `memberdelay`, `weight`, `timeoutrestart`, `periodic-announce`, `periodic-announce-frequency`, `ringinuse`, `setinterfacevar`, `setqueuevar`, `setqueueentryvar`';
+        $model  = Queue::model()->findAll(
+            [
+                'select' => $select,
+            ]
+        );
+
+        if (count($model)) {
+            AsteriskAccess::instance()->writeAsteriskFile($model, '/etc/asterisk/queues_magnus.conf', 'name');
+        }
+
+        AsteriskAccess::instance()->mohReload();
+    }
+
+    public function mohReload()
+    {
+        return $this->asmanager->Command("moh reload");
+    }
+
+    public function hangupRequest($channel, $server = 'localhost')
+    {
+
+        AsteriskAccess::instance($server, 'magnus', 'magnussolution');
+        $this->asmanager->Command("hangup request " . $channel);
+    }
+
+    public function dialPlanReload()
+    {
+        return $this->asmanager->Command("dialplan reload");
+    }
+
+    public function pjsipReload()
+    {
+        return $this->asmanager->Command("pjsip reload");
+    }
+
+    public function VoiceMailReload()
+    {
+        return $this->asmanager->Command("voicemail reload");
+    }
+
+    public function sipShowPeer($peer)
+    {
+        return $this->asmanager->Command("sip show peer " . $peer);
+    }
+
+    public function pjsipShowContacts()
+    {
+        return $this->asmanager->Command('pjsip show contacts');
+    }
+
+
+    public function sipShowPeers()
+    {
+        return $this->asmanager->Command("sip show peers");
+    }
+
+    public function pjsipShowRegistry()
+    {
+        return $this->asmanager->Command("pjsip show registrations");
+    }
+
+    public function sipShowRegistry()
+    {
+        return $this->asmanager->Command("sip show registry");
+    }
+
+    public function iaxReload()
+    {
+        return @$this->asmanager->Command("iax2 reload");
+    }
+
+    public function coreShowChannelsConcise()
+    {
+        return @$this->asmanager->Command("core show channels concise");
+    }
+
+    public function cdrShowActive()
+    {
+        return @$this->asmanager->Command("cdr show active");
+    }
+
+    public function coreShowChannelsVerbose()
+    {
+        return @$this->asmanager->Command("core show channels verbose");
+    }
+
+    public function groupShowChannels()
+    {
+        return $this->asmanager->Command("group show channels");
+    }
+
+    public function coreShowChannel($channel)
+    {
+        return @$this->asmanager->Command("core show channel " . $channel);
+    }
+    public function sipShowChannel($channel)
+    {
+        return @$this->asmanager->Command("sip show channel " . $channel);
+    }
+
+    public function queueGetMemberStatus($member, $campaign_name)
+    {
+        $queueData = AsteriskAccess::instance()->queueShow($campaign_name);
+        $queueData = explode("\n", $queueData["data"]);
+        $status    = "error";
+        foreach ($queueData as $key => $data) {
+
+            $data = trim($data);
+
+            if (preg_match("/PJSIP\/" . Yii::app()->session['username'] . "/", $data)) {
+                $line   = explode('(', $data);
+                $status = trim($line[3]);
+                $status = explode(")", $status);
+
+                $status = $status[0];
+                break;
+            }
+        }
+        return $status;
+    }
+    //model , file, e o nome para o contexto
+    public function writeAsteriskFile($model, $file, $head_field = 'name')
+    {
+        $rows = Util::getColumnsFromModel($model);
+
+        $fd = fopen($file, "w");
+        file_put_contents($file, '');
+
+
+        if (! $fd) {
+            echo "</br><center><b><font color=red>" . gettext("Could not open buddy file") . $file . "</font></b></center>";
+        } else {
+            foreach ($rows as $key => $data) {
+                $line         = "\n";
+
+                //registrar tronco
+                if (preg_match("/^[^:]+:[^@]+@[^\/]+\/?.*$/", $data['register_string'])) {
+
+                    $line .= "\n\n[reg_" . $data[$head_field] . '_' . $data['user'] . '_' . $data['host'] . "]\n";
+                    $line .= "type = registration\n";
+                    $line .= "retry_interval = 20\n";
+                    $line .= "max_retries = 10\n";
+                    $line .= "expiration = 120\n";
+                    $line .= "transport = transport-udp\n";
+                    $line .= "outbound_auth = auth_reg_" . $data[$head_field] . '_' . $data['user'] . '_' . $data['host'] . "\n";
+                    $line .= "client_uri = sip:" . $data['user'] . '@' . $data['host'] . "\n";
+                    $line .= "server_uri = sip:" . $data['host'] . "\n";
+                    $line .= "contact_user = " . $data['user'] . "\n";
+                }
+
+
+                if (strlen($data['user']) && strlen($data['secret'])) {
+                    $line .= "\n[auth_reg_" . $data[$head_field] . '_' . $data['user'] . '_' . $data['host'] . "]\n";
+                    $line .= "type = auth\n";
+                    $line .= "username = " . $data['user'] . "\n";
+                    $line .= "password = " . $data['secret'] . "\n";
+                }
+
+                $line .= "\n[" . $data[$head_field] . "]\n";
+                $line .= "type = aor\n";
+                if (strlen($data['user'])) {
+                    $line .= "contact = sip:" . $data['user'] . '@' . $data['host'] . "\n";
+                } else {
+                    $line .= "contact = sip:" . $data['host'] . "\n";
+                }
+                if ($data['qualify'] == 'yes') {
+                    $line .= "qualify_frequency = 60\n";
+                } else {
+                    $line .= "qualify_frequency = " . $data['qualify'] . "\n";
+                }
+                $line .= "max_contacts = 1\n";
+
+                $line .= "\n[" . $data[$head_field] . "]\n";
+                $line .= "type = identify\n";
+                $line .= "endpoint = " . $data[$head_field] . "\n";
+                $line .= "match = " . strtok($data['host'], ':') . "\n";
+
+                $line .= "\n[" . $data[$head_field] . "]\n";
+                $line .= "type = endpoint\n";
+                $line .= "context = " . $data['context'] . "\n";
+                $line .= "dtmf_mode = rfc4733\n";
+                $line .= "disallow = all\n";
+                $line .= "allow = " . $data['allow'] . "\n";
+                $line .= "rtp_symmetric = yes\n";
+                $line .= "force_rport = yes\n";
+                $line .= "rewrite_contact = yes\n";
+                $line .= "direct_media = " . $data['directmedia'] . "\n";
+                $line .= "language = " . strlen($data['language']) ? $data['language'] : 'en' . "\n";
+                $line .= "allow_subscribe = yes\n";
+
+                $line .= "aors = " . $data[$head_field] . "\n";
+                if (strlen($data['fromuser'])) {
+                    $line .= "from_user = " . $data['fromuser'] . "\n";
+                }
+                if (strlen($data['fromdomain'])) {
+                    $line .= "from_domain = " . $data['fromdomain'] . "\n";
+                }
+                if (strlen($data['user']) && strlen($data['secret'])) {
+                    $line .= "auth = auth_reg_" . $data[$head_field] . '_' . $data['user'] . '_' . $data['host'] . "\n";
+                    $line .= "outbound_auth = auth_reg_" . $data[$head_field] . '_' . $data['user'] . '_' . $data['host'] . "\n";
+                }
+
+
+                if (fwrite($fd, $line) === false) {
+                    echo "Impossible to write to the file";
+                    break;
+                }
+
+
+                if ($head_field == 'trunkcode') {
+                    $sql          = "SELECT * FROM pkg_servers WHERE type != 'mbilling' AND status IN (1,4) AND host != 'localhost'";
+                    $modelServers = Yii::app()->db->createCommand($sql)->queryAll();
+
+                    $line = "";
+
+                    foreach ($modelServers as $key => $data) {
+
+
+                        if ($data['type'] == 'asterisk') {
+                            $trunkName =  preg_replace('/ /', '', strtolower($data['name'])) . "-" . $data['id'];
+                            $context .= 'slave';
+                        } else if ($data['type'] == 'sipproxy') {
+                            $trunkName = "\n\n[sipproxy-" . preg_replace('/ /', '', strtolower($data['name'])) . "-" . $data['id'] . "]\n";
+                            $accountcode = 'sipproxy';
+                            $context .= 'proxy' . "\n";
+                        } else if ($data['type'] == 'mbilling') {
+                            $trunkName = "\n\n[mbilling]\n";
+                            $context = 'slave';
+                        }
+
+                        $line .=  "\n\n[" . $trunkName . "]\n";
+                        $line .= "type = aor\n";
+
+                        $line .= "contact = sip:" . $data['host'] . "\n";
+                        $line .= "qualify_frequency = 60\n";
+                        $line .= "max_contacts = 1\n";
+
+                        $line .= "\n\n[" . $trunkName . "]\n";
+                        $line .= "type = identify\n";
+                        $line .= "endpoint = " . $trunkName . "\n";
+                        $line .= "match = " . strtok($data['host'], ':') . "\n";
+
+                        $line .= "\n\n[" . $trunkName . "]\n";
+                        $line .= "type = endpoint\n";
+                        $line .= "context = " . $context . "\n";
+                        $line .= "dtmf_mode = rfc4733\n";
+                        $line .= "disallow = all\n";
+                        $line .= "allow = g729,alaw,ulaw\n";
+                        $line .= "rtp_symmetric = yes\n";
+                        $line .= "force_rport = yes\n";
+                        $line .= "rewrite_contact = yes\n";
+
+                        $line .= "language = " . strlen($data['language']) ? $data['language'] : 'en' . "\n";
+                        $line .= "allow_subscribe = yes\n";
+
+                        $line .= "aors = " . $trunkName . "\n";
+                        if (isset($accountcode) && strlen($accountcode)) {
+                            $line .= "set_var = ACCOUNT_CODE=" . $accountcode . "\n";
+                        }
+
+
+                        if (fwrite($fd, $line) === false) {
+                            echo "Impossible to write to the file (" . $file . ")";
+                            break;
+                        }
+                    }
+                }
+            }
+
+
+            fclose($fd);
+
+            if (preg_match("/pjsip/", $file)) {
+                AsteriskAccess::instance()->pjsipReload();
+            } elseif (preg_match("/iax/", $file)) {
+                AsteriskAccess::instance()->iaxReload();
+            } else {
+                AsteriskAccess::instance()->queueReload();
+            }
+        }
+    }
+    //call file , time in seconds to create the file
+    public static function generateCallFile($callFile, $time = 0)
+    {
+        $aleatorio    = str_replace(" ", "", microtime(true));
+        $arquivo_call = "/var/spool/asterisk/outgoing/" . $aleatorio . ".call";
+        $fp           = fopen("$arquivo_call", "a+");
+        fwrite($fp, $callFile);
+        fclose($fp);
+
+        $time += time();
+
+        touch("$arquivo_call", $time);
+        @chown("$arquivo_call", "asterisk");
+        @chgrp("$arquivo_call", "asterisk");
+        chmod("$arquivo_call", 0755);
+    }
+
+    public function getCallsPerDid($did, $agi = null)
+    {
+        $channelsData = AsteriskAccess::instance()->coreShowChannelsConcise();
+        $channelsData = explode("\n", $channelsData["data"]);
+
+        $calls = 0;
+        foreach ($channelsData as $key => $line) {
+            if (preg_match("/$did\!.*\!Dial\!/", $line)) {
+                $calls++;
+            }
+        }
+
+        return $calls;
+    }
+
+    public function getCallsPerUser($accountcode)
+    {
+        $channelsData = AsteriskAccess::instance()->coreShowChannelsConcise();
+        $channelsData = explode("\n", $channelsData["data"]);
+        $modelSip     = Sip::model()->findAll('id_user = ( SELECT id FROM pkg_user WHERE username = :key)', [':key' => $accountcode]);
+        $sipAccounts  = '';
+        foreach ($modelSip as $key => $sip) {
+            $sipAccounts .= $sip->name . '|';
+        }
+
+        $sipAccounts = substr($sipAccounts, 0, -1);
+        $calls       = 0;
+        foreach ($channelsData as $key => $line) {
+            if (preg_match("/^SIP\/($sipAccounts)-/", $line)) {
+                $calls++;
+            }
+        }
+
+        return $calls;
+    }
+
+    public function groupTrunk($agi, $ipaddress, $maxuse)
+    {
+        if ($maxuse > 0) {
+
+            $agi->verbose('Trunk have channels limit', 15);
+            //Set group to count the trunk call use
+            $agi->set_variable("GROUP()", $ipaddress);
+
+            $groupData = AsteriskAccess::instance()->groupShowChannels();
+
+            $arr   = explode("\n", $groupData["data"]);
+            $count = 0;
+            if ($arr[0] != "") {
+
+                foreach ($arr as $temp) {
+                    $linha = explode("  ", $temp);
+
+                    if (trim($linha[4]) == $ipaddress) {
+                        $channel = AsteriskAccess::getCoreShowChannel($linha[0], $agi);
+                        $agi->verbose(print_r($channel['State'], true), 15);
+
+                        if (preg_match("/Up |Ring /", $channel['State'])) {
+                            $count++;
+                        }
+                    }
+                }
+            }
+            if ($count > $maxuse) {
+                $agi->verbose('Trunk ' . $ipaddress . ' have  ' . $count . ' calls, and the maximun call is ' . $maxuse, 1);
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    public static function getSipShowPeers()
+    {
+        $sql          = "SELECT * FROM pkg_servers WHERE type = 'asterisk' AND status IN (1,4) AND host != 'localhost'";
+        $modelServers = Yii::app()->db->createCommand($sql)->queryAll();
+
+        // adiciona localhost
+        array_push($modelServers, [
+            'host'     => 'localhost',
+            'username' => 'magnus',
+            'password' => 'magnussolution',
+        ]);
+
+        $result = [];
+
+        foreach ($modelServers as $server) {
+
+            // precisa criar esse método no AsteriskAccess chamando "pjsip show contacts"
+            $data = AsteriskAccess::instance($server['host'], $server['username'], $server['password'])->pjsipShowContacts();
+
+            if (!isset($data['data']) || strlen($data['data']) < 10) {
+                continue;
+            }
+
+            $lines = explode("\n", $data['data']);
+
+            /*
+         * Formato típico de linha:
+         *
+         * Contact:  36533/sip:36533@190.183.192.252:49286  f3a6a976231beb3a  Avail         33.456
+         *
+         * Vamos extrair:
+         *   - Aor        => 36533
+         *   - Uri        => sip:36533@190.183.192.252:49286
+         *   - Hash       => f3a6a976231beb3a
+         *   - Status     => Avail / Unavail / Unknown...
+         *   - RTT        => 33.456 / 0.000 / <qualquer coisa>
+         */
+
+            foreach ($lines as $line) {
+
+                $line = trim($line);
+                if ($line == '' || strpos($line, 'Contact:') !== 0) {
+                    continue;
+                }
+
+                // remove o prefixo "Contact:"
+                $clean = preg_replace('/^Contact:\s*/', '', $line);
+
+                // quebra em partes por espaços múltiplos
+                // Aor/URI, Hash, Status, RTT
+                $parts = preg_split('/\s+/', $clean);
+
+                if (count($parts) < 4) {
+                    continue;
+                }
+
+                // primeiro campo vem como "AOR/URI"
+                // ex: "36533/sip:36533@190.183.192.252:49286"
+                $aor      = null;
+                $uri      = null;
+                $aorUri   = $parts[0];
+                $hash     = $parts[1];
+                $status   = $parts[2];
+                $rtt      = isset($parts[3]) ? $parts[3] : '';
+
+                if (strpos($aorUri, '/') !== false) {
+                    list($aor, $uri) = explode('/', $aorUri, 2);
+                } else {
+                    $aor = $aorUri;
+                    $uri = '';
+                }
+
+                $element = [
+                    'Aor'    => $aor,
+                    'Uri'    => $uri,
+                    'Hash'   => $hash,
+                    'Status' => $status,
+                    'RTT'    => $rtt,
+                    'server' => $server['host'],
+                ];
+
+                $result[] = $element;
+            }
+        }
+
+        return $result;
+    }
+
+
+
+
+    public static function getCoreShowCdrChannels()
+    {
+
+        $sql          = "SELECT * FROM pkg_servers WHERE type = 'asterisk' AND status IN (1,4) AND host != 'localhost'";
+        $modelServers = Yii::app()->db->createCommand($sql)->queryAll();
+
+        array_push($modelServers, [
+            'host'     => 'localhost',
+            'username' => 'magnus',
+            'password' => 'magnussolution',
+        ]);
+
+        $channels = [];
+        foreach ($modelServers as $key => $server) {
+
+            $data = AsteriskAccess::instance($server['host'], $server['username'], $server['password'])->cdrShowActive();
+
+            if (! isset($data) || ! isset($data['data'])) {
+                Servers::model()->updateByPk($server['id'], ['status' => 2]);
+                continue;
+            }
+
+            if (! isset($data) || ! isset($data['data'])) {
+                continue;
+            }
+
+            $linesCallsResult = explode("\n", $data['data']);
+
+            for ($i = 0; $i < count($linesCallsResult) - 1; $i++) {
+                $call = explode("|", $linesCallsResult[$i]);
+
+                if (!preg_match('/^SIP|^IAX|^PJSIP/', $call[0])) {
+                    continue;
+                }
+
+                if ($call[4] == 'Down') {
+                    continue;
+                }
+                if ($call[6] == '<none>' && $call[7] != 'AGI' && substr($call[1], 0, 2) != 'MC') {
+                    continue;
+                }
+                $call['server'] = $server['host'];
+                $channels[]     = $call;
+            }
+        }
+
+        return $channels;
+    }
+
+    public static function getCoreShowChannels()
+    {
+
+        $sql          = "SELECT * FROM pkg_servers WHERE type = 'asterisk' AND status IN (1,4) AND host != 'localhost'";
+        $modelServers = Yii::app()->db->createCommand($sql)->queryAll();
+
+        array_push($modelServers, [
+            'host'     => 'localhost',
+            'username' => 'magnus',
+            'password' => 'magnussolution',
+        ]);
+
+        $channels = [];
+        foreach ($modelServers as $key => $server) {
+
+            $columns = ['Channel', 'Context', 'Exten', 'Priority', 'Stats', 'Application', 'Data', 'CallerID', 'Accountcode', 'Amaflags', 'Duration', 'Bridged'];
+            $data    = AsteriskAccess::instance($server['host'], $server['username'], $server['password'])->coreShowChannelsConcise();
+
+            if (! isset($data) || ! isset($data['data'])) {
+                return;
+            }
+
+            $linesCallsResult = explode("\n", $data['data']);
+
+            if (count($linesCallsResult) < 1) {
+                return;
+            }
+
+            for ($i = 0; $i < count($linesCallsResult); $i++) {
+                $call = explode("!", $linesCallsResult[$i]);
+                if (! preg_match("/\//", $call[0])) {
+                    continue;
+                }
+                $call['server'] = $server['host'];
+                $channels[]     = $call;
+            }
+        }
+        return $channels;
+    }
+
+    public static function getCoreShowChannelsVerbose()
+    {
+
+        $sql          = "SELECT * FROM pkg_servers WHERE type = 'asterisk' AND status IN (1,4) AND host != 'localhost'";
+        $modelServers = Yii::app()->db->createCommand($sql)->queryAll();
+
+        array_push($modelServers, [
+            'host'     => 'localhost',
+            'username' => 'magnus',
+            'password' => 'magnussolution',
+        ]);
+
+        $channels = [];
+        foreach ($modelServers as $key => $server) {
+            $columns = ['Channel', 'Context', 'Extension', 'Prio', 'State', 'Application', 'Data', 'CallerID', 'Duration', 'Accountcode', 'PeerAccount', 'BridgedTo'];
+            $data    = AsteriskAccess::instance($server['host'], $server['username'], $server['password'])->coreShowChannelsVerbose();
+
+            if (! isset($data) || ! isset($data['data'])) {
+                return;
+            }
+
+            $linesCallsResult = explode("\n", $data['data']);
+
+            if (count($linesCallsResult) < 1) {
+                return;
+            }
+
+            for ($i = 0; $i < count($linesCallsResult); $i++) {
+
+                if (preg_match("/\(Outgoing Line\)/", $linesCallsResult[$i])) {
+                    continue;
+                }
+                $call = preg_split("/\s+/", $linesCallsResult[$i]);
+                if (! preg_match("/\//", $call[0])) {
+                    continue;
+                }
+                $call['server'] = $server['host'];
+                $channels[]     = $call;
+            }
+        }
+        return $channels;
+    }
+
+    public static function getCoreShowChannel($channel, $agi = null, $server = null)
+    {
+
+        if ($server == null) {
+            $sql = "SELECT * FROM pkg_servers WHERE type = 'asterisk' AND  status IN (1,4) AND host != 'localhost'";
+            if (isset($agi->engine)) {
+                $modelServers = $agi->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+            } else {
+                $modelServers = Yii::app()->db->createCommand($sql)->queryAll();
+            }
+
+            array_push($modelServers, [
+                'host'     => 'localhost',
+                'username' => 'magnus',
+                'password' => 'magnussolution',
+            ]);
+        } else {
+            $modelServers = [];
+            array_push($modelServers, [
+                'host'     => $server,
+                'username' => 'magnus',
+                'password' => 'magnussolution',
+            ]);
+        }
+
+        $channels = [];
+        foreach ($modelServers as $key => $server) {
+            $data = AsteriskAccess::instance($server['host'], $server['username'], $server['password'])->coreShowChannel($channel);
+            if (! isset($data['data']) || strlen($data['data']) < 10 || preg_match("/is not a known channe/", $data['data'])) {
+                continue;
+            }
+            $linesCallResult = explode("\n", $data['data']);
+            if (count($linesCallResult) < 1) {
+                continue;
+            }
+            $result = [];
+            for ($i = 2; $i < count($linesCallResult); $i++) {
+                if (preg_match("/level 1: /", $linesCallResult[$i])) {
+                    $data = explode("=", substr($linesCallResult[$i], 9));
+                } elseif (preg_match("/: /", $linesCallResult[$i])) {
+                    $data = explode(":", $linesCallResult[$i]);
+                } elseif (preg_match("/=/", $linesCallResult[$i])) {
+                    $data = explode("=", $linesCallResult[$i]);
+                }
+                // echo '<pre>';
+                //print_r($data);
+                $key   = isset($data[0]) ? $data[0] : '';
+                $value = isset($data[1]) ? $data[1] : '';
+
+                if ($key == 'SIPCALLID') {
+                    $result[trim($key)] = AsteriskAccess::instance($server['host'], $server['username'], $server['password'])->sipShowChannel(trim($value));
+                } else {
+                    $result[trim($key)] = trim($value);
+                }
+            }
+            break;
+        }
+
+        return $result;
+    }
+
+    public function generateSipPeers()
+    {
+        ini_set('memory_limit', '-1');
+        $modelSip = Sip::model()->findAll();
+
+        $pjsipFile     = '/etc/asterisk/pjsip_magnus_user.conf';
+        $voicemailFile = '/etc/asterisk/voicemail_magnus.conf';
+
+        // reset files
+        file_put_contents($pjsipFile, '');
+        file_put_contents($voicemailFile, '');
+
+        $fr_voicemail = fopen($voicemailFile, "w");
+        $voicemail    = "[billing]\n";
+
+        if (count($modelSip)) {
+
+            $fd = fopen($pjsipFile, "w");
+
+            if ($fd) {
+                foreach ($modelSip as $key => $sip) {
+
+                    // voicemail (igual ao código antigo)
+                    if (isset($sip->voicemail) && $sip->voicemail == 1) {
+                        $voicemail .= $sip->name . " => " . $sip->voicemail_password . "," .
+                            $sip->idUser->lastname . ' ' . $sip->idUser->firstname . "," .
+                            $sip->voicemail_email . "\n";
+                    }
+
+                    // usuário inativo não gera peer
+                    if ($sip->idUser->active == 0) {
+                        continue;
+                    }
+
+                    // host:port
+                    if (preg_match('/\:/', $sip->host)) {
+                        $hostParts  = explode(':', $sip->host);
+                        $host       = trim($hostParts[0]);
+                        $port       = (int)$hostParts[1];
+                    } else {
+                        $host = trim($sip->host);
+                        $port = 5060;
+                    }
+
+                    $sip->name        = trim($sip->name);
+                    $sip->defaultuser = trim($sip->defaultuser);
+                    $sip->fromuser    = trim($sip->fromuser);
+
+                    // names for sections
+                    $endpointName = strlen($sip->name) ? $sip->name : $host;
+                    $authName     = $endpointName . "_auth";
+                    $aorName      = $endpointName;
+                    $identifyName = $endpointName . "_identify";
+
+                    // username for auth (mantém lógica defaultuser/name)
+                    $authUsername = strlen($sip->defaultuser) > 0 ? $sip->defaultuser : $sip->name;
+
+                    // -------- AUTH --------
+                    $line  = "\n\n[" . $authName . "]\n";
+                    $line .= "type=auth\n";
+                    $line .= "auth_type=userpass\n";
+                    $line .= "username=" . $authUsername . "\n";
+                    if (strlen($sip->secret) > 0) {
+                        $line .= "password=" . $sip->secret . "\n";
+                    }
+
+                    // -------- AOR --------
+                    $line .= "\n[" . $aorName . "]\n";
+                    $line .= "type=aor\n";
+
+                    if ($host == 'dynamic') {
+                        // endpoint registrando no Asterisk
+                        $line .= "max_contacts=1\n";
+                    } else {
+                        // peer por IP
+                        $line .= "contact=sip:" . $host;
+                        if ($port != 5060) {
+                            $line .= ":" . $port;
+                        }
+                        $line .= "\n";
+                    }
+
+                    if (strlen($sip->qualify) > 0 && $sip->qualify != 'no') {
+                        $line .= "qualify_frequency=60\n";
+                    }
+
+                    // -------- ENDPOINT --------
+                    $line .= "\n[" . $endpointName . "]\n";
+                    $line .= "type=endpoint\n";
+                    $line .= "transport=transport-udp\n";
+
+                    // accountcode -> set_var
+                    $line .= "set_var=ACCOUNT_CODE=" . $sip->idUser->username . "\n";
+
+                    // context
+                    if (strlen($sip->context) > 0) {
+                        $line .= "context=" . $sip->context . "\n";
+                    } else {
+                        $line .= "context=billing\n";
+                    }
+
+                    // dtmfmode (RFC2833 -> rfc4733 no pjsip)
+                    if (strlen($sip->dtmfmode) > 0) {
+                        $dtmf = strtolower($sip->dtmfmode);
+                        if ($dtmf == 'rfc2833') {
+                            $dtmf = 'rfc4733';
+                        }
+                        $line .= "dtmf_mode=" . $dtmf . "\n";
+                    }
+
+                    // codecs
+                    $line .= "disallow=all\n";
+                    if (strlen($sip->allow) > 0) {
+                        $codecs = explode(",", $sip->allow);
+                        foreach ($codecs as $codec) {
+                            $codec = trim($codec);
+                            if ($codec == '') {
+                                continue;
+                            }
+                            $line .= "allow=" . $codec . "\n";
+                        }
+                    }
+
+                    // NAT equivalentes
+                    $line .= "rtp_symmetric=yes\n";
+                    $line .= "force_rport=yes\n";
+                    $line .= "rewrite_contact=yes\n";
+
+                    // direct media
+                    if (strlen($sip->directmedia) > 0) {
+                        $line .= "direct_media=" . ($sip->directmedia == 'yes' ? 'yes' : 'no') . "\n";
+                    } else {
+                        $line .= "direct_media=no\n";
+                    }
+
+                    // from_user / from_domain
+                    if (strlen($sip->fromuser) > 0) {
+                        $line .= "from_user=" . $sip->fromuser . "\n";
+                    }
+                    if ($host != 'dynamic') {
+                        $line .= "from_domain=" . $host . "\n";
+                    }
+
+                    // language
+                    if (strlen($sip->language) > 0) {
+                        $line .= "language=" . $sip->language . "\n";
+                    }
+
+                    // allowtransfer (aproximação)
+                    if ($sip->allowtransfer == 'no') {
+                        $line .= "allow_transfer=no\n";
+                    } else {
+                        $line .= "allow_transfer=yes\n";
+                    }
+
+                    // vídeos
+                    if ($sip->videosupport != 'no') {
+                        $line .= "allow_video=yes\n";
+                    }
+
+                    // amarra auth/aor
+                    $line .= "auth=" . $authName . "\n";
+                    $line .= "aors=" . $aorName . "\n";
+
+                    // -------- IDENTIFY (quando não é dynamic) --------
+                    if ($host != 'dynamic') {
+                        $line .= "\n[" . $identifyName . "]\n";
+                        $line .= "type=identify\n";
+                        $line .= "endpoint=" . $endpointName . "\n";
+                        $line .= "match=" . $host . "\n";
+                    }
+
+                    if (fwrite($fd, $line) === false) {
+                        echo gettext("Impossible to write to the file") . " ($pjsipFile)";
+                        break;
+                    }
+                }
+
+                fclose($fd);
+            }
+        }
+
+        if (fwrite($fr_voicemail, $voicemail) === false) {
+            echo "Impossible to write to the file ($voicemailFile)";
+        }
+        fclose($fr_voicemail);
+
+        AsteriskAccess::instance()->VoiceMailReload();
+        AsteriskAccess::instance()->pjsipReload();
+    }
+
+
+
+    public function generateSipPeersOLD()
+    {
+        ini_set('memory_limit', '-1');
+
+        $modelSip = Sip::model()->findAll();
+
+        $buddyfile = '/etc/asterisk/pjsip_magnus_user.conf';
+
+        $voicemailFile = '/etc/asterisk/voicemail_magnus.conf';
+        file_put_contents($voicemailFile, '');
+        $fr_voicemail = fopen($voicemailFile, "w");
+        $voicemail    = "[billing]\n";
+
+        if (count($modelSip)) {
+
+            $fd = fopen($buddyfile, "w");
+
+            if ($fd) {
+                foreach ($modelSip as $key => $sip) {
+
+                    if (isset($sip->voicemail) && $sip->voicemail == 1) {
+                        $voicemail .= $sip->name . " => " . $sip->voicemail_password . "," . $sip->idUser->lastname . ' ' . $sip->idUser->firstname . "," . $sip->voicemail_email . "\n";
+                    }
+
+                    if ($sip->idUser->active == 0) {
+                        continue;
+                    }
+
+                    if (preg_match('/\:/', $sip->host)) {
+                        $host      = explode(':', $sip->host);
+                        $sip->host = $host[0];
+                        $port      = $host[1];
+                    } else {
+                        $port = 5060;
+                    }
+
+                    $sip->name        = trim($sip->name);
+                    $sip->defaultuser = trim($sip->defaultuser);
+                    $sip->fromuser    = trim($sip->fromuser);
+
+                    if ($sip->techprefix > 1) {
+                        $line = "\n\n[" . $sip->host . "]\n";
+                    } else {
+                        $line = "\n\n[" . $sip->name . "]\n";
+                        $line .= 'accountcode=' . $sip->idUser->username . "\n";
+                        if (strlen($sip->defaultuser) > 1) {
+                            $line .= 'defaultuser=' . $sip->defaultuser . "\n";
+                        }
+                        if (strlen($sip->fromuser) > 1) {
+                            $line .= 'fromuser=' . $sip->fromuser . "\n";
+                        }
+
+                        if (strlen($sip->secret) > 1) {
+                            $line .= 'secret=' . $sip->secret . "\n";
+                        }
+                    }
+
+                    if ($sip->host != 'dynamic') {
+                        $line .= 'deny=0.0.0.0/0.0.0.0' . "\n";
+                        $line .= 'permit=' . $sip->host . "/255.255.255.0\n";
+                    } else {
+                        if (strlen($sip->deny) > 1) {
+                            $line .= 'deny=' . $sip->deny . "\n";
+                        }
+                        if (strlen($sip->permit) > 1) {
+                            $line .= 'permit=' . $sip->permit . "\n";
+                        }
+                    }
+
+                    if (isset($port) && $port != 5060) {
+                        $line .= 'post=' . $port . "\n";
+                    }
+
+                    $line .= 'host=' . $sip->host . "\n";
+                    $line .= 'fromdomain=' . $sip->host . "\n";
+                    $line .= 'disallow=' . $sip->disallow . "\n";
+
+                    $codecs = explode(",", $sip->allow);
+                    foreach ($codecs as $codec) {
+                        $line .= 'allow=' . $codec . "\n";
+                    }
+
+                    if (strlen($sip->directmedia) > 1) {
+                        $line .= 'directmedia=' . $sip->directmedia . "\n";
+                    }
+
+                    if (strlen($sip->context) > 1) {
+                        $line .= 'context=' . $sip->context . "\n";
+                    }
+
+                    if (strlen($sip->dtmfmode) > 1) {
+                        $line .= 'dtmfmode=' . $sip->dtmfmode . "\n";
+                    }
+
+                    if (strlen($sip->insecure) > 1) {
+                        $line .= 'insecure=' . $sip->insecure . "\n";
+                    }
+
+                    if (strlen($sip->nat) > 1) {
+                        $line .= 'nat=' . $sip->nat . "\n";
+                    }
+
+                    if (strlen($sip->qualify) > 1) {
+                        $line .= 'qualify=' . $sip->qualify . "\n";
+                    }
+
+                    if (strlen($sip->type) > 1) {
+                        $line .= 'type=' . $sip->type . "\n";
+                    }
+
+                    if (strlen($sip->regexten) > 1) {
+                        $line .= 'regexten=' . $sip->regexten . "\n";
+                    }
+
+                    if (strlen($sip->amaflags) > 1) {
+                        $line .= 'amaflags=' . $sip->amaflags . "\n";
+                    }
+
+                    if (strlen($sip->callerid) > 1) {
+
+                        if (preg_match('/\<.*\>/', $sip->callerid)) {
+                            $line .= 'callerid=' . $sip->callerid . "\n";
+                        } else {
+                            $line .= 'callerid=<' . $sip->callerid . ">\n";
+                        }
+                    }
+
+                    if (strlen($sip->language) > 1) {
+                        $line .= 'language=' . $sip->language . "\n";
+                    }
+
+                    if ($sip->calllimit > 0) {
+                        $line .= 'call-limit=' . $sip->calllimit . "\n";
+                    }
+
+                    if (strlen($sip->mohsuggest) > 1) {
+                        $line .= 'mohsuggest=' . $sip->mohsuggest . "\n";
+                    }
+
+                    if ($sip->videosupport != 'no') {
+                        $line .= 'videosupport=' . $sip->videosupport . "\n";
+                    }
+
+                    $line .= 'allowtransfer=' . $sip->allowtransfer . "\n";
+
+                    if ($sip->context == 'encryption') {
+                        $line .= "encryption=yes\n";
+                        $line .= "avpf=yes\n";
+                        $line .= "force_avp=yes\n";
+                        $line .= "icesupport=yes\n";
+                        $line .= "dtlsenable=yes\n";
+                        $line .= "dtlsverify=fingerprint\n";
+                        $line .= "dtlscertfile=/etc/asterisk/certificate/asterisk.pem\n";
+                        $line .= "dtlscafile=/etc/asterisk/certificate/ca.crt\n";
+                        $line .= "dtlssetup=actpass\n";
+                        $line .= "rtcp_mux=yes\n";
+                    }
+
+                    if (isset($sip->sip_config) && $sip->sip_config != '') {
+                        $line .= $sip->sip_config . "\n";
+                    }
+
+                    if (strlen($sip->sip_group) > 0) {
+                        $line .= 'namedcallgroup=' . $sip->sip_group . "\n";
+                        $line .= 'namedpickupgroup=' . $sip->sip_group . "\n";
+                    }
+
+                    if (fwrite($fd, $line) === false) {
+                        echo gettext("Impossible to write to the file") . " ($buddyfile)";
+                        break;
+                    }
+                }
+
+                fclose($fd);
+            }
+        }
+        if (fwrite($fr_voicemail, $voicemail) === false) {
+            echo "Impossible to write to the file ($fr_voicemail)";
+        }
+        AsteriskAccess::instance()->VoiceMailReload();
+
+        AsteriskAccess::instance()->pjsipReload();
+    }
+    public function generateIaxPeers()
+    {
+
+        $modelIax = Iax::model()->findAll();
+
+        $buddyfile = '/etc/asterisk/iax_magnus_user.conf';
+
+        if (count($modelIax)) {
+
+            $fd = fopen($buddyfile, "w");
+
+            if ($fd) {
+                foreach ($modelIax as $key => $iax) {
+
+                    if ($iax->idUser->active == 0) {
+                        continue;
+                    }
+
+                    $line = "\n\n[" . $iax->name . "]\n";
+                    if (fwrite($fd, $line) === false) {
+                        echo "Impossible to write to the file ($buddyfile)";
+                        break;
+                    } else {
+                        $line = '';
+
+                        $line .= 'host=' . $iax->host . "\n";
+
+                        $line .= 'fromdomain=' . $iax->host . "\n";
+                        $line .= 'accountcode=' . $iax->idUser->username . "\n";
+                        $line .= 'disallow=' . $iax->disallow . "\n";
+
+                        $codecs = explode(",", $iax->allow);
+                        foreach ($codecs as $codec) {
+                            $line .= 'allow=' . $codec . "\n";
+                        }
+
+                        if (strlen($iax->context) > 1) {
+                            $line .= 'context=' . $iax->context . "\n";
+                        }
+
+                        if (strlen($iax->dtmfmode) > 1) {
+                            $line .= 'dtmfmode=' . $iax->dtmfmode . "\n";
+                        }
+
+                        if (strlen($iax->insecure) > 1) {
+                            $line .= 'insecure=' . $iax->insecure . "\n";
+                        }
+
+                        if (strlen($iax->nat) > 1) {
+                            $line .= 'nat=' . $iax->nat . "\n";
+                        }
+
+                        if (strlen($iax->qualify) > 1) {
+                            $line .= 'qualify=' . $iax->qualify . "\n";
+                        }
+
+                        if (strlen($iax->type) > 1) {
+                            $line .= 'type=' . $iax->type . "\n";
+                        }
+
+                        if (strlen($iax->regexten) > 1) {
+                            $line .= 'regexten=' . $iax->regexten . "\n";
+                        }
+
+                        if (strlen($iax->amaflags) > 1) {
+                            $line .= 'amaflags=' . $iax->amaflags . "\n";
+                        }
+
+                        if (strlen($iax->language) > 1) {
+                            $line .= 'language=' . $iax->language . "\n";
+                        }
+
+                        if (strlen($iax->username) > 1) {
+                            $line .= 'username=' . $iax->username . "\n";
+                        }
+
+                        if (strlen($iax->fromuser) > 1) {
+                            $line .= 'fromuser=' . $iax->fromuser . "\n";
+                        }
+
+                        if (strlen($iax->callerid) > 1) {
+                            $line .= 'cid_number=' . $iax->callerid . "\n";
+                        }
+
+                        if (strlen($iax->callerid) > 1) {
+                            $line .= 'callerid=' . $iax->callerid . "\n";
+                        }
+
+                        if (strlen($iax->secret) > 1) {
+                            $line .= 'secret=' . $iax->secret . "\n";
+                        }
+
+                        if ($iax->calllimit > 0) {
+                            $line .= 'call-limit=' . $iax->calllimit . "\n";
+                        }
+
+                        if (fwrite($fd, $line) === false) {
+                            echo gettext("Impossible to write to the file") . " ($buddyfile)";
+                            break;
+                        }
+                    }
+                }
+                fclose($fd);
+            }
+        }
+
+        AsteriskAccess::instance()->iaxReload();
+    }
+
+    public function writeDidContext()
+    {
+        $modeDidDestination = Diddestination::model()->findAll('voip_call = 10 AND context != ""');
+        $context_file       = '';
+        foreach ($modeDidDestination as $key => $destination) {
+            $context_file .= "[did-" . $destination->idDid->did . "]\n";
+            $context_file .= $destination->context . "\n\n";
+        }
+
+        $buddyfile = '/etc/asterisk/extensions_magnus_did.conf';
+        $fd        = fopen($buddyfile, "w");
+        if ($fd) {
+            fwrite($fd, $context_file);
+            fclose($fd);
+        }
+
+        AsteriskAccess::instance()->dialPlanReload();
+    }
+}

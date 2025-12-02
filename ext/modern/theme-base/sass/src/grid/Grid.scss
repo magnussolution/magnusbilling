@@ -1,0 +1,10 @@
+.#{$prefix}grid .#{$prefix}dock-body > .#{$prefix}body {
+    width: 100%;
+}
+
+.#{$prefix}grid .#{$prefix}resize-marker-el {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+}

@@ -1,0 +1,41 @@
+/**
+ * @class Ext.grid.Grid
+ */
+
+
+/**
+ * @var {color}
+ * background-color for the resize indicator that displays when resizing columns in the grid
+ */
+$grid-resize-marker-background-color: dynamic($neutral-dark-color);
+
+/**
+ * @var {number}
+ * Width of the resize indicator that displays when resizing columns in the grid
+ */
+$grid-resize-marker-width: dynamic(1px);
+
+/**
+ * Creates a visual theme for a Grid.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ */
+@mixin grid-ui(
+    $ui: null,
+    $resize-marker-background-color: null,
+    $resize-marker-width: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}grid#{$ui-suffix} {
+        .#{$prefix}resize-marker-el {
+            background-color: $resize-marker-background-color;
+            width: $resize-marker-width;
+        }
+    }
+}
+
+

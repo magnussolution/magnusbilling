@@ -1,0 +1,138 @@
+/**
+ * @class Ext.grid.cell.Expander
+
+/**
+ * @var {number/list}
+ * Expander cell padding
+ */
+$expandercell-padding: dynamic(0);
+
+/**
+ * @var {number/list}
+ * Expander cell padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$expandercell-padding-big: dynamic(0);
+
+/**
+ * @var {number}
+ * Expander cell icon size
+ */
+$expandercell-icon-size: dynamic(1.077em);
+
+/**
+ * @var {number}
+ * Expander cell icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$expandercell-icon-size-big: dynamic(1.2em);
+
+/**
+ * @var {number}
+ * Expander cell icon font-size
+ */
+$expandercell-icon-font-size: dynamic($expandercell-icon-size);
+
+/**
+ * @var {number}
+ * Expander cell icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$expandercell-icon-font-size-big: dynamic($expandercell-icon-size-big);
+
+/**
+ * @var {string/list}
+ * Expander cell expand icon
+ */
+$expandercell-expand-icon: dynamic($fa-var-plus-square);
+
+/**
+ * @var {string/list}
+ * Expander cell collapse icon
+ */
+$expandercell-collapse-icon: dynamic($fa-var-minus-square);
+
+/**
+ * @var {color}
+ * Expander cell icon color
+ */
+$expandercell-icon-color: dynamic($neutral-dark-color);
+
+/**
+ * Creates a visual theme for a check cell.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @var {number/list} $padding
+ * Expander cell padding
+ *
+ * @var {number/list} $padding-big
+ * Expander cell padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @var {number} $icon-size
+ * Expander cell icon size
+ *
+ * @var {number} $icon-size-big
+ * Expander cell icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @var {number} $icon-font-size
+ * Expander cell icon font-size
+ *
+ * @var {number} $icon-font-size-big
+ * Expander cell icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @var {string/list} $expand-icon
+ * Expander cell expand icon
+ *
+ * @var {string/list} $collapse-icon
+ * Expander cell collapse icon
+ *
+ * @var {color} $icon-color
+ * Expander cell icon color
+ */
+@mixin expandercell-ui(
+    $ui: null,
+    $padding: null,
+    $padding-big: null,
+    $icon-size: null,
+    $icon-size-big: null,
+    $icon-font-size: null,
+    $icon-font-size-big: null,
+    $expand-icon: null,
+    $collapse-icon: null,
+    $icon-color: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}expandercell#{$ui-suffix} {
+        padding: $padding;
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                padding: $padding-big;
+            }
+        }
+
+        .#{$prefix}icon-el {
+            height: $icon-size;
+            width: $icon-size;
+            color: $icon-color;
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    height: $icon-size-big;
+                    width: $icon-size-big;
+                }
+            }
+
+            @include icon(
+                $icon: $expand-icon,
+                $font-size: $icon-font-size,
+                $font-size-big: $icon-font-size-big
+            );
+        }
+
+        &.#{$prefix}expanded .#{$prefix}icon-el {
+            @include icon($collapse-icon);
+        }
+    }
+}

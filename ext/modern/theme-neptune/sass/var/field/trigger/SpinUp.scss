@@ -1,0 +1,233 @@
+/**
+ * @class Ext.field.trigger.SpinUp
+ */
+
+/**
+ * @var {number}
+ * Spin Up Trigger width
+ */
+$spinuptrigger-width: dynamic(null);
+
+/**
+ * @var {number}
+ * Spin Up Trigger width in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$spinuptrigger-width-big: dynamic(null);
+
+/**
+ * @var {color}
+ * Spin Up Trigger background-color
+ */
+$spinuptrigger-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Spin Up Trigger background-color when hovered
+ */
+$spinuptrigger-hovered-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Spin Up Trigger background-color when pressed
+ */
+$spinuptrigger-pressed-background-color: dynamic(null);
+
+//# fashion replaces $spinnerfield-button-up-icon
+/**
+ * @var {string}
+ * Spin Up Trigger icon
+ */
+$spinuptrigger-icon: dynamic($fa-var-caret-up);
+
+/**
+ * @var {string}
+ * Spin Up Trigger icon in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$spinuptrigger-icon-big: dynamic($fa-var-plus);
+
+/**
+ * @var {color}
+ * Spin Up Trigger icon color
+ */
+$spinuptrigger-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Spin Up Trigger icon color when hovered
+ */
+$spinuptrigger-hovered-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Spin Up Trigger icon color when pressed
+ */
+$spinuptrigger-pressed-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Spin Up Trigger icon background-color
+ */
+$spinuptrigger-icon-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Spin Up Trigger icon background-color when hovered
+ */
+$spinuptrigger-hovered-icon-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Spin Up Trigger icon background-color when pressed
+ */
+$spinuptrigger-pressed-icon-background-color: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Spin Up Trigger icon border-radius
+ */
+$spinuptrigger-icon-border-radius: dynamic(null);
+
+/**
+ * @var {number}
+ * Spin Up Trigger icon size
+ */
+$spinuptrigger-icon-size: dynamic(px-to-em(11px, 13px));
+
+/**
+ * @var {number}
+ * Spin Up Trigger icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$spinuptrigger-icon-size-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Spin Up Trigger icon font-size
+ */
+$spinuptrigger-icon-font-size: dynamic(px-to-em(16px, 13px));
+
+/**
+ * @var {number}
+ * Spin Up Trigger icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$spinuptrigger-icon-font-size-big: dynamic($spinuptrigger-icon-size-big);
+
+/**
+ * Creates a visual theme for a Spin Up Trigger.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=spinuptrigger] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {number} $width
+ * Spin Up Trigger width
+ *
+ * @param {number} $width-big
+ * Spin Up Trigger width in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $background-color
+ * Spin Up Trigger background-color
+ *
+ * @param {color} $hovered-background-color
+ * Spin Up Trigger background-color when hovered
+ *
+ * @param {color} $pressed-background-color
+ * Spin Up Trigger background-color when pressed
+ *
+ * @param {string} $icon
+ * Spin Up Trigger icon
+ *
+ * @param {string} $icon-big
+ * Spin Up Trigger icon in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $icon-color
+ * Spin Up Trigger icon color
+ *
+ * @param {color} $hovered-icon-color
+ * Spin Up Trigger icon color when hovered
+ *
+ * @param {color} $pressed-icon-color
+ * Spin Up Trigger icon color when pressed
+ *
+ * @param {color} $icon-background-color
+ * Spin Up Trigger icon background-color
+ *
+ * @param {color} $hovered-icon-background-color
+ * Spin Up Trigger icon background-color when hovered
+ *
+ * @param {color} $pressed-icon-background-color
+ * Spin Up Trigger icon background-color when pressed
+ *
+ * @param {number/list} $icon-border-radius
+ * Spin Up Trigger icon border-radius
+ *
+ * @param {number} $icon-size
+ * Spin Up Trigger icon size
+ *
+ * @param {number} $icon-size-big
+ * Spin Up Trigger icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $icon-font-size
+ * Spin Up Trigger icon font-size
+ *
+ * @param {number} $icon-font-size-big
+ * Spin Up Trigger icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin spinuptrigger-ui(
+    $ui: null,
+    $xtype: spinuptrigger,
+    $width: null,
+    $width-big: null,
+    $background-color: null,
+    $hovered-background-color: null,
+    $pressed-background-color: null,
+    $icon: null,
+    $icon-big: null,
+    $icon-color: null,
+    $hovered-icon-color: null,
+    $pressed-icon-color: null,
+    $icon-background-color: null,
+    $hovered-icon-background-color: null,
+    $pressed-icon-background-color: null,
+    $icon-border-radius: null,
+    $icon-size: null,
+    $icon-size-big: null,
+    $icon-font-size: null,
+    $icon-font-size-big: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    @include trigger-ui(
+        $ui: $ui,
+        $xtype: $xtype,
+        $width: $width,
+        $width-big: $width-big,
+        $background-color: $background-color,
+        $hovered-background-color: $hovered-background-color,
+        $pressed-background-color: $pressed-background-color,
+        $icon: $icon,
+        $icon-color: $icon-color,
+        $hovered-icon-color: $hovered-icon-color,
+        $pressed-icon-color: $pressed-icon-color,
+        $icon-background-color: $icon-background-color,
+        $hovered-icon-background-color: $hovered-icon-background-color,
+        $pressed-icon-background-color: $pressed-icon-background-color,
+        $icon-border-radius: $icon-border-radius,
+        $icon-size: $icon-size,
+        $icon-size-big: $icon-size-big,
+        $icon-font-size: $icon-font-size,
+        $icon-font-size-big: $icon-font-size-big
+    );
+
+    .#{$prefix}#{$xtype}#{$ui-suffix} {
+        .#{$prefix}icon-el {
+            @if $enable-big {
+                .#{$prefix}big & {
+                    @include icon($icon: $icon-big);
+                }
+            }
+        }
+    }
+}

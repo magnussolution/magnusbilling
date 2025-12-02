@@ -1,0 +1,52 @@
+$panel-tool-color: dynamic($base-color);
+$panel-tool-font-size: dynamic($panel-header-line-height);
+$panel-tool-font-size-big: dynamic($panel-header-line-height-big);
+
+$panel-tool-close-icon: dynamic($ios-close $font-icon-font-family);
+
+$panel-tool-minimize-icon: dynamic($ios-minus $font-icon-font-family);
+$panel-tool-maximize-icon: dynamic($ios-plus $font-icon-font-family);
+$panel-tool-restore-icon: dynamic($ios-restore $font-icon-font-family);
+
+$panel-tool-toggle-up-icon: dynamic($ios-up $font-icon-font-family);
+$panel-tool-toggle-down-icon: dynamic($ios-down $font-icon-font-family);
+
+$panel-tool-gear-icon: dynamic($ios-gear $font-icon-font-family);
+$panel-tool-prev-icon: dynamic($ios-left $font-icon-font-family);
+$panel-tool-next-icon: dynamic($ios-right $font-icon-font-family);
+
+$panel-tool-pin-icon: dynamic($ios-pin $font-icon-font-family);
+$panel-tool-unpin-icon: dynamic($ios-unpin $font-icon-font-family);
+
+$panel-tool-right-icon: dynamic($ios-arrow-right $font-icon-font-family);
+$panel-tool-left-icon: dynamic($ios-arrow-left $font-icon-font-family);
+$panel-tool-down-icon: dynamic($ios-arrow-down $font-icon-font-family);
+$panel-tool-up-icon: dynamic($ios-arrow-up $font-icon-font-family);
+
+$panel-tool-refresh-icon: dynamic($ios-refresh $font-icon-font-family);
+
+$panel-tool-plus-icon: dynamic($ios-plus $font-icon-font-family);
+$panel-tool-minus-icon: dynamic($ios-minus $font-icon-font-family);
+
+$panel-tool-menu-icon: dynamic($ios-menu $font-icon-font-family);
+
+$panel-tool-search-icon: dynamic($ios-search $font-icon-font-family);
+$panel-tool-save-icon: dynamic($ios-folder $font-icon-font-family);
+
+$panel-tool-help-icon: dynamic($ios-help $font-icon-font-family);
+$panel-tool-print-icon: dynamic($ios-print $font-icon-font-family);
+
+$panel-tool-expand-icon: dynamic($ios-expand $font-icon-font-family);
+$panel-tool-collapse-icon: dynamic($ios-collapse $font-icon-font-family);
+
+$panel-tool-expand-bottom-icon: dynamic($ios-arrow-down $font-icon-font-family);
+$panel-tool-collapse-bottom-icon: dynamic($ios-arrow-down $font-icon-font-family);
+
+$panel-tool-expand-top-icon: dynamic($ios-arrow-up $font-icon-font-family);
+$panel-tool-collapse-top-icon: dynamic($ios-arrow-up $font-icon-font-family);
+
+$panel-tool-expand-left-icon: dynamic($ios-arrow-left $font-icon-font-family);
+$panel-tool-collapse-left-icon: dynamic($ios-arrow-left $font-icon-font-family);
+
+$panel-tool-expand-right-icon: dynamic($ios-arrow-right $font-icon-font-family);
+$panel-tool-collapse-right-icon: dynamic($ios-arrow-right $font-icon-font-family);

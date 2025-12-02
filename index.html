@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html manifest="">
+    <head>
+        <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+        <meta charset="utf-8"/>
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+        <link href="resources/images/logo.ico" id="favicon" rel="shortcut icon" type="image/x-icon"/>
+        <title>
+            MagnusBilling
+        </title>
+        <script src="locale.js">
+        </script>
+        <script src="icons.js">
+        </script>
+        <script src="index.php">
+        </script>
+        <link href="resources/init.css" rel="stylesheet"/>
+        <script>
+
+            if (window.agentTitle) {
+                window.show_signup_button = false;
+                window.document.title = window.agentTitle;
+            }
+
+            if (window.reCaptchaKey.length >15) {
+                document.write('<script async="" defer="" src="https://www.google.com/recaptcha/api.js?render=' + window.reCaptchaKey+ '"> <\/script>');
+            }
+        </script>
+    </head>
+</html>
+<div id="loading-mask">
+</div>
+<div id="loading">
+    <div class="loading-indicator">
+        <div style="text-align:center">
+            <img id="loadinggif" src="resources/images/loading.gif" style="vertical-align:top;" width="90px"/>
+            <br/>
+            <span id="name-system">
+            </span>
+            <br/>
+            <span id="text-msg">
+            </span>
+            <br/>
+            <span id="loading-msg">
+            </span>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    if (window.agentTitle) {
+        document.getElementById('loadinggif').src = 'resources/images/logo_custom_'+window.agentId+'.png';
+    }
+
+
+    document.getElementById('loading-mask').style.backgroundColor = window.backgroundColor;
+    window.theme = window.theme || 'blue-dark';
+            window.themeApp = window.theme;
+            window.isThemeNeptune = window.theme.indexOf('neptune') !== -1;
+            window.isThemeCrisp = window.theme.indexOf('crisp') !== -1;
+            window.isThemeTriton = window.theme.indexOf('triton') !== -1;
+            window.isThemeDark = window.theme.indexOf('dark') !== -1;
+            window.layout=1;
+</script>
+<script type="text/javascript">
+
+        if (window.agentTitle) {
+            document.getElementById('name-system').innerHTML = window.agentTitle;
+        }else{
+            document.getElementById('name-system').innerHTML = t('MagnusBilling System'); 
+        }
+    
+        document.getElementById('text-msg').innerHTML = 'Voip System';
+        document.getElementById('loading-msg').innerHTML = t('Starting...');
+</script>
+<script type="text/javascript">
+    var defaultLang= localStorage.getItem('lang') && localStorage.getItem('lang') != 'undefined' 
+                        ? localStorage.getItem('lang') 
+                        : localStorage.lang = window.lang;
+
+            var lang = defaultLang,
+                localeApp = 'resources/locale/' + lang + '.js';
+            document.write('<script type="text/javaScript" src="resources/help/help_' + lang + '.js"></'+'script>');
+            document.write('<script type="text/javaScript" src="'+ localeApp +'"></'+'script>');
+</script>
+<script type="text/javascript">
+    var Ext = Ext || {}; // Ext namespace won't be defined yet...
+            Ext.repoDevMode = true;
+            window.wallpapers = 'resources/images/wallpapers/'+window.wallpaper+'.jpg';
+            window.colorMenu = window.colorMenu;
+
+            Ext.beforeLoad = function (tags) {
+                window.isTablet =!tags.desktop;
+                var theme = window.isTablet ?  window.theme_color+'-triton' : window.theme; 
+                
+                Ext.microloaderTags = tags; Ext.Boot.platformTags = Ext.platformTags || {};
+
+                Ext.manifest = theme; // this name must match a build profile name   
+            };
+</script>
+<script data-app="69eb1359-905e-4f4c-9e1e-2841e3ec1bda" id="microloader" src="bootstrap.js" type="text/javascript">
+</script>
+<body>
+</body>

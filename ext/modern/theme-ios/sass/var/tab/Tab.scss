@@ -1,0 +1,36 @@
+$tab-background-color: dynamic(transparent);
+$tab-active-background-color: dynamic(transparent);
+
+$tab-font-weight: dynamic($font-weight-normal);
+
+$tab-color: dynamic($highlight-color);
+$tab-active-color: dynamic($base-color);
+
+$tab-font-size: dynamic(0.7em);
+$tab-font-size-big: dynamic(.7em);
+
+$tab-line-height: dynamic(1.23em);
+$tab-line-height-big: dynamic(1.25em);
+
+$tab-padding: dynamic(0.171em 0.77em);
+$tab-padding-big: dynamic(0.3125em 0.625em);
+
+$tab-icon-size: dynamic(1.23rem);
+$tab-icon-font-size: dynamic($tab-icon-size);
+$tab-icon-size-big: dynamic(1.5rem);
+$tab-icon-font-size-big: dynamic($tab-icon-size-big);
+
+$tab-badge-font-size: dynamic(0.923rem);
+$tab-badge-font-size-big: dynamic(0.875rem);
+$tab-badge-min-width: dynamic(null);
+$tab-badge-max-width: dynamic(75%);
+$tab-badge-background-color: dynamic(#fe0000);
+$tab-badge-background-gradient: dynamic(null);
+$tab-badge-top: dynamic(-1em);
+$tab-badge-left: dynamic(53%);
+$tab-badge-right: dynamic(null);
+
+$tab-badge-padding: dynamic(.1em .4em);
+$tab-badge-padding-big: dynamic(.1em .5em);
+
+$tab-badge-border-radius: dynamic(10em);

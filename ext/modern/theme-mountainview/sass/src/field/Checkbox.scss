@@ -1,0 +1,71 @@
+/**
+ * @class Ext.field.Checkbox
+ */
+
+@mixin checkmark($color: #000){
+    @extend .x-checkmark-base;
+    color: $color;
+}
+
+.x-checkmark-base {
+    position: absolute;
+    top: -2px;
+    right: -3px;
+    bottom: 0;
+    content: '3';
+    // TODO: Use FontAwesome
+    font-family: 'Pictos';
+    font-size: 23px;
+    text-align: right;
+    line-height: 1.9em;
+    @include text-shadow(
+        0 -1px $background-color,
+        0 1px $background-color,
+        -1px 0 $background-color,
+        1px 0 $background-color,
+        0 2px 4px rgba($base-color, .3),
+        0 -2px 4px rgba($base-color, .3),
+        2px 0 4px rgba($base-color, .3),
+        -2px 0 4px rgba($base-color, .3)
+    );
+}
+
+.x-checkboxfield {
+    .x-mask-el::before,
+    .x-mask-el::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 0;
+        margin-top: -10px;
+        height: 20px;
+        width: 20px;
+        border: 1px solid $foreground-color;
+    }
+
+    .x-mask-el::after {
+        @include checkmark($base-color);
+        visibility: hidden;
+    }
+
+    .x-input-el {
+        visibility: hidden;
+
+        &:checked + .x-mask-el::after {
+            visibility: visible;
+        }
+    }
+
+    &.x-disabled {
+        .x-mask-el::before {
+            border-color: $secondary-color;
+        }
+
+        .x-input-el:checked + .x-mask-el::after {
+            text-shadow: none;
+            color: $foreground-color;
+        }
+    }
+}
+
+

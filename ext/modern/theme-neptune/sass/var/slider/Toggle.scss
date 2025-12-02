@@ -1,0 +1,247 @@
+/**
+ * @class Ext.field.Toggle
+ */
+
+/**
+ * @var {number}
+ * The width of the toggle slider
+ */
+$toggleslider-width: dynamic(2rem);
+
+/**
+ * @var {number}
+ * The width of the toggle slider in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$toggleslider-width-big: dynamic(3rem);
+
+/**
+ * @var {number}
+ * The height of the toggle slider track
+ */
+$toggleslider-track-height: dynamic(null);
+
+/**
+ * @var {number}
+ * The height of the toggle slider track in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$toggleslider-track-height-big: dynamic(null);
+
+/**
+ * @var {color/list}
+ * The background-color of the toggle slider track
+ */
+$toggleslider-track-background-color: dynamic(null);
+
+/**
+ * @var {number/list}
+ * The border-width of the toggle slider track
+ */
+$toggleslider-track-border-width: dynamic(null);
+
+/**
+ * @var {string/list}
+ * The border-style of the toggle slider track
+ */
+$toggleslider-track-border-style: dynamic(null);
+
+/**
+ * @var {color/list}
+ * The border-color of the toggle slider track
+ */
+$toggleslider-track-border-color: dynamic(null);
+
+/**
+ * @var {number}
+ * The border-radius of the toggle slider track
+ */
+$toggleslider-track-border-radius: dynamic(null);
+
+/**
+ * @var {number}
+ * The border-radius of the toggle slider track in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$toggleslider-track-border-radius-big: dynamic(null);
+
+/**
+ * @var {color}
+ * The background-color of the toggle slider fill element
+ */
+$toggleslider-fill-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The background-color of the toggle slider fill element when disabled
+ */
+$toggleslider-disabled-fill-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The border-color of the toggle slider fill element
+ */
+$toggleslider-fill-border-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The border-color of the toggle slider fill element when disabled
+ */
+$toggleslider-disabled-fill-border-color: dynamic(null);
+
+/**
+ * @var {number}
+ * Opacity of the toggle slider when disabled
+ */
+$toggleslider-disabled-opacity: dynamic(null);
+
+/**
+ * @var {number}
+ * Amount of space to inset the toggle thumb from the left and right edge of the track
+ */
+$toggleslider-thumb-inset: dynamic(null);
+
+
+/**
+ * Creates a visual theme for a toggle slider.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=toggleslider] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {number} $width
+ * The width of the toggle slider
+ *
+ * @param {number} $width-big
+ * The width of the toggle slider in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $track-height
+ * The height of the toggle slider track
+ *
+ * @param {number} $track-height-big
+ * The height of the toggle slider track in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color/list} $track-background-color
+ * The background-color of the toggle slider track
+ *
+ * @param {number/list} $track-border-width
+ * The border-width of the toggle slider track
+ *
+ * @param {string/list} $track-border-style
+ * The border-style of the toggle slider track
+ *
+ * @param {color/list} $track-border-color
+ * The border-color of the toggle slider track
+ *
+ * @param {number} $track-border-radius
+ * The border-radius of the toggle slider track
+ *
+ * @param {number} $track-border-radius-big
+ * The border-radius of the toggle slider track in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $fill-background-color
+ * The background-color of the toggle slider fill element
+ *
+ * @param {color} $disabled-fill-background-color
+ * The background-color of the toggle slider fill element when disabled
+ *
+ * @param {color} $fill-border-color
+ * The border-color of the toggle slider fill element
+ *
+ * @param {color} $disabled-fill-border-color
+ * The border-color of the toggle slider fill element when disabled
+ *
+ * @param {number} $disabled-opacity
+ * Opacity of the toggle slider when disabled
+ *
+ * @member Ext.field.Toggle
+ */
+@mixin toggleslider-ui(
+    $ui: null,
+    $xtype: toggleslider,
+
+    $width: null,
+    $width-big: null,
+
+    $track-height: null,
+    $track-height-big: null,
+    $track-background-color: null,
+    $track-border-width: null,
+    $track-border-style: null,
+    $track-border-color: null,
+    $track-border-radius: null,
+    $track-border-radius-big: null,
+
+    $fill-background-color: null,
+    $disabled-fill-background-color: null,
+    $fill-border-color: null,
+    $disabled-fill-border-color: null,
+
+    $disabled-opacity: null,
+    $thumb-inset: null
+) {
+
+    @include slider-ui(
+        $ui: $ui,
+        $xtype: $xtype,
+
+        $track-height: $track-height,
+        $track-height-big: $track-height-big,
+        $track-background-color: $track-background-color,
+        $track-border-width: $track-border-width,
+        $track-border-style: $track-border-style,
+        $track-border-color: $track-border-color,
+        $track-border-radius: null,
+        $track-border-radius-big: null,
+
+        $fill-background-color: $fill-background-color,
+        $disabled-fill-background-color: $disabled-fill-background-color,
+        $fill-border-color: $fill-border-color,
+        $disabled-fill-border-color: $disabled-fill-border-color,
+
+        $disabled-opacity: $disabled-opacity
+    );
+
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}#{$xtype}#{$ui-suffix} {
+        width: $width;
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                width: $width-big;
+            }
+        }
+
+        .#{$prefix}track-el,
+        .#{$prefix}fill-el {
+            border-radius: $track-border-radius;
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    border-radius: $track-border-radius;
+                }
+            }
+        }
+
+
+        @if $ui == null and $track-border-width == null {
+            $track-border-width: $slider-track-border-width;
+        }
+
+        .#{$prefix}fill-el {
+            @if $track-border-width != null {
+                width: calc(100% + #{horizontal($track-border-width)});
+            } @else {
+                width: 100%;
+            }
+        }
+
+        @if $thumb-inset != null {
+            .#{$prefix}thumb-wrap-el {
+                margin: 0 $thumb-inset;
+            }
+        }
+    }
+
+}

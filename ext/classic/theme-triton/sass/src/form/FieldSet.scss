@@ -1,0 +1,15 @@
+.#{$prefix}fieldset {
+	border-top: 1px solid mix(#000, $form-field-border-color, 10%) !important;
+	background: $neutral-light-color;
+	position: static; //this is to hide a rendering bug in Chrome
+
+	.#{$prefix}fieldset-header {
+            padding: 10px 5px 10px 5px;
+	}
+        .#{$prefix}fieldset-body {
+            position: relative;
+        }
+	&.#{$prefix}fieldset-collapsed {
+		background: none;
+	}
+}

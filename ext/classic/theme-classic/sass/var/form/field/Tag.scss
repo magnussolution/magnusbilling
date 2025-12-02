@@ -1,0 +1,11 @@
+$tag-field-item-background-color: dynamic(adjust-color($base-color, $hue: 0deg, $saturation: 0.542%, $lightness: 7.843%));
+$tag-field-item-border-color: dynamic(adjust-color($base-color, $hue: 0deg, $saturation: 7.644%, $lightness: -8.627%));
+$tag-field-item-over-background-color: dynamic(adjust-color($tag-field-item-background-color, $lightness: -12%));
+$tag-field-item-over-border-color: dynamic(adjust-color($tag-field-item-border-color, $lightness: -12%));
+$tag-field-item-selected-background-color: dynamic(desaturate(darken($base-color, 23.33%), 11.55%));
+$tag-field-item-selected-border-color: dynamic(saturate(darken($base-color, 38.63%), 5.65%));
+$tag-field-item-selected-color: dynamic(#fff);
+$tag-field-item-close-icon-size: dynamic(11px);
+$tag-field-item-height: dynamic(16px);
+$form-toolbar-tag-field-padding: dynamic(0 3px 0);
+$form-toolbar-tag-field-item-margin: dynamic(1px 4px 1px 0);

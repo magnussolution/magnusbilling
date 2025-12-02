@@ -1,0 +1,19 @@
+$textfield-input-border-color: dynamic($divider-color);
+$textfield-input-background-color: dynamic(transparent);
+$textfield-input-color: dynamic($color);
+$textfield-disabled-input-color: dynamic($disabled-color);
+$textfield-placeholder-color: dynamic($field-disabled-label-color);
+
+$textfield-input-font-size: dynamic(px-to-rem(13px, 12px));
+$textfield-input-font-size-big: dynamic(px-to-rem(16px, 14px));
+$textfield-input-font-weight: dynamic(400);
+$textfield-input-line-height: dynamic(px-to-em(16px, 13px));
+$textfield-input-line-height-big: dynamic(px-to-em(20px, 16px));
+
+$textfield-input-padding: dynamic(px-to-em($content-padding / 4, 13px) 0);
+$textfield-input-padding-big: dynamic(px-to-em($content-padding / 2, 16px) 0);
+
+$textfield-input-border-width: dynamic(0 0 1px 0);
+$textfield-invalid-input-border-color: dynamic($alert-color);
+$textfield-focused-input-border-color: dynamic($base-color);
+$textfield-focused-input-border-width: dynamic(0 0 2px 0);

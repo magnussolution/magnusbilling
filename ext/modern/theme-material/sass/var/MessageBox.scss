@@ -1,0 +1,9 @@
+$messagebox-background-color: dynamic($background-color);
+$messagebox-border-width: dynamic(null);
+$messagebox-border-style: dynamic(null);
+$messagebox-title-background-color: dynamic($background-color);
+$messagebox-border-color: dynamic(null);
+$messagebox-border-radius: dynamic(null);
+$messagebox-padding: dynamic(px-to-em($content-padding, 12px)); // this 12px comes from the panel font-size
+$messagebox-title-color: dynamic($color);
+$messagebox-footer-background-color: dynamic($background-color);

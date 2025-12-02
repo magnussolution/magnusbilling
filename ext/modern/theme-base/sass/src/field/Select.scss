@@ -1,0 +1,11 @@
+.#{$prefix}selectfield-overlay {
+    .#{$prefix}listitem-body {
+        // Prevent the item from growing larger than the parent
+        min-width: 0;
+    }
+
+    .#{$prefix}list-label {
+        @include ellipsis();
+        display: block;
+    }
+}

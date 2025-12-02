@@ -1,0 +1,48 @@
+.#{$prefix}accordion-item {
+
+    .#{$prefix}accordion-body {
+
+        .#{$prefix}grid-item {
+            padding: 5px;
+
+            .#{$prefix}tree-elbow {
+                background-image: none;
+            }
+
+            .#{$prefix}tree-elbow-end {
+                background-image: none;
+            }
+        }
+
+        .#{$prefix}grid-item-selected {
+            background-color : #ffffff
+        }
+
+
+        .#{$prefix}grid-item-selected::before {
+            content: " ";
+            position: absolute;
+            display: block;
+            left: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+        }
+
+        .#{$prefix}grid-item-selected-activated::before {
+            background-color: $base-color;
+            content: " ";
+            position: absolute;
+            display: block;
+            left: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+        }
+
+
+        .#{$prefix}grid-item-focused .#{$prefix}grid-cell-inner:before {
+            border: 0px transparent;
+        }
+    }
+}

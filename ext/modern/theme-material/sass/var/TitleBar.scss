@@ -1,0 +1,18 @@
+$titlebar-background-color: dynamic($base-color);
+$titlebar-color: dynamic($base-foreground-color);
+$titlebar-min-height: dynamic(px-to-rem(48px, 12px));
+$titlebar-min-height-big: dynamic(px-to-rem(64px, 14px));
+$titlebar-font-size: dynamic(px-to-rem(16px, 12px));
+$titlebar-font-size-big: dynamic(px-to-rem(18px, 14px));
+$titlebar-font-weight: dynamic($font-weight-bold);
+$titlebar-border-color: dynamic(null);
+$titlebar-border-width: dynamic(null);
+$titlebar-border-style: dynamic(null);
+$titlebar-box-shadow: dynamic($material-shadow-1);
+$titlebar-title-color: dynamic($base-foreground-color);
+$titlebar-padding: dynamic(px-to-em(12px, 16px) px-to-em($content-padding /2, 16px));
+$titlebar-padding-big: dynamic(px-to-em(14px, 18px) px-to-em($content-padding /2, 18px));
+$titlebar-title-padding: dynamic(0 px-to-em(4px, 16px) 0 0 );
+$titlebar-title-padding-big: dynamic(0 px-to-em(8px, 18px));
+$titlebar-horizontal-spacing: dynamic(0);
+$titlebar-horizontal-spacing-big: dynamic(null);

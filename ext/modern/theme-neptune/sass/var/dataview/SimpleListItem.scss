@@ -1,0 +1,207 @@
+/**
+ * @class Ext.dataview.SimpleListItem
+ */
+
+// TODO this should "import once" once implemented - https://sencha.jira.com/browse/SDKTOOLS-1527
+//@import './ListItem.scss';
+
+/**
+ * @var {color} $listitem-color
+ * @inheritdoc Ext.dataview.List#$listitem-color
+ */
+
+/**
+ * @var {color} $listitem-hovered-color
+ * @inheritdoc Ext.dataview.List#$listitem-hovered-color
+ */
+
+/**
+ * @var {color} $listitem-pressed-color
+ * @inheritdoc Ext.dataview.List#$listitem-pressed-color
+ */
+
+/**
+ * @var {color} $listitem-selected-color
+ * @inheritdoc Ext.dataview.List#$listitem-selected-color
+ */
+
+/**
+ * @var {color} $listitem-background-color
+ * @inheritdoc Ext.dataview.List#$listitem-background-color
+ */
+
+/**
+ * @var {color} $listitem-alt-background-color
+ * @inheritdoc Ext.dataview.List#$listitem-alt-background-color
+ */
+
+/**
+ * @var {color} $listitem-hovered-background-color
+ * @inheritdoc Ext.dataview.List#$listitem-hovered-background-color
+ */
+
+/**
+ * @var {color} $listitem-pressed-background-color
+ * @inheritdoc Ext.dataview.List#$listitem-pressed-background-color
+ */
+
+/**
+ * @var {color} $listitem-selected-background-color
+ * @inheritdoc Ext.dataview.List#$listitem-selected-background-color
+ */
+
+/**
+ * @var {number} $listitem-border-width
+ * @inheritdoc Ext.dataview.List#$listitem-border-width
+ */
+
+/**
+ * @var {string} $listitem-border-style
+ * @inheritdoc Ext.dataview.List#$listitem-border-style
+ */
+
+/**
+ * @var {color} $listitem-border-color
+ * @inheritdoc Ext.dataview.List#$listitem-border-color
+ */
+
+/**
+ * @var {color} $listitem-hovered-border-color
+ * @inheritdoc Ext.dataview.List#$listitem-hovered-border-color
+ */
+
+/**
+ * @var {color} $listitem-pressed-border-color
+ * @inheritdoc Ext.dataview.List#$listitem-pressed-border-color
+ */
+
+/**
+ * @var {color} $listitem-selected-border-color
+ * @inheritdoc Ext.dataview.List#$listitem-selected-border-color
+ */
+
+/**
+ * @var {string/number} $listitem-font-weight
+ * @inheritdoc Ext.dataview.List#$listitem-font-weight
+ */
+
+/**
+ * @var {number} $listitem-font-size
+ * @inheritdoc Ext.dataview.List#$listitem-font-size
+ */
+
+/**
+ * @var {number} $listitem-font-size-big
+ * @inheritdoc Ext.dataview.List#$listitem-font-size-big
+ */
+
+/**
+ * @var {number} $listitem-line-height
+ * @inheritdoc Ext.dataview.List#$listitem-line-height
+ */
+
+/**
+ * @var {number} $listitem-line-height-big
+ * @inheritdoc Ext.dataview.List#$listitem-line-height-big
+ */
+
+/**
+ * @var {string} $listitem-font-family
+ * @inheritdoc Ext.dataview.List#$listitem-font-family
+ */
+
+/**
+ * @var {number/list} $listitem-padding
+ * @inheritdoc Ext.dataview.List#$listitem-padding
+ */
+
+/**
+ * @var {number/list} $listitem-padding-big
+ * @inheritdoc Ext.dataview.List#$listitem-padding-big
+ */
+
+/**
+ * @var {color} $listitem-padding-big
+ * @inheritdoc Ext.dataview.List#$listitem-padding-big
+ */
+
+/**
+ * @var {color} $listitem-disclosure-background-color
+ * @inheritdoc Ext.dataview.List#$listitem-disclosure-background-color
+ */
+
+/**
+ * @var {color} $listitem-pressed-disclosure-background-color
+ * @inheritdoc Ext.dataview.List#$listitem-pressed-disclosure-background-color
+ */
+
+/**
+ * @var {color} $listitem-disclosure-pressed-background-color
+ * @inheritdoc Ext.dataview.List#$listitem-disclosure-pressed-background-color
+ */
+
+/**
+ * @var {number/list} $listitem-disclosure-border-radius
+ * @inheritdoc Ext.dataview.List#$listitem-disclosure-border-radius
+ */
+
+/**
+ * @var {number/list} $listitem-disclosure-border-radius-big
+ * @inheritdoc Ext.dataview.List#$listitem-disclosure-border-radius-big
+ */
+
+/**
+ * @var {string} $listitem-disclosure-icon
+ * @inheritdoc Ext.dataview.List#$listitem-disclosure-icon
+ */
+
+/**
+ * @var {color} $listitem-disclosure-icon-color
+ * @inheritdoc Ext.dataview.List#$listitem-disclosure-icon-color
+ */
+
+/**
+ * @var {color} $listitem-pressed-disclosure-icon-color
+ * @inheritdoc Ext.dataview.List#$listitem-pressed-disclosure-icon-color
+ */
+
+/**
+ * @var {color} $listitem-disclosure-pressed-icon-color
+ * @inheritdoc Ext.dataview.List#$listitem-disclosure-pressed-icon-color
+ */
+
+/**
+ * @var {number} $listitem-disclosure-icon-size
+ * @inheritdoc Ext.dataview.List#$listitem-disclosure-icon-size
+ */
+
+/**
+ * @var {number} $listitem-disclosure-icon-size-big
+ * @inheritdoc Ext.dataview.List#$listitem-disclosure-icon-size-big
+ */
+
+/**
+ * @var {number} $listitem-disclosure-icon-font-size
+ * @inheritdoc Ext.dataview.List#$listitem-disclosure-icon-font-size
+ */
+
+/**
+ * @var {number} $listitem-disclosure-icon-font-size-big
+ * @inheritdoc Ext.dataview.List#$listitem-disclosure-icon-font-size-big
+ */
+
+/**
+ * @var {number} $listitem-disclosure-margin
+ * @inheritdoc Ext.dataview.List#$listitem-disclosure-leading-space
+ */
+
+/**
+ * @var {number} $listitem-disclosure-margin-big
+ * @inheritdoc Ext.dataview.List#$listitem-disclosure-leading-space-big
+ */
+
+
+/**
+ * @sass-mixin listitem-ui
+ * @inheritdoc Ext.dataview.ListItem#listitem-ui
+ */

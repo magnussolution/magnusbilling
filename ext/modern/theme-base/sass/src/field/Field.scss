@@ -1,0 +1,94 @@
+// Label
+.#{$prefix}label-el {
+    display: none;
+}
+
+.#{$prefix}field.#{$prefix}no-label-wrap .#{$prefix}label-el {
+    @include ellipsis();
+}
+
+//  Ext.field.Field
+.#{$prefix}field {
+    @include st-box();
+
+    > .#{$prefix}body-el {
+        @include st-box();
+        @include st-box-orient(horizontal);
+        @include st-box-align(center);
+    }
+
+    &.#{$prefix}body-align-start > .#{$prefix}body-el {
+        @include st-box-pack(start);
+    }
+
+    &.#{$prefix}body-align-center > .#{$prefix}body-el {
+        @include st-box-pack(center);
+    }
+
+    &.#{$prefix}body-align-end > .#{$prefix}body-el {
+        @include st-box-pack(end);
+    }
+
+    &.#{$prefix}body-align-stretch {
+        > .#{$prefix}body-el {
+            // do not use stretch pack just in case the input can't stretch (checkbox/radio)
+            @include st-box-pack(center);
+        }
+
+        .#{$prefix}input {
+            width: 100%;
+        }
+    }
+}
+
+.#{$prefix}field.#{$prefix}labeled .#{$prefix}label-el {
+    display: block;
+}
+
+.#{$prefix}field {
+    &.#{$prefix}label-align-left,
+    &.#{$prefix}label-align-right {
+        @include st-box-orient(horizontal);
+        @include st-box-align(center);
+
+        .#{$prefix}body-el {
+            @include st-box-flex(1);
+        }
+    }
+
+    &.#{$prefix}label-align-right {
+        @include st-box-direction(reverse, row);
+    }
+
+    &.#{$prefix}label-align-top,
+    &.#{$prefix}label-align-bottom,
+    &.#{$prefix}label-align-placeholder {
+        @include st-box-orient(vertical);
+    }
+
+    &.#{$prefix}label-align-bottom {
+        @include st-box-direction(reverse, column);
+    }
+
+    &.#{$prefix}label-text-align-left {
+        text-align: left;
+    }
+
+    &.#{$prefix}label-text-align-center {
+        text-align: center;
+    }
+
+    &.#{$prefix}label-text-align-right {
+        text-align: right;
+    }
+}
+
+// Required fields
+.#{$prefix}field.#{$prefix}required .#{$prefix}label-el:after {
+    content: "*";
+    display: inline-block;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+}

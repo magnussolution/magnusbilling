@@ -1,0 +1,11 @@
+$gridcolumn-color: dynamic($color);
+$gridcolumn-background-color: dynamic(#fff);
+$gridcolumn-resizer-background-color: dynamic($neutral-light-color);
+$gridcolumn-border-color: dynamic($neutral-color);
+$gridcolumn-sort-icon-color: dynamic($neutral-dark-color);
+$gridcolumn-sorted-background-color: dynamic($gridcolumn-background-color);
+$gridcolumn-padding: dynamic(.61em .6em);
+$gridcolumn-line-height: dynamic(1.2308em);
+$gridcolumn-padding: dynamic(0.6154em 0.77em);
+$gridcolumn-line-height-big: dynamic(1.25em);
+$gridcolumn-padding-big: dynamic(0.75em 0.9735em);

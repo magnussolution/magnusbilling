@@ -1,0 +1,54 @@
+/**
+ * @class Ext.calendar.panel.Panel
+ */
+
+/**
+ * @var {number/list}
+ * The margin for the panel sidebar.
+ */
+$calendar-panel-sidebar-padding: dynamic(1em);
+
+$calendar-panel-sidebar-max-width: dynamic(20%);
+
+$calendar-panel-sheet-padding: dynamic(1em);
+
+$calendar-panel-create-button-horizontal-padding: dynamic(3em);
+
+$calendar-panel-sheet-max-width: dynamic(80vw);
+
+@mixin calendar-panel-ui(
+    $ui: null,
+
+    $sidebar-padding: null,
+    $sidebar-max-width: null,
+
+    $sheet-padding: null,
+    $sheet-max-width: null,
+
+    $create-button-horizontal-padding: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}calendar-panel#{$ui-suffix} {
+        .#{$prefix}calendar-panel-create-button {
+            padding-left: $create-button-horizontal-padding;
+            padding-right: $create-button-horizontal-padding;
+        }
+
+        .#{$prefix}calendar-sidebar {
+            max-width: $sidebar-max-width;
+            .#{$prefix}panel-inner {
+                padding: $sidebar-padding;
+            }
+        }
+    }
+
+    .#{$prefix}calendar-panel-sheet#{$ui-suffix} {
+        padding: 0;
+        max-width: $sheet-max-width;
+
+        .#{$prefix}sheet-inner {
+            padding: $sheet-padding;
+        }
+    }
+}

@@ -1,0 +1,10 @@
+@include summarycell-ui(
+    $font-weight: $summarycell-font-weight,
+    $font-size: $summarycell-font-size,
+    $font-size-big: $summarycell-font-size-big,
+    $line-height: $summarycell-line-height,
+    $line-height-big: $summarycell-line-height-big,
+    $font-family: $summarycell-font-family,
+    $padding: $summarycell-padding,
+    $padding-big: $summarycell-padding-big
+);

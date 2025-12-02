@@ -1,0 +1,39 @@
+.#{$prefix}panel-title {
+    @include st-box;
+    @include st-box-align(center);
+}
+
+.#{$prefix}panel-title-align-left {
+    text-align: left;
+}
+
+.#{$prefix}panel-title-align-center {
+    text-align: center;
+}
+
+.#{$prefix}panel-title-align-right {
+    text-align: right;
+}
+
+.#{$prefix}panel-title-vertical {
+    @include st-box-orient(vertical);
+
+    &.#{$prefix}panel-title-align-left {
+        @include st-box-align(start);
+    }
+
+    &.#{$prefix}panel-title-align-center {
+        @include st-box-align(center);
+    }
+
+    &.#{$prefix}panel-title-align-right {
+        @include st-box-align(end);
+    }
+}
+
+.#{$prefix}panel-title-text {
+    @include st-box-flex;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

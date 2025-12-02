@@ -1,0 +1,377 @@
+/**
+ * @class Ext.dataview.IndexBar
+ */
+
+//# fashion replaces $index-bar-width
+/**
+ * @var {number}
+ * Index bar width
+ */
+$indexbar-width: dynamic(1.15rem);
+
+/**
+ * @var {number}
+ * Index bar width in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$indexbar-width-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Index bar height
+ */
+$indexbar-height: dynamic(25rem);
+
+/**
+ * @var {number}
+ * Index bar height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$indexbar-height-big: dynamic(null);
+
+/**
+ * @var {color}
+ * Index bar color.
+ */
+$indexbar-color: dynamic($base-dark-color);
+
+/**
+ * @var {color}
+ * Index bar color when pressed
+ */
+$indexbar-pressed-color: dynamic(null);
+
+//# fashion replaces $index-bar-bg-color
+/**
+ * @var {color}
+ * Index bar background-color
+ */
+$indexbar-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Index bar background-color when pressed
+ */
+$indexbar-pressed-background-color: dynamic($neutral-color);
+
+/**
+ * @var {number/list}
+ * Index bar border-radius
+ */
+$indexbar-border-radius: dynamic($indexbar-width);
+
+/**
+ * @var {number/list}
+ * Index bar border-radius in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$indexbar-border-radius-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Index bar opacity
+ */
+$indexbar-opacity: dynamic(null);
+
+/**
+ * @var {number}
+ * Index bar opacity when pressed
+ */
+$indexbar-pressed-opacity: dynamic(null);
+
+/**
+ * @var {string/number}
+ * Index bar font-weight
+ */
+$indexbar-font-weight: dynamic($font-weight-bold);
+
+/**
+ * @var {number}
+ * Index bar font-size
+ */
+$indexbar-font-size: dynamic(.77rem);
+
+/**
+ * @var {number}
+ * Index bar font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$indexbar-font-size-big: dynamic(.8rem);
+
+/**
+ * @var {string}
+ * Index bar font-family
+ */
+$indexbar-font-family: dynamic($font-family);
+
+/**
+ * @var {number/list}
+ * Index bar padding
+ */
+$indexbar-padding: dynamic(.4rem 0);
+
+/**
+ * @var {number/list}
+ * Index bar padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$indexbar-padding-big: dynamic(.5rem 0);
+
+/**
+ * @var {number/list}
+ * Index bar margin
+ */
+$indexbar-margin: dynamic(0 .6rem 0 0);
+
+/**
+ * @var {number/list}
+ * Index bar margin in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$indexbar-margin-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Index bar width when {@link #direction horizontally} oriented
+ */
+$indexbar-horizontal-width: dynamic(24em);
+
+/**
+ * @var {number}
+ * Index bar width when {@link #direction horizontally} oriented in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$indexbar-horizontal-width-big: dynamic(28em);
+
+/**
+ * @var {number}
+ * Index bar height when {@link #direction horizontally} oriented
+ */
+$indexbar-horizontal-height: dynamic($indexbar-width);
+
+/**
+ * @var {number}
+ * Index bar height when {@link #direction horizontally} oriented in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$indexbar-horizontal-height-big: dynamic($indexbar-height-big);
+
+/**
+ * @var {number/list}
+ * Index bar padding when {@link #direction horizontally} oriented
+ */
+$indexbar-horizontal-padding: dynamic(rotate90($indexbar-padding));
+
+/**
+ * @var {number/list}
+ * Index bar padding when {@link #direction horizontally} oriented in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$indexbar-horizontal-padding-big: dynamic(rotate90($indexbar-padding-big));
+
+/**
+ * @var {number/list}
+ * Index bar margin when {@link #direction horizontally} oriented
+ */
+$indexbar-horizontal-margin: dynamic(rotate90($indexbar-margin));
+
+/**
+ * @var {number/list}
+ * Index bar margin when {@link #direction horizontally} oriented in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$indexbar-horizontal-margin-big: dynamic(rotate90($indexbar-margin-big));
+
+
+/**
+ * Creates a visual theme for an IndexBar.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {number} $width
+ * Index bar width
+ *
+ * @param {number} $width-big
+ * Index bar width in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $height
+ * Index bar height
+ *
+ * @param {number} $height-big
+ * Index bar height in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $color
+ * Index bar color.
+ *
+ * @param {color} $pressed-color
+ * Index bar color when pressed
+ *
+ * @param {color} $background-color
+ * Index bar background-color
+ *
+ * @param {color} $pressed-background-color
+ * Index bar background-color when pressed
+ *
+ * @param {number/list} $border-radius
+ * Index bar border-radius
+ *
+ * @param {number/list} $border-radius-big
+ * Index bar border-radius in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $opacity
+ * Index bar opacity
+ *
+ * @param {number} $pressed-opacity
+ * Index bar opacity when pressed
+ *
+ * @param {string/number} $font-weight
+ * Index bar font-weight
+ *
+ * @param {number} $font-size
+ * Index bar font-size
+ *
+ * @param {number} $font-size-big
+ * Index bar font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $font-family
+ * Index bar font-family
+ *
+ * @param {number/list} $padding
+ * Index bar padding
+ *
+ * @param {number/list} $padding-big
+ * Index bar padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number/list} $margin
+ * Index bar margin
+ *
+ * @param {number/list} $margin-big
+ * Index bar margin in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $horizontal-width
+ * Index bar width when {@link #direction horizontally} oriented
+ *
+ * @param {number} $horizontal-width-big
+ * Index bar width when {@link #direction horizontally} oriented in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $horizontal-height
+ * Index bar height when {@link #direction horizontally} oriented
+ *
+ * @param {number} $horizontal-height-big
+ * Index bar height when {@link #direction horizontally} oriented in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number/list} $horizontal-padding
+ * Index bar padding when {@link #direction horizontally} oriented
+ *
+ * @param {number/list} $horizontal-padding-big
+ * Index bar padding when {@link #direction horizontally} oriented in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number/list} $horizontal-margin
+ * Index bar margin when {@link #direction horizontally} oriented
+ *
+ * @param {number/list} $horizontal-margin-big
+ * Index bar margin when {@link #direction horizontally} oriented in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin indexbar-ui(
+    $ui: null,
+    $width: null,
+    $width-big: null,
+    $height: null,
+    $height-big: null,
+    $color: null,
+    $pressed-color: null,
+    $background-color: null,
+    $pressed-background-color: null,
+    $border-radius: null,
+    $border-radius-big: null,
+    $opacity: null,
+    $pressed-opacity: null,
+    $font-weight: null,
+    $font-size: null,
+    $font-size-big: null,
+    $font-family: null,
+    $padding: null,
+    $padding-big: null,
+    $margin: null,
+    $margin-big: null,
+    $horizontal-width: null,
+    $horizontal-width-big: null,
+    $horizontal-height: null,
+    $horizontal-height-big: null,
+    $horizontal-padding: null,
+    $horizontal-padding-big: null,
+    $horizontal-margin: null,
+    $horizontal-margin-big: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}indexbar#{$ui-suffix} {
+        color: $color;
+        background-color: $background-color;
+        border-radius: $border-radius;
+        opacity: $opacity;
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                border-radius: $border-radius-big;
+                font-size: $font-size-big;
+            }
+        }
+
+        &.#{$prefix}pressed {
+            background-color: $pressed-background-color;
+            opacity: $pressed-opacity;
+        }
+
+        &.#{$prefix}vertical {
+            width: $width;
+            height: $height;
+            padding: $padding;
+            margin: $margin;
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    width: $width-big;
+                    height: $height-big;
+                    padding: $padding-big;
+                    margin: $margin-big;
+                }
+            }
+        }
+
+        .#{$prefix}indexbar-item {
+            // font must be on the item so that it does not affect the size/padding/margin
+            // of the indexbar when size is specified in ems
+            @include font($font-weight: $font-weight, $font-size: $font-size, $font-family: $font-family);
+        }
+
+        &.#{$prefix}horizontal {
+            width: $horizontal-width;
+            height: $horizontal-height;
+            padding: $horizontal-padding;
+            margin: $horizontal-margin;
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    width: $horizontal-width-big;
+                    height: $horizontal-height-big;
+                    padding: $horizontal-padding-big;
+                    margin: $horizontal-margin-big;
+                }
+            }
+        }
+    }
+
+    .#{$prefix}list.#{$prefix}indexed-vertical.#{$prefix}indexed#{$ui-suffix} {
+        .#{$prefix}listitem,
+        .#{$prefix}itemheader {
+            padding-right: calc-sum($width, horizontal($margin));
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    padding-right: calc-sum($width-big, horizontal($margin-big));
+                }
+            }
+        }
+    }
+}

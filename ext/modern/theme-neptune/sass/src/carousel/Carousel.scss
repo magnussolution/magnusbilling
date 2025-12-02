@@ -1,0 +1,33 @@
+/**
+ * @class Ext.carousel.Carousel
+ */
+
+.x-carousel-indicator span {
+  width: $carousel-indicator-size;
+  height: $carousel-indicator-size;
+  @if $enable-border-radius {
+    @include border-radius($carousel-indicator-border-radius);
+  }
+  margin: $carousel-indicator-spacing;
+
+  &.x-carousel-indicator-active {
+    width: $carousel-indicator-active-size;
+    height: $carousel-indicator-active-size;
+  }
+}
+
+.x-carousel-indicator-horizontal {
+  height: $carousel-track-size;
+}
+
+.x-carousel-indicator-vertical {
+  width: $carousel-track-size;
+}
+
+@if $carousel-light-ui {
+  @include carousel-light-ui;
+}
+
+@if $carousel-dark-ui {
+  @include carousel-dark-ui;
+}

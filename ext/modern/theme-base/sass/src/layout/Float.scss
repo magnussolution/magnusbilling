@@ -1,0 +1,17 @@
+/**
+ * @class Ext.layout.Float
+ */
+
+.x-layout-float {
+    overflow: hidden;
+
+    > .x-layout-float-item {
+        float: left;
+    }
+
+    &.x-direction-right {
+        > .x-layout-float-item {
+            float: right;
+        }
+    }
+}

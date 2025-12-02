@@ -1,0 +1,5 @@
+.#{$prefix}draw-container {
+    position: relative;
+    @include user-select(none);
+    cursor: default;
+}

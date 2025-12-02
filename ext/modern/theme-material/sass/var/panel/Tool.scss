@@ -1,0 +1,50 @@
+$panel-tool-close-icon: dynamic('close' $font-icon-font-family);
+$panel-tool-minimize-icon: dynamic('remove' $font-icon-font-family);
+$panel-tool-maximize-icon: dynamic('add' $font-icon-font-family);
+$panel-tool-restore-icon: dynamic($fa-var-compress 'FontAwesome');
+
+$panel-tool-toggle-up-icon: dynamic('arrow_drop_up' $font-icon-font-family);
+$panel-tool-toggle-down-icon: dynamic('arrow_drop_down' $font-icon-font-family);
+
+$panel-tool-gear-icon: dynamic('settings' $font-icon-font-family);
+$panel-tool-prev-icon: dynamic('arrow_back' $font-icon-font-family);
+$panel-tool-next-icon: dynamic('arrow_forward' $font-icon-font-family);
+
+$panel-tool-pin-icon: dynamic($fa-var-thumb-tack 'FontAwesome');
+$panel-tool-unpin-icon: dynamic($ext-var-unpin ExtJS);
+
+$panel-tool-right-icon: dynamic('keyboard_arrow_right' $font-icon-font-family);
+$panel-tool-left-icon: dynamic('keyboard_arrow_left' $font-icon-font-family);
+$panel-tool-down-icon: dynamic('keyboard_arrow_down' $font-icon-font-family);
+$panel-tool-up-icon: dynamic('keyboard_arrow_up' $font-icon-font-family);
+
+$panel-tool-refresh-icon: dynamic('refresh'$font-icon-font-family);
+
+$panel-tool-plus-icon: dynamic('add' $font-icon-font-family);
+$panel-tool-minus-icon: dynamic('remove' $font-icon-font-family);
+
+$panel-tool-menu-icon: dynamic('menu' $font-icon-font-family);
+
+$panel-tool-search-icon: dynamic('search' $font-icon-font-family);
+$panel-tool-save-icon: dynamic('save' $font-icon-font-family);
+
+$panel-tool-help-icon: dynamic('help_outline' $font-icon-font-family);
+$panel-tool-print-icon: dynamic('print' $font-icon-font-family);
+
+$panel-tool-expand-icon: dynamic('expand_more' $font-icon-font-family);
+$panel-tool-collapse-icon: dynamic('expand_less' $font-icon-font-family);
+$panel-tool-resize-icon: dynamic($fa-var-arrows-h 'FontAwesome');
+
+$panel-tool-move-icon: dynamic('open_with' $font-icon-font-family);
+
+$panel-tool-expand-bottom-icon: dynamic('keyboard_arrow_down' $font-icon-font-family);
+$panel-tool-collapse-bottom-icon: dynamic('keyboard_arrow_down' $font-icon-font-family);
+
+$panel-tool-expand-top-icon: dynamic('keyboard_arrow_up' $font-icon-font-family);
+$panel-tool-collapse-top-icon: dynamic('keyboard_arrow_up' $font-icon-font-family);
+
+$panel-tool-expand-left-icon: dynamic('keyboard_arrow_left' $font-icon-font-family);
+$panel-tool-collapse-left-icon: dynamic('keyboard_arrow_left' $font-icon-font-family);
+
+$panel-tool-expand-right-icon: dynamic('keyboard_arrow_right' $font-icon-font-family);
+$panel-tool-collapse-right-icon: dynamic('keyboard_arrow_right' $font-icon-font-family);

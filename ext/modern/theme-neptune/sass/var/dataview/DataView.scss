@@ -1,0 +1,134 @@
+/**
+ * @class Ext.dataview.DataView
+ */
+
+/**
+ * @var {color}
+ * Data view background-color
+ */
+$dataview-background-color: dynamic($background-color);
+
+/**
+ * @var {color}
+ * Data view {@link #emptyText} color
+ */
+$dataview-empty-text-color: dynamic($highlight-color);
+
+/**
+ * @var {string/number}
+ * Data view {@link #emptyText} font-weight
+ */
+$dataview-empty-text-font-weight: dynamic($font-weight-normal);
+
+/**
+ * @var {number}
+ * Data view {@link #emptyText} font-size
+ */
+$dataview-empty-text-font-size: dynamic(1rem);
+
+/**
+ * @var {number}
+ * Data view {@link #emptyText} font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$dataview-empty-text-font-size-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Data view {@link #emptyText} line-height
+ */
+$dataview-empty-text-line-height: dynamic(1.2);
+
+/**
+ * @var {number}
+ * Data view {@link #emptyText} in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$dataview-empty-text-line-height-big: dynamic(null);
+
+/**
+ * @var {string}
+ * Data view {@link #emptyText} font-family
+ */
+$dataview-empty-text-font-family: dynamic($font-family);
+
+/**
+ * @var {number/list}
+ * Data view {@link #emptyText} padding
+ */
+$dataview-empty-text-padding: dynamic(1em);
+
+/**
+ * @var {number/list}
+ * Data view {@link #emptyText} padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$dataview-empty-text-padding-big: dynamic(1em);
+
+/**
+ * Creates a visual theme for a DataView.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {color} $background-color
+ * Data view background-color
+ *
+ * @param {color} $empty-text-color
+ * Data view {@link #emptyText} color
+ *
+ * @param {string/number} $empty-text-font-weight
+ * Data view {@link #emptyText} font-weight
+ *
+ * @param {number} $empty-text-font-size
+ * Data view {@link #emptyText} font-size
+ *
+ * @param {number} $empty-text-font-size-big
+ * Data view {@link #emptyText} font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $empty-text-line-height
+ * Data view {@link #emptyText} line-height
+ *
+ * @param {number} $empty-text-line-height-big
+ * Data view {@link #emptyText} in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $empty-text-font-family
+ * Data view {@link #emptyText} font-family
+ *
+ * @param {number/list} $empty-text-padding
+ * Data view {@link #emptyText} padding
+ *
+ * @param {number/list} $empty-text-padding-big
+ * Data view {@link #emptyText} padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin dataview-ui(
+    $ui: null,
+    $background-color: null,
+    $empty-text-color: null,
+    $empty-text-font-weight: null,
+    $empty-text-font-size: null,
+    $empty-text-font-size-big: null,
+    $empty-text-line-height: null,
+    $empty-text-line-height-big: null,
+    $empty-text-font-family: null,
+    $empty-text-padding: null,
+    $empty-text-padding-big: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}dataview#{$ui-suffix} {
+        background-color: $background-color;
+
+        .#{$prefix}empty-text {
+            color: $empty-text-color;
+            @include font($empty-text-font-weight, $empty-text-font-size, $empty-text-line-height, $empty-text-font-family);
+            padding: $empty-text-padding;
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    font-size: $empty-text-font-size-big;
+                    line-height: $empty-text-line-height-big;
+                    padding: $empty-text-padding-big;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,108 @@
+.#{$prefix}button {
+    text-transform: uppercase;
+}
+
+.#{$prefix}button-pressing {
+    transition: background-color .2s 0.28s cubic-bezier(0.4, 0, 0.2, 1), color .2s 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@if $button-raised-ui {
+    @include button-raised-ui;
+}
+
+@if $button-raised-confirm-ui {
+    @include button-raised-confirm-ui;
+}
+
+@if $button-raised-decline-ui {
+    @include button-raised-decline-ui;
+}
+
+/* Floating Action Buttons
+{
+  xtype: 'button',
+  ui: 'fab',
+  bottom: 16,
+  right: 16,
+  iconCls: 'md-icon-add'
+}*/
+.#{$prefix}button-fab {
+    color: $background-color;
+    display: flex;
+    width: 56px;
+    height: 56px;
+    background-color: $accent-color;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    @include material-shadow(2);
+
+    .#{$prefix}button-icon {
+        color: $background-color;
+    }
+
+    &.#{$prefix}button-pressing {
+        background-color: $accent-pressed-color;
+        @include material-shadow(3);
+    }
+}
+
+.#{$prefix}docked-top {
+    .#{$prefix}hasbadge .#{$prefix}badge {
+        top: -8px;
+    }
+}
+
+.#{$prefix}hasbadge {
+    .#{$prefix}badge {
+
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        text-align: center;
+        display: block;
+        overflow: hidden;
+
+        line-height: inherit;
+
+        @include material-shadow(1);
+    }
+}
+
+// Ripple Effects
+
+.md-ripple-wrap {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.md-ripple {
+    @include animation(none);
+}
+
+.md-ripple-effect {
+    position: absolute;
+    border-radius: 50%;
+    @include scale(1);
+    opacity: .4;
+
+    @include animation(md-ripple-animation .5s ease-out forwards);
+}
+
+@include keyframes(md-ripple-animation) {
+    0% {
+        @include scale(0);
+        opacity: 0.4;
+    }
+    75% {
+        @include scale(1.5);
+        opacity: .2;
+    }
+    100% {
+        @include scale(1.5);
+        opacity: 0;
+    }
+}

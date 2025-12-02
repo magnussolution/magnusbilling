@@ -1,0 +1,25 @@
+{
+    "name": "theme-ios",
+    "namespace": "Ext",
+    "type": "theme",
+    "extend": "theme-triton",
+    "toolkit": "modern",
+    "creator": "Sencha",
+    "summary": "Ext JS iOS Theme",
+    "detailedDescription": "A modern-toolkit theme that emulates the native look and feel of iOS",
+    "version": "6.2.0.981",
+    "compatVersion": "6.2.0",
+    "format": "1",
+    "output": "${workspace.subpkg.prefix}/${package.name}",
+    "local": true,
+    "sass": {
+        "namespace": "Ext",
+        "etc": "${package.dir}/sass/etc/all.scss",
+        "var": "${package.dir}/sass/var",
+        "src": "${package.dir}/sass/src"
+    },
+    "classpath": "${package.dir}/src",
+    "overrides": "${package.dir}/overrides",
+    "framework": "ext",
+    "requires": ["font-ios"]
+}

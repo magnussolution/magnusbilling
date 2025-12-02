@@ -1,0 +1,14 @@
+@include checkcell-ui(
+    $padding: $checkcell-padding,
+    $padding-big: $checkcell-padding-big,
+    $checkbox-size: $checkcell-checkbox-size,
+    $checkbox-size-big: $checkcell-checkbox-size-big,
+    $checkbox-font-size: $checkcell-checkbox-font-size,
+    $checkbox-font-size-big: $checkcell-checkbox-font-size-big,
+    $checkbox-icon: $checkcell-checkbox-icon,
+    $checked-checkbox-icon: $checkcell-checked-checkbox-icon,
+    $checkbox-color: $checkcell-checkbox-color,
+    $checked-checkbox-color: $checkcell-checked-checkbox-color,
+    $disabled-checkbox-opacity: $checkcell-disabled-checkbox-opacity,
+    $disabled-checkbox-color: $checkcell-disabled-checkbox-color
+);

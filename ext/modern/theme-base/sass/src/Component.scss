@@ -1,0 +1,385 @@
+// Used for feature detection of CSS Variables
+:root {
+    --x-supports-variables: true;
+}
+
+html, body {
+-webkit-text-size-adjust: none;
+margin: 0;
+cursor: default;
+}
+
+// Reset
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3,
+h4, h5, h6, pre, code, form, fieldset, legend,
+input, textarea, p, blockquote, th, td {
+margin: 0;
+padding: 0;
+}
+
+table {
+border-collapse: collapse;
+border-spacing: 0;
+}
+
+fieldset, img {
+border: 0;
+}
+
+address, caption, cite, code, dfn, em, strong, th, var {
+font-style: normal;
+font-weight: normal;
+}
+
+li {
+list-style-type: none;
+}
+
+caption, th {
+text-align: left;
+}
+
+h1, h2, h3, h4, h5, h6 {
+font-size: 100%;
+font-weight: normal;
+}
+
+q:before,
+q:after {
+content: '';
+}
+
+abbr, acronym {
+border: 0;
+font-variant: normal;
+}
+
+sup {
+vertical-align: text-top;
+}
+
+sub {
+vertical-align: text-bottom;
+}
+
+input, textarea, select {
+font-family: inherit;
+font-size: inherit;
+font-weight: inherit;
+}
+
+*:focus {
+outline: none;
+}
+
+body.#{$prefix}desktop {
+    overflow: hidden;
+}
+
+@-ms-viewport {
+    width: device-width;
+}
+
+*, *:after, *:before {
+    @include box-sizing(border-box);
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: -moz-none;
+}
+
+input, textarea {
+    -webkit-user-select: text;
+    -ms-user-select: auto;
+    -moz-user-select: text;
+}
+
+.#{$prefix}hidden-visibility {
+    visibility: hidden !important;
+}
+
+.#{$prefix}hidden-display {
+    display: none !important;
+}
+
+.#{$prefix}hidden-offsets {
+    position: absolute !important;
+    left: -10000em;
+    top: -10000em;
+    visibility: hidden;
+}
+
+.#{$prefix}html {
+    -webkit-user-select: auto;
+    -webkit-touch-callout: inherit;
+    -ms-user-select: auto;
+
+    ul {
+        list-style-position: inside; 
+
+        li {
+            list-style-type: disc;
+        }
+    }
+
+    ol { 
+        list-style-position: inside; 
+
+        li {
+            list-style-type: decimal; 
+        }
+    }
+
+    ul ul, ol ul { 
+        list-style-type: circle; 
+        list-style-position: inside; 
+        margin-left: 15px; 
+    }
+    ol ol, ul ol { 
+        list-style-type: lower-latin; 
+        list-style-position: inside; 
+        margin-left: 15px; 
+    }
+}
+
+@-webkit-keyframes x-loading-spinner-rotate {
+    0%{     -webkit-transform: rotate(0deg);   }
+    8.32%{  -webkit-transform: rotate(0deg);   }
+
+    8.33%{  -webkit-transform: rotate(30deg);  }
+    16.65%{ -webkit-transform: rotate(30deg);  }
+
+    16.66%{ -webkit-transform: rotate(60deg);  }
+    24.99%{ -webkit-transform: rotate(60deg);  }
+
+    25%{    -webkit-transform: rotate(90deg);  }
+    33.32%{ -webkit-transform: rotate(90deg);  }
+
+    33.33%{ -webkit-transform: rotate(120deg); }
+    41.65%{ -webkit-transform: rotate(120deg); }
+
+    41.66%{ -webkit-transform: rotate(150deg); }
+    49.99%{ -webkit-transform: rotate(150deg); }
+
+    50%{    -webkit-transform: rotate(180deg); }
+    58.32%{ -webkit-transform: rotate(180deg); }
+
+    58.33%{ -webkit-transform: rotate(210deg); }
+    66.65%{ -webkit-transform: rotate(210deg); }
+
+    66.66%{ -webkit-transform: rotate(240deg); }
+    74.99%{ -webkit-transform: rotate(240deg); }
+
+    75%{    -webkit-transform: rotate(270deg); }
+    83.32%{ -webkit-transform: rotate(270deg); }
+
+    83.33%{ -webkit-transform: rotate(300deg); }
+    91.65%{ -webkit-transform: rotate(300deg); }
+
+    91.66%{ -webkit-transform: rotate(330deg); }
+    100%{   -webkit-transform: rotate(330deg); }
+}
+
+@keyframes x-loading-spinner-rotate {
+    0%{     transform: rotate(0deg);   }
+    8.32%{  transform: rotate(0deg);   }
+
+    8.33%{  transform: rotate(30deg);  }
+    16.65%{ transform: rotate(30deg);  }
+
+    16.66%{ transform: rotate(60deg);  }
+    24.99%{ transform: rotate(60deg);  }
+
+    25%{    transform: rotate(90deg);  }
+    33.32%{ transform: rotate(90deg);  }
+
+    33.33%{ transform: rotate(120deg); }
+    41.65%{ transform: rotate(120deg); }
+
+    41.66%{ transform: rotate(150deg); }
+    49.99%{ transform: rotate(150deg); }
+
+    50%{    transform: rotate(180deg); }
+    58.32%{ transform: rotate(180deg); }
+
+    58.33%{ transform: rotate(210deg); }
+    66.65%{ transform: rotate(210deg); }
+
+    66.66%{ transform: rotate(240deg); }
+    74.99%{ transform: rotate(240deg); }
+
+    75%{    transform: rotate(270deg); }
+    83.32%{ transform: rotate(270deg); }
+
+    83.33%{ transform: rotate(300deg); }
+    91.65%{ transform: rotate(300deg); }
+
+    91.66%{ transform: rotate(330deg); }
+    100%{   transform: rotate(330deg); }
+}
+
+.#{$prefix}shim {
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+    @include opacity(0);
+}
+
+.#{$prefix}css-shadow {
+    position: absolute;
+    @include border-radius($css-shadow-border-radius);
+}
+
+.#{$prefix}shadow {
+    -webkit-box-shadow: $shadow-x-offset $shadow-y-offset $shadow-blur-radius $shadow-width $shadow-color;
+    box-shadow: $shadow-x-offset $shadow-y-offset $shadow-blur-radius $shadow-width $shadow-color;
+}
+
+@if ($enable-floated-shadows) {
+    .#{$prefix}floated {
+        @extend .#{$prefix}shadow;
+    }
+}
+
+.#{$prefix}no-shadow {
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+}
+
+.#{$prefix}floating {
+    position: absolute !important;
+}
+
+.#{$prefix}center {
+    @include absolute-position();
+    @include st-box();
+    @include st-box-align(center);
+    @include st-box-pack(center);
+
+    > * {
+        position: relative;
+    }
+
+    > .#{$prefix}floating {
+        position: relative !important;
+	}
+}
+
+@if ($enable-status-bar-padding) {
+    // Must a native iOS app (not standalone)
+    // Must not be phone AND landscape (status bar disappears in landscape for phones)
+    .#{$prefix}ios-native:not(.#{$prefix}phone.#{$prefix}landscape) {
+        padding-top: 20px;
+    }
+}
+
+.#{$prefix}font-icon {
+    font-weight: normal;
+    // Flexbox layout is used to vertically center the icon inside the element.
+    // The pseudo el below may or may not be the same size as the icon element's font-size
+    // therefore we cannot rely on line-height: 1 to vertically center the icon.
+    // If block behavior is needed, use flex instead of inline-flex.
+    @include st-inline-box;
+    @include st-box-align(center);
+    @include st-box-pack(center);
+
+    &:before {
+        @include st-box();
+        line-height: 1;
+        font-style: normal;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+
+        /* Support for all WebKit browsers. */
+        -webkit-font-smoothing: antialiased;
+
+        /* Support for Firefox. */
+        -moz-osx-font-smoothing: grayscale;
+
+        /* Roboto uses ligatures.  Android and IE seem to need this */
+        font-feature-settings: 'liga';
+
+        /* Support for Safari and Chrome. */
+        text-rendering: optimizeLegibility;
+    }
+}
+
+.#{$prefix}noborder-l {
+    border-left-width: 0 !important;
+}
+
+.#{$prefix}noborder-b {
+    border-bottom-width: 0 !important;
+}
+
+.#{$prefix}noborder-bl {
+    border-bottom-width: 0 !important;
+    border-left-width: 0 !important;
+}
+
+.#{$prefix}noborder-r {
+    border-right-width: 0 !important;
+}
+
+.#{$prefix}noborder-rl {
+    border-right-width: 0 !important;
+    border-left-width: 0 !important;
+}
+
+.#{$prefix}noborder-rb {
+    border-right-width: 0 !important;
+    border-bottom-width: 0 !important;
+}
+
+.#{$prefix}noborder-rbl {
+    border-right-width: 0 !important;
+    border-bottom-width: 0 !important;
+    border-left-width: 0 !important;
+}
+
+.#{$prefix}noborder-t {
+    border-top-width: 0 !important;
+}
+
+.#{$prefix}noborder-tl {
+    border-top-width: 0 !important;
+    border-left-width: 0 !important;
+}
+
+.#{$prefix}noborder-tb {
+    border-top-width: 0 !important;
+    border-bottom-width: 0 !important;
+}
+
+.#{$prefix}noborder-tbl {
+    border-top-width: 0 !important;
+    border-bottom-width: 0 !important;
+    border-left-width: 0 !important;
+}
+
+.#{$prefix}noborder-tr {
+    border-top-width: 0 !important;
+    border-right-width: 0 !important;
+}
+
+.#{$prefix}noborder-trl {
+    border-top-width: 0 !important;
+    border-right-width: 0 !important;
+    border-left-width: 0 !important;
+}
+
+.#{$prefix}noborder-trb {
+    border-top-width: 0 !important;
+    border-right-width: 0 !important;
+    border-bottom-width: 0 !important;
+}
+
+.#{$prefix}noborder-trbl {
+    border-width: 0 !important;
+}

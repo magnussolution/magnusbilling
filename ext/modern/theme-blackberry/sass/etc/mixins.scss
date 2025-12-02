@@ -1,0 +1,34 @@
+//$default-gradient: null;
+
+///**
+// * @class Global_CSS
+// */
+
+$bb-icons-path: '#{$bb-images-path}/icons';
+$bb-icons-light-path: '#{$bb-images-path}/icons-light';
+
+@mixin bb-gradient($color, $offset: 2) {
+  background: $color;
+  @include background-image(linear-gradient(top, color-stops(lighten($color, $offset), darken($color, $offset))));
+}
+
+@mixin bb-icon($icon) {
+  .x-button-icon.#{$icon} {
+    content: '';
+    background-image: url('#{$bb-icons-path}/ic_#{$icon}.png');
+
+    &:before {
+      content: '' !important;
+    }
+  }
+
+  .x-button-light .x-button-icon.#{$icon}, .x-button-icon.#{$icon}-light, .x-button.bb-default .x-button-icon.#{$icon} {
+    &:after {
+      content: '';
+      background-image: url('#{$bb-icons-light-path}/ic_#{$icon}.png');
+    }
+    &:before {
+      content: '' !important;
+    }
+  }
+}

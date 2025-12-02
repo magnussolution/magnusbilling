@@ -1,0 +1,29 @@
+$panel-header-font-size: dynamic(1.23rem);
+$panel-header-font-size-big: dynamic(1.25rem);
+$panel-header-line-height: dynamic(1.25em);
+$panel-header-line-height-big: dynamic(1.2em);
+$panel-header-padding: dynamic(.75em .94em);
+$panel-header-padding-big: dynamic(.8em .75em);
+$panel-header-icon-font-size: dynamic(1em);
+$panel-header-icon-font-size-big: dynamic(1em);
+$panel-header-color: dynamic($light-color);
+$panel-tool-opacity: dynamic(0.8);
+$panel-tool-opacity-over: dynamic(1);
+$panel-tool-font-size: dynamic(1em);
+$panel-tool-font-size-big: dynamic(1em);
+$panel-tool-opacity-pressed: dynamic(0.8);
+$panel-header-icon-opacity: dynamic(1);
+$panel-tool-spacing: dynamic(.375em);
+$panel-tool-spacing-big: dynamic(.4em);
+
+@mixin panel-light-ui {
+    @include panel-ui(
+        $ui: 'light',
+        $header-color: $highlight-color,
+        $header-background-color: #fff,
+        $border-color: $neutral-color,
+        $header-border-color: $neutral-color,
+        $body-border-color: $neutral-color,
+        $tool-color: $neutral-dark-color
+    );
+}

@@ -1,0 +1,23 @@
+/**
+ * @class Ext.Toast
+ */
+
+.#{$prefix}toast {
+    margin: $toast-margin;
+    @include border($toast-border-width $toast-border-style $toast-border-color);
+    @include box-shadow($toast-shadow);
+
+    .#{$prefix}toast-inner {
+        color: $toast-color;
+        background-color: $toast-background-color;
+        @include font($toast-font-weight, $toast-font-size, $toast-line-height, $toast-font-family);
+        padding: $toast-padding;
+    }
+
+    .#{$prefix}big & {
+        .#{$prefix}toast-inner {
+            @include font($toast-font-weight, $toast-font-size-big, $toast-line-height-big, $toast-font-family);
+            padding: $toast-padding-big;
+        }
+    }
+}

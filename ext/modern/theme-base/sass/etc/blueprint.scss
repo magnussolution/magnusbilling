@@ -1,0 +1,120 @@
+$blueprint-font-family: "Helvetica Neue", Arial, Helvetica, sans-serif !default;
+$blueprint-fixed-font-family: "andale mono", "lucida console", monospace !default;
+$blueprint-font-size: 12px !default;
+
+$font-color:     #333333 !default;
+$quiet-color:    lighten($font-color, 20%) !default;
+$loud-color:     darken($font-color, 13.33%) !default;
+$header-color:   darken($font-color, 6.67%) !default;
+
+$alt-text-color: #666666 !default;
+
+$link-color:         #06c                  !default;
+$link-hover-color:   #09f                  !default;
+$link-focus-color:   $link-hover-color     !default;
+$link-active-color:  lighten(adjust-hue($link-color, 75deg), 10%) !default;
+$link-visited-color: darken($link-color, 10%) !default;
+
+$blueprint-background-color: #eeeeee !default;
+$blueprint-table-header-color: #c3d9ff !default;
+$blueprint-table-stripe-color: #e5ecf9 !default;
+
+@mixin normal-text      { font-family: $blueprint-font-family; color: $font-color; }
+@mixin fixed-width-text { font: 1em $blueprint-fixed-font-family; line-height: 1.5; }
+@mixin header-text      { font-weight: normal; color: $header-color; }
+@mixin quiet            { color: $quiet-color; }
+@mixin loud             { color: $loud-color; }
+
+@mixin link-colors($normal, $hover: false, $active: false, $visited: false, $focus: false) {
+  color: $normal;
+  @if $visited {
+    &:visited {
+      color: $visited;
+    }
+  }
+  @if $focus {
+    &:focus {
+      color: $focus;
+    }
+  }
+  @if $hover {
+    &:hover {
+      color: $hover;
+    }
+  }
+  @if $active {
+    &:active {
+      color: $active;
+    }
+  }
+}
+
+@mixin float-left {
+  @include float(left);
+}
+
+@mixin float-right {
+  @include float(right);
+}
+
+@mixin float($side: left) {
+  float: unquote($side);
+}
+
+@mixin blueprint-typography($nested: false) {
+  @if $nested {
+    @include blueprint-typography-body;
+    @include blueprint-typography-defaults;
+  } @else {
+    body { @include blueprint-typography-body; }
+    @include blueprint-typography-defaults;
+  }
+}
+
+@mixin blueprint-typography-body($font-size: $blueprint-font-size) {
+  line-height: 1.5;
+  @include normal-text;
+  font-size: 100% * $font-size / 16px;
+}
+
+@mixin blueprint-typography-defaults {
+  #{headers(all)} { @include header-text;
+    img           { margin: 0; } }
+  h1              { font-size: 3em;   line-height: 1;    margin-bottom: 0.50em; }
+  h2              { font-size: 2em;                      margin-bottom: 0.75em; }
+  h3              { font-size: 1.5em; line-height: 1;    margin-bottom: 1.00em; }
+  h4              { font-size: 1.2em; line-height: 1.25; margin-bottom: 1.25em; }
+  h5              { font-size: 1em;   font-weight: bold; margin-bottom: 1.50em; }
+  h6              { font-size: 1em;   font-weight: bold;                        }
+  p               { margin: 0 0 1.5em;
+    .left         { @include float-left;  margin: 1.5em 1.5em 1.5em 0; padding: 0; }
+    .right        { @include float-right; margin: 1.5em 0 1.5em 1.5em; padding: 0; } }
+  a               { text-decoration: underline; @include link-colors($link-color, $link-hover-color, $link-active-color, $link-visited-color, $link-focus-color); }
+  blockquote      { margin: 1.5em; color: $alt-text-color; font-style: italic; }
+  strong, dfn     { font-weight: bold; }
+  em, dfn         { font-style: italic; }
+  sup, sub        { line-height: 0; }
+  abbr, acronym   { border-bottom: 1px dotted #666666; }
+  address         { margin: 0 0 1.5em; font-style: italic; }
+  del             { color: $alt-text-color; }
+  pre             { margin: 1.5em 0; white-space: pre; }
+  pre, code, tt   { @include fixed-width-text; }
+  li ul, li ol    { margin: 0; }
+  ul, ol          { margin: 0 1.5em 1.5em 0; padding-left: 1.5em; }
+  ul              { list-style-type: disc; }
+  ol              { list-style-type: decimal; }
+  dl              { margin: 0 0 1.5em 0;
+    dt            { font-weight: bold; } }
+  dd              { margin-left: 1.5em; }
+  table           { margin-bottom: 1.4em; width: 100%; }
+  th              { font-weight: bold; }
+  thead th        { background: $blueprint-table-header-color; }
+  th, td, caption { padding: 4px 10px 4px 5px; }
+  table.striped tr:nth-child(even) td,
+  table         tr.even            td
+  { background: $blueprint-table-stripe-color; }
+  tfoot           { font-style: italic; }
+  caption         { background: $blueprint-background-color; }
+  .quiet          { @include quiet; }
+  .loud           { @include loud; }
+}

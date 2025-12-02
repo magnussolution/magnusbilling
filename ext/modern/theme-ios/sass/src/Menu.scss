@@ -1,0 +1,10 @@
+.#{$prefix}menu {
+    .#{$prefix}button {
+        border-bottom-color: $neutral-highlight-color;
+        border-radius: 0;
+
+        &:last-child {
+            border-bottom-color: transparent;
+        }
+    }
+}

@@ -1,0 +1,418 @@
+/**
+ * @class Ext.Toolbar
+ */
+
+/**
+ * @var {color}
+ * Toolbar background-color
+ */
+$toolbar-background-color: dynamic($background-color);
+
+/**
+ * @var {string/list}
+ * Toolbar background-gradient. Can be either the name of a gradient defined by
+ * {@link Global_CSS#background-gradient} or a list of color stops.
+ */
+$toolbar-background-gradient: dynamic(null);
+
+/**
+ * @var {color}
+ * Toolbar color
+ */
+$toolbar-color: dynamic($color);
+
+/**
+ * @var {number/list}
+ * Toolbar border-width
+ */
+$toolbar-border-width: dynamic(1px);
+
+/**
+ * @var {string/list}
+ * Toolbar border-style
+ */
+$toolbar-border-style: dynamic(solid);
+
+/**
+ * @var {color/list}
+ * Toolbar border-color
+ */
+$toolbar-border-color: dynamic($neutral-medium-dark-color);
+
+/**
+ * @var {list}
+ * Toolbar box-shadow
+ */
+$toolbar-box-shadow: dynamic(null);
+
+/**
+ * @var {string/number}
+ * Toolbar font-weight
+ */
+$toolbar-font-weight: dynamic($font-weight-bold);
+
+/**
+ * @var {number}
+ * Toolbar font-size
+ */
+$toolbar-font-size: dynamic(1rem);
+
+/**
+ * @var {number}
+ * Toolbar font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$toolbar-font-size-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Toolbar line-height
+ */
+$toolbar-line-height: dynamic(1.25em);
+
+/**
+ * @var {number}
+ * Toolbar line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$toolbar-line-height-big: dynamic(null);
+
+/**
+ * @var {string}
+ * Toolbar font-family
+ */
+$toolbar-font-family: dynamic($font-family);
+
+/**
+ * @var {number/list}
+ * Toolbar padding
+ */
+$toolbar-padding: dynamic(.4616em .5em);
+
+/**
+ * @var {number/list}
+ * Toolbar padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$toolbar-padding-big: dynamic(.4em .67em);
+
+/**
+ * @var {number}
+ * The space in between horizontally aligned Toolbar items
+ */
+$toolbar-horizontal-spacing: dynamic(.2rem);
+
+/**
+ * @var {number}
+ * The space in between horizontally aligned Toolbar items in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$toolbar-horizontal-spacing-big: dynamic(.3rem);
+
+/**
+ * @var {number}
+ * The space in between vertically aligned Toolbar items
+ */
+$toolbar-vertical-spacing: dynamic(.2rem);
+
+/**
+ * @var {number}
+ * The space in between vertically aligned Toolbar items in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$toolbar-vertical-spacing-big: dynamic(.3rem);
+
+/**
+ * @var {color}
+ * Toolbar {@link Ext.Title Title} color
+ */
+$toolbar-title-color: dynamic($highlight-color);
+
+/**
+ * @var {string/number}
+ * Toolbar {@link Ext.Title Title} font-weight
+ */
+$toolbar-title-font-weight: dynamic($toolbar-font-weight);
+
+/**
+ * @var {number}
+ * Toolbar {@link Ext.Title Title} font-size
+ */
+$toolbar-title-font-size: dynamic($toolbar-font-size);
+
+/**
+ * @var {number}
+ * Toolbar {@link Ext.Title Title} font-size in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$toolbar-title-font-size-big: dynamic($toolbar-font-size-big);
+
+/**
+ * @var {string}
+ * Toolbar {@link Ext.Title Title} font-family
+ */
+$toolbar-title-font-family: dynamic($font-family);
+
+/**
+ * @var {number}
+ * Toolbar {@link Ext.Title Title} title-padding
+ */
+$toolbar-title-padding: dynamic(null);
+
+/**
+ * @var {number}
+ * Toolbar {@link Ext.Title Title} title-padding in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$toolbar-title-padding-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Toolbar min-height
+ */
+$toolbar-min-height: dynamic(2.7693em);
+
+/**
+ * @var {number}
+ * Toolbar min-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$toolbar-min-height-big: dynamic(2.9334em);
+
+/**
+ * Creates a visual theme for a Toolbar.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=toolbar] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {color} $background-color
+ * Toolbar background-color
+ *
+ * @param {string/list} $background-gradient
+ * Toolbar background-gradient. Can be either the name of a gradient defined by
+ * {@link Global_CSS#background-gradient} or a list of color stops.
+ *
+ * @param {number/list} $border-width
+ * Toolbar border-width
+ *
+ * @param {string/list} $border-style
+ * Toolbar border-style
+ *
+ * @param {color} $border-color
+ * Toolbar border-color
+ *
+ * @param {color} $box-shadow
+ * Toolbar box-shadow
+ *
+ * @param {string/number} $font-weight
+ * Toolbar font-weight
+ *
+ * @param {number} $font-size
+ * Toolbar font-size
+ *
+ * @param {number} $font-size-big
+ * Toolbar font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $line-height
+ * Toolbar line-height
+ *
+ * @param {number} $line-height-big
+ * Toolbar line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $font-family
+ * Toolbar font-family
+ *
+ * @param {number/list} $padding
+ * Toolbar padding
+ *
+ * @param {number/list} $padding-big
+ * Toolbar padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $horizontal-spacing
+ * The space in between horizontally aligned Toolbar items
+ *
+ * @param {number} $horizontal-spacing-big
+ * The space in between horizontally aligned Toolbar items in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $vertical-spacing
+ * The space in between vertically aligned Toolbar items
+ *
+ * @param {number} $vertical-spacing-big
+ * The space in between vertically aligned Toolbar items in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $title-color
+ * Toolbar {@link Ext.Title Title} color
+ *
+ * @param {string/number} $title-font-weight
+ * Toolbar {@link Ext.Title Title} font-weight
+ *
+ * @param {number} $title-font-size
+ * Toolbar {@link Ext.Title Title} font-size
+ *
+ * @param {number} $title-font-size-big
+ * Toolbar {@link Ext.Title Title} font-size in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $title-padding
+ * Toolbar {@link Ext.Title Title} padding
+ *
+ * @param {number} $title-padding-big
+ * Toolbar {@link Ext.Title Title} padding in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $title-font-family
+ * Toolbar {@link Ext.Title Title} font-family
+ *
+ * @param {number} $min-height
+ * Toolbar min-height
+ *
+ * @param {number} $min-height-big
+ * Toolbar min-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin toolbar-ui(
+    $ui: null,
+    $xtype: toolbar,
+    $background-color: null,
+    $background-gradient: null,
+    $color: null,
+    $border-width: null,
+    $border-style: null,
+    $border-color: null,
+    $box-shadow: null,
+    $font-weight: null,
+    $font-size: null,
+    $font-size-big: null,
+    $line-height: null,
+    $line-height-big: null,
+    $font-family: null,
+    $padding: null,
+    $padding-big: null,
+    $horizontal-spacing: null,
+    $horizontal-spacing-big: null,
+    $vertical-spacing: null,
+    $vertical-spacing-big: null,
+    $title-color: null,
+    $title-font-weight: null,
+    $title-font-size: null,
+    $title-font-size-big: null,
+    $title-padding: null,
+    $title-padding-big: null,
+    $title-font-family: null,
+    $min-height: null,
+    $min-height-big: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    @if $background-color != null {
+        @if $border-color == null {
+            $border-color: toolbar-border-color($background-color);
+        }
+
+        @if $title-color == null {
+            $title-color: toolbar-title-color($background-color);
+        }
+    }
+
+    .#{$prefix}#{$xtype}#{$ui-suffix} {
+        @include background-gradient($background-color, $background-gradient);
+        @include border($border-width, $border-style, $border-color);
+        @include font($font-weight, $font-size, $line-height, $font-family);
+        color: $color;
+        box-shadow: $box-shadow;
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                font-size: $font-size-big;
+                line-height: $line-height-big;
+            }
+        }
+
+        @if $horizontal-spacing != null {
+            .#{$prefix}#{$xtype}-inner.#{$prefix}horizontal > * {
+                margin-right: $horizontal-spacing;
+
+                @if $enable-big and ($horizontal-spacing-big != $horizontal-spacing) {
+                    .#{$prefix}big & {
+                        margin-right: $horizontal-spacing-big;
+                    }
+                }
+
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
+        }
+
+        @if $vertical-spacing != null {
+            .#{$prefix}vertical > * {
+                margin-bottom: $vertical-spacing;
+
+                @if $enable-big and ($vertical-spacing-big != $vertical-spacing) {
+                    .#{$prefix}big & {
+                        margin-bottom: $vertical-spacing-big;
+                    }
+                }
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+
+        .#{$prefix}title {
+            color: $title-color;
+            padding: $title-padding;
+            @include font(
+                $font-weight: $title-font-weight,
+                $font-size: $title-font-size,
+                $font-family: $title-font-family
+            );
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    font-size: $title-font-size-big;
+                    padding: $title-padding-big;
+                }
+            }
+        }
+    }
+
+    .#{$prefix}#{$xtype}-inner#{$ui-suffix} {
+        padding: $padding;
+        min-height: $min-height;
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                padding: $padding-big;
+                min-height: $min-height-big;
+            }
+        }
+    }
+}
+
+/**
+ * Creates a theme UI for toolbars.
+ *
+ *     // SCSS
+ *     @include sencha-toolbar-ui('sub', #58710D, 'glossy');
+ *
+ *     // JS
+ *     var myTb = new Ext.Toolbar({title: 'My Green Glossy Toolbar', ui: 'sub'})
+ *
+ * @param {string} $ui-label The name of the UI being created.
+ *   Can not included spaces or special punctuation (used in class names)
+ * @param {color} $color Base color for the UI.
+ * @param {string} $gradient: $toolbar-background-gradient Background gradient style for the UI.
+ *
+ * @member Ext.Button
+ * @deprecated 6.0 Use {@link #toolbar-ui} instead
+ */
+@mixin sencha-toolbar-ui($ui-label, $color, $gradient: $toolbar-background-gradient) {
+    @include toolbar-ui(
+        $ui: $ui-label,
+        $background-color: $color,
+        $background-gradient: $gradient
+    );
+}

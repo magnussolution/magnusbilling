@@ -1,0 +1,51 @@
+/**
+ * @class Ext.form.CheckboxGroup
+ */
+
+/**
+ * @var {number/list}
+ * The padding of the CheckboxGroup body element
+ */
+$form-checkboxgroup-body-padding: dynamic(0 4px);
+
+/**
+ * @var {color}
+ * The border color of the CheckboxGroup body element when in an invalid state.
+ */
+$form-checkboxgroup-body-invalid-border-color: dynamic($form-field-invalid-border-color);
+
+/**
+ * @var {string}
+ * The border style of the CheckboxGroup body element when in an invalid state.
+ */
+$form-checkboxgroup-body-invalid-border-style: dynamic(solid);
+
+/**
+ * @var {number}
+ * The border width of the CheckboxGroup body element when in an invalid state.
+ */
+$form-checkboxgroup-body-invalid-border-width: dynamic(1px);
+
+/**
+ * @var {string}
+ * The background image of the CheckboxGroup body element when in an invalid state.
+ */
+$form-checkboxgroup-body-invalid-background-image: dynamic($form-field-invalid-background-image);
+
+/**
+ * @var {string}
+ * The background-repeat of the CheckboxGroup body element when in an invalid state.
+ */
+$form-checkboxgroup-body-invalid-background-repeat: dynamic($form-field-invalid-background-repeat);
+
+/**
+ * @var {string}
+ * The background-position of the CheckboxGroup body element when in an invalid state.
+ */
+$form-checkboxgroup-body-invalid-background-position: dynamic($form-field-invalid-background-position);
+
+/**
+ * @var {boolean}
+ * True to include the "default" checkboxgroup UI
+ */
+$include-checkboxgroup-default-ui: dynamic($include-field-default-ui);

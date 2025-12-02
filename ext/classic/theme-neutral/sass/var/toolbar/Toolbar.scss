@@ -1,0 +1,365 @@
+/**
+ * @class Ext.toolbar.Toolbar
+ */
+
+/**
+ * @var {number}
+ * The default font-size of Toolbar text
+ */
+$toolbar-font-size: dynamic($font-size);
+
+/**
+ * @var {color}
+ * The background-color of the Toolbar
+ */
+$toolbar-background-color: dynamic($base-color);
+
+/**
+ * @var {string/list}
+ * The background-gradient of the Toolbar.  Can be either the name of a predefined gradient
+ * or a list of color stops. Used as the `$type` parameter for {@link Global_CSS#background-gradient}.
+ */
+$toolbar-background-gradient: dynamic('none');
+
+/**
+ * @var {number}
+ * The horizontal spacing of Toolbar items
+ */
+$toolbar-horizontal-spacing: dynamic(2px);
+
+/**
+ * @var {number}
+ * The vertical spacing of Toolbar items
+ */
+$toolbar-vertical-spacing: dynamic(2px);
+
+/**
+ * @var {number}
+ * The horizontal spacing of {@link Ext.panel.Panel#fbar footer} Toolbar items
+ */
+$toolbar-footer-horizontal-spacing: dynamic(6px);
+
+/**
+ * @var {number}
+ * The vertical spacing of {@link Ext.panel.Panel#fbar footer} Toolbar items
+ */
+$toolbar-footer-vertical-spacing: dynamic(4px);
+
+/**
+ * @var {color}
+ * The background-color of {@link Ext.panel.Panel#fbar footer} Toolbars
+ */
+$toolbar-footer-background-color: dynamic(transparent);
+
+/**
+ * @var {number}
+ * The border-width of {@link Ext.panel.Panel#fbar footer} Toolbars
+ */
+$toolbar-footer-border-width: dynamic(0);
+
+/**
+ * @var {color}
+ * The border-color of Toolbars
+ */
+$toolbar-border-color: dynamic($base-color);
+
+/**
+ * @var {number}
+ * The border-width of Toolbars
+ */
+$toolbar-border-width: dynamic(1px);
+
+/**
+ * @var {string}
+ * The border-style of Toolbars
+ */
+$toolbar-border-style: dynamic(solid);
+
+/**
+ * @var {number}
+ * The width of Toolbar {@link Ext.toolbar.Spacer Spacers}
+ */
+$toolbar-spacer-width: dynamic(2px);
+
+/**
+ * @var {color}
+ * The main border-color of Toolbar {@link Ext.toolbar.Separator Separators}
+ */
+$toolbar-separator-color: dynamic(adjust-color($base-color, $hue: -1deg, $saturation: 100%, $lightness: -4.3%));
+
+/**
+ * @var {color}
+ * The highlight border-color of Toolbar {@link Ext.toolbar.Separator Separators}
+ */
+$toolbar-separator-highlight-color: dynamic(#fff);
+
+/**
+ * @var {number/list}
+ * The margin of {@link Ext.toolbar.Separator Separators} on a horizontally oriented Toolbar
+ */
+$toolbar-separator-horizontal-margin: dynamic(0 $toolbar-horizontal-spacing 0 0);
+
+/**
+ * @var {number}
+ * The height of {@link Ext.toolbar.Separator Separators} on a horizontally oriented Toolbar
+ */
+$toolbar-separator-horizontal-height: dynamic(14px);
+
+/**
+ * @var {string}
+ * The border-style of {@link Ext.toolbar.Separator Separators} on a horizontally oriented Toolbar
+ */
+$toolbar-separator-horizontal-border-style: dynamic(solid);
+
+/**
+ * @var {number}
+ * The border-width of {@link Ext.toolbar.Separator Separators} on a horizontally oriented Toolbar
+ */
+$toolbar-separator-horizontal-border-width: dynamic(0 1px);
+
+/**
+ * @var {number/list}
+ * The margin of {@link Ext.toolbar.Separator Separators} on a vertically oriented Toolbar
+ */
+$toolbar-separator-vertical-margin: dynamic(0 5px $toolbar-vertical-spacing);
+
+/**
+ * @var {string}
+ * The border-style of {@link Ext.toolbar.Separator Separators} on a vertically oriented Toolbar
+ */
+$toolbar-separator-vertical-border-style: dynamic(solid none);
+
+/**
+ * @var {number}
+ * The border-width of {@link Ext.toolbar.Separator Separators} on a vertically oriented Toolbar
+ */
+$toolbar-separator-vertical-border-width: dynamic(1px 0);
+
+/**
+ * @var {string}
+ * The default font-family of Toolbar text
+ */
+$toolbar-text-font-family: dynamic($font-family);
+
+/**
+ * @var {number}
+ * The default font-size of Toolbar text
+ */
+$toolbar-text-font-size: dynamic($toolbar-font-size);
+
+/**
+ * @var {number}
+ * The default font-size of Toolbar text
+ */
+$toolbar-text-font-weight: dynamic($font-weight);
+
+/**
+ * @var {color}
+ * The text-color of Toolbar text
+ */
+$toolbar-text-color: dynamic(mix(desaturate(lighten($base-color, 37), 5), #000, 30));
+
+/**
+ * @var {number}
+ * The line-height of Toolbar text
+ */
+$toolbar-text-line-height: dynamic(16px);
+
+/**
+ * @var {number/list}
+ * The padding of Toolbar text
+ */
+$toolbar-text-padding: dynamic(0 4px);
+
+/**
+ * @var {number}
+ * The width of Toolbar scrollers
+ */
+$toolbar-scroller-width: dynamic(14px);
+
+/**
+ * @var {number}
+ * The height of Toolbar scrollers
+ */
+$toolbar-scroller-height: dynamic(22px);
+
+/**
+ * @var {number}
+ * The width of scrollers on vertically aligned toolbars
+ */
+$toolbar-scroller-vertical-width: dynamic($toolbar-scroller-height);
+
+/**
+ * @var {number}
+ * The height of scrollers on vertically aligned toolbars
+ */
+$toolbar-scroller-vertical-height: dynamic($toolbar-scroller-width);
+
+/**
+ * @var {color}
+ * The border-color of Toolbar scroller buttons
+ */
+$toolbar-scroller-border-color: dynamic(#8db2e3);
+
+/**
+ * @var {number}
+ * The border-width of Toolbar scroller buttons
+ */
+$toolbar-scroller-border-width: dynamic(0 0 1px);
+
+/**
+ * @var {color}
+ * The border-color of scroller buttons on vertically aligned toolbars
+ */
+$toolbar-scroller-vertical-border-color: dynamic($toolbar-scroller-border-color);
+
+/**
+ * @var {number}
+ * The border-width of scroller buttons on vertically aligned toolbars
+ */
+$toolbar-scroller-vertical-border-width: dynamic(0);
+
+/**
+ * @var {number/list}
+ * The margin of "top" Toolbar scroller buttons
+ */
+$toolbar-scroller-top-margin: dynamic(4px 0);
+
+/**
+ * @var {number/list}
+ * The margin of "right" Toolbar scroller buttons
+ */
+$toolbar-scroller-right-margin: dynamic(0 4px);
+
+/**
+ * @var {number/list}
+ * The margin of "bottom" Toolbar scroller buttons
+ */
+$toolbar-scroller-bottom-margin: dynamic(4px 0);
+
+/**
+ * @var {number/list}
+ * The margin of "left" Toolbar scroller buttons
+ */
+$toolbar-scroller-left-margin: dynamic(0 4px);
+
+/**
+ * @var {string}
+ * The cursor of Toolbar scroller buttons
+ */
+$toolbar-scroller-cursor: dynamic(pointer);
+
+/**
+ * @var {string}
+ * The cursor of disabled Toolbar scroller buttons
+ */
+$toolbar-scroller-cursor-disabled: dynamic(default);
+
+/**
+ * @var {number}
+ * The opacity of Toolbar scroller buttons. Only applicable when
+ * {@link #$toolbar-classic-scrollers} is `false`.
+ */
+$toolbar-scroller-opacity: dynamic(0.6);
+
+/**
+ * @var {number}
+ * The opacity of hovered Toolbar scroller buttons. Only applicable when
+ * {@link #$toolbar-classic-scrollers} is `false`.
+ */
+$toolbar-scroller-opacity-over: dynamic(0.8);
+
+/**
+ * @var {number}
+ * The opacity of pressed Toolbar scroller buttons. Only applicable when
+ * {@link #$toolbar-classic-scrollers} is `false`.
+ */
+$toolbar-scroller-opacity-pressed: dynamic(1);
+
+/**
+ * @var {number}
+ * The opacity of disabled Toolbar scroller buttons.
+ */
+$toolbar-scroller-opacity-disabled: dynamic(0.25);
+
+/**
+ * @var {color}
+ * The color to use for toolbar scroller icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$toolbar-scroller-glyph-color: dynamic($neutral-color);
+
+/**
+ * @var {number}
+ * The font size for toolbar scroller icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$toolbar-scroller-glyph-font-size: dynamic(16px);
+
+/**
+ * @var {string/list}
+ * Glyph for the "top" scroller icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$toolbar-scroller-top-glyph: dynamic($fa-var-chevron-up $toolbar-scroller-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the "right" scroller icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$toolbar-scroller-right-glyph: dynamic($fa-var-chevron-right $toolbar-scroller-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the "bottom" scroller icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$toolbar-scroller-bottom-glyph: dynamic($fa-var-chevron-down $toolbar-scroller-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the "left" scroller icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$toolbar-scroller-left-glyph: dynamic($fa-var-chevron-left $toolbar-scroller-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {boolean}
+ * `true` to use classic-style scroller buttons.  When `true` scroller buttons are given their
+ * hover state by changing their background-position,  When `false` scroller buttons are
+ * given their hover state by applying opacity.
+ */
+$toolbar-classic-scrollers: dynamic(false);
+
+/**
+ * @var {string}
+ * The sprite to use for {@link Ext.panel.Tool Tools} on a Toolbar
+ */
+$toolbar-tool-background-image: dynamic('none');
+
+/**
+ * @var {color}
+ * The color to use for the Toolbar's tool icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$toolbar-tool-glyph-color: dynamic($neutral-color);
+
+/**
+ * @var {color}
+ * The color to use for the {@link #overflowHandler menu overflow} "more" icon when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$toolbar-menu-overflow-glyph-color: dynamic($button-toolbar-glyph-color);
+
+/**
+ * @var {string/list}
+ * Glyph for the {@link #overflowHandler menu overflow} "more" icon when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$toolbar-menu-overflow-glyph: dynamic($fa-var-bars $button-small-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {boolean}
+ * True to include the "default" toolbar UI
+ */
+$include-toolbar-default-ui: dynamic($include-default-uis);
+
+/**
+ * @var {boolean}
+ * True to include the "footer" toolbar UI
+ */
+$include-toolbar-footer-ui: dynamic($include-default-uis);

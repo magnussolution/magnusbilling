@@ -1,0 +1,28 @@
+$field-background-color: dynamic(null);
+
+
+$field-label-color: dynamic($highlight-color);
+$field-label-padding: dynamic(null);
+$field-label-padding-big: dynamic(null);
+
+$field-label-font-size: dynamic(px-to-rem(12px, 12px));
+$field-label-font-size-big: dynamic(px-to-rem(12px, 14px));
+$field-label-font-weight: dynamic(400);
+$field-label-line-height: dynamic(px-to-em(16px, 12px));
+$field-label-line-height-big: dynamic(px-to-em(16px, 12px));
+
+$field-focused-label-color: dynamic($base-color);
+$field-disabled-label-color: dynamic($disabled-color);
+
+$field-required-indicator-font-size: dynamic(12px);
+$field-required-indicator-font-weight: dynamic(400);
+$field-required-indicator-font-family: dynamic($font-icon-font-family);
+
+$field-required-indicator-position: dynamic(relative);
+$field-required-indicator-top: dynamic(-3px);
+$field-required-indicator-padding: dynamic($content-padding/4);
+
+$field-vertical-spacing: dynamic(px-to-em(8px, 12px));
+$field-vertical-spacing-big: dynamic(px-to-em(20px, 12px));
+
+$field-disabled-opacity: dynamic(null);

@@ -1,0 +1,110 @@
+/**
+ * @class Ext.field.Field
+ */
+
+// Private variables
+$form-clear-size: 2.2em;
+
+@mixin checkmark($color: $ios7-blue) {
+  @extend .x-checkmark-base;
+  color: $color;
+}
+
+.x-checkmark-base {
+  position: absolute;
+  top: 0;
+  right: 12px;
+  bottom: 0;
+  content: '3';
+  // TODO: Use FontAwesome
+  font-family: 'Pictos';
+  font-size: 1.3em;
+  text-align: right;
+  line-height: 2.1em;
+}
+
+.x-field {
+	min-height: $form-field-height;
+	background: #fff;
+
+	&:last-child {
+		border-bottom: 0;
+	}
+}
+
+.x-input {
+	.x-cleartrigger .x-icon-el {
+		background: get-image-url('clear_icon') no-repeat;
+		background-position: center center;
+		background-size: 55% 55%;
+		width: $form-clear-size;
+		height: $form-clear-size;
+		margin: .5em;
+		margin-top: -($form-clear-size/2);
+		right: -.5em;
+	}
+
+	border: 1px solid #cccccc;
+	border-radius: 5px;
+	background-color: #fff;
+}
+
+.x-input-el {
+	background: transparent;
+	padding: .7em .4em .4em .4em;
+	min-height: $form-field-height;
+	border-width: 0;
+	-webkit-appearance: none;
+}
+
+.x-ie .x-input-el {
+	background: transparent;
+}
+
+.x-field.x-disabled {
+	.x-label-el,
+	input,
+	.x-input-el,
+	.x-spinner-body,
+	select,
+	textarea,
+	.x-field-clear-container {
+		color: #b3b3b3;
+		pointer-events: none;
+	}
+}
+
+.x-field.x-disabled .x-label-el {
+	color: #aaa;
+}
+
+.x-field.x-disabled .x-label-el:after {
+	color: #666 !important;
+}
+
+.x-toolbar {
+	.x-field {
+		background: transparent;
+
+		.x-body-el {
+			padding: .4em .6em 0;
+		}
+
+		.x-input-el {
+			padding: .3em .6em;
+			min-height: 1.4em;
+			background: transparent;
+		}
+	}
+
+	.x-input {
+		position: relative;
+		background: #fff;
+	}
+
+	.x-cleartrigger .x-icon-el {
+		position: absolute;
+		top: .9em;
+		right: -.7em;
+	}
+}

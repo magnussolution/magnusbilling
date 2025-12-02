@@ -1,0 +1,4 @@
+@include grid-ui(
+    $resize-marker-background-color: $grid-resize-marker-background-color,
+    $resize-marker-width: $grid-resize-marker-width
+);

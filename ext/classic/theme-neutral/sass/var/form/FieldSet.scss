@@ -1,0 +1,157 @@
+/**
+ * @class Ext.form.FieldSet
+ */
+
+/**
+ * @var {number}
+ * The font-size of the FieldSet header
+ */
+$fieldset-header-font-size: dynamic(ceil($font-size * .9));
+
+/**
+ * @var {string}
+ * The font-weight of the FieldSet header
+ */
+$fieldset-header-font-weight: dynamic($font-weight);
+
+/**
+ * @var {string}
+ * The font-family of the FieldSet header
+ */
+$fieldset-header-font-family: dynamic($font-family);
+
+/**
+ * @var {number/string}
+ * The line-height of the FieldSet header
+ */
+$fieldset-header-line-height: dynamic(14px);
+
+/**
+ * @var {color}
+ * The text color of the FieldSet header
+ */
+$fieldset-header-color: dynamic(adjust-color($base-color, $hue: 3.785deg, $saturation: 18.194%, $lightness: -52.745%));
+
+/**
+ * @var {number}
+ * The border-width of the FieldSet
+ */
+$fieldset-border-width: dynamic(1px);
+
+/**
+ * @var {string}
+ * The border-style of the FieldSet
+ */
+$fieldset-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * The border-color of the FieldSet
+ */
+$fieldset-border-color: dynamic(#B5B8C8);
+
+/**
+ * @var {number}
+ * The border radius of FieldSet elements.
+ */
+$fieldset-border-radius: dynamic(0);
+
+/**
+ * @var {number/list}
+ * The FieldSet's padding
+ */
+$fieldset-padding: dynamic(0 10px);
+
+/**
+ * @var {number/list}
+ * The FieldSet's margin
+ */
+$fieldset-margin: dynamic(0 0 10px);
+
+/**
+ * @var {number/list}
+ * The padding to apply to the FieldSet's header
+ */
+$fieldset-header-padding: dynamic(0 3px 1px);
+
+/**
+ * @var {number}
+ * The size of the FieldSet's collapse tool
+ */
+$fieldset-collapse-tool-size: dynamic(15px);
+
+/**
+ * @var {number/list}
+ * The margin to apply to the FieldSet's collapse tool
+ */
+$fieldset-collapse-tool-margin: dynamic(1px 3px 0 0);
+
+/**
+ * @var {number/list}
+ * The padding to apply to the FieldSet's collapse tool
+ */
+$fieldset-collapse-tool-padding: dynamic(0);
+
+/**
+ * @var {string} $fieldset-collapse-tool-background-image
+ * The background-image to use for the collapse tool. If 'none' the default tool
+ * sprite will be used.  Defaults to 'none'.
+ */
+$fieldset-collapse-tool-background-image: dynamic('none');
+
+/**
+ * @var {number}
+ * The opacity of the FieldSet's collapse tool
+ */
+$fieldset-collapse-tool-opacity: dynamic(1);
+
+/**
+ * @var {number}
+ * The opacity of the FieldSet's collapse tool when hovered
+ */
+$fieldset-collapse-tool-opacity-over: dynamic(1);
+
+/**
+ * @var {number}
+ * The opacity of the FieldSet's collapse tool when pressed
+ */
+$fieldset-collapse-tool-opacity-pressed: dynamic(1);
+
+/**
+ * @var {number}
+ * The font size to use for the collapse/expand tool icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$fieldset-tool-glyph-font-size: dynamic(16px);
+
+/**
+ * @var {color}
+ * The color to use for the collapse/expand tool icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$fieldset-tool-glyph-color: dynamic($fieldset-header-color);
+
+/**
+ * @var {string/list}
+ * Glyph for the "expand" tool icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$fieldset-tool-expand-glyph: dynamic($fa-var-caret-down $fieldset-tool-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the "collapse" tool icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$fieldset-tool-collapse-glyph: dynamic($fa-var-caret-up $fieldset-tool-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {number/list}
+ * The margin to apply to the FieldSet's checkbox (for FieldSets that use
+ * {@link #checkboxToggle})
+ */
+$fieldset-checkbox-margin: dynamic($fieldset-collapse-tool-margin);
+
+$fieldset-use-standard-tool-background-positions: dynamic(false);
+
+/**
+ * @var {boolean}
+ * True to include the "default" fieldset UI
+ */
+$include-fieldset-default-ui: dynamic($include-field-default-ui);

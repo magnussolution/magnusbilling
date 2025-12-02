@@ -1,0 +1,13 @@
+$grid-cell-spinner-trigger-vertical-background-image: dynamic('form/spinner-small');
+$grid-cell-tag-field-padding: dynamic(0 3px 0);
+$grid-cell-tag-field-item-margin: dynamic(1px 4px 1px 0);
+
+/**
+ * @var {boolean}
+ * True to include the "grid-cell" form field UIs for grid fields and input fields in {@link Ext.grid.column.Widget WidgetColumns}.
+ *
+ * This defaults to `true`. It is required if either grid fields are being used,
+ * or if a {@link Ext.grid.column.Widget WidgetColumn} is being used to house an input field.
+ * @member Ext.view.Table
+ */
+$include-grid-cell-field-ui: dynamic(true);

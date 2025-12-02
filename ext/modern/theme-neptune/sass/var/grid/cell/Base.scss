@@ -1,0 +1,122 @@
+/**
+ * @class Ext.grid.cell.Base
+ */
+
+//# fashion replaces $grid-cell-font-weight
+/**
+ * @var {string/number}
+ * Grid cell font-weight
+ */
+$gridcell-font-weight: dynamic($listitem-font-weight);
+
+//# fashion replaces $grid-cell-font-size
+/**
+ * @var {number}
+ * Grid cell font-size
+ */
+$gridcell-font-size: dynamic($listitem-font-size);
+
+//# fashion replaces $grid-cell-font-size-big
+/**
+ * @var {number}
+ * Grid cell font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$gridcell-font-size-big: dynamic($listitem-font-size-big);
+
+//# fashion replaces $grid-cell-line-height
+/**
+ * @var {number}
+ * Grid cell line-height
+ */
+$gridcell-line-height: dynamic($listitem-line-height);
+
+//# fashion replaces $grid-cell-line-height-big
+/**
+ * @var {number}
+ * Grid cell line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$gridcell-line-height-big: dynamic($listitem-line-height-big);
+
+//# fashion replaces $grid-cell-font-family
+/**
+ * @var {string}
+ * Grid cell font-family
+ */
+$gridcell-font-family: dynamic($listitem-font-family);
+
+//# fashion replaces $grid-cell-padding
+/**
+ * @var {number/list}
+ * Grid cell padding
+ */
+$gridcell-padding: dynamic($listitem-padding);
+
+//# fashion replaces $grid-cell-padding-big
+/**
+ * @var {number/list}
+ * Grid cell padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$gridcell-padding-big: dynamic($listitem-padding-big);
+
+
+/**
+ * Creates a visual theme for a grid cell.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=gridcell] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {string/number} $font-weight
+ * Grid cell font-weight
+ *
+ * @param {number} $font-size
+ * Grid cell font-size
+ *
+ * @param {number} $font-size-big
+ * Grid cell font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $line-height
+ * Grid cell line-height
+ *
+ * @param {number} $line-height-big
+ * Grid cell line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $font-family
+ * Grid cell font-family
+ *
+ * @param {number/list} $padding
+ * Grid cell padding
+ *
+ * @param {number/list} $padding-big
+ * Grid cell padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin gridcell-ui(
+    $ui: null,
+    $xtype: gridcell,
+    $font-weight: null,
+    $font-size: null,
+    $font-size-big: null,
+    $line-height: null,
+    $line-height-big: null,
+    $font-family: null,
+    $padding: null,
+    $padding-big: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}#{$xtype}#{$ui-suffix} {
+        @include font($font-weight, $font-size, $line-height, $font-family);
+        padding: $padding;
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                font-size: $font-size-big;
+                line-height: $line-height-big;
+                padding: $padding-big;
+            }
+        }
+    }
+}

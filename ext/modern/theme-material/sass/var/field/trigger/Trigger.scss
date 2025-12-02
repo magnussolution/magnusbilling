@@ -1,0 +1,8 @@
+$trigger-width: dynamic(24px);
+$trigger-width-big: dynamic(36px);
+$trigger-icon-color: dynamic($highlight-color);
+$trigger-hovered-icon-color: dynamic($disabled-color);
+$trigger-pressed-icon-color: dynamic($base-pressed-color);
+$trigger-icon-size: dynamic(px-to-em(20px, 13px));
+$trigger-icon-size-big: dynamic(px-to-em(30px, 16px));
+$trigger-icon: dynamic('arrow_drop_down');

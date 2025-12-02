@@ -1,0 +1,46 @@
+
+// Menu Button UI until we have button icon UI mixin
+.#{$prefix}button-menu .#{$prefix}button-icon{
+    &:before {
+        content: $ios-menu !important;
+        font-family: 'iOS' !important;
+        color: $button-color;
+        font-size: 1.4em;
+        line-height: 0;
+        padding-right: .2em;
+        position: relative;
+        top: .15em;
+        font-weight: bold;
+    }
+}
+
+.#{$prefix}button-menu.#{$prefix}button-pressing .#{$prefix}button-icon:before {
+    color: $button-pressed-color;
+}
+
+.#{$prefix}button-menu.#{$prefix}button-disabled .#{$prefix}button-icon:before {
+    color: $button-disabled-color;
+}
+
+// Back Button UI until we have button icon UI mixin
+.#{$prefix}button-back{
+    &:before {
+        content: $ios-back-arrow;
+        font-family: 'iOS';
+        color: $button-color;
+        font-size: 1.4em;
+        line-height: 0;
+        padding-right: .2em;
+        position: relative;
+        top: .05em;
+        font-weight: bold;
+    }
+}
+
+.#{$prefix}button-back.#{$prefix}button-pressing:before {
+    color: $button-pressed-color;
+}
+
+.#{$prefix}button-back.#{$prefix}button-disabled:before {
+    color: $button-disabled-color;
+}

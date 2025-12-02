@@ -1,0 +1,436 @@
+/**
+ * @class Ext.field.Text
+ */
+
+/**
+ * @var {color}
+ * Text Field input color
+ */
+$textfield-input-color: dynamic($color);
+
+/**
+ * @var {color}
+ * Text Field input color when focused
+ */
+$textfield-focused-input-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Text Field input color when invalid
+ */
+$textfield-invalid-input-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Text Field input color when disabled
+ */
+$textfield-disabled-input-color: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Text Field input border width
+ */
+$textfield-input-border-width: dynamic(1px);
+
+/**
+ * @var {number/list}
+ * Text Field input border width when focused
+ */
+$textfield-focused-input-border-width: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Text Field input border width when invalid
+ */
+$textfield-invalid-input-border-width: dynamic(null);
+
+/**
+ * @var {string/list}
+ * Text Field input border style
+ */
+$textfield-input-border-style: dynamic(solid);
+
+/**
+ * @var {string/list}
+ * Text Field input border style when focused
+ */
+$textfield-focused-input-border-style: dynamic(null);
+
+/**
+ * @var {string/list}
+ * Text Field input border style when invalid
+ */
+$textfield-invalid-input-border-style: dynamic(null);
+
+//# fashion replaces $field-border-color
+/**
+ * @var {color/list}
+ * Text Field input border color
+ */
+$textfield-input-border-color: dynamic($neutral-color);
+
+/**
+ * @var {string/list}
+ * Text Field input border color when focused
+ */
+$textfield-focused-input-border-color: dynamic(mix(#fff, #157fcc, 15%));
+
+/**
+ * @var {string/list}
+ * Text Field input border color when invalid
+ */
+$textfield-invalid-input-border-color: dynamic($alert-color);
+
+/**
+ * @var {string/list}
+ * Text Field input border color when disabled
+ */
+$textfield-disabled-input-border-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Text Field input background-color
+ */
+$textfield-input-background-color: dynamic($background-color);
+
+/**
+ * @var {color}
+ * Text Field input background-color when focused
+ */
+$textfield-focused-input-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Text Field input background-color when invalid
+ */
+$textfield-invalid-input-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Text Field input background-color when disabled
+ */
+$textfield-disabled-input-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Text Field input padding
+ */
+$textfield-input-padding: dynamic(px-to-em(3px 6px, 13px));
+
+/**
+ * @var {color}
+ * Text Field input padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$textfield-input-padding-big: dynamic(px-to-em(3px 6px, 15px));
+
+/**
+ * @var {string/number}
+ * Text Field input font-weight
+ */
+$textfield-input-font-weight: dynamic($font-weight-normal);
+
+/**
+ * @var {number}
+ * Text Field input font-size
+ */
+$textfield-input-font-size: dynamic(1rem);
+
+/**
+ * @var {number}
+ * Text Field input font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$textfield-input-font-size-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Text Field input line-height
+ */
+$textfield-input-line-height: dynamic(px-to-em(16px, 13px));
+
+/**
+ * @var {number}
+ * Text Field input line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$textfield-input-line-height-big: dynamic(px-to-em(24px, 15px));
+
+/**
+ * @var {string}
+ * Text Field input font-family
+ */
+$textfield-input-font-family: dynamic($font-family);
+
+/**
+ * @var {color}
+ * Text Field {@link #placeholder} color
+ */
+$textfield-placeholder-color: dynamic($neutral-medium-dark-color);
+
+/**
+ * Creates a visual theme for a Text Field
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=textfield] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {color} $input-color
+ * Text Field input color
+ *
+ * @param {color} $focused-input-color
+ * Text Field input color when focused
+ *
+ * @param {color} $invalid-input-color
+ * Text Field input color when invalid
+ *
+ * @param {color} $disabled-input-color
+ * Text Field input color when disabled
+ *
+ * @param {number/list} $input-border-width
+ * Text Field input border width
+ *
+ * @param {number/list} $focused-input-border-width
+ * Text Field input border width when focused
+ *
+ * @param {number/list} $invalid-input-border-width
+ * Text Field input border width when invalid
+ *
+ * @param {string/list} $input-border-style
+ * Text Field input border style
+ *
+ * @param {string/list} $focused-input-border-style
+ * Text Field input border style when focused
+ *
+ * @param {string/list} $invalid-input-border-style
+ * Text Field input border style when invalid
+ *
+ * @param {color/list} $input-border-color
+ * Text Field input border color
+ *
+ * @param {string/list} $focused-input-border-color
+ * Text Field input border color when focused
+ *
+ * @param {string/list} $invalid-input-border-color
+ * Text Field input border color when invalid
+ *
+ * @param {string/list} $disabled-input-border-color
+ * Text Field input border color when disabled
+ *
+ * @param {color} $input-background-color
+ * Text Field input background-color
+ *
+ * @param {color} $focused-input-background-color
+ * Text Field input background-color when focused
+ *
+ * @param {color} $invalid-input-background-color
+ * Text Field input background-color when invalid
+ *
+ * @param {color} $disabled-input-background-color
+ * Text Field input background-color when disabled
+ *
+ * @param {color} $input-padding
+ * Text Field input padding
+ *
+ * @param {color} $input-padding-big
+ * Text Field input padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string/number} $input-font-weight
+ * Text Field input font-weight
+ *
+ * @param {number} $input-font-size
+ * Text Field input font-size
+ *
+ * @param {number} $input-font-size-big
+ * Text Field input font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $input-line-height
+ * Text Field input line-height
+ *
+ * @param {number} $input-line-height-big
+ * Text Field input line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $input-font-family
+ * Text Field input font-family
+ *
+ * @param {color} $placeholder-color
+ * Text Field {@link #placeholder} color
+ */
+@mixin textfield-ui(
+    $ui: null,
+    $xtype: textfield,
+    $background-color: null,
+    $focused-background-color: null,
+    $invalid-background-color: null,
+    $disabled-background-color: null,
+    $label-color: null,
+    $focused-label-color: null,
+    $invalid-label-color: null,
+    $disabled-label-color: null,
+    $label-background-color: null,
+    $focused-label-background-color: null,
+    $invalid-label-background-color: null,
+    $disabled-label-background-color: null,
+    $label-padding: null,
+    $label-padding-big: null,
+    $label-font-weight: null,
+    $label-font-size: null,
+    $label-font-size-big: null,
+    $label-line-height: null,
+    $label-line-height-big: null,
+    $label-font-family: null,
+    $disabled-opacity: null,
+    $required-indicator-font-weight: null,
+    $required-indicator-font-size: null,
+    $required-indicator-line-height: null,
+    $required-indicator-font-family: null,
+    $required-indicator-margin: null,
+    $required-indicator-margin-big: null,
+    $input-color: null,
+    $focused-input-color: null,
+    $invalid-input-color: null,
+    $disabled-input-color: null,
+    $input-border-width: null,
+    $focused-input-border-width: null,
+    $invalid-input-border-width: null,
+    $input-border-style: null,
+    $focused-input-border-style: null,
+    $invalid-input-border-style: null,
+    $input-border-color: null,
+    $focused-input-border-color: null,
+    $invalid-input-border-color: null,
+    $disabled-input-border-color: null,
+    $input-background-color: null,
+    $focused-input-background-color: null,
+    $invalid-input-background-color: null,
+    $disabled-input-background-color: null,
+    $input-padding: null,
+    $input-padding-big: null,
+    $input-font-weight: null,
+    $input-font-size: null,
+    $input-font-size-big: null,
+    $input-line-height: null,
+    $input-line-height-big: null,
+    $input-font-family: null,
+    $placeholder-color: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}#{$xtype}#{$ui-suffix} {
+        .#{$prefix}input {
+            @include font($input-font-weight, $input-font-size, $input-line-height, $input-font-family);
+            @include border($input-border-width, $input-border-style, $input-border-color);
+            background-color: $input-background-color;
+        }
+
+        .#{$prefix}input-el {
+            color: $input-color;
+            padding: $input-padding;
+            // input element has to have its own line height or it is not heighted correctly
+            line-height: $input-line-height;
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    padding: $input-padding-big;
+                    font-size: $input-font-size-big;
+                    line-height: $input-line-height-big;
+                }
+            }
+
+            // when using vendor prefixes, the selectors need to be separated into their own
+            // rule for each prefix because when encountering an unsupported vendor prefix,
+            // CSS parsing engines will consider the entire rule invalid.
+            &::-webkit-input-placeholder {
+                color: $placeholder-color;
+            }
+            &::-moz-placeholder {
+                color: $placeholder-color;
+            }
+            &:-ms-input-placeholder {
+                color: $placeholder-color;
+            }
+        }
+
+        &.#{$prefix}focused {
+            .#{$prefix}input {
+                @include border($focused-input-border-width, $focused-input-border-style, $focused-input-border-color);
+                background-color: $focused-input-background-color;
+            }
+
+            .#{$prefix}input-el {
+                color: $focused-input-color;
+            }
+        }
+
+        &.#{$prefix}invalid {
+            .#{$prefix}input {
+                @include border($invalid-input-border-width, $invalid-input-border-style, $invalid-input-border-color);
+                background-color: $invalid-input-background-color;
+            }
+
+            .#{$prefix}input-el {
+                color: $invalid-input-color;
+            }
+        }
+
+        &.#{$prefix}disabled {
+            .#{$prefix}input {
+                background-color: $disabled-input-background-color;
+                border-color: $disabled-input-border-color;
+            }
+
+            .#{$prefix}input-el {
+                color: $disabled-input-color;
+            }
+        }
+
+
+        // When border widths for the various states are not the same (e.g. focused
+        // state in material theme) it can cause the text/triggers to move when changing
+        // states.  The following rules ensure that the text and triggers remain still
+        // while moving between states with potentially different border widths.
+
+        $top-border-width: top($input-border-width) or top($textfield-input-border-width) or 0;
+        $bottom-border-width: bottom($input-border-width) or bottom($textfield-input-border-width) or 0;
+        $focused-top-border-width: top($focused-input-border-width) or top($textfield-focused-input-border-width) or $top-border-width;
+        $focused-bottom-border-width: bottom($focused-input-border-width) or bottom($textfield-focused-input-border-width) or $bottom-border-width;
+        $invalid-top-border-width: top($invalid-input-border-width) or top($textfield-invalid-input-border-width) or $top-border-width;
+        $invalid-bottom-border-width: bottom($invalid-input-border-width) or bottom($textfield-invalid-input-border-width) or $bottom-border-width;
+        $smallest-top-border: min($top-border-width, $focused-top-border-width, $invalid-top-border-width);
+        $smallest-bottom-border: min($bottom-border-width, $focused-bottom-border-width, $invalid-bottom-border-width);
+
+        .#{$prefix}input-el, .#{$prefix}before-el, .#{$prefix}after-el, {
+            @if $top-border-width != $smallest-top-border {
+                margin-top: -($smallest-top-border - $top-border-width);
+            }
+
+            @if $bottom-border-width != $smallest-bottom-border {
+                margin-bottom: $smallest-bottom-border - $bottom-border-width;
+            }
+        }
+
+        &.#{$prefix}focused {
+            .#{$prefix}input-el, .#{$prefix}before-el, .#{$prefix}after-el, {
+                @if $focused-top-border-width != $smallest-top-border {
+                    margin-top: -($smallest-top-border - $focused-top-border-width);
+                }
+
+                @if $focused-bottom-border-width != $smallest-bottom-border {
+                    margin-bottom: $smallest-bottom-border - $focused-bottom-border-width;
+                }
+            }
+        }
+
+        &.#{$prefix}invalid {
+            .#{$prefix}input-el, .#{$prefix}before-el, .#{$prefix}after-el, {
+                @if $invalid-top-border-width != $smallest-top-border {
+                    margin-top: -($smallest-top-border - $invalid-top-border-width);
+                }
+
+                @if $invalid-bottom-border-width != $smallest-bottom-border {
+                    margin-bottom: $smallest-bottom-border - $invalid-bottom-border-width;
+                }
+            }
+        }
+    }
+}

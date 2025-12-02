@@ -1,0 +1,17 @@
+.#{$prefix}dataview.#{$prefix}inline {
+    > .#{$prefix}scroller > .#{$prefix}dataview-inner {
+
+        // The innerElement must stretch to accommodate the inline-block items
+        display: table;
+    }
+    .#{$prefix}dataview-item, .#{$prefix}dataitem {
+        display: inline-block;
+        vertical-align: top;
+    }
+}
+
+.#{$prefix}dataview.#{$prefix}nowrap {
+    .#{$prefix}dataview-container {
+        white-space: nowrap !important;
+    }
+}

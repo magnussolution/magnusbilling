@@ -1,0 +1,316 @@
+/**
+ * @class Ext.tab.Bar
+ */
+
+/**
+ * @var {color}
+ * Tab Bar background-color
+ */
+$tabbar-background-color: dynamic($base-color);
+
+/**
+ * @var {string/list}
+ * Tab Bar background-gradient. Can be either the name of a gradient defined by
+ * {@link Global_CSS#background-gradient} or a list of color stops.
+ */
+$tabbar-background-gradient: dynamic(null);
+
+/**
+ * @var {color}
+ * Tab Bar color
+ */
+$tabbar-color: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Tab Bar border-width
+ */
+$tabbar-border-width: dynamic(null);
+
+/**
+ * @var {string/list}
+ * Tab Bar border-style
+ */
+$tabbar-border-style: dynamic(null);
+
+/**
+ * @var {color/list}
+ * Tab Bar border-color
+ */
+$tabbar-border-color: dynamic($panel-header-border-color);
+
+/**
+ * @var {list}
+ * Tab Bar box-shadow
+ */
+$tabbar-box-shadow: dynamic(null);
+
+/**
+ * @var {string/number}
+ * Tab Bar font-weight
+ */
+$tabbar-font-weight: dynamic(null);
+
+/**
+ * @var {number}
+ * Tab Bar font-size
+ */
+$tabbar-font-size: dynamic(null);
+
+/**
+ * @var {number}
+ * Tab Bar font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tabbar-font-size-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Tab Bar line-height
+ */
+$tabbar-line-height: dynamic(null);
+
+/**
+ * @var {number}
+ * Tab Bar line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tabbar-line-height-big: dynamic(null);
+
+/**
+ * @var {string}
+ * Tab Bar font-family
+ */
+$tabbar-font-family: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Tab Bar padding
+ */
+$tabbar-padding: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Tab Bar padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tabbar-padding-big: dynamic(null);
+
+//# fashion replaces $tabbar-tab-spacing
+/**
+ * @var {number}
+ * The space in between horizontally aligned Tab Bar items
+ */
+$tabbar-horizontal-spacing: dynamic(.4em);
+
+//# fashion replaces $tabbar-tab-spacing-big
+/**
+ * @var {number}
+ * The space in between horizontally aligned Tab Bar items in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tabbar-horizontal-spacing-big: dynamic(null);
+
+/**
+ * @var {number}
+ * The space in between vertically aligned Tab Bar items
+ */
+$tabbar-vertical-spacing: dynamic(null);
+
+/**
+ * @var {number}
+ * The space in between vertically aligned Tab Bar items in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tabbar-vertical-spacing-big: dynamic(null);
+
+/**
+ * @var {color}
+ * Tab Bar {@link Ext.Title Title} color
+ */
+$tabbar-title-color: dynamic(null);
+
+/**
+ * @var {string/number}
+ * Tab Bar {@link Ext.Title Title} font-weight
+ */
+$tabbar-title-font-weight: dynamic($tabbar-font-weight);
+
+/**
+ * @var {number}
+ * Tab Bar {@link Ext.Title Title} font-size
+ */
+$tabbar-title-font-size: dynamic($tabbar-font-size);
+
+/**
+ * @var {number}
+ * Tab Bar {@link Ext.Title Title} font-size in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tabbar-title-font-size-big: dynamic($tabbar-font-size-big);
+
+/**
+ * @var {string}
+ * Tab Bar {@link Ext.Title Title} font-family
+ */
+$tabbar-title-font-family: dynamic(null);
+
+/**
+ * @var {number}
+ * Tab Bar min-height
+ */
+$tabbar-min-height: dynamic($toolbar-min-height);
+
+/**
+ * @var {number}
+ * Tab Bar min-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tabbar-min-height-big: dynamic($toolbar-min-height-big);
+
+/**
+ * Creates a visual theme for a Tab Bar.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=tabbar] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {color} $background-color
+ * Tab Bar background-color
+ *
+ * @param {string/list} $background-gradient
+ * Tab Bar background-gradient. Can be either the name of a gradient defined by
+ * {@link Global_CSS#background-gradient} or a list of color stops.
+ *
+ * @param {number/list} $border-width
+ * Tab Bar border-width
+ *
+ * @param {string/list} $border-style
+ * Tab Bar border-style
+ *
+ * @param {color} $border-color
+ * Tab Bar border-color
+ *
+ * @param {color} $box-shadow
+ * Tab Bar box-shadow
+ *
+ * @param {string/number} $font-weight
+ * Tab Bar font-weight
+ *
+ * @param {number} $font-size
+ * Tab Bar font-size
+ *
+ * @param {number} $font-size-big
+ * Tab Bar font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $line-height
+ * Tab Bar line-height
+ *
+ * @param {number} $line-height-big
+ * Tab Bar line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $font-family
+ * Tab Bar font-family
+ *
+ * @param {number/list} $padding
+ * Tab Bar padding
+ *
+ * @param {number/list} $padding-big
+ * Tab Bar padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $horizontal-spacing
+ * The space in between horizontally aligned Tab Bar items
+ *
+ * @param {number} $horizontal-spacing-big
+ * The space in between horizontally aligned Tab Bar items in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $vertical-spacing
+ * The space in between vertically aligned Tab Bar items
+ *
+ * @param {number} $vertical-spacing-big
+ * The space in between vertically aligned Tab Bar items in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $title-color
+ * Tab Bar {@link Ext.Title Title} color
+ *
+ * @param {string/number} $title-font-weight
+ * Tab Bar {@link Ext.Title Title} font-weight
+ *
+ * @param {number} $title-font-size
+ * Tab Bar {@link Ext.Title Title} font-size
+ *
+ * @param {number} $title-font-size-big
+ * Tab Bar {@link Ext.Title Title} font-size in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $title-font-family
+ * Tab Bar {@link Ext.Title Title} font-family
+ *
+ * @param {number} $min-height
+ * Tab Bar min-height
+ *
+ * @param {number} $min-height-big
+ * Tab Bar min-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin tabbar-ui(
+    $ui: null,
+    $xtype: tabbar,
+    $background-color: null,
+    $background-gradient: null,
+    $color: null,
+    $border-width: null,
+    $border-style: null,
+    $border-color: null,
+    $box-shadow: null,
+    $font-weight: null,
+    $font-size: null,
+    $font-size-big: null,
+    $line-height: null,
+    $line-height-big: null,
+    $font-family: null,
+    $padding: null,
+    $padding-big: null,
+    $horizontal-spacing: null,
+    $horizontal-spacing-big: null,
+    $vertical-spacing: null,
+    $vertical-spacing-big: null,
+    $title-color: null,
+    $title-font-weight: null,
+    $title-font-size: null,
+    $title-font-size-big: null,
+    $title-font-family: null,
+    $min-height: null,
+    $min-height-big: null
+) {
+    @include toolbar-ui(
+        $ui: $ui,
+        $xtype: $xtype,
+        $background-color: $background-color,
+        $background-gradient: $background-gradient,
+        $color: $color,
+        $border-width: $border-width,
+        $border-style: $border-style,
+        $border-color: $border-color,
+        $box-shadow: $box-shadow,
+        $font-weight: $font-weight,
+        $font-size: $font-size,
+        $font-size-big: $font-size-big,
+        $line-height: $line-height,
+        $line-height-big: $line-height-big,
+        $font-family: $font-family,
+        $padding: $padding,
+        $padding-big: $padding-big,
+        $horizontal-spacing: $horizontal-spacing,
+        $horizontal-spacing-big: $horizontal-spacing-big,
+        $vertical-spacing: $vertical-spacing,
+        $vertical-spacing-big: $vertical-spacing-big,
+        $title-color: $title-color,
+        $title-font-weight: $title-font-weight,
+        $title-font-size: $title-font-size,
+        $title-font-size-big: $title-font-size-big,
+        $title-font-family: $title-font-family,
+        $min-height: $min-height,
+        $min-height-big: $min-height-big
+    );
+}

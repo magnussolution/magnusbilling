@@ -1,0 +1,83 @@
+{
+    /**
+     * The namespace of this package.
+     *
+     * As a general rule, all classes that belong to this package should be under this namespace
+     * if multiple namespaces are part of this package, set this to "".
+     */
+    "namespace": "Ext",
+
+    "name": "theme-base",
+    "type": "theme",
+    "alternateName": [
+        "ext-theme-base"
+    ],
+
+    "framework": "ext",
+    "toolkit": "classic",
+    "requires": [
+        "classic"
+    ],
+
+    "creator": "Sencha",
+    "summary": "Ext JS Modern Base Theme",
+    "detailedDescription": "An abstract base theme that provides only the bare minimums for the Ext JS classic toolkit",
+
+    "version": "6.2.0.981",
+    "compatVersion": "6.0.0",
+    "format": "1",
+
+    "output": "${workspace.subpkg.prefix}/${package.name}",
+    "local": true,
+
+    "sass": {
+        "namespace": "Ext",
+
+        "etc": "${package.dir}/sass/etc/all.scss",
+
+        "var": "${package.dir}/sass/var",
+
+        "src": "${package.dir}/sass/src"
+    },
+
+    "classpath": "${package.dir}/src",
+
+    "overrides": "${package.dir}/overrides",
+
+    "js": [
+        {
+            "path":"/~cmd/extensions/sencha-fashion/fashion/fashion.js",
+            "bootstrap": true,
+            "remote": true,
+            "platform": ["fashion"],
+            "isSdk": false
+        },
+        {
+            "path":"/~cmd/extensions/sencha-fashion/sass-compiler.js",
+            "bootstrap": true,
+            "remote": true,
+            "platform": ["fashion"],
+            "isSdk": false
+        }
+    ],
+
+    "slicer": {
+        "js": [
+            {
+                "path": "${package.dir}/sass/example/render.js"
+            },
+            {
+                "path": "${package.dir}/sass/example/shortcuts.js"
+            },
+            {
+                "path": "${package.dir}/sass/example/manifest.js",
+                "isWidgetManifest": true
+            }
+        ],
+        "css": [
+            {
+                "path": "${package.dir}/sass/example/slicer.css"
+            }
+        ]
+    }
+}

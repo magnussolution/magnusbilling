@@ -1,0 +1,246 @@
+{
+  "URL": {
+    "DEFAULT": {
+      "production": "https://cobrancas.api.efipay.com.br",
+      "sandbox": "https://sandbox.api.efipay.com.br"
+    },
+    "PIX": {
+      "production": "https://pix.api.efipay.com.br",
+      "sandbox": "https://pix-h.api.efipay.com.br"
+    }
+  },
+  "ENDPOINTS": {
+    "DEFAULT": {
+      "authorize": {
+        "route": "/v1/authorize",
+        "method": "post"
+      },
+      "createCharge": {
+        "route": "/v1/charge",
+        "method": "post"
+      },
+      "oneStep": {
+        "route": "/v1/charge/one-step",
+        "method": "post"
+      },
+      "detailCharge": {
+        "route": "/v1/charge/:id",
+        "method": "get"
+      },
+      "updateChargeMetadata": {
+        "route": "/v1/charge/:id/metadata",
+        "method": "put"
+      },
+      "updateBillet": {
+        "route": "/v1/charge/:id/billet",
+        "method": "put"
+      },
+      "payCharge": {
+        "route": "/v1/charge/:id/pay",
+        "method": "post"
+      },
+      "cancelCharge": {
+        "route": "/v1/charge/:id/cancel",
+        "method": "put"
+      },
+      "createCarnet": {
+        "route": "/v1/carnet",
+        "method": "post"
+      },
+      "detailCarnet": {
+        "route": "/v1/carnet/:id",
+        "method": "get"
+      },
+      "updateParcel": {
+        "route": "/v1/carnet/:id/parcel/:parcel",
+        "method": "put"
+      },
+      "updateCarnetMetadata": {
+        "route": "/v1/carnet/:id/metadata",
+        "method": "put"
+      },
+      "getNotification": {
+        "route": "/v1/notification/:token",
+        "method": "get"
+      },
+      "getPlans": {
+        "route": "/v1/plans",
+        "method": "get"
+      },
+      "createPlan": {
+        "route": "/v1/plan",
+        "method": "post"
+      },
+      "deletePlan": {
+        "route": "/v1/plan/:id",
+        "method": "delete"
+      },
+      "createSubscription": {
+        "route": "/v1/plan/:id/subscription",
+        "method": "post"
+      },
+      "detailSubscription": {
+        "route": "/v1/subscription/:id",
+        "method": "get"
+      },
+      "paySubscription": {
+        "route": "/v1/subscription/:id/pay",
+        "method": "post"
+      },
+      "cancelSubscription": {
+        "route": "/v1/subscription/:id/cancel",
+        "method": "put"
+      },
+      "updateSubscriptionMetadata": {
+        "route": "/v1/subscription/:id/metadata",
+        "method": "put"
+      },
+      "getInstallments": {
+        "route": "/v1/installments",
+        "method": "get"
+      },
+      "resendBillet": {
+        "route": "/v1/charge/:id/billet/resend",
+        "method": "post"
+      },
+      "createChargeHistory": {
+        "route": "/v1/charge/:id/history",
+        "method": "post"
+      },
+      "resendCarnet": {
+        "route": "/v1/carnet/:id/resend",
+        "method": "post"
+      },
+      "resendParcel": {
+        "route": "/v1/carnet/:id/parcel/:parcel/resend",
+        "method": "post"
+      },
+      "createCarnetHistory": {
+        "route": "/v1/carnet/:id/history",
+        "method": "post"
+      },
+      "cancelCarnet": {
+        "route": "/v1/carnet/:id/cancel",
+        "method": "put"
+      },
+      "cancelParcel": {
+        "route": "/v1/carnet/:id/parcel/:parcel/cancel",
+        "method": "put"
+      },
+      "linkCharge": {
+        "route": "/v1/charge/:id/link",
+        "method": "post"
+      },
+      "chargeLink": {
+        "route": "/v1/charge/:id/link",
+        "method": "post"
+      },
+      "updateChargeLink": {
+        "route": "/v1/charge/:id/link",
+        "method": "put"
+      },
+      "updatePlan": {
+        "route": "/v1/plan/:id",
+        "method": "put"
+      },
+      "createSubscriptionHistory": {
+        "route": "/v1/subscription/:id/history",
+        "method": "post"
+      },
+      "createChargeBalanceSheet": {
+        "route": "/v1/charge/:id/balance-sheet",
+        "method": "post"
+      },
+      "settleCharge": {
+        "route": "/v1/charge/:id/settle",
+        "method": "put"
+      },
+      "settleCarnetParcel": {
+        "route": "/v1/carnet/:id/parcel/:parcel/settle",
+        "method": "put"
+      }
+    },
+    "PIX": {
+      "authorize": {
+        "route": "/oauth/token",
+        "method": "post"
+      },
+      "pixConfigWebhook": {
+        "route": "/v2/webhook/:chave",
+        "method": "put"
+      },
+      "pixGetWebhook": {
+        "route": "/v2/webhook/:chave",
+        "method": "get"
+      },
+      "pixListWebhook": {
+        "route": "/v2/webhook",
+        "method": "get"
+      },
+      "pixDeleteWebhook": {
+        "route": "/v2/webhook/:chave",
+        "method": "delete"
+      },
+      "pixCreateCharge": {
+        "route": "/v2/cob/:txid",
+        "method": "put"
+      },
+      "pixCreateImmediateCharge": {
+        "route": "/v2/cob",
+        "method": "post"
+      },
+      "pixDetailCharge": {
+        "route": "/v2/cob/:txid",
+        "method": "get"
+      },
+      "pixUpdateCharge": {
+        "route": "/v2/cob/:txid",
+        "method": "patch"
+      },
+      "pixListCharges": {
+        "route": "/v2/cob",
+        "method": "get"
+      },
+      "pixGenerateQRCode": {
+        "route": "/v2/loc/:id/qrcode",
+        "method": "get"
+      },
+      "pixDevolution": {
+        "route": "/v2/pix/:e2eId/devolucao/:id",
+        "method": "put"
+      },
+      "pixDevolutionGet": {
+        "route": "/v2/pix/:e2eId/devolucao/:id",
+        "method": "get"
+      },
+      "pixSend": {
+        "route": "/v2/pix",
+        "method": "post"
+      },
+      "pixSendList": {
+        "route": "/v2/pix/:e2eId",
+        "method": "get"
+      },
+      "pixReceivedList": {
+        "route": "/v2/pix",
+        "method": "get"
+      },
+      "pixLocationCreate": {
+        "route": "/v2/loc",
+        "method": "post"
+      },
+      "pixLocationList": {
+        "route": "/v2/loc",
+        "method": "get"
+      },
+      "pixLocationGet": {
+        "route": "/v2/loc/:id",
+        "method": "get"
+      },
+      "pixLocationDeleteTxid": {
+        "route": "/v2/loc/:id/txid",
+        "method": "delete"
+      }
+    }
+  }
+}

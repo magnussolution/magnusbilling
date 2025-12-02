@@ -1,0 +1,9 @@
+Options -Indexes
+
+Order Deny,Allow
+Deny from all
+
+<FilesMatch ".*\.css">
+Order deny,allow
+Allow from all
+</FilesMatch>

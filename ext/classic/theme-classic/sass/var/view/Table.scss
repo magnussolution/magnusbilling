@@ -1,0 +1,25 @@
+// classic cells
+$grid-row-cell-font-size: dynamic(ceil($font-size * .9));
+$grid-cell-inner-padding: dynamic(3px 6px 4px);
+
+$grid-row-cell-border-color: dynamic(#ededed
+    adjust-color($base-color, $hue: 0deg, $saturation: -55.556%, $lightness: -2.549%));
+
+// special cells
+$grid-cell-special-background-color: dynamic(#f6f6f6);
+$grid-cell-special-background-gradient: dynamic('grid-cell-special');
+$grid-cell-special-selected-border-color: dynamic(adjust-color($base-color, $hue: -0.175deg, $saturation: 25.296%, $lightness: -2.549%));
+$grid-cell-special-over-background-color: dynamic(adjust-color($base-color, $hue: -0.476deg, $saturation: 25.214%, $lightness: 5.686%));
+
+$grid-cell-selected-background-color: dynamic(#B8CFEE);
+
+$grid-row-cell-over-border-color: dynamic(adjust-color($neutral-color, $hue: 0deg, $saturation: 0%, $lightness: -6.667%));
+$grid-row-cell-over-background-color: dynamic(adjust-color($neutral-color, $hue: 0deg, $saturation: 0%, $lightness: 0.392%));
+
+$grid-row-cell-selected-border-style: dynamic(dotted);
+$grid-row-cell-selected-border-color: dynamic(adjust-color($base-color, $hue: 6.952deg, $saturation: 5.848%, $lightness: -6.471%));
+$grid-row-cell-selected-background-color: dynamic(adjust-color($base-color, $hue: 3.188deg, $saturation: 0.542%, $lightness: 7.843%));
+
+$grid-row-cell-focus-border-color: dynamic(adjust-color($neutral-color, $hue: 0deg, $saturation: 0%, $lightness: -66%));
+
+$grid-no-row-lines-show-focus-border: dynamic(true);

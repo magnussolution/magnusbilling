@@ -1,0 +1,21 @@
+@mixin transform($transforms) {
+    -webkit-transform: $transforms;
+    transform: $transforms;
+}
+
+@mixin transform-origin ($origin) {
+    -webkit-transform-origin: $origin;
+    transform-origin: $origin;
+}
+
+@mixin rotate ($deg) {
+    @include transform(rotate(#{$deg}deg));
+}
+
+@mixin scale($scale) {
+    @include transform(scale($scale));
+}
+
+@mixin translate ($x, $y) {
+    @include transform(translate($x, $y));
+}

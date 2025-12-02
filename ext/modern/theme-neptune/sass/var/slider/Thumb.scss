@@ -1,0 +1,298 @@
+/**
+ * @class Ext.slider.Thumb
+ */
+
+/**
+ * @var {number}
+ * Thumb height
+ */
+$thumb-height: dynamic(1.154rem);
+
+/**
+ * @var {number}
+ * Thumb height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$thumb-height-big: dynamic(1.867rem);
+
+/**
+ * @var {number}
+ * Thumb width
+ */
+$thumb-width: dynamic(1.154rem);
+
+/**
+ * @var {number}
+ * Thumb width in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$thumb-width-big: dynamic(1.867rem);
+
+/**
+ * @var {color}
+ * Thumb background-color
+ */
+$thumb-background-color: dynamic($slider-track-background-color);
+
+/**
+ * @var {color}
+ * Thumb background-color when hovered
+ */
+$thumb-hovered-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Thumb background-color when pressed
+ */
+$thumb-pressed-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Thumb background-color when disabled
+ */
+$thumb-disabled-background-color: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Thumb border-width
+ */
+$thumb-border-width: dynamic(1px);
+
+/**
+ * @var {string/list}
+ * Thumb border-style
+ */
+$thumb-border-style: dynamic(solid);
+
+/**
+ * @var {color/list}
+ * Thumb border-color
+ */
+$thumb-border-color: dynamic($neutral-medium-dark-color);
+
+/**
+ * @var {number}
+ * Thumb border-radius
+ */
+$thumb-border-radius: dynamic($thumb-height / 2);
+
+/**
+ * @var {number}
+ * Thumb border-radius in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$thumb-border-radius-big: dynamic($thumb-height-big / 2);
+
+/**
+ * @var {string}
+ * Thumb icon
+ */
+$thumb-icon: dynamic($fa-var-circle);
+
+/**
+ * @var {color}
+ * Thumb icon color
+ */
+$thumb-icon-color: dynamic($highlight-color);
+
+/**
+ * @var {number}
+ * Thumb icon size
+ */
+$thumb-icon-size: dynamic(7px); // use px here because this is smaller than the browser's minimum font size for rem units
+
+/**
+ * @var {number}
+ * Thumb icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$thumb-icon-size-big: dynamic(.8rem);
+
+/**
+ * @var {number}
+ * Thumb icon font-size
+ */
+$thumb-icon-font-size: dynamic($thumb-icon-size);
+
+/**
+ * @var {number}
+ * Thumb icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$thumb-icon-font-size-big: dynamic($thumb-icon-size-big);
+
+/**
+ * @var {list}
+ * Thumb box-shadow
+ */
+$thumb-box-shadow: dynamic(1px 1px 2px $neutral-dark-color);
+
+/**
+ * @var {list}
+ * Thumb box-shadow in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$thumb-box-shadow-big: dynamic($thumb-box-shadow);
+
+
+/**
+ * Creates a visual theme for a Thumb.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {number} $height
+ * Thumb height
+ *
+ * @param {number} $height-big
+ * Thumb height in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $width
+ * Thumb width
+ *
+ * @param {number} $width-big
+ * Thumb width in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $background-color
+ * Thumb background-color
+ *
+ * @param {color} $hovered-background-color
+ * Thumb background-color when hovered
+ *
+ * @param {color} $pressed-background-color
+ * Thumb background-color when pressed
+ *
+ * @param {color} $disabled-background-color
+ * Thumb background-color when disabled
+ *
+ * @param {number/list} $border-width
+ * Thumb border-width
+ *
+ * @param {string/list} $border-style
+ * Thumb border-style
+ *
+ * @param {color/list} $border-color
+ * Thumb border-color
+ *
+ * @param {number} $border-radius
+ * Thumb border-radius
+ *
+ * @param {number} $border-radius-big
+ * Thumb border-radius in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string/list} $icon
+ * Thumb icon
+ *
+ * @param {color} $icon-color
+ * Thumb icon color
+ *
+ * @param {number} $icon-size
+ * Thumb icon size
+ *
+ * @param {number} $icon-size-big
+ * Thumb icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $icon-font-size
+ * Thumb icon font-size
+ *
+ * @param {number} $icon-font-size-big
+ * Thumb icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {list} $box-shadow
+ * Thumb box-shadow
+ *
+ * @param {list} $box-shadow-big
+ * Thumb box-shadow in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin thumb-ui(
+    $ui: null,
+    $height: null,
+    $height-big: null,
+    $width: null,
+    $width-big: null,
+    $background-color: null,
+    $hovered-background-color: null,
+    $pressed-background-color: null,
+    $disabled-background-color: null,
+    $border-width: null,
+    $border-style: null,
+    $border-color: null,
+    $border-radius: null,
+    $border-radius-big: null,
+    $icon: null,
+    $icon-color: null,
+    $icon-size: null,
+    $icon-size-big: null,
+    $icon-font-size: null,
+    $icon-font-size-big: null,
+    $box-shadow: null,
+    $box-shadow-big: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}thumb#{$ui-suffix} {
+        height: $height;
+        width: $width;
+        background-color: $background-color;
+        border-radius: $border-radius;
+        box-shadow: $box-shadow;
+
+        @if $height != null {
+            margin-top: -$height / 2;
+        }
+
+        @include border($border-width, $border-style, $border-color);
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                height: $height-big;
+                width: $width-big;
+                box-shadow: $box-shadow-big;
+                margin-top: -($height-big or $thumb-height-big) / 2;
+                @include border-radius($border-radius-big);
+            }
+        }
+
+        .#{$prefix}icon-el {
+            color: $icon-color;
+            size: $icon-size;
+            size-big: $icon-size-big;
+
+            @include icon(
+                $icon: $icon,
+                $font-size: $icon-font-size,
+                $font-size-big: $icon-font-size-big
+            );
+        }
+
+        &:hover {
+            background-color: $hovered-background-color;
+        }
+
+        &:active {
+            background-color: $pressed-background-color;
+        }
+
+        &.#{$prefix}disabled {
+            background-color: $disabled-background-color;
+        }
+    }
+
+    // This element ensures the containing slider is at least as high as its largest thumb
+    .#{$prefix}thumb-sizer#{$ui-suffix} {
+        height: $height;
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                height: $height-big;
+            }
+        }
+    }
+}
+
+@mixin thumb-toggle-on-ui {
+    @include thumb-ui(
+        $ui: 'toggle-on'
+    );
+}
+
+@mixin thumb-toggle-off-ui {
+    @include thumb-ui(
+        $ui: 'toggle-off'
+    );
+}

@@ -1,0 +1,210 @@
+/**
+ * @class Ext.field.trigger.Search
+ */
+
+/**
+ * @var {number}
+ * Search Trigger width
+ */
+$searchtrigger-width: dynamic(null);
+
+/**
+ * @var {number}
+ * Search Trigger width in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$searchtrigger-width-big: dynamic(null);
+
+/**
+ * @var {color}
+ * Search Trigger background-color
+ */
+$searchtrigger-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Search Trigger background-color when hovered
+ */
+$searchtrigger-hovered-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Search Trigger background-color when pressed
+ */
+$searchtrigger-pressed-background-color: dynamic(null);
+
+/**
+ * @var {string}
+ * Search Trigger icon
+ */
+$searchtrigger-icon: dynamic($fa-var-search);
+
+/**
+ * @var {color}
+ * Search Trigger icon color
+ */
+$searchtrigger-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Search Trigger icon color when hovered
+ */
+$searchtrigger-hovered-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Search Trigger icon color when pressed
+ */
+$searchtrigger-pressed-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Search Trigger icon background-color
+ */
+$searchtrigger-icon-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Search Trigger icon background-color when hovered
+ */
+$searchtrigger-hovered-icon-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Search Trigger icon background-color when pressed
+ */
+$searchtrigger-pressed-icon-background-color: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Search Trigger icon border-radius
+ */
+$searchtrigger-icon-border-radius: dynamic(null);
+
+/**
+ * @var {number}
+ * Search Trigger icon size
+ */
+$searchtrigger-icon-size: dynamic(null);
+
+/**
+ * @var {number}
+ * Search Trigger icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$searchtrigger-icon-size-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Search Trigger icon font-size
+ */
+$searchtrigger-icon-font-size: dynamic($searchtrigger-icon-size);
+
+/**
+ * @var {number}
+ * Search Trigger icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$searchtrigger-icon-font-size-big: dynamic($searchtrigger-icon-size-big);
+
+/**
+ * Creates a visual theme for a Search Trigger.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=searchtrigger] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {number} $width
+ * Search Trigger width
+ *
+ * @param {number} $width-big
+ * Search Trigger width in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $background-color
+ * Search Trigger background-color
+ *
+ * @param {color} $hovered-background-color
+ * Search Trigger background-color when hovered
+ *
+ * @param {color} $pressed-background-color
+ * Search Trigger background-color when pressed
+ *
+ * @param {string} $icon
+ * Search Trigger icon
+ *
+ * @param {color} $icon-color
+ * Search Trigger icon color
+ *
+ * @param {color} $hovered-icon-color
+ * Search Trigger icon color when hovered
+ *
+ * @param {color} $pressed-icon-color
+ * Search Trigger icon color when pressed
+ *
+ * @param {color} $icon-background-color
+ * Search Trigger icon background-color
+ *
+ * @param {color} $hovered-icon-background-color
+ * Search Trigger icon background-color when hovered
+ *
+ * @param {color} $pressed-icon-background-color
+ * Search Trigger icon background-color when pressed
+ *
+ * @param {number/list} $icon-border-radius
+ * Search Trigger icon border-radius
+ *
+ * @param {number} $icon-size
+ * Search Trigger icon size
+ *
+ * @param {number} $icon-size-big
+ * Search Trigger icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $icon-font-size
+ * Search Trigger icon font-size
+ *
+ * @param {number} $icon-font-size-big
+ * Search Trigger icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin searchtrigger-ui(
+    $ui: null,
+    $xtype: searchtrigger,
+    $width: null,
+    $width-big: null,
+    $background-color: null,
+    $hovered-background-color: null,
+    $pressed-background-color: null,
+    $icon: null,
+    $icon-color: null,
+    $hovered-icon-color: null,
+    $pressed-icon-color: null,
+    $icon-background-color: null,
+    $hovered-icon-background-color: null,
+    $pressed-icon-background-color: null,
+    $icon-border-radius: null,
+    $icon-size: null,
+    $icon-size-big: null,
+    $icon-font-size: null,
+    $icon-font-size-big: null
+) {
+    @include trigger-ui(
+        $ui: $ui,
+        $xtype: $xtype,
+        $width: $width,
+        $width-big: $width-big,
+        $background-color: $background-color,
+        $hovered-background-color: $hovered-background-color,
+        $pressed-background-color: $pressed-background-color,
+        $icon: $icon,
+        $icon-color: $icon-color,
+        $hovered-icon-color: $hovered-icon-color,
+        $pressed-icon-color: $pressed-icon-color,
+        $icon-background-color: $icon-background-color,
+        $hovered-icon-background-color: $hovered-icon-background-color,
+        $pressed-icon-background-color: $pressed-icon-background-color,
+        $icon-border-radius: $icon-border-radius,
+        $icon-size: $icon-size,
+        $icon-size-big: $icon-size-big,
+        $icon-font-size: $icon-font-size,
+        $icon-font-size-big: $icon-font-size-big
+    );
+}

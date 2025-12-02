@@ -1,0 +1,34 @@
+.#{$prefix}textinput {
+    overflow: hidden;
+    @include st-box;
+
+    .#{$prefix}input-body-el {
+        position: relative;
+        @include st-box-flex(1);
+        @include st-box;
+    }
+
+    .#{$prefix}input-el {
+        @include st-box-flex(1);
+        &::-ms-clear {
+            display: none;
+        }
+
+        width: 10em;
+    }
+
+    .#{$prefix}mask-el {
+        cursor: pointer;
+    }
+
+    .#{$prefix}before-el,
+    .#{$prefix}after-el {
+        @include st-box;
+    }
+}
+
+.#{$prefix}textfield.#{$prefix}widthed {
+    .#{$prefix}input-el {
+        width: 0;
+    }
+}

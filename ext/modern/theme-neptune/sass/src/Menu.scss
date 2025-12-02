@@ -1,0 +1,32 @@
+.x-menu {
+    padding: $menu-padding;
+    background-color: $sheet-background-color;
+
+    &.x-top {
+        @include border($menu-top-border-width, $menu-top-border-style, $menu-top-border-color);
+    }
+
+    &.x-right {
+        @include border($menu-right-border-width, $menu-right-border-style, $menu-right-border-color);
+    }
+
+    &.x-bottom {
+        @include border($menu-bottom-border-width, $menu-bottom-border-style, $menu-bottom-border-color);
+    }
+
+    &.x-left {
+        @include border($menu-left-border-width, $menu-left-border-style, $menu-left-border-color);
+    }
+
+    .x-menu-inner {
+        padding: 0;
+    }
+
+    .x-button {
+        margin-bottom: $sheet-button-spacing;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}

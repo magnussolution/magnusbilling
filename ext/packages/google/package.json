@@ -1,0 +1,98 @@
+{
+    "namespace": "Ext",
+    "name": "google",
+    "type": "code",
+
+    "alternateName": [ "ext-google" ],
+
+    "framework": "ext",
+    "creator": "Sencha",
+    "summary": "Google APIs",
+    "detailedDescription": "This package provides Google APIs support.",
+
+    "version": "6.2.0.981",
+    "compatVersion": "6.0.0",
+    "format": "1",
+    "local": true,
+
+    "output": {
+        "base": "${framework.dir}/build/packages/${package.name}/${toolkit.name}/${build.id}",
+        "js": "..",
+        "sass": ""
+    },
+
+    "sass": {
+        "namespace": "Ext",
+
+        "etc": [
+            "${package.dir}/sass/etc/all.scss",
+            "${package.dir}/${toolkit.name}/sass/etc/all.scss"
+        ],
+
+        "var": [
+            "${package.dir}/sass/var",
+            "${package.dir}/${toolkit.name}/sass/var"
+        ],
+
+        "src": [
+            "${package.dir}/sass/src",
+            "${package.dir}/${toolkit.name}/sass/src"
+        ]
+    },
+
+    "classpath": [
+        "${package.dir}/src",
+        "${package.dir}/${toolkit.name}/src"
+    ],
+
+    "overrides": [
+        "${package.dir}/overrides",
+        "${package.dir}/${toolkit.name}/overrides"
+    ],
+
+    "slicer": {
+        "js": [{
+            "path": "${package.dir}/sass/example/custom.js",
+            "isWidgetManifest": true
+        }]
+    },
+
+    "resource": {
+        "paths": [
+            "${package.dir}/resources",
+            "${package.dir}/${toolkit.name}/resources"
+        ]
+    },
+
+    "builds": {
+        "triton": {
+            "toolkit": "classic",
+            "theme": "theme-triton"
+        },
+
+        "neptune": {
+            "toolkit": "classic",
+            "theme": "theme-neptune"
+        },
+
+        "crisp": {
+            "toolkit": "classic",
+            "theme": "theme-crisp"
+        },
+
+        "classic": {
+            "toolkit": "classic",
+            "theme": "theme-classic"
+        },
+
+        "modern-triton": {
+            "toolkit": "modern",
+            "theme": "theme-triton"
+        },
+
+        "modern-neptune": {
+            "toolkit": "modern",
+            "theme": "theme-neptune"
+        }
+    }
+}

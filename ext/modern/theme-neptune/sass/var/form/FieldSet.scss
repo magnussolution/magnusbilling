@@ -1,0 +1,54 @@
+/**
+ * @class Ext.form.FieldSet
+ */
+
+/**
+ * @var {number/list}
+ * FieldSet border-radius
+ */
+$fieldset-border-radius: dynamic(null);
+
+/**
+ * @var {color}
+ * FieldSet border-color
+ */
+$fieldset-border-color: dynamic($neutral-color);
+
+/**
+ * @var {number/list}
+ * FieldSet border-width
+ */
+$fieldset-border-width: dynamic(1px);
+
+/**
+ * @var {style}
+ * FieldSet border-style
+ */
+$fieldset-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * FieldSet title text color
+ */
+$fieldset-title-color: dynamic($highlight-color);
+
+$fieldset-padding: dynamic(.6rem);
+$fieldset-margin: dynamic(1rem);
+
+$fieldset-title-font-weight: dynamic(null);
+$fieldset-title-line-height: dynamic(null);
+$fieldset-title-line-height-big: dynamic(null);
+$fieldset-title-font-family: dynamic($font-family);
+$fieldset-title-font-size: dynamic(.8em);
+$fieldset-title-font-size-big: dynamic(.8em);
+$fieldset-title-margin: dynamic(1em .7em .3em);
+
+$fieldset-instructions-color: dynamic(lighten($fieldset-title-color, 20%));
+$fieldset-instructions-margin: dynamic(1em .7em .3em);
+$fieldset-instructions-font-weight: dynamic(null);
+$fieldset-instructions-font-size: dynamic(null);
+$fieldset-instructions-font-size-big: dynamic(null);
+$fieldset-instructions-line-height: dynamic(null);
+$fieldset-instructions-line-height-big: dynamic(null);
+$fieldset-instructions-font-family: dynamic(null);
+$fieldset-instructions-text-align: dynamic(null);

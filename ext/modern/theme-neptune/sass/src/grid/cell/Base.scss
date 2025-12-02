@@ -1,0 +1,12 @@
+@include gridcell-ui(
+    $font-weight: $gridcell-font-weight,
+    $font-size: $gridcell-font-size,
+    $font-size-big: $gridcell-font-size-big,
+    $line-height: $gridcell-line-height,
+    $line-height-big: $gridcell-line-height-big,
+    $font-family: $gridcell-font-family,
+    $padding: $gridcell-padding,
+    $padding-big: $gridcell-padding-big
+);
+
+

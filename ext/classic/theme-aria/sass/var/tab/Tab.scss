@@ -1,0 +1,15 @@
+$tab-base-color: dynamic(#616f8c);
+$tab-base-color-over: dynamic(lighten(#616f8c, 5));
+$tab-base-color-active: dynamic($orange);
+$tab-color: dynamic(#fff);
+$tab-color-active: dynamic($tab-color);
+$tab-inner-border-width: dynamic(0);
+$tab-border-color: dynamic(#2e3746);
+$tab-border-color-active: dynamic(#74400e);
+$tab-background-gradient: dynamic(null);
+$tab-background-gradient-over: dynamic(null);
+$tab-background-gradient-active: dynamic(null);
+$tab-background-gradient-disabled: dynamic(null);
+$tab-closable-icon: dynamic('tabs/tab-close');
+$tab-closable-background-position: dynamic(top right);
+$tab-closable-width: dynamic(16px);

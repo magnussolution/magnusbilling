@@ -1,0 +1,11 @@
+/**
+ * @class Ext.form.Panel
+ */
+
+/**
+ * @var {color}
+ * FormPanel body background-color
+ */
+$formpanel-body-background-color: dynamic($background-color);
+$formpanel-body-padding: dynamic(null);
+$formpanel-body-padding-big: dynamic(null);

@@ -1,0 +1,165 @@
+/**
+ * @class Ext.field.Checkbox
+ */
+
+/**
+ * @var {number}
+ * Checkbox Field checkbox size
+ */
+$checkboxfield-checkbox-size: dynamic(px-to-rem(16px, 13px));
+
+/**
+ * @var {number}
+ * Checkbox Field checkbox size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$checkboxfield-checkbox-size-big: dynamic(px-to-rem(18px, 15px));
+
+/**
+ * @var {number}
+ * Checkbox Field checkbox font size
+ */
+$checkboxfield-checkbox-font-size: dynamic($checkboxfield-checkbox-size);
+
+/**
+ * @var {number}
+ * CheckboxField checkbox font size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$checkboxfield-checkbox-font-size-big: dynamic($checkboxfield-checkbox-size-big);
+
+/**
+ * @var {number}
+ * CheckboxField checkbox margin
+ */
+$checkboxfield-checkbox-margin: dynamic(null);
+
+/**
+ * @var {number}
+ * CheckboxField checkbox margin in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$checkboxfield-checkbox-margin-big: dynamic(null);
+
+/**
+ * @var {string/list}
+ * Checkbox Field checkbox icon
+ */
+$checkboxfield-checkbox-icon: dynamic($fa-var-square-o);
+
+/**
+ * @var {string/list}
+ * Checkbox Field checkbox icon when checked
+ */
+$checkboxfield-checked-checkbox-icon: dynamic($fa-var-check-square-o);
+
+/**
+ * @var {color}
+ * Checkbox Field checkbox color
+ */
+$checkboxfield-checkbox-color: dynamic($neutral-dark-color);
+
+/**
+ * @var {color}
+ * Checkbox Field checkbox color when checked
+ */
+$checkboxfield-checked-checkbox-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Checkbox Field checkbox color when disabled
+ */
+$checkboxfield-disabled-checkbox-color: dynamic(null);
+
+/**
+ * Creates a visual theme for a Checkbox Field
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=checkboxfield] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {number} $checkbox-size
+ * Checkbox Field checkbox size
+ *
+ * @param {number} $checkbox-size-big
+ * Checkbox Field checkbox size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $checkbox-font-size
+ * Checkbox Field checkbox font size
+ *
+ * @param {number} $checkbox-font-size-big
+ * CheckboxField checkbox font size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $checkbox-margin
+ * CheckboxField checkbox margin
+ *
+ * @param {number} $checkbox-margin-big
+ * CheckboxField checkbox margin in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string/list} $checkbox-icon
+ * Checkbox Field checkbox icon
+ *
+ * @param {string/list} $checked-checkbox-icon
+ * Checkbox Field checkbox icon when checked
+ *
+ * @param {color} $checkbox-color
+ * Checkbox Field checkbox color
+ *
+ * @param {color} $checked-checkbox-color
+ * Checkbox Field checkbox color when checked
+ *
+ * @param {color} $disabled-checkbox-color
+ * Checkbox Field checkbox color when disabled
+ */
+@mixin checkboxfield-ui(
+    $ui: null,
+    $xtype: checkboxfield,
+    $checkbox-size: null,
+    $checkbox-size-big: null,
+    $checkbox-font-size: null,
+    $checkbox-font-size-big: null,
+    $checkbox-margin: null,
+    $checkbox-margin-big: null,
+    $checkbox-icon: null,
+    $checked-checkbox-icon: null,
+    $checkbox-color: null,
+    $checked-checkbox-color: null,
+    $disabled-checkbox-color: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}#{$xtype}#{$ui-suffix} {
+
+        .#{$prefix}input {
+            margin: $checkbox-margin;
+            height: $checkbox-size;
+            width: $checkbox-size;
+            line-height: $checkbox-size;
+            color: $checkbox-color;
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    margin: $checkbox-margin-big;
+                    height: $checkbox-size-big;
+                    width: $checkbox-size-big;
+                }
+            }
+
+            @include icon(
+                $icon: $checkbox-icon,
+                $font-size: $checkbox-font-size,
+                $font-size-big: $checkbox-font-size-big
+            );
+        }
+
+        &.#{$prefix}checked .#{$prefix}input {
+            @include icon($checked-checkbox-icon);
+            color: $checked-checkbox-color;
+
+            &.#{$prefix}disabled {
+                color: $disabled-checkbox-color;
+            }
+        }
+    }
+}
+

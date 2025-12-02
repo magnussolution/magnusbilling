@@ -1,0 +1,13 @@
+.#{$prefix}slider {
+    .#{$prefix}thumb {
+        transition: transform .15s ease-out;
+
+        &:active {
+            @include scale(1.5);
+        }
+
+        &.#{$prefix}disabled:active {
+            @include scale(1);
+        }
+    }
+}

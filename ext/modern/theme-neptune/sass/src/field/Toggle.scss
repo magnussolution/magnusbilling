@@ -1,0 +1,15 @@
+/**
+ * @class Ext.field.Toggle
+ */
+
+.x-togglefield {
+    .x-body-el {
+        padding: $togglefield-padding;
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                padding: $togglefield-padding-big;
+            }
+        }
+    }
+}

@@ -1,0 +1,57 @@
+/**
+ * @class Ext.field.Checkbox
+ */
+
+.x-checkboxfield {
+    .x-mask-el {
+        @include absolute-position;
+
+        &:before {
+            position: absolute;
+            content: '';
+            top: 0;
+            right: 0;
+            width: 32px;
+            height: 32px;
+            background-color: $field-background-color;
+            border: 2px solid $field-border-color;
+        }
+    }
+
+    .x-input-el {
+        visibility: hidden;
+
+        &:checked ~ .x-mask-el:after {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 32px;
+            text-align: center;
+            // TODO: Use FontAwesome
+            font-family: 'Pictos';
+            font-size: 26px;
+            line-height: 36px;
+            content: '3';
+            color: #000;
+        }
+    }
+
+    &.x-disabled {
+        .x-mask-el {
+            &:before {
+                background-color: $field-disabled-background-color;
+                border-color: $field-disabled-border-color;
+            }
+        }
+
+        .x-input-el:checked ~ .x-mask-el:after {
+            color: $field-disabled-color;
+        }
+
+    }
+}
+
+.x-radiofield .x-input-el:checked ~ .x-mask-el:after {
+    background-color: $field-disabled-color;
+}
+

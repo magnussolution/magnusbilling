@@ -1,0 +1,9 @@
+
+// TODO: change sizing to use em/rem units
+$treelist-padding: dynamic(0 10px);
+$treelist-item-line-height: dynamic(32px);
+$treelist-item-line-height-big: dynamic(44px);
+$treelist-item-text-icon-gap: dynamic(6px);
+
+$treelist-item-expander-color: dynamic($base-color);
+$treelist-item-icon-color: dynamic($base-color);

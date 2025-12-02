@@ -1,0 +1,21 @@
+/**
+ * @class Ext.field.Select
+ */
+
+.x-selectfield-overlay {
+    .x-list-item-label {
+        height: 2.6em;
+    }
+
+    .x-listitem.x-selected {
+        .x-list-label {
+            margin-right: 2.6em;
+            @include font-icon($selectfield-selected-item-icon, $pseudo: after, $style-pseudo: true);
+            &:after {
+                color: $selectfield-selected-item-icon-color;
+                position: absolute;
+                right: .6em;
+            }
+        }
+    }
+}

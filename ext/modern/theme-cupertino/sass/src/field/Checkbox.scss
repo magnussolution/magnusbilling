@@ -1,0 +1,25 @@
+/**
+ * @class Ext.field.Checkbox
+ */
+
+.x-checkboxfield {
+    .x-mask-el {
+        &::after {
+            @include checkmark(#ccc);
+        }
+    }
+
+    .x-input-el {
+        visibility: hidden;
+
+        &:checked + .x-mask-el::after {
+            color: $ios7-blue;
+        }
+    }
+
+    &.x-disabled {
+        .x-input-el:checked + .x-mask-el::after {
+            color: lighten($ios7-blue, 20%);
+        }
+    }
+}

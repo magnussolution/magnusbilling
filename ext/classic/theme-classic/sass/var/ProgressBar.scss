@@ -1,0 +1,11 @@
+/** @class Ext.ProgressBar */
+//
+
+$progress-bar-base-color: dynamic($base-color);
+$progress-border-color: dynamic(adjust-color($progress-bar-base-color, $hue: 0deg, $saturation: -3.08%, $lightness: -23.725%));
+$progress-background-color: dynamic(adjust-color($progress-bar-base-color, $hue: 0deg, $saturation: -11.37%, $lightness: 7.451%));
+$progress-bar-background-color: dynamic(adjust-color($progress-bar-base-color, $hue: 0deg, $saturation: 8.187%, $lightness: -17.647%));
+$progress-text-back-color: dynamic(adjust-color($progress-bar-base-color, $hue: 0deg, $saturation: -10.895%, $lightness: -43.725%));
+
+$progress-text-font-size: dynamic(ceil($font-size * .9));
+$progress-bar-background-gradient: dynamic('glossy');

@@ -1,0 +1,7 @@
+@function toolbar-border-color($background-color) {
+    @return darken($background-color, 50%);
+}
+
+@function toolbar-title-color($background-color) {
+    @return color-by-background($background-color);
+}

@@ -1,0 +1,12 @@
+$pivot-grid-config-column-btn-width: $content-padding;
+$pivot-grid-config-column-btn-height: $content-padding;
+$pivot-grid-config-column-btn-color: $disabled-color;
+$pivot-grid-config-column-btn-delete-icon: 'remove_circle';
+$pivot-grid-config-column-btn-delete-color: $alert-color;
+
+$pivot-grid-config-column-btn-move-icon: 'reorder';
+$pivot-grid-config-column-btn-sort-asc-icon: 'arrow_upward';
+$pivot-grid-config-column-btn-sort-desc-icon: 'arrow_downward';
+
+$pivot-grid-config-column-btn-font-size: px-to-rem(16px, 12px);
+$pivot-grid-config-column-btn-font-size-big: px-to-rem(18px, 14px);

@@ -1,0 +1,19 @@
+@include revealtrigger-ui(
+    $width: $revealtrigger-width,
+    $width-big: $revealtrigger-width-big,
+    $background-color: $revealtrigger-background-color,
+    $hovered-background-color: $revealtrigger-hovered-background-color,
+    $pressed-background-color: $revealtrigger-pressed-background-color,
+    $icon: $revealtrigger-icon,
+    $icon-color: $revealtrigger-icon-color,
+    $hovered-icon-color: $revealtrigger-hovered-icon-color,
+    $pressed-icon-color: $revealtrigger-pressed-icon-color,
+    $icon-background-color: $revealtrigger-icon-background-color,
+    $hovered-icon-background-color: $revealtrigger-hovered-icon-background-color,
+    $pressed-icon-background-color: $revealtrigger-pressed-icon-background-color,
+    $icon-border-radius: $revealtrigger-icon-border-radius,
+    $icon-size: $revealtrigger-icon-size,
+    $icon-size-big: $revealtrigger-icon-size-big,
+    $icon-font-size: $revealtrigger-icon-font-size,
+    $icon-font-size-big: $revealtrigger-icon-font-size-big
+);

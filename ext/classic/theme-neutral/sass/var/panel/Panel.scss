@@ -1,0 +1,426 @@
+/**
+ * @class Ext.panel.Panel
+ */
+
+// TODO: setting this probably does not work well, since border-radius is typically
+// reserved for framed-panels - should we remove this?
+$panel-border-radius: dynamic(0);
+
+/**
+ * @var {number}
+ * The default border-width of Panels
+ */
+$panel-border-width: dynamic(1px);
+
+/**
+ * @var {color}
+ * The base color of Panels
+ */
+$panel-base-color: dynamic($base-color);
+
+/**
+ * @var {color}
+ * The default border-color of Panels
+ */
+$panel-border-color: dynamic($panel-base-color);
+
+/**
+ * @var {number}
+ * The maximum width a Panel's border can be before resizer handles are embedded
+ * into the borders using negative absolute positions.
+ *
+ * This defaults to 2, so that in the classic theme which uses 1 pixel borders,
+ * resize handles are in the content area within the border as they always have
+ * been.
+ *
+ * In the Neptune theme, the handles are embedded into the 5 pixel wide borders
+ * of any framed panel.
+ */
+$border-width-threshold: dynamic(2);
+
+// ===============================
+// ========= PANEL BODY ==========
+// ===============================
+/**
+ * @var {string}
+ * The default border-style of Panels
+ */
+$panel-body-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * The default body background-color of Panels
+ */
+$panel-body-background-color: dynamic(#fff);
+
+/**
+ * @var {color}
+ * The default color of text inside a Panel's body
+ */
+$panel-body-color: dynamic($color);
+
+/**
+ * @var {color}
+ * The default border-color of the Panel body
+ */
+$panel-body-border-color: dynamic($panel-border-color);
+
+/**
+ * @var {number}
+ * The default border-width of the Panel body
+ */
+$panel-body-border-width: dynamic(1px);
+
+/**
+ * @var {number}
+ * The default font-size of the Panel body
+ */
+$panel-body-font-size: dynamic($font-size);
+
+/**
+ * @var {string}
+ * The default font-weight of the Panel body
+ */
+$panel-body-font-weight: dynamic($font-weight);
+
+/**
+ * @var {string}
+ * The default font-family of the Panel body
+ */
+$panel-body-font-family: dynamic($font-family);
+
+/**
+ * @var {number}
+ * The space between the Panel {@link Ext.panel.Tool Tools}
+ */
+$panel-tool-spacing: dynamic(4px);
+
+/**
+ * @var {string}
+ * The background sprite to use for Panel {@link Ext.panel.Tool Tools}
+ */
+$panel-tool-background-image: dynamic('tools/tool-sprites');
+
+/**
+ * @var {color}
+ * The color of the outline around Panel {@link Ext.panel.Tool Tools} when focused
+ */
+$panel-tool-focus-outline-color: dynamic($base-color);
+
+/**
+ * @var {string}
+ * The outline-style of Panel {@link Ext.panel.Tool Tools} when focused
+ */
+$panel-tool-focus-outline-style: dynamic(solid);
+
+/**
+ * @var {number}
+ * The outline-width of Panel {@link Ext.panel.Tool Tools} when focused
+ */
+$panel-tool-focus-outline-width: dynamic(1px);
+
+/**
+ * @var {number}
+ * The outline-offset of Panel {@link Ext.panel.Tool Tools} when focused
+ */
+$panel-tool-focus-outline-offset: dynamic(0);
+
+/**
+ * @var {number}
+ * The border-width of Panel Headers
+ */
+$panel-header-border-width: dynamic($panel-border-width);
+
+/**
+ * @var {string}
+ * The border-style of Panel Headers
+ */
+$panel-header-border-style: dynamic(solid);
+
+/**
+ * @var {number/list}
+ * The padding of Panel Headers
+ */
+$panel-header-padding: dynamic(5px);
+
+/**
+ * @var {number}
+ * The font-size of Panel Headers
+ */
+$panel-header-font-size: dynamic($font-size);
+
+/**
+ * @var {number}
+ * The line-height of Panel Headers
+ */
+$panel-header-line-height: dynamic(16px);
+
+/**
+ * @var {string}
+ * The font-weight of Panel Headers
+ */
+$panel-header-font-weight: dynamic($font-weight-bold);
+
+/**
+ * @var {string}
+ * The font-family of Panel Headers
+ */
+$panel-header-font-family: dynamic($font-family);
+
+/**
+ * @var {string}
+ * The text-transform of Panel Headers
+ */
+$panel-header-text-transform: dynamic(none);
+
+/**
+ * @var {number/list}
+ * The padding of the Panel Header's text element
+ */
+$panel-header-text-padding: dynamic(0);
+
+/**
+ * @var {number/list}
+ * The margin of the Panel Header's text element
+ */
+$panel-header-text-margin: dynamic(0);
+
+/**
+ * @var {string/list}
+ * The background-gradient of the Panel Header. Can be either the name of a predefined
+ * gradient or a list of color stops. Used as the `$type` parameter for
+ * {@link Global_CSS#background-gradient}.
+ */
+$panel-header-background-gradient: dynamic('none');
+
+/**
+ * @var {color}
+ * The border-color of the Panel Header
+ */
+$panel-header-border-color: dynamic($panel-border-color);
+
+/**
+ * @var {color}
+ * The inner border-color of the Panel Header
+ */
+$panel-header-inner-border-color: dynamic(#fff);
+
+/**
+ * @var {number}
+ * The inner border-width of the Panel Header
+ */
+$panel-header-inner-border-width: dynamic(0);
+
+/**
+ * @var {color}
+ * The text color of the Panel Header
+ */
+$panel-header-color: dynamic($color);
+
+/**
+ * @var {color}
+ * The background-color of the Panel Header
+ */
+$panel-header-background-color: dynamic($panel-base-color);
+
+/**
+ * @var {number}
+ * The width of the Panel Header icon
+ */
+$panel-header-icon-width: dynamic(16px);
+
+/**
+ * @var {number}
+ * The height of the Panel Header icon
+ */
+$panel-header-icon-height: dynamic(16px);
+
+/**
+ * @var {number}
+ * The space between the Panel Header icon and text
+ */
+$panel-header-icon-spacing: dynamic(4px);
+
+/**
+ * @var {list}
+ * The background-position of  the Panel Header icon
+ */
+$panel-header-icon-background-position: dynamic(center center);
+
+/**
+ * @var {color}
+ * The color of the Panel Header glyph icon
+ */
+$panel-header-glyph-color: dynamic($panel-header-color);
+
+/**
+ * @var {number}
+ * The opacity of the Panel Header glyph icon
+ */
+$panel-header-glyph-opacity: dynamic(.5);
+
+/**
+ * @var {boolean}
+ * True to adjust the padding of borderless panel headers so that their height is the same
+ * as the height of bordered panels.  This is helpful when borderless and bordered panels
+ * are used side-by-side, as it maintains a consistent vertical alignment.
+ */
+$panel-header-noborder-adjust: dynamic(true);
+
+/**
+ * @var {color}
+ * The base color of the framed Panels
+ */
+$panel-frame-base-color: dynamic($panel-base-color);
+
+/**
+ * @var {number}
+ * The border-radius of framed Panels
+ */
+$panel-frame-border-radius: dynamic(4px);
+
+/**
+ * @var {number}
+ * The border-width of framed Panels
+ */
+$panel-frame-border-width: dynamic(1px);
+
+/**
+ * @var {string}
+ * The border-style of framed Panels
+ */
+$panel-frame-border-style: dynamic(solid);
+
+/**
+ * @var {number}
+ * The padding of {@link Ext.panel.Panel#cfg-frame framed} Panels.
+ * 
+ * The padding value must be equal to or greater than value specified in the 
+ * {@link #$panel-frame-border-radius} variable (or the maximum value if corner values 
+ * are specified individually).  
+ * See also: {@link #$panel-ignore-frame-padding}
+ */
+$panel-frame-padding: dynamic(4px);
+
+/**
+ * @var {color}
+ * The background-color of framed Panels
+ */
+$panel-frame-background-color: dynamic(#fff);
+
+/**
+ * @var {color}
+ * The border-color of framed Panels
+ */
+$panel-frame-border-color: dynamic($panel-border-color);
+
+/**
+ * @var {number}
+ * The border-width of the body element of framed Panels
+ */
+$panel-frame-body-border-width: dynamic(1px);
+
+/**
+ * @var {number}
+ * The border-width of framed Panel Headers
+ */
+$panel-frame-header-border-width: dynamic($panel-header-border-width);
+
+/**
+ * @var {color}
+ * The inner border-color of framed Panel Headers
+ */
+$panel-frame-header-inner-border-color: dynamic(#fff);
+
+/**
+ * @var {number}
+ * The inner border-width of framed Panel Headers
+ */
+$panel-frame-header-inner-border-width: dynamic(0);
+
+/**
+ * @var {number/list}
+ * The padding of framed Panel Headers
+ */
+$panel-frame-header-padding: dynamic($panel-header-padding);
+
+/**
+ * @var {number}
+ * The opacity of ghost Panels while dragging
+ */
+$panel-ghost-opacity: dynamic(0.50);
+
+/**
+ * @var {string}
+ * The direction to strech the background-gradient of top docked Headers when slicing images
+ * for IE using Sencha Cmd
+ */
+$panel-background-stretch-top: dynamic(bottom);
+
+/**
+ * @var {string}
+ * The direction to strech the background-gradient of bottom docked Headers when slicing images
+ * for IE using Sencha Cmd
+ */
+$panel-background-stretch-bottom: dynamic(top);
+
+/**
+ * @var {string}
+ * The direction to strech the background-gradient of right docked Headers when slicing images
+ * for IE using Sencha Cmd
+ */
+$panel-background-stretch-right: dynamic(left);
+
+/**
+ * @var {string}
+ * The direction to strech the background-gradient of left docked Headers when slicing images
+ * for IE using Sencha Cmd
+ */
+$panel-background-stretch-left: dynamic(right);
+
+/**
+ * @var {boolean}
+ * True to include neptune style border management rules.
+ */
+$panel-include-border-management-rules: dynamic(false);
+
+/**
+ * @var {color}
+ * The color to apply to the border that wraps the body and docked items in a framed
+ * panel. The presence of the wrap border in a framed panel is controlled by the
+ * {@link #border} config. Only applicable when `$panel-include-border-management-rules` is
+ * `true`.
+ */
+$panel-wrap-border-color: dynamic($panel-border-color);
+
+/**
+ * @var {number}
+ * The width to apply to the border that wraps the body and docked items in a framed
+ * panel. The presence of the wrap border in a framed panel is controlled by the
+ * {@link #border} config. Only applicable when `$panel-include-border-management-rules` is
+ * `true`.
+ */
+$panel-wrap-border-width: dynamic(1px);
+
+/**
+ * @var {boolean}
+ * True to include the "default" panel UI
+ */
+$include-panel-default-ui: dynamic($include-default-uis);
+
+/**
+ * @var {boolean}
+ * True to include the "default-framed" panel UI
+ */
+$include-panel-default-framed-ui: dynamic($include-default-uis);
+
+/**
+ * @var {boolean}
+ * True to ignore the frame padding.  By default, the frame mixin adds extra padding when
+ * border radius is larger than border width.  This is intended to prevent the content
+ * from colliding with the rounded corners of the frame.  Set this to true to prevent
+ * the panel frame from adding this extra padding.
+ * 
+ * **Note:** This var is not applicable to IE8 & IE9.
+ */
+$panel-ignore-frame-padding: dynamic(false);

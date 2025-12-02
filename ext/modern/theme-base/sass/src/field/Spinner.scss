@@ -1,0 +1,18 @@
+.#{$prefix}spinnerfield {
+    //http://stackoverflow.com/questions/3790935/can-i-hide-the-html5-number-inputs-spin-box
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .#{$prefix}spinner-button {
+        text-align: center;
+    }
+
+    &.#{$prefix}grouped-buttons {
+        .#{$prefix}input-el {
+            text-align: left;
+        }
+    }
+}

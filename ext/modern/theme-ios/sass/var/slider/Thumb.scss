@@ -1,0 +1,15 @@
+$thumb-height: dynamic(1.4286rem);
+$thumb-height-big: dynamic(1.75rem);
+$thumb-width: dynamic(1.4286rem);
+$thumb-width-big: dynamic(1.75rem);
+$thumb-background-color: dynamic($background-color);
+$thumb-hovered-background-color: dynamic(null);
+$thumb-pressed-background-color: dynamic(null);
+$thumb-border-radius: dynamic($thumb-height / 2);
+$thumb-border-radius-big: dynamic($thumb-height-big / 2);
+$thumb-icon: dynamic(null);
+$thumb-icon-color: dynamic(null);
+$thumb-icon-size: dynamic(null);
+$thumb-icon-size-big: dynamic(null);
+$thumb-box-shadow: dynamic(0px 2px 4px rgba(0,0,0,.2));
+$thumb-box-shadow-big: dynamic(0px 3px 6px rgba(0,0,0,.2));

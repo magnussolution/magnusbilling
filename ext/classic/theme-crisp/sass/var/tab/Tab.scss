@@ -1,0 +1,19 @@
+$tab-base-color: dynamic($neutral-light-color);
+$tab-base-color-over: dynamic(mix($base-color, $tab-base-color, 20%));
+$tab-base-color-active: dynamic($base-highlight-color);
+$tab-base-color-disabled: dynamic($tab-base-color);
+
+$tab-border-width: dynamic(1px);
+
+$tab-border-color: dynamic($neutral-light-color);
+$tab-border-color-active: dynamic($tab-base-color-active);
+$tab-border-color-disabled: dynamic($tab-border-color);
+
+$tab-inner-border-color-focus: dynamic($tab-base-color-active);
+$tab-inner-border-color-focus-over: dynamic($tab-inner-border-color-focus);
+
+$tab-color: dynamic(#000);
+$tab-color-active: dynamic(#fff);
+$tab-color-disabled: dynamic($tab-color);
+
+$tab-padding: dynamic(3px 8px);

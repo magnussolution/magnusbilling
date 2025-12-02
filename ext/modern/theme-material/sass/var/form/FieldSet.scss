@@ -1,0 +1,22 @@
+$fieldset-title-color: dynamic($color);
+$fieldset-margin: dynamic(0);
+$fieldset-border-radius: dynamic(0);
+$fieldset-border-color: dynamic(null);
+$fieldset-border-width: dynamic(null);
+$fieldset-border-style: dynamic(none);
+
+$fieldset-title-font-size: dynamic(px-to-rem(14px, 12px));
+$fieldset-title-font-size-big: dynamic(px-to-rem(16px, 14px));
+$fieldset-title-font-weight: dynamic(400);
+$fieldset-title-line-height: dynamic(px-to-em(18px, 14px));
+$fieldset-title-line-height-big: dynamic(px-to-em(24px, 16px));
+$fieldset-title-margin: dynamic(0);
+
+$fieldset-instructions-color: dynamic($highlight-color);
+$fieldset-instructions-font-size: dynamic(px-to-rem(12px, 12px));
+$fieldset-instructions-font-size-big: dynamic(px-to-rem(12px, 14px));
+$fieldset-instructions-font-weight: dynamic(400);
+$fieldset-instructions-line-height: dynamic(px-to-em(32px, 12px));
+$fieldset-instructions-line-height-big: dynamic(px-to-em(32px, 12px));
+$fieldset-instructions-margin: dynamic(null);
+$fieldset-instructions-text-align: dynamic(left);

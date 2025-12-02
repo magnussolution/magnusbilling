@@ -1,0 +1,8 @@
+$checkboxfield-checkbox-color: dynamic($base-color);
+$checkboxfield-checkbox-size: dynamic(px-to-rem(22px, 14px));
+$checkboxfield-checkbox-size-big: dynamic(px-to-rem(30px, 16px));
+$checkboxfield-checkbox-color: dynamic($base-color);
+$checkboxfield-checkbox-icon: dynamic($ios-check-box-unchecked iOS);
+$checkboxfield-checked-checkbox-icon: dynamic($ios-check-box-checked iOS);
+$checkboxfield-checkbox-font-size: dynamic(px-to-rem(16px, 14px));
+$checkboxfield-checkbox-font-size-big: dynamic(px-to-rem(24px, 16px));

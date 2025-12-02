@@ -1,0 +1,24 @@
+{
+    "name": "font-ios",
+    "namespace": "Ext",
+    "type": "code",
+    "creator": "Sencha",
+    "summary": "iOS font icons",
+    "detailedDescription": "Font icons used in the modern toolkit iOS theme",
+    "version": "6.2.0.981",
+    "compatVersion": "6.2.0",
+    "format": "1",
+    "output": "${framework.dir}/build/packages/${package.name}",
+    "local": true,
+    "sass" : {
+        "namespace": "Ext",
+        "etc": "${package.dir}/sass/etc/all.scss",
+        "var": "${package.dir}/sass/var",
+        "src": [
+            "${package.dir}/sass/src",
+            "${package.dir}/sass/src/all.scss"
+        ]
+    },
+    "classpath": "${package.dir}/src",
+    "overrides": "${package.dir}/overrides"
+}

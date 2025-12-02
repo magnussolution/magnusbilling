@@ -1,0 +1,257 @@
+/**
+ * @class Ext.field.trigger.Trigger
+ */
+
+/**
+ * @var {number}
+ * Trigger width
+ */
+$trigger-width: dynamic(px-to-em(22px, 13px));
+
+/**
+ * @var {number}
+ * Trigger width in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$trigger-width-big: dynamic(px-to-em(30px, 15px));
+
+/**
+ * @var {color}
+ * Trigger background-color
+ */
+$trigger-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Trigger background-color when hovered
+ */
+$trigger-hovered-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Trigger background-color when pressed
+ */
+$trigger-pressed-background-color: dynamic(null);
+
+/**
+ * @var {string}
+ * Trigger icon
+ */
+$trigger-icon: dynamic($fa-var-caret-down);
+
+/**
+ * @var {color}
+ * Trigger icon color
+ */
+$trigger-icon-color: dynamic($neutral-dark-color);
+
+/**
+ * @var {color}
+ * Trigger icon color when hovered
+ */
+$trigger-hovered-icon-color: dynamic(mix(#000, $trigger-icon-color, 8%));
+
+/**
+ * @var {color}
+ * Trigger icon color when pressed
+ */
+$trigger-pressed-icon-color: dynamic(mix(#000, $trigger-icon-color, 15%));
+
+/**
+ * @var {color}
+ * Trigger icon background-color
+ */
+$trigger-icon-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Trigger icon background-color when hovered
+ */
+$trigger-hovered-icon-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Trigger icon background-color when pressed
+ */
+$trigger-pressed-icon-background-color: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Trigger icon border-radius
+ */
+$trigger-icon-border-radius: dynamic(null);
+
+/**
+ * @var {number}
+ * Trigger icon size
+ */
+$trigger-icon-size: dynamic(px-to-em(16px, 13px));
+
+/**
+ * @var {number}
+ * Trigger icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$trigger-icon-size-big: dynamic(px-to-em(20px, 15px));
+
+/**
+ * @var {number}
+ * Trigger icon font-size
+ */
+$trigger-icon-font-size: dynamic($trigger-icon-size);
+
+/**
+ * @var {number}
+ * Trigger icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$trigger-icon-font-size-big: dynamic($trigger-icon-size-big);
+
+/**
+ * Creates a visual theme for a Trigger.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=trigger] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {number} $width
+ * Trigger width
+ *
+ * @param {number} $width-big
+ * Trigger width in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $background-color
+ * Trigger background-color
+ *
+ * @param {color} $hovered-background-color
+ * Trigger background-color when hovered
+ *
+ * @param {color} $pressed-background-color
+ * Trigger background-color when pressed
+ *
+ * @param {string} $icon
+ * Trigger icon
+ *
+ * @param {color} $icon-color
+ * Trigger icon color
+ *
+ * @param {color} $hovered-icon-color
+ * Trigger icon color when hovered
+ *
+ * @param {color} $pressed-icon-color
+ * Trigger icon color when pressed
+ *
+ * @param {color} $icon-background-color
+ * Trigger icon background-color
+ *
+ * @param {color} $hovered-icon-background-color
+ * Trigger icon background-color when hovered
+ *
+ * @param {color} $pressed-icon-background-color
+ * Trigger icon background-color when pressed
+ *
+ * @param {number/list} $icon-border-radius
+ * Trigger icon border-radius
+ *
+ * @param {number} $icon-size
+ * Trigger icon size
+ *
+ * @param {number} $icon-size-big
+ * Trigger icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $icon-font-size
+ * Trigger icon font-size
+ *
+ * @param {number} $icon-font-size-big
+ * Trigger icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin trigger-ui(
+    $ui: null,
+    $xtype: trigger,
+    $width: null,
+    $width-big: null,
+    $background-color: null,
+    $hovered-background-color: null,
+    $pressed-background-color: null,
+    $icon: null,
+    $icon-color: null,
+    $hovered-icon-color: null,
+    $pressed-icon-color: null,
+    $icon-background-color: null,
+    $hovered-icon-background-color: null,
+    $pressed-icon-background-color: null,
+    $icon-border-radius: null,
+    $icon-size: null,
+    $icon-size-big: null,
+    $icon-font-size: null,
+    $icon-font-size-big: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}#{$xtype}#{$ui-suffix} {
+        width: $width;
+        background-color: $background-color;
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                width: $width-big;
+            }
+        }
+
+        .#{$prefix}icon-el {
+            height: $icon-size;
+            width: $icon-size;
+            color: $icon-color;
+            background-color: $icon-background-color;
+            border-radius: $icon-border-radius;
+
+            @include icon(
+                $icon: $icon,
+                $font-size: $icon-font-size,
+                $font-size-big: $icon-font-size-big
+            );
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    height: $icon-size-big;
+                    width: $icon-size-big;
+                }
+            }
+        }
+
+        &.#{$prefix}interactive {
+            &:hover {
+                background-color: $hovered-background-color;
+
+                .#{$prefix}icon-el {
+                    color: $hovered-icon-color;
+                    background-color: $hovered-icon-background-color;
+                }
+            }
+
+            &:active {
+                background-color: $pressed-background-color;
+
+                .#{$prefix}icon-el {
+                    color: $pressed-icon-color;
+                    background-color: $pressed-icon-background-color;
+                }
+            }
+        }
+    }
+}
+
+
+// Non-UI variables - these variables do not correspond to a UI mixin parameter
+
+/**
+ * @var {'horizontal'/'vertical'}
+ * The alignment of {@link #grouped} triggers
+ */
+$trigger-grouped-align: dynamic(vertical);
+
+/**
+ * @var {'horizontal'/'vertical'}
+ * The alignment of {@link #grouped} triggers in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$trigger-grouped-align-big: dynamic(horizontal);

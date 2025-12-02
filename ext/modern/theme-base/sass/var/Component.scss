@@ -1,0 +1,124 @@
+/**
+ * @class Global_CSS
+ * Global CSS variables and mixins.
+ */
+
+$touch-theme-base: true;
+
+/**
+ * @var {string}
+ * The font-family to use for font icons throughout the theme.
+ * @private
+ */
+$font-icon-font-family: dynamic(FontAwesome);
+
+//Required by charts
+$font-size: dynamic(15px);
+$font-weight: dynamic(normal);
+$font-family: dynamic('Helvetica');
+
+/**
+ * @var {color} $base-color
+ * The primary color variable from which most elements derive their color scheme.
+ */
+$base-color: dynamic(#808080);
+
+/**
+ * @var {string} $image-extension
+ * default file extension to use for images (defaults to 'png').
+ */
+$image-extension: dynamic('png');
+
+/**
+ * Default search path for images
+ */
+$image-search-path: '.' !default;
+
+/**
+ * @var {boolean/string} $relative-image-path-for-uis
+ * True to use a relative image path for all new UIs. If true, the path will be "../images/".
+ * It can also be a string of the path value.
+ * It defaults to false, which means it will look for the images in the ExtJS SDK folder.
+ */
+$relative-image-path-for-uis: false !default;
+
+
+
+/**
+ * @var {boolean} $enable-missing-images
+ * True to include files which are not found when compiling your SASS
+ */
+$include-missing-images: dynamic(true); //legacy fallback < 6.2
+$enable-missing-images: dynamic($include-missing-images);
+
+/**
+ * @var {string}
+ * The base path relative to the CSS output directory to use for theme resources.  For example
+ * if the theme's images live one directory up from the generated CSS output in a directory
+ * named 'foo/images/', you would need to set this variable to '../foo/' in order for the image
+ * paths in the CSS output to be generated correctly. By default this is the same as the
+ * CSS output directory.
+ */
+$theme-resource-path: dynamic('');
+
+/**
+ * @var {number} $css-shadow-border-radius
+ * The border radius for CSS shadows in the Classic toolkit.
+ */
+$css-shadow-border-radius: dynamic(5px);
+
+/**
+ * @var {boolean}
+ * True to add font-smoothing styles to all components
+ */
+$enable-font-smoothing: dynamic(true);
+
+/**
+ * @var {number}
+ * The X pixel offset by which to shift drop shadows behind floated components in the Modern toolkit.
+ * By default, shadows are centered below their component, and spread by {@link Global_CSS#$shadow-width} pixels.
+ */
+$shadow-x-offset: dynamic(2px);
+
+/**
+ * @var {number}
+ * The Y pixel offset by which to shift drop shadows behind floated components in the Modern toolkit.
+ * By default, shadows are centered below their component, and spread by {@link Global_CSS#$shadow-width} pixels.
+ */
+$shadow-y-offset: dynamic(2px);
+
+/**
+ * @var {number}
+ * The width in pixels by which the specified {@link Global_CSS#$shadow-width} is blurred to create a soft
+ * shadow effect. If set to 0 the shadow will be sharp, the higher the number, the more blurred it will be,
+ * and the further out the shadow will extend. For instance a shadow with {@link Global_CSS#$shadow-width} of 5px
+ * that also has a 5px blur radius will be 10px of total shadow..
+ */
+$shadow-blur-radius: dynamic(8px);
+
+/**
+ * @var {number}
+ * The width in pixels by which shadows exceed their owning component borders all round in the Modern toolkit.
+ * A light source direction may be added to skew this in any direction by use of {@link Global_CSS#$shadow-x-offset} and
+ * {@link Global_CSS#$shadow-y-offset}.
+ */
+$shadow-width: dynamic(0);
+
+/**
+ * @var {color}
+ * The color of the shadow in the Modern toolkit. Usually with a transparency element, eg: rgba(0, 0, 0, 0.4).
+ */
+$shadow-color: dynamic(rgba(0, 0, 0, 0.4));
+
+/**
+ * @var {boolean}
+ * Determines if a padding is applied to the whole application when inside a webview on iOS
+ * disable this if your hybrid application is not using a overlay status bar on iOS
+ */
+$enable-status-bar-padding: dynamic(true);
+
+/**
+ * @var {boolean}
+ * Determines if {@link Ext.Component#floated} items have shadows
+ */
+$enable-floated-shadows: dynamic(true);

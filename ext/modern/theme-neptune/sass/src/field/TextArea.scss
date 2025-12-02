@@ -1,0 +1,10 @@
+/**
+ * @class Ext.field.TextArea
+ */
+
+.#{$prefix}textareafield {
+    .#{$prefix}input-el {
+        min-height: $textareafield-input-min-height;
+        padding: $textareafield-padding;
+    }
+}

@@ -1,0 +1,139 @@
+.#{$prefix}tool-close {
+    @include font-icon($panel-tool-close-icon);
+}
+
+.#{$prefix}tool-minimize {
+    @include font-icon($panel-tool-minimize-icon);
+}
+
+.#{$prefix}tool-maximize {
+    @include font-icon($panel-tool-maximize-icon);
+}
+
+.#{$prefix}tool-restore {
+    @include font-icon($panel-tool-restore-icon);
+}
+
+.#{$prefix}tool-toggle {
+    @include font-icon($panel-tool-toggle-up-icon);
+
+    .#{$prefix}panel-collapsed & {
+        @include font-icon($panel-tool-toggle-down-icon);
+    }
+}
+
+.#{$prefix}tool-gear {
+    @include font-icon($panel-tool-gear-icon);
+}
+
+.#{$prefix}tool-prev {
+    @include font-icon($panel-tool-prev-icon);
+}
+
+.#{$prefix}tool-next {
+    @include font-icon($panel-tool-next-icon);
+}
+
+.#{$prefix}tool-pin {
+    @include font-icon($panel-tool-pin-icon);
+}
+
+.#{$prefix}tool-unpin {
+    @include font-icon($panel-tool-unpin-icon);
+}
+
+.#{$prefix}tool-right {
+    @include font-icon($panel-tool-right-icon);
+}
+
+.#{$prefix}tool-left {
+    @include font-icon($panel-tool-left-icon);
+}
+
+.#{$prefix}tool-down {
+    @include font-icon($panel-tool-down-icon);
+}
+
+.#{$prefix}tool-up {
+    @include font-icon($panel-tool-up-icon);
+}
+
+.#{$prefix}tool-refresh {
+    @include font-icon($panel-tool-refresh-icon);
+}
+
+.#{$prefix}tool-plus {
+    @include font-icon($panel-tool-plus-icon);
+}
+
+.#{$prefix}tool-menu {
+    @include font-icon($panel-tool-menu-icon);
+}
+
+.#{$prefix}tool-minus {
+    @include font-icon($panel-tool-minus-icon);
+}
+
+.#{$prefix}tool-search {
+    @include font-icon($panel-tool-search-icon);
+}
+
+.#{$prefix}tool-save {
+    @include font-icon($panel-tool-save-icon);
+}
+
+.#{$prefix}tool-help {
+    @include font-icon($panel-tool-help-icon);
+}
+
+.#{$prefix}tool-print {
+    @include font-icon($panel-tool-print-icon);
+}
+
+.#{$prefix}tool-expand {
+    @include font-icon($panel-tool-expand-icon);
+}
+
+.#{$prefix}tool-collapse {
+    @include font-icon($panel-tool-collapse-icon);
+}
+
+.#{$prefix}tool-resize {
+    @include font-icon($panel-tool-resize-icon);
+}
+
+.#{$prefix}tool-move {
+    @include font-icon($panel-tool-move-icon);
+}
+
+.#{$prefix}tool-expand-bottom {
+    @include font-icon($panel-tool-expand-bottom-icon);
+}
+
+.#{$prefix}tool-collapse-bottom {
+    @include font-icon($panel-tool-collapse-bottom-icon);
+}
+
+.#{$prefix}tool-expand-top {
+    @include font-icon($panel-tool-expand-top-icon);
+}
+
+.#{$prefix}tool-collapse-top {
+    @include font-icon($panel-tool-collapse-top-icon);
+}
+
+.#{$prefix}tool-expand-left {
+    @include font-icon($panel-tool-expand-left-icon);
+}
+
+.#{$prefix}tool-collapse-left {
+    @include font-icon($panel-tool-collapse-left-icon);
+}
+
+.#{$prefix}tool-expand-right {
+    @include font-icon($panel-tool-expand-right-icon);
+}
+
+.#{$prefix}tool-collapse-right {
+    @include font-icon($panel-tool-collapse-right-icon);
+}

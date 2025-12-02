@@ -1,0 +1,33 @@
+/** @class Ext.button.Button */
+//
+
+$button-default-base-color: dynamic(#f8f8f8);
+$button-default-base-color-over: dynamic(#f3f3f3);
+$button-default-base-color-focus: dynamic($button-default-base-color-over);
+$button-default-base-color-pressed: dynamic(#d6d6d6);
+$button-default-base-color-disabled: dynamic(adjust-color($base-color, $hue: 0deg, $saturation: -55.556%, $lightness: 12.745%));  //F7F7F7
+
+$button-default-border-color: dynamic(#bbbbbb);
+$button-default-border-color-over: dynamic(#9d9d9d);
+$button-default-border-color-focus: dynamic($button-default-border-color-over);
+$button-default-border-color-pressed: dynamic($button-default-border-color-over);
+$button-default-border-color-disabled: dynamic(adjust-color($button-default-base-color-disabled, $hue: 0deg, $saturation: 0%, $lightness: -8.627%));
+
+$button-default-background-gradient: dynamic('matte');
+$button-default-background-gradient-over: dynamic('matte');
+$button-default-background-gradient-focus: dynamic('matte');
+$button-default-background-gradient-pressed: dynamic('matte-reverse');
+$button-default-background-gradient-disabled: dynamic('matte');
+
+$button-toolbar-border-color-over: dynamic($button-default-border-color-over);
+$button-toolbar-border-color-focus: dynamic($button-default-border-color-focus);
+$button-toolbar-border-color-pressed: dynamic($button-default-border-color-pressed);
+$button-toolbar-border-color-disabled: dynamic($button-default-border-color-disabled);
+
+$button-toolbar-background-color-over: dynamic($button-default-base-color-over);
+$button-toolbar-background-color-focus: dynamic($button-default-base-color-focus);
+$button-toolbar-background-color-pressed: dynamic($button-default-base-color-pressed);
+
+$button-toolbar-background-gradient-over: dynamic($button-default-background-gradient-over);
+$button-toolbar-background-gradient-focus: dynamic($button-default-background-gradient-focus);
+$button-toolbar-background-gradient-pressed: dynamic($button-default-background-gradient-pressed);

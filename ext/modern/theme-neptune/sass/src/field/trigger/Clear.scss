@@ -1,0 +1,19 @@
+@include cleartrigger-ui(
+    $width: $cleartrigger-width,
+    $width-big: $cleartrigger-width-big,
+    $background-color: $cleartrigger-background-color,
+    $hovered-background-color: $cleartrigger-hovered-background-color,
+    $pressed-background-color: $cleartrigger-pressed-background-color,
+    $icon: $cleartrigger-icon,
+    $icon-color: $cleartrigger-icon-color,
+    $hovered-icon-color: $cleartrigger-hovered-icon-color,
+    $pressed-icon-color: $cleartrigger-pressed-icon-color,
+    $icon-background-color: $cleartrigger-icon-background-color,
+    $hovered-icon-background-color: $cleartrigger-hovered-icon-background-color,
+    $pressed-icon-background-color: $cleartrigger-pressed-icon-background-color,
+    $icon-border-radius: $cleartrigger-icon-border-radius,
+    $icon-size: $cleartrigger-icon-size,
+    $icon-size-big: $cleartrigger-icon-size-big,
+    $icon-font-size: $cleartrigger-icon-font-size,
+    $icon-font-size-big: $cleartrigger-icon-font-size-big
+);

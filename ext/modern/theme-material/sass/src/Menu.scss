@@ -1,0 +1,48 @@
+.#{$prefix}menu {
+  background-color: $background-color;
+
+  .#{$prefix}button {
+    padding: $content-padding;
+  }
+
+  &.#{$prefix}left,
+  &.#{$prefix}right {
+    width: 220px;
+  }
+
+  &.#{$prefix}menu-cover {
+    &.#{$prefix}left {
+      box-shadow: 3px 0 5px -2px rgba(0, 0, 0, 0.2);
+    }
+
+    &.#{$prefix}right {
+      box-shadow: -3px 0 5px -2px rgba(0, 0, 0, 0.2);
+    }
+
+    &.#{$prefix}top {
+      box-shadow: 0 3px 5px -2px rgba(0, 0, 0, 0.2);
+    }
+
+    &.#{$prefix}bottom {
+      box-shadow: 0 -3px 5px -2px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &.#{$prefix}menu-reveal {
+    &.#{$prefix}left {
+      box-shadow: inset -3px 0 5px -2px rgba(0, 0, 0, 0.2);
+    }
+
+    &.#{$prefix}right {
+      box-shadow: inset 3px 0 5px -2px rgba(0, 0, 0, 0.2);
+    }
+
+    &.#{$prefix}top {
+      box-shadow: inset 0 -3px 5px -2px rgba(0, 0, 0, 0.2)
+    }
+
+    &.#{$prefix}bottom {
+      box-shadow: inset 0 3px 5px -2px rgba(0, 0, 0, 0.2)
+    }
+  }
+}

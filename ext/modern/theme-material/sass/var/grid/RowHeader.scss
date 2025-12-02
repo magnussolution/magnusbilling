@@ -1,0 +1,10 @@
+$rowheader-padding: dynamic($content-padding/2 $content-padding);
+$rowheader-background-color: dynamic($base-dark-color);
+$rowheader-color: dynamic($reverse-color);
+
+$rowheader-pinned-color: dynamic($rowheader-color);
+$rowheader-pinned-background-color: dynamic($rowheader-background-color);
+
+$rowheader-border-width: dynamic(null);
+$rowheader-border-style: dynamic(null);
+$rowheader-border-color: dynamic(null);

@@ -1,0 +1,175 @@
+/**
+ * @class Ext.grid.cell.Check
+ */
+
+/**
+ * @var {number/list}
+ * Check cell padding
+ */
+$checkcell-padding: dynamic(0);
+
+/**
+ * @var {number/list}
+ * Check cell padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$checkcell-padding-big: dynamic(0);
+
+/**
+ * @var {number}
+ * Check cell checkbox size
+ */
+$checkcell-checkbox-size: dynamic($checkcolumn-checkbox-size);
+
+/**
+ * @var {number}
+ * Check cell checkbox size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$checkcell-checkbox-size-big: dynamic($checkcolumn-checkbox-size-big);
+
+/**
+ * @var {number}
+ * Check cell checkbox font-size
+ */
+$checkcell-checkbox-font-size: dynamic($checkcolumn-checkbox-font-size);
+
+/**
+ * @var {number}
+ * Check cell checkbox font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$checkcell-checkbox-font-size-big: dynamic($checkcolumn-checkbox-font-size-big);
+
+/**
+ * @var {string/list}
+ * Check cell checkbox icon
+ */
+$checkcell-checkbox-icon: dynamic($checkcolumn-checkbox-icon);
+
+/**
+ * @var {string/list}
+ * Check cell checkbox icon when checked
+ */
+$checkcell-checked-checkbox-icon: dynamic($checkcolumn-checked-checkbox-icon);
+
+/**
+ * @var {color}
+ * Check cell checkbox color
+ */
+$checkcell-checkbox-color: dynamic($checkcolumn-checkbox-color);
+
+/**
+ * @var {color}
+ * Check cell checkbox color when checked
+ */
+$checkcell-checked-checkbox-color: dynamic($checkcolumn-checked-checkbox-color);
+
+/**
+ * @var {color}
+ * Check cell checkbox opacity when disabled
+ */
+$checkcell-disabled-checkbox-opacity: dynamic($checkcolumn-disabled-checkbox-opacity);
+
+/**
+ * @var {color}
+ * Check cell checkbox color when disabled
+ */
+$checkcell-disabled-checkbox-color: dynamic($checkcolumn-disabled-checkbox-color);
+
+/**
+ * Creates a visual theme for a check cell.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {number/list} $padding
+ * Check cell padding
+ *
+ * @param {number/list} $padding-big
+ * Check cell padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $checkbox-size
+ * Check cell checkbox size
+ *
+ * @param {number} $checkbox-size-big
+ * Check cell checkbox size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $checkbox-font-size
+ * Check cell checkbox font-size
+ *
+ * @param {number} $checkbox-font-size-big
+ * Check cell checkbox font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string/list} $checkbox-icon
+ * Check cell checkbox icon
+ *
+ * @param {string/list} $checked-checkbox-icon
+ * Check cell checkbox icon when checked
+ *
+ * @param {color} $checkbox-color
+ * Check cell checkbox color
+ *
+ * @param {color} $checked-checkbox-color
+ * Check cell checkbox color when checked
+ *
+ * @param {color} $disabled-checkbox-opacity
+ * Check cell checkbox opacity when disabled
+ *
+ * @param {color} $disabled-checkbox-color
+ * Check cell checkbox color when disabled
+ */
+@mixin checkcell-ui(
+    $ui: null,
+    $padding: null,
+    $padding-big: null,
+    $checkbox-size: null,
+    $checkbox-size-big: null,
+    $checkbox-font-size: null,
+    $checkbox-font-size-big: null,
+    $checkbox-icon: null,
+    $checked-checkbox-icon: null,
+    $checkbox-color: null,
+    $checked-checkbox-color: null,
+    $disabled-checkbox-opacity: null,
+    $disabled-checkbox-color: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}checkcell#{$ui-suffix} {
+        padding: $padding;
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                padding: $padding-big;
+            }
+        }
+
+        .#{$prefix}checkbox-el {
+            height: $checkbox-size;
+            width: $checkbox-size;
+            color: $checkbox-color;
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    height: $checkbox-size-big;
+                    width: $checkbox-size-big;
+                }
+            }
+
+            @include icon(
+                $icon: $checkbox-icon,
+                $font-size: $checkbox-font-size,
+                $font-size-big: $checkbox-font-size-big
+            );
+        }
+
+        &.#{$prefix}checked .#{$prefix}checkbox-el {
+            color: $checked-checkbox-color;
+            @include icon($checked-checkbox-icon);
+        }
+
+        &.#{$prefix}disabled .#{$prefix}checkbox-el {
+            color: $disabled-checkbox-color;
+            opacity: $disabled-checkbox-opacity;
+        }
+    }
+}

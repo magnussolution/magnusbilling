@@ -1,0 +1,49 @@
+{
+    /**
+     * The namespace of this package.
+     *
+     * As a general rule, all classes that belong to this package should be under this namespace
+     * if multiple namespaces are part of this package, set this to "".
+     */
+    "namespace": "Ext",
+
+    "name": "locale",
+    "type": "code",
+    "alternateName": [
+        "ext-locale"
+    ],
+
+    "framework": "ext",
+    "toolkit": "classic",
+    //"requires": [
+    //    ...
+    //],
+
+    "creator": "anonymous",
+    "summary": "Short summary",
+    "detailedDescription": "Long description of package",
+
+    "version": "6.2.0.981",
+    "compatVersion": "6.0.0",
+    "format": "1",
+
+    "output": "${workspace.subpkg.prefix}/${package.name}",
+    "local": true,
+    "build": {
+        "dir": "${package.output}"
+    },
+
+    "sass": {
+        "namespace": "Ext",
+
+        "etc": "${package.dir}/sass/etc/all.scss",
+
+        "var": "${package.dir}/sass/var",
+
+        "src": "${package.dir}/sass/src"
+    },
+
+    "classpath": "${package.dir}/src",
+
+    "overrides": "${package.dir}/overrides/${package.locale}"
+}

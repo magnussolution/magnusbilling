@@ -1,0 +1,497 @@
+/**
+ * @class Ext.menu.Menu
+ */
+
+/**
+ * @var {color}
+ * The background-color of the Menu
+ */
+$menu-background-color: dynamic(#fff);
+
+/**
+ * @var {color}
+ * The border-color of the Menu
+ */
+$menu-border-color: dynamic($neutral-color);
+
+/**
+ * @var {string}
+ * The border-style of the Menu
+ */
+$menu-border-style: dynamic(solid);
+
+/**
+ * @var {number}
+ * The border-width of the Menu
+ */
+$menu-border-width: dynamic(1px);
+
+/**
+ * @var {number/list}
+ * The padding to apply to the Menu body element
+ */
+$menu-padding: dynamic(2px);
+
+/**
+ * @var {color}
+ * The color of Menu Item text
+ */
+$menu-text-color: dynamic(#000);
+
+/**
+ * @var {string}
+ * The font-family of {@link Ext.menu.Item Menu Items}
+ */
+$menu-item-font-family: dynamic($font-family);
+
+/**
+ * @var {number}
+ * The font-size of {@link Ext.menu.Item Menu Items}
+ */
+$menu-item-font-size: dynamic($font-size);
+
+/**
+ * @var {string}
+ * The font-weight of {@link Ext.menu.Item Menu Items}
+ */
+$menu-item-font-weight: dynamic($font-weight);
+
+/**
+ * @var {number}
+ * The height of {@link Ext.menu.Item Menu Items}
+ */
+$menu-item-height: dynamic(24px);
+
+/**
+ * @var {number}
+ * The border-width of {@link Ext.menu.Item Menu Items}
+ */
+$menu-item-border-width: dynamic(1px);
+
+/**
+ * @var {string}
+ * The style of cursor to display when the cursor is over a {@link Ext.menu.Item Menu Item}
+ */
+$menu-item-cursor: dynamic(pointer);
+
+/**
+ * @var {string}
+ * The style of cursor to display when the cursor is over a disabled {@link Ext.menu.Item Menu Item}
+ */
+$menu-item-disabled-cursor: dynamic(default);
+
+/**
+ * @var {color}
+ * The text color of the active {@link Ext.menu.Item Menu Item}
+ */
+$menu-item-active-text-color: dynamic($color);
+
+/**
+ * @var {color}
+ * The background-color of the active {@link Ext.menu.Item Menu Item}
+ */
+$menu-item-active-background-color: dynamic($base-color);
+
+/**
+ * @var {color}
+ * The border-color of the active {@link Ext.menu.Item Menu Item}
+ */
+$menu-item-active-border-color: dynamic(adjust-color($base-color, $saturation: 23%, $lightness: -3%));
+ 
+/**
+ * @var {string/list}
+ * The background-gradient for {@link Ext.menu.Item Menu Items}. Can be either the name
+ * of a predefined gradient or a list of color stops. Used as the `$type` parameter for
+ * {@link Global_CSS#background-gradient}.
+ */
+$menu-item-background-gradient: dynamic('none');
+
+/**
+ * @var {number}
+ * The border-radius of {@link Ext.menu.Item Menu Items}
+ */
+$menu-item-active-border-radius: dynamic(0);
+
+/**
+ * @var {number}
+ * The size of {@link Ext.menu.Item Menu Item} icons
+ */
+$menu-item-icon-size: dynamic(16px);
+
+/**
+ * @var {color} $menu-glyph-color
+ * The color to use for menu icons configured using {@link Ext.menu.Item#glyph glyph}
+ */
+$menu-glyph-color: dynamic($menu-text-color);
+
+/**
+ * @var {string}
+ * The font-size to use for menu icons configured using {@link Ext.menu.Item#glyph glyph}
+ */
+$menu-glyph-font-size: dynamic($menu-item-icon-size);
+
+/**
+ * @var {number} $menu-glyph-opacity
+ * The opacity to use for menu icons configured using {@link Ext.menu.Item#glyph glyph}
+ */
+$menu-glyph-opacity: dynamic(.5);
+
+/**
+ * @var {color}
+ * The color to use for menu icons configured using {@link Ext.menu.Item#glyph glyph}
+ * when the menu item is active.
+ */
+$menu-item-active-glyph-color: dynamic($menu-glyph-color);
+
+/**
+ * @var {number}
+ * The size of {@link Ext.menu.CheckItem CheckItem} checkboxes
+ */
+$menu-item-checkbox-size: dynamic($menu-item-icon-size);
+
+/**
+ * @var {number}
+ * The size of {@link Ext.menu.CheckItem CheckItem} checkboxes
+ */
+$menu-item-checkbox-glyph-font-size: dynamic($form-checkbox-size);
+
+/**
+ * @var {string/list}
+ * The glyph for {@link Ext.menu.CheckItem CheckItem} checkboxes when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-item-checkbox-glyph: dynamic($fa-var-square-o $menu-item-checkbox-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The glyph for {@link Ext.menu.CheckItem CheckItem} checkboxes in "checked" state when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-item-checkbox-checked-glyph: dynamic($fa-var-check-square-o $menu-item-checkbox-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {color}
+ * The color of {@link Ext.menu.CheckItem CheckItem} checkboxes when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-item-checkbox-glyph-color: dynamic($menu-text-color);
+
+/**
+ * @var {color}
+ * The color of the {@link Ext.menu.CheckItem CheckItem} checkbox for the active menu item
+ * when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-item-active-checkbox-glyph-color: dynamic($menu-item-active-text-color);
+
+/**
+ * @var {string/list}
+ * The glyph for {@link Ext.menu.CheckItem CheckItem} group checkboxes when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-item-checkbox-group-glyph: dynamic(null);
+
+/**
+ * @var {string/list}
+ * The glyph for {@link Ext.menu.CheckItem CheckItem} group checkboxes in "checked" state when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-item-checkbox-group-checked-glyph: dynamic($fa-var-check $menu-item-checkbox-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {color}
+ * The color of {@link Ext.menu.CheckItem CheckItem} group checkboxes when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-item-checkbox-group-glyph-color: dynamic($menu-item-checkbox-glyph-color);
+
+/**
+ * @var {color}
+ * The color of the {@link Ext.menu.CheckItem CheckItem} group checkbox for the active menu item
+ * when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-item-active-checkbox-group-glyph-color: dynamic($menu-item-active-checkbox-glyph-color);
+
+/**
+ * @var {list}
+ * The background-position of {@link Ext.menu.Item Menu Item} icons
+ */
+$menu-item-icon-background-position: dynamic(center center);
+
+/**
+ * @var {number}
+ * vertical offset for menu item icons/checkboxes.  By default the icons are roughly
+ * vertically centered, but it may be necessary in some cases to make minor adjustments
+ * to the vertical position.
+ */
+$menu-item-icon-vertical-offset: dynamic(0);
+
+/**
+ * @var {number}
+ * vertical offset for menu item text.  By default the text is given a line-height
+ * equal to the menu item's content-height, however, depending on the font this may not
+ * result in perfect vertical centering.  Offset can be used to make small adjustments
+ * to the text's vertical position.
+ */
+$menu-item-text-vertical-offset: dynamic(0);
+
+/**
+ * @var {number/list}
+ * The space to the left and right of {@link Ext.menu.Item Menu Item} text. Can be specified
+ * as a number (e.g. 5px) or as a list with 2 items for different left/right values. e.g.
+ *
+ *     $menu-item-text-horizontal-spacing: dynamic(4px 8px); // 4px of space to the left, and 8px to the right
+ */
+$menu-item-text-horizontal-spacing: dynamic(4px);
+
+/**
+ * @var {number}
+ * The space to the left and right of {@link Ext.menu.Item Menu Item} icons. Can be specified
+ * as a number (e.g. 5px) or as a list with 2 items for different left/right values. e.g.
+ *
+ *     $menu-item-icon-horizontal-spacing: dynamic(4px 8px); // 4px of space to the left, and 8px to the right
+ */
+$menu-item-icon-horizontal-spacing: dynamic(3px 5px);
+
+/**
+ * @var {number}
+ * The space to the left and right of {@link Ext.menu.Item Menu Item} arrows. Can be specified
+ * as a number (e.g. 5px) or as a list with 2 items for different left/right values. e.g.
+ *
+ *     $menu-item-arrow-horizontal-spacing: dynamic(4px 8px); // 4px of space to the left, and 8px to the right
+ */
+$menu-item-arrow-horizontal-spacing: dynamic(5px 0);
+
+/**
+ * @var {number}
+ * The space to the left and right of the {@link Ext.menu.Bar Menu item} arrows. Can be specified
+ * as a number or as a list with 2 values.
+ */
+$menubar-item-arrow-horizontal-spacing: dynamic(5px 5px);
+
+/**
+ * @var {number/list}
+ * The margin of {@link Ext.menu.Separator Menu Separators}
+ */
+$menu-item-separator-margin: dynamic(2px 0);
+
+/**
+ * @var {number}
+ * The height of {@link Ext.menu.Item Menu Item} arrows
+ */
+$menu-item-arrow-height: dynamic(9px);
+
+/**
+ * @var {number}
+ * Vertical offset for arrow el.
+ * @private
+ */
+$menubar-item-arrow-vertical-offset: dynamic(round($menubar-item-arrow-height / 2));
+
+/**
+ * @var {number}
+ * The width of {@link Ext.menu.Item Menu Item} arrows
+ */
+$menu-item-arrow-width: dynamic(12px);
+
+/**
+ * @var {number}
+ * The height of the {@link Ext.menu.Bar Menu item} arrows
+ */
+$menubar-item-arrow-height: dynamic(6px);
+
+/**
+ * @var {number}
+ * The width of the {@link Ext.menu.Bar Menu item} arrows
+ */
+$menubar-item-arrow-width: dynamic(9px);
+
+/**
+ * @var {number/list}
+ * The margin of {@link Ext.menu.Item Menu Item} arrows
+ */
+$menu-item-arrow-margin: dynamic(null);
+
+/**
+ * @var {color}
+ * The color to use for the menu arrow icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-item-arrow-glyph-color: dynamic($color);
+
+/**
+ * @var {color}
+ * The color to use for the menu arrow icon of the active menu item when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-item-active-arrow-glyph-color: dynamic($menu-item-active-text-color);
+
+/**
+ * @var {number}
+ * The font size to use for the menu arrow icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-item-arrow-glyph-font-size: dynamic(16px);
+
+/**
+ * @var {string/list}
+ * Glyph for the menu arrow icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-item-arrow-glyph: dynamic($fa-var-caret-right $menu-item-arrow-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the RTL menu arrow icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-item-arrow-glyph-rtl: dynamic($fa-var-caret-left $menu-item-arrow-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the menu bar item arrow icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menubar-item-arrow-glyph: dynamic($fa-var-caret-down $menu-item-arrow-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the RTL menu bar item arrow icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menubar-item-arrow-glyph-rtl: dynamic($fa-var-caret-down $menu-item-arrow-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {number}
+ * The opacity of disabled {@link Ext.menu.Item Menu Items}
+ */
+$menu-item-disabled-opacity: dynamic(.5);
+
+/**
+ * @var {number/list}
+ * The margin non-MenuItems placed in a Menu
+ */
+$menu-component-margin: dynamic(0);
+
+/**
+ * @var {color}
+ * The border-color of {@link Ext.menu.Separator Menu Separators}
+ */
+$menu-separator-border-color: dynamic($neutral-color);
+
+/**
+ * @var {color}
+ * The background-color of {@link Ext.menu.Separator Menu Separators}
+ */
+$menu-separator-background-color: dynamic(#FFF);
+
+/**
+ * @var {number}
+ * The size of {@link Ext.menu.Separator Menu Separators}
+ */
+$menu-separator-size: dynamic(2px);
+
+/**
+ * @var {number}
+ * The width of Menu scrollers
+ */
+$menu-scroller-width: dynamic(16px);
+
+/**
+ * @var {number}
+ * The height of Menu scrollers
+ */
+$menu-scroller-height: dynamic(16px);
+
+/**
+ * @var {color}
+ * The border-color of Menu scroller buttons
+ */
+$menu-scroller-border-color: dynamic($neutral-color);
+
+/**
+ * @var {number}
+ * The border-width of Menu scroller buttons
+ */
+$menu-scroller-border-width: dynamic(0);
+
+/**
+ * @var {number/list}
+ * The margin of "top" Menu scroller buttons
+ */
+$menu-scroller-top-margin: dynamic(4px 0);
+
+/**
+ * @var {number/list}
+ * The margin of "bottom" Menu scroller buttons
+ */
+$menu-scroller-bottom-margin: dynamic(4px 0);
+
+/**
+ * @var {string}
+ * The cursor of Menu scroller buttons
+ */
+$menu-scroller-cursor: dynamic(pointer);
+
+/**
+ * @var {string}
+ * The cursor of disabled Menu scroller buttons
+ */
+$menu-scroller-cursor-disabled: dynamic(default);
+
+/**
+ * @var {number}
+ * The opacity of Menu scroller buttons. Only applicable when
+ * {@link #$menu-classic-scrollers} is `false`.
+ */
+$menu-scroller-opacity: dynamic(0.5);
+
+/**
+ * @var {number}
+ * The opacity of hovered Menu scroller buttons. Only applicable when
+ * {@link #$menu-classic-scrollers} is `false`.
+ */
+$menu-scroller-opacity-over: dynamic(0.6);
+
+/**
+ * @var {number}
+ * The opacity of pressed Menu scroller buttons. Only applicable when
+ * {@link #$menu-classic-scrollers} is `false`.
+ */
+$menu-scroller-opacity-pressed: dynamic(0.7);
+
+/**
+ * @var {number}
+ * The opacity of disabled Menu scroller buttons.
+ */
+$menu-scroller-opacity-disabled: dynamic(0.25);
+
+/**
+ * @var {color}
+ * The color to use for Menu scroller icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-scroller-glyph-color: dynamic($neutral-color);
+
+/**
+ * @var {number}
+ * The font size for Menu scroller icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-scroller-glyph-font-size: dynamic(16px);
+
+/**
+ * @var {string/list}
+ * Glyph for the "top" scroller icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-scroller-top-glyph: dynamic($fa-var-chevron-up $menu-scroller-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the "bottom" scroller icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$menu-scroller-bottom-glyph: dynamic($fa-var-chevron-down $menu-scroller-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {boolean}
+ * `true` to use classic-style scroller buttons.  When `true` scroller buttons are given their
+ * hover state by changing their background-position,  When `false` scroller buttons are
+ * given their hover state by applying opacity.
+ */
+$menu-classic-scrollers: dynamic(false);
+
+/**
+ * @var {boolean}
+ * True to include the "default" menu UI
+ */
+$include-menu-default-ui: dynamic($include-default-uis);

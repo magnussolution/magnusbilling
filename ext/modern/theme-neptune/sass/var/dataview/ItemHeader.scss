@@ -1,0 +1,218 @@
+/**
+ * @class Ext.dataview.ItemHeader
+ */
+
+//# fashion replaces $list-group-header-color
+/**
+ * @var {color}
+ * List item header color
+ */
+$itemheader-color: dynamic($highlight-color);
+
+//# fashion replaces $list-group-header-background-color
+/**
+ * @var {color}
+ * List item header background-color
+ */
+$itemheader-background-color: dynamic($neutral-light-color);
+
+/**
+ * @var {color}
+ * List item header color when {@link Ext.dataview.List#pinHeaders pinned}
+ */
+$itemheader-pinned-color: dynamic(null);
+
+/**
+ * @var {color}
+ * List item header background-color when {@link Ext.dataview.List#pinHeaders pinned}
+ */
+$itemheader-pinned-background-color: dynamic(null);
+
+/**
+ * @var {number}
+ * List item header border-width
+ */
+$itemheader-border-width: dynamic(1px);
+
+/**
+ * @var {string}
+ * List item header border-style
+ */
+$itemheader-border-style: dynamic(solid);
+
+//# fashion replaces $list-group-header-border-color
+/**
+ * @var {color}
+ * List item header border-color
+ */
+$itemheader-border-color: dynamic($neutral-medium-dark-color);
+
+//# fashion replaces $list-group-header-font-weight
+/**
+ * @var {string/number}
+ * List item header font-weight
+ */
+$itemheader-font-weight: dynamic($font-weight-bold);
+
+//# fashion replaces $list-group-header-font-size
+/**
+ * @var {number}
+ * List item header font-size
+ */
+$itemheader-font-size: dynamic($listitem-font-size);
+
+//# fashion replaces $list-group-header-font-size-big
+/**
+ * @var {number}
+ * List item header font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$itemheader-font-size-big: dynamic($listitem-font-size-big);
+
+//# fashion replaces $list-group-header-line-height
+/**
+ * @var {number}
+ * List item header line-height
+ */
+$itemheader-line-height: dynamic($listitem-line-height);
+
+//# fashion replaces $list-group-header-line-height-big
+/**
+ * @var {number}
+ * List item header line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$itemheader-line-height-big: dynamic($listitem-line-height-big);
+
+//# fashion replaces $list-group-header-font-family
+/**
+ * @var {string}
+ * List item header font-family
+ */
+$itemheader-font-family: dynamic($listitem-font-family);
+
+//# fashion replaces $list-group-header-padding
+/**
+ * @var {number/list}
+ * List item header padding
+ */
+$itemheader-padding: dynamic($listitem-padding);
+
+//# fashion replaces $list-group-header-padding-big
+/**
+ * @var {number/list}
+ * List item header padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$itemheader-padding-big: dynamic($listitem-padding-big);
+
+
+/**
+ * Creates a visual theme for an ItemHeader.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=itemheader] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {color} $color
+ * List item header color
+ *
+ * @param {color} $background-color
+ * List item header background-color
+ *
+ * @param {color} $pinned-color
+ * List item header color when {@link Ext.dataview.List#pinHeaders pinned}
+ *
+ * @param {color} $pinned-background-color
+ * List item header background-color when {@link Ext.dataview.List#pinHeaders pinned}
+ *
+ * @param {number} $border-width
+ * List item header border-width
+ *
+ * @param {string} $border-style
+ * List item header border-style
+ *
+ * @param {color} $border-color
+ * List item header border-color
+ *
+ * @param {string/number} $font-weight
+ * List item header font-weight
+ *
+ * @param {number} $font-size
+ * List item header font-size
+ *
+ * @param {number} $font-size-big
+ * List item header font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $line-height
+ * List item header line-height
+ *
+ * @param {number} $line-height-big
+ * List item header line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $font-family
+ * List item header font-family
+ *
+ * @param {number/list} $padding
+ * List item header padding
+ *
+ * @param {number/list} $padding-big
+ * List item header padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin itemheader-ui(
+    $ui: null,
+    $xtype: itemheader,
+    $color: null,
+    $background-color: null,
+    $pinned-color: null,
+    $pinned-background-color: null,
+    $border-width: null,
+    $border-style: null,
+    $border-color: null,
+    $font-weight: null,
+    $font-size: null,
+    $font-size-big: null,
+    $line-height: null,
+    $line-height-big: null,
+    $font-family: null,
+    $padding: null,
+    $padding-big: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}#{$xtype}#{$ui-suffix} {
+        color: $color;
+        background-color: $background-color;
+        @include font($font-weight, $font-size, $line-height, $font-family);
+        padding: $padding;
+
+        @if $enable-big  {
+            .#{$prefix}big & {
+                font-size: $font-size-big;
+                line-height: $line-height-big;
+                padding: $padding-big;
+            }
+        }
+
+        &.#{$prefix}pinned {
+            color: $pinned-color;
+            background-color: $pinned-background-color;
+        }
+    }
+
+    // The "bottom" border of the list item header is the top border of the next item
+    .#{$prefix}#{$xtype}#{$ui-suffix} {
+        &,
+        // this crazy long selector must be so in order to override selected/hovered listitem borders
+        + div.#{$prefix}group-first.#{$prefix}listitem {
+            @include border-top($border-width, $border-style, $border-color);
+        }
+    }
+
+    // The pinned header has no previous item, so it must have its own top border
+    .#{$prefix}#{$xtype}#{$ui-suffix} {
+        &.#{$prefix}pinned {
+            @include border-bottom($border-width, $border-style, $border-color);
+        }
+    }
+}

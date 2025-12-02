@@ -1,0 +1,33 @@
+/** @class Ext.pivot.Grid */
+
+$ext-pivot-trial: false !default; // Updated automatically by the build script.
+
+/**
+ * @var {color}
+ * The text color of group header titles
+ */
+$pivot-grid-group-title-color: dynamic(adjust-color($base-color, $hue: 0.952deg, $saturation: -6.718%, $lightness: -41.961%));
+
+/**
+ * @var {number/list}
+ * Margin to add to the group title's icon
+ */
+$pivot-grid-group-icon-margin: dynamic(0 .5em 0);
+
+/**
+ * @var {color}
+ * The text color of group totals
+ */
+$pivot-grid-group-total-color: dynamic($pivot-grid-group-title-color);
+
+/**
+ * @var {color}
+ * The text color of grand totals
+ */
+$pivot-grid-grand-total-color: dynamic($pivot-grid-group-title-color);
+
+/**
+ * @var {string}
+ * The cursor of group headers
+ */
+$pivot-grid-group-header-cursor: dynamic(pointer);

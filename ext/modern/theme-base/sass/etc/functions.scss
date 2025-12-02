@@ -1,0 +1,125 @@
+@import './functions/calc-math';
+@import './functions/color';
+
+/*
+ * Method which inserts a full background-image property for a theme image.
+ * It checks if the file exists and if it doesn't, it'll throw an error.
+ * By default it will not include the background-image property if it is not found,
+ * but this can be changed by changing the default value of $enable-missing-images to
+ * be true.
+ */
+@function theme-background-image($path, $extension: $image-extension, $nocheck: false) {
+  $path: file_join($relative-image-path-for-uis, $path + '.' + $extension);
+  $background-image: none;
+
+  @if $path {
+    @if $nocheck {
+      $background-image: $path;
+    } @else if theme_image_exists($image-search-path, $path) {
+      $background-image: $path;
+    } @else {
+      @warn "@theme-background-image: Theme image not found: #{$path}";
+      @if $enable-missing-images {
+        $background-image: $path;
+      }
+    }
+
+    @if $background-image != none {
+      $background-image: url(file_join($theme-resource-path, $path));
+    }
+  } @else {
+    @warn "@theme-background-image: No arguments passed";
+  }
+
+  @return $background-image;
+}
+
+@function get-image-url($path, $extension: $image-extension, $nocheck: false) {
+  @return theme-background-image($path, $extension, $nocheck);
+}
+
+@function x($position) {
+    @return parsebox($position, 1);
+}
+@function y($position) {
+    @return parsebox($position, 2);
+}
+
+@function before($position) {
+    @return parsebox($position, 1);
+}
+@function after($position) {
+    @return parsebox($position, 2);
+}
+
+@function top($box) {
+    @return parsebox($box, 1);
+}
+@function right($box) {
+    @return parsebox($box, 2);
+}
+@function bottom($box) {
+    @return parsebox($box, 3);
+}
+@function left($box) {
+    @return parsebox($box, 4);
+}
+@function vertical($box) {
+    @return top($box) + bottom($box);
+}
+@function horizontal($box) {
+    @return left($box) + right($box);
+}
+@function boxmax($box) {
+    @return max(max(top($box), right($box)), max(bottom($box), left($box)));
+}
+@function boxmin($box) {
+  @return min(min(top($box), right($box)), min(bottom($box), left($box)));
+}
+@function boxContainsNull($list) {
+  @for $i from 1 through length($list) {
+    @if nth($list, $i) == null {
+      @return true;
+    }
+  }
+  @return false;
+}
+@function rotate90($box) {
+    @return left($box) top($box) right($box) bottom($box);
+}
+@function rotate180($box) {
+    @return bottom($box) left($box) top($box) right($box);
+}
+
+@function rotate270($box) {
+    @return right($box) bottom($box) left($box) top($box);
+}
+@function flip-vertical($box) {
+    @return bottom($box) right($box) top($box) left($box);
+}
+@function flip-horizontal($box) {
+    @return top($box) left($box) bottom($box) right($box);
+}
+@function rtl($box) {
+    @return top($box) left($box) bottom($box) right($box);
+}
+
+@function rtl-background-position($pos) {
+    $x: parsebox($pos, 1);
+    $new-x: null;
+    @if $x == right or $x == 100% {
+        $new-x: 0;
+    } @else if $x == 0 or $x == left {
+        $new-x: right;
+    } @else {
+        $new-x: $x;
+    }
+    @return $new-x parsebox($pos, 2);
+}
+
+@function nopx ($value) {
+    @if $value == 0 {
+        @return 0;
+    }
+    @return $value / 1px;
+}

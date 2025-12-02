@@ -1,0 +1,12 @@
+.#{$prefix}thumb {
+    position: absolute;
+    left: 0;
+    top: 50% !important; // overrides inline style applied by translatable during dragging
+    @include st-box;
+    @include st-box-pack(center);
+    @include st-box-align(center);
+
+    + .#{$prefix}sizer-el {
+        width: 0;
+    }
+}

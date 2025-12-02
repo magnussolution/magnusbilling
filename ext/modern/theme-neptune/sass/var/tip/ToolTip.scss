@@ -1,0 +1,162 @@
+/**
+ * @class Ext.tip.ToolTip
+ */
+
+/**
+ * @var {number}
+ * The height (in all orientations) of the anchor arrow
+ */
+$tip-anchor-height: dynamic($panel-anchor-height);
+
+/**
+ * @var {number}
+ * The width (in all orientations) of the anchor arrow.
+ */
+$tip-anchor-width: dynamic($panel-anchor-width);
+
+/**
+ * @var {color}
+ * The background-color of the Tip
+ */
+$tip-background-color: dynamic(mix($base-light-color, #fff, 25%));
+
+/**
+ * @var {color}
+ * The text color of the Tip body
+ */
+$tip-body-color: dynamic(#000);
+
+/**
+ * @var {number}
+ * The font-size of the Tip body
+ */
+$tip-body-font-size: dynamic(null);
+
+/**
+ * @var {string}
+ * The font-weight of the Tip body
+ */
+$tip-body-font-weight: dynamic($font-weight);
+
+/**
+ * @var {number/list}
+ * The padding of the Tip body
+ */
+$tip-body-padding: dynamic(3px);
+
+/**
+ * @var {color}
+ * The text color of the Tip header
+ */
+$tip-header-color: dynamic($tip-body-color);
+
+/**
+ * @var {number}
+ * The font-size of the Tip header
+ */
+$tip-header-font-size: dynamic($tip-body-font-size);
+
+/**
+ * @var {string}
+ * The font-weight of the Tip header
+ */
+$tip-header-font-weight: dynamic(bold);
+
+/**
+ * @var {number/list}
+ * The padding of the Tip header's body element
+ */
+$tip-header-padding: dynamic(3px 3px 0 3px);
+
+/**
+ * @var {color}
+ * The border-color of the Tip
+ */
+$tip-border-color: dynamic($panel-body-border-color);
+
+/**
+ * @var {number}
+ * The border-width of the Tip
+ */
+$tip-border-width: dynamic($panel-border-width);
+
+//
+// TODO: We will need an error UI for tooltip.
+//
+///**
+// * @var {color}
+// * The inner border-color of the form field error Tip
+// */
+//$tip-error-inner-border-color: dynamic(#fff);
+//
+///**
+// * @var {number}
+// * The inner border-width of the form field error Tip
+// */
+//$tip-error-inner-border-width: dynamic(0);
+//
+///**
+// * @var {color}
+// * The border-color of the form field error Tip
+// */
+//$tip-error-border-color: dynamic($tip-border-color);
+//
+///**
+// * @var {number}
+// * The border-radius of the form field error Tip
+// */
+//$tip-error-border-radius: dynamic($tip-border-radius);
+//
+///**
+// * @var {number}
+// * The border-width of the form field error Tip
+// */
+//$tip-error-border-width: dynamic($tip-border-width);
+//
+///**
+// * @var {color}
+// * The background-color of the form field error Tip
+// */
+//$tip-error-background-color: dynamic($tip-background-color);
+//
+///**
+// * @var {number/list}
+// * The padding of the form field error Tip's body element
+// */
+//$tip-error-body-padding: dynamic($tip-body-padding);
+//
+///**
+// * @var {color}
+// * The text color of the form field error Tip's body element
+// */
+//$tip-error-body-color: dynamic($tip-body-color);
+//
+///**
+// * @var {number}
+// * The font-size of the form field error Tip's body element
+// */
+//$tip-error-body-font-size: dynamic($tip-body-font-size);
+//
+///**
+// * @var {string}
+// * The font-weight of the form field error Tip's body element
+// */
+//$tip-error-body-font-weight: dynamic($tip-body-font-weight);
+//
+///**
+// * @var {color}
+// * The color of anchor tags in the form field error Tip's body element
+// */
+//$tip-error-body-link-color: dynamic($tip-body-link-color);
+
+/**
+ * @var {number}
+ * The space between {@link Ext.panel.Tool Tools} in the header
+ */
+$tip-tool-spacing: dynamic(4px);
+
+/**
+ * @var {tip-tool-color}
+ * Tool icon color
+ */
+$tip-tool-color: dynamic($highlight-color);

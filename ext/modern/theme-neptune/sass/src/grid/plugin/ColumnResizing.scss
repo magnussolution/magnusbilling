@@ -1,0 +1,12 @@
+.x-gridcolumn:after {
+  content: '';
+  width: 0;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.x-gridcolumn.x-resizing:after {
+  width: 1em;
+}

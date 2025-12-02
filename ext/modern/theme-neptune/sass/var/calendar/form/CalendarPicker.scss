@@ -1,0 +1,53 @@
+/**
+ * @class Ext.calendar.form.CalendarPicker
+ */
+
+$calendarpicker-icon-width: dynamic(1.5em);
+$calendarpicker-icon-height: dynamic($calendarpicker-icon-width);
+$calendarpicker-icon-spacer: dynamic(0.5em);
+$calendarpicker-slot-icon-margin: dynamic(null);
+
+@mixin ext-calendar-calendarpicker(
+    $ui: null,
+    $icon-width: null,
+    $icon-height: null,
+    $icon-spacer: null,
+    $slot-icon-margin: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}calendar-picker-list#{$ui-suffix} {
+        .#{$prefix}calendar-picker-list-icon {
+            width: $icon-width;
+            height: $icon-height;
+        }
+
+        .#{$prefix}calendar-picker-list-text {
+            padding-left: $icon-width + $icon-spacer;
+        }
+
+        .#{$prefix}picker-slot .#{$prefix}calendar-picker-list-icon {
+            @include margin($slot-icon-margin);
+        }
+    }
+
+    .#{$prefix}calendar-picker-field#{$ui-suffix} {
+        .#{$prefix}calendar-picker-field-icon {
+            width: $icon-width;
+            height: $icon-height;
+            left: left($textfield-input-padding);
+
+            .#{$prefix}big & {
+                left: left($textfield-input-padding-big);
+            }
+        }
+
+        .#{$prefix}input-el {
+            padding-left: left($textfield-input-padding) + $icon-width + $calendarpicker-icon-spacer;
+
+            .#{$prefix}big & {
+                padding-left: left($textfield-input-padding-big) + $icon-width + $calendarpicker-icon-spacer;
+            }
+        }
+    }
+}

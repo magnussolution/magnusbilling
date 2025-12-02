@@ -1,0 +1,210 @@
+/**
+ * @class Ext.field.trigger.Date
+ */
+
+/**
+ * @var {number}
+ * Date Trigger width
+ */
+$datetrigger-width: dynamic(null);
+
+/**
+ * @var {number}
+ * Date Trigger width in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$datetrigger-width-big: dynamic(null);
+
+/**
+ * @var {color}
+ * Date Trigger background-color
+ */
+$datetrigger-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Date Trigger background-color when hovered
+ */
+$datetrigger-hovered-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Date Trigger background-color when pressed
+ */
+$datetrigger-pressed-background-color: dynamic(null);
+
+/**
+ * @var {string}
+ * Date Trigger icon
+ */
+$datetrigger-icon: dynamic($fa-var-calendar);
+
+/**
+ * @var {color}
+ * Date Trigger icon color
+ */
+$datetrigger-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Date Trigger icon color when hovered
+ */
+$datetrigger-hovered-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Date Trigger icon color when pressed
+ */
+$datetrigger-pressed-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Date Trigger icon background-color
+ */
+$datetrigger-icon-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Date Trigger icon background-color when hovered
+ */
+$datetrigger-hovered-icon-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Date Trigger icon background-color when pressed
+ */
+$datetrigger-pressed-icon-background-color: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Date Trigger icon border-radius
+ */
+$datetrigger-icon-border-radius: dynamic(null);
+
+/**
+ * @var {number}
+ * Date Trigger icon size
+ */
+$datetrigger-icon-size: dynamic(null);
+
+/**
+ * @var {number}
+ * Date Trigger icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$datetrigger-icon-size-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Date Trigger icon font-size
+ */
+$datetrigger-icon-font-size: dynamic($datetrigger-icon-size);
+
+/**
+ * @var {number}
+ * Date Trigger icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$datetrigger-icon-font-size-big: dynamic($datetrigger-icon-size-big);
+
+/**
+ * Creates a visual theme for a Date Trigger.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=datetrigger] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {number} $width
+ * Date Trigger width
+ *
+ * @param {number} $width-big
+ * Date Trigger width in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $background-color
+ * Date Trigger background-color
+ *
+ * @param {color} $hovered-background-color
+ * Date Trigger background-color when hovered
+ *
+ * @param {color} $pressed-background-color
+ * Date Trigger background-color when pressed
+ *
+ * @param {string} $icon
+ * Date Trigger icon
+ *
+ * @param {color} $icon-color
+ * Date Trigger icon color
+ *
+ * @param {color} $hovered-icon-color
+ * Date Trigger icon color when hovered
+ *
+ * @param {color} $pressed-icon-color
+ * Date Trigger icon color when pressed
+ *
+ * @param {color} $icon-background-color
+ * Date Trigger icon background-color
+ *
+ * @param {color} $hovered-icon-background-color
+ * Date Trigger icon background-color when hovered
+ *
+ * @param {color} $pressed-icon-background-color
+ * Date Trigger icon background-color when pressed
+ *
+ * @param {number/list} $icon-border-radius
+ * Date Trigger icon border-radius
+ *
+ * @param {number} $icon-size
+ * Date Trigger icon size
+ *
+ * @param {number} $icon-size-big
+ * Date Trigger icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $icon-font-size
+ * Date Trigger icon font-size
+ *
+ * @param {number} $icon-font-size-big
+ * Date Trigger icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin datetrigger-ui(
+    $ui: null,
+    $xtype: datetrigger,
+    $width: null,
+    $width-big: null,
+    $background-color: null,
+    $hovered-background-color: null,
+    $pressed-background-color: null,
+    $icon: null,
+    $icon-color: null,
+    $hovered-icon-color: null,
+    $pressed-icon-color: null,
+    $icon-background-color: null,
+    $hovered-icon-background-color: null,
+    $pressed-icon-background-color: null,
+    $icon-border-radius: null,
+    $icon-size: null,
+    $icon-size-big: null,
+    $icon-font-size: null,
+    $icon-font-size-big: null
+) {
+    @include trigger-ui(
+        $ui: $ui,
+        $xtype: $xtype,
+        $width: $width,
+        $width-big: $width-big,
+        $background-color: $background-color,
+        $hovered-background-color: $hovered-background-color,
+        $pressed-background-color: $pressed-background-color,
+        $icon: $icon,
+        $icon-color: $icon-color,
+        $hovered-icon-color: $hovered-icon-color,
+        $pressed-icon-color: $pressed-icon-color,
+        $icon-background-color: $icon-background-color,
+        $hovered-icon-background-color: $hovered-icon-background-color,
+        $pressed-icon-background-color: $pressed-icon-background-color,
+        $icon-border-radius: $icon-border-radius,
+        $icon-size: $icon-size,
+        $icon-size-big: $icon-size-big,
+        $icon-font-size: $icon-font-size,
+        $icon-font-size-big: $icon-font-size-big
+    );
+}

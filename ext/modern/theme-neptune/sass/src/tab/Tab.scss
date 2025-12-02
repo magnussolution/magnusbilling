@@ -1,0 +1,65 @@
+@include tab-ui(
+    $background-color: $tab-background-color,
+    $active-background-color: $tab-active-background-color,
+
+    $background-gradient: $tab-background-gradient,
+    $active-background-gradient: $tab-active-background-gradient,
+
+    $color: $tab-color,
+    $active-color: $tab-active-color,
+
+    $border-color: $tab-border-color,
+    $active-border-color: $tab-active-border-color,
+
+
+    $border-style: $tab-border-style,
+    $border-width: $tab-border-width,
+
+    $border-radius: $tab-border-radius,
+    $border-radius-big: $tab-border-radius-big,
+
+    $active-box-shadow: $tab-active-box-shadow,
+
+    $font-weight: $tab-font-weight,
+    $font-size: $tab-font-size,
+    $font-size-big: $tab-font-size-big,
+    $line-height: $tab-line-height,
+    $line-height-big: $tab-line-height-big,
+    $font-family: $tab-font-family,
+
+    $padding: $tab-padding,
+    $padding-big: $tab-padding-big,
+
+    $icon-color: $tab-icon-color,
+    $active-icon-color: $tab-active-icon-color,
+    $icon-size: $tab-icon-size,
+    $icon-size-big: $tab-icon-size-big,
+    $icon-font-size: $tab-icon-font-size,
+    $icon-font-size-big: $tab-icon-font-size-big,
+    $icon-horizontal-spacing: $tab-icon-horizontal-spacing,
+    $icon-horizontal-spacing-big: $tab-icon-horizontal-spacing-big,
+    $icon-vertical-spacing: $tab-icon-vertical-spacing,
+    $icon-vertical-spacing-big: $tab-icon-vertical-spacing-big,
+
+    $disabled-opacity: $button-disabled-opacity,
+
+    $badge-background-color: $tab-badge-background-color,
+    $badge-background-gradient: $tab-badge-background-gradient,
+    $badge-color: $tab-badge-color,
+    $badge-border-color: $tab-badge-border-color,
+    $badge-border-radius: $tab-badge-border-radius,
+    $badge-min-width: $tab-badge-min-width,
+    $badge-max-width: $tab-badge-max-width,
+    $badge-font-weight: $tab-badge-font-weight,
+    $badge-font-size: $tab-badge-font-size,
+    $badge-font-size-big: $tab-badge-font-size-big,
+    $badge-font-family: $tab-badge-font-family,
+    $badge-line-height: $tab-badge-line-height,
+    $badge-line-height-big: $tab-badge-line-height-big,
+    $badge-top: $tab-badge-top,
+    $badge-right: $tab-badge-right,
+    $badge-bottom: $tab-badge-bottom,
+    $badge-left: $tab-badge-left,
+    $badge-padding: $tab-badge-padding,
+    $badge-padding-big: $tab-badge-padding-big
+);

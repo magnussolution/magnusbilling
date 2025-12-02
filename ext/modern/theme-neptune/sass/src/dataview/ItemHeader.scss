@@ -1,0 +1,17 @@
+@include itemheader-ui(
+    $color: $itemheader-color,
+    $background-color: $itemheader-background-color,
+    $pinned-color: $itemheader-pinned-color,
+    $pinned-background-color: $itemheader-pinned-background-color,
+    $border-width: $itemheader-border-width,
+    $border-style: $itemheader-border-style,
+    $border-color: $itemheader-border-color,
+    $font-weight: $itemheader-font-weight,
+    $font-size: $itemheader-font-size,
+    $font-size-big: $itemheader-font-size-big,
+    $line-height: $itemheader-line-height,
+    $line-height-big: $itemheader-line-height-big,
+    $font-family: $itemheader-font-family,
+    $padding: $itemheader-padding,
+    $padding-big: $itemheader-padding-big
+);

@@ -1,0 +1,282 @@
+/**
+ * @class Ext.panel.Tool
+ */
+
+/**
+ * @var {color}
+ * Panel Tool icon color
+ */
+$panel-tool-color: dynamic(#fff);
+
+/**
+ * @var {number}
+ * Panel Tool icon size.  If specified in terms of `em` units, the icon will be sized
+ * relative to {@link #$panel-tool-font-size}.
+ */
+$panel-tool-size: dynamic(1em);
+
+/**
+ * @var {number}
+ * Panel Tool icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ * If specified in terms of `em` units, the icon will be sized
+ * relative to {@link #$panel-tool-font-size-big}.
+ */
+$panel-tool-size-big: dynamic(1em);
+
+/**
+ * @var {number}
+ * Panel Tool icon font-size
+ */
+$panel-tool-font-size: dynamic($panel-header-line-height);
+
+/**
+ * @var {number}
+ * Panel Tool icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$panel-tool-font-size-big: dynamic($panel-header-line-height-big);
+
+/**
+ * @var {number}
+ * The space between Panel Tools
+ */
+$panel-tool-spacing: dynamic(.46em);
+
+/**
+ * @var {number}
+ * The space between Panel Tools in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$panel-tool-spacing-big: dynamic($panel-tool-spacing);
+
+/**
+ * @var {string}
+ * The cursor to display when the mouse cursor is over a Panel Tool
+ */
+$panel-tool-cursor: dynamic(pointer);
+
+/**
+ * @var {number}
+ * Panel Tool opacity
+ */
+$panel-tool-opacity: dynamic(.5);
+
+/**
+ * @var {number}
+ * Panel Tool opacity when hovered
+ */
+$panel-tool-opacity-over: dynamic(.6);
+
+/**
+ * @var {number}
+ * Panel Tool opacity when pressed
+ */
+$panel-tool-opacity-pressed: dynamic(.7);
+
+/**
+ * @var {string/list}
+ * The "close" tool icon
+ */
+$panel-tool-close-icon: dynamic($fa-var-close $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "minimize" tool icon
+ */
+$panel-tool-minimize-icon: dynamic($ext-var-minimize ExtJS);
+
+/**
+ * @var {string/list}
+ * The "maximize" tool icon
+ */
+$panel-tool-maximize-icon: dynamic($fa-var-expand $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "restore" tool icon
+ */
+$panel-tool-restore-icon: dynamic($fa-var-compress $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The up "toggle" tool icon
+ */
+$panel-tool-toggle-up-icon: dynamic($fa-var-chevron-up $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The down "toggle" tool icon
+ */
+$panel-tool-toggle-down-icon: dynamic($fa-var-chevron-down $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "gear" tool icon
+ */
+$panel-tool-gear-icon: dynamic($fa-var-cog $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "prev" tool icon
+ */
+$panel-tool-prev-icon: dynamic($fa-var-chevron-left $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "next" tool icon
+ */
+$panel-tool-next-icon: dynamic($fa-var-chevron-right $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "pin" tool icon
+ */
+$panel-tool-pin-icon: dynamic($fa-var-thumb-tack $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "unpin" tool icon
+ */
+$panel-tool-unpin-icon: dynamic($ext-var-unpin ExtJS);
+
+/**
+ * @var {string/list}
+ * The "right" tool icon
+ */
+$panel-tool-right-icon: dynamic($fa-var-caret-right $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "left" tool icon
+ */
+$panel-tool-left-icon: dynamic($fa-var-caret-left $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "down" tool icon
+ */
+$panel-tool-down-icon: dynamic($fa-var-caret-down $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "up" tool icon
+ */
+$panel-tool-up-icon: dynamic($fa-var-caret-up $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "refresh" tool icon
+ */
+$panel-tool-refresh-icon: dynamic($fa-var-refresh $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "plus" tool icon
+ */
+$panel-tool-plus-icon: dynamic($fa-var-plus $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "menu" tool icon
+ */
+$panel-tool-menu-icon: dynamic($fa-var-bars $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "minus" tool icon
+ */
+$panel-tool-minus-icon: dynamic($fa-var-minus $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "search" tool icon
+ */
+$panel-tool-search-icon: dynamic($fa-var-search $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "save" tool icon
+ */
+$panel-tool-save-icon: dynamic($fa-var-check $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "help" tool icon
+ */
+$panel-tool-help-icon: dynamic($fa-var-question $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "print" tool icon
+ */
+$panel-tool-print-icon: dynamic($fa-var-print $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "expand" tool icon
+ */
+$panel-tool-expand-icon: dynamic($ext-var-expand ExtJS);
+
+/**
+ * @var {string/list}
+ * The "collapse" tool icon
+ */
+$panel-tool-collapse-icon: dynamic($ext-var-collapse ExtJS);
+
+/**
+ * @var {string/list}
+ * The "resize" tool icon
+ */
+$panel-tool-resize-icon: dynamic($fa-var-arrows-h $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The "move" tool icon
+ */
+$panel-tool-move-icon: dynamic($fa-var-arrows $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The downward "expand" tool icon
+ */
+$panel-tool-expand-bottom-icon: dynamic($fa-var-caret-down $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The downward "collapse" tool icon
+ */
+$panel-tool-collapse-bottom-icon: dynamic($fa-var-caret-down $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The upward "expand" tool icon
+ */
+$panel-tool-expand-top-icon: dynamic($fa-var-caret-up $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The upward "collapse" tool icon
+ */
+$panel-tool-collapse-top-icon: dynamic($fa-var-caret-up $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The left "expand" tool icon
+ */
+$panel-tool-expand-left-icon: dynamic($fa-var-caret-left $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The left "collapse" tool icon
+ */
+$panel-tool-collapse-left-icon: dynamic($fa-var-caret-left $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The right "expand" tool icon
+ */
+$panel-tool-expand-right-icon: dynamic($fa-var-caret-right $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The right "collapse" tool icon
+ */
+$panel-tool-collapse-right-icon: dynamic($fa-var-caret-right $font-icon-font-family);

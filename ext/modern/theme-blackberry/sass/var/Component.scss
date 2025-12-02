@@ -1,0 +1,23 @@
+$touch-theme-blackberry: true;
+
+///**
+// * @class Global_CSS
+// *
+// * Global CSS variables and mixins of Sencha Touch.
+// */
+
+$base-color: dynamic(#0099cc);
+$dark-color: dynamic(#2D2D2D);
+$secondary: dynamic(#969696);
+$highlight-color: dynamic(#E6E6E6);
+$color: dynamic(#333);
+
+$include-default-icons: dynamic(true);
+
+$default-button-animation-time: dyanmic(.2s);
+
+/**
+ * @var {color} $loading-spinner-color
+ * Background-color for the bars in the loading spinner.
+ */
+$loading-spinner-color: dynamic(#aaa);

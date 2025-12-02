@@ -1,0 +1,219 @@
+/**
+ * @class Ext.grid.plugin.PagingToolbar
+ */
+
+/**
+ * @var {color}
+ * Paging toolbar background-color
+ */
+$pagingtoolbar-background-color: dynamic(null);
+
+/**
+ * @var {string/list}
+ * Paging toolbar background-gradient. Can be either the name of a gradient defined by
+ * {@link Global_CSS#background-gradient} or a list of color stops.
+ */
+$pagingtoolbar-background-gradient: dynamic(null);
+
+/**
+ * @var {color}
+ * Paging toolbar color
+ */
+$pagingtoolbar-color: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Paging toolbar border-width
+ */
+$pagingtoolbar-border-width: dynamic(null);
+
+/**
+ * @var {string/list}
+ * Paging toolbar border-style
+ */
+$pagingtoolbar-border-style: dynamic(null);
+
+/**
+ * @var {color/list}
+ * Paging toolbar border-color
+ */
+$pagingtoolbar-border-color: dynamic(null);
+
+/**
+ * @var {list}
+ * Paging toolbar box-shadow
+ */
+$pagingtoolbar-box-shadow: dynamic(null);
+
+/**
+ * @var {string/number}
+ * Paging toolbar font-weight
+ */
+$pagingtoolbar-font-weight: dynamic(null);
+
+/**
+ * @var {number}
+ * Paging toolbar font-size
+ */
+$pagingtoolbar-font-size: dynamic(null);
+
+/**
+ * @var {number}
+ * Paging toolbar font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$pagingtoolbar-font-size-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Paging toolbar line-height
+ */
+$pagingtoolbar-line-height: dynamic(null);
+
+/**
+ * @var {number}
+ * Paging toolbar line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$pagingtoolbar-line-height-big: dynamic(null);
+
+/**
+ * @var {string}
+ * Paging toolbar font-family
+ */
+$pagingtoolbar-font-family: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Paging toolbar padding
+ */
+$pagingtoolbar-padding: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Paging toolbar padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$pagingtoolbar-padding-big: dynamic(null);
+
+/**
+ * @var {string/list}
+ * Paging toolbar "previous" icon
+ */
+$pagingtoolbar-prev-icon: dynamic($fa-var-angle-left FontAwesome);
+
+/**
+ * @var {string/list}
+ * Paging toolbar "next" icon
+ */
+$pagingtoolbar-next-icon: dynamic($fa-var-angle-right FontAwesome);
+
+/**
+ * Creates a visual theme for a paging toolbar.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=pagingtoolbar] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {color} $background-color
+ * Paging toolbar background-color
+ *
+ * @param {string/list} $background-gradient
+ * Paging toolbar background-gradient. Can be either the name of a gradient defined by
+ * {@link Global_CSS#background-gradient} or a list of color stops.
+ *
+ * @param {number/list} $border-width
+ * Paging toolbar border-width
+ *
+ * @param {string/list} $border-style
+ * Paging toolbar border-style
+ *
+ * @param {color} $border-color
+ * Paging toolbar border-color
+ *
+ * @param {color} $box-shadow
+ * Paging toolbar box-shadow
+ *
+ * @param {string/number} $font-weight
+ * Paging toolbar font-weight
+ *
+ * @param {number} $font-size
+ * Paging toolbar font-size
+ *
+ * @param {number} $font-size-big
+ * Paging toolbar font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $line-height
+ * Paging toolbar line-height
+ *
+ * @param {number} $line-height-big
+ * Paging toolbar line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $font-family
+ * Paging toolbar font-family
+ *
+ * @param {number/list} $padding
+ * Paging toolbar padding
+ *
+ * @param {number/list} $padding-big
+ * Paging toolbar padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string/list} $prev-icon
+ * Paging toolbar "previous" icon
+ *
+ * @param {string/list} $next-icon
+ * Paging toolbar "next" icon
+ */
+@mixin pagingtoolbar-ui(
+    $ui: null,
+    $xtype: pagingtoolbar,
+    $background-color: null,
+    $background-gradient: null,
+    $color: null,
+    $border-width: null,
+    $border-style: null,
+    $border-color: null,
+    $box-shadow: null,
+    $font-weight: null,
+    $font-size: null,
+    $font-size-big: null,
+    $line-height: null,
+    $line-height-big: null,
+    $font-family: null,
+    $padding: null,
+    $padding-big: null,
+    $prev-icon: null,
+    $next-icon: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    @include toolbar-ui(
+        $ui: $ui,
+        $xtype: $xtype,
+        $background-color: $background-color,
+        $background-gradient: $background-gradient,
+        $color: $color,
+        $border-color: $border-color,
+        $border-width: $border-width,
+        $border-style: $border-style,
+        $box-shadow: $box-shadow,
+        $font-weight: $font-weight,
+        $font-size: $font-size,
+        $font-size-big: $font-size-big,
+        $line-height: $line-height,
+        $line-height-big: $line-height-big,
+        $font-family: $font-family,
+        $padding: $padding,
+        $padding-big: $padding-big
+    );
+
+    .#{$prefix}#{$xtype}#{$ui-suffix} {
+        .#{$prefix}pagingtoolbar-prev {
+            @include icon($prev-icon);
+        }
+
+        .#{$prefix}pagingtoolbar-next {
+            @include icon($next-icon);
+        }
+    }
+}

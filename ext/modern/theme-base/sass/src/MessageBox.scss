@@ -1,0 +1,32 @@
+/**
+ * @class Ext.MessageBox
+ */
+
+.x-msgbox {
+    min-width: 15em;
+    max-width: 20em;
+    max-height: 90%;
+
+    // to hide content that is too large (vertically)
+    .x-docking-vertical {
+        overflow: hidden;
+    }
+}
+
+// This will need to be generalized at some point
+.x-ie {
+    .x-msgbox {
+        .x-dock.x-dock-horizontal.x-unsized {
+            > .x-dock-body {
+               @include st-box-flex(1, 0px);
+            }
+        }
+    }
+}
+
+
+.x-msgbox-buttons {
+    .x-button {
+        min-width: 4.5em;
+    }
+}

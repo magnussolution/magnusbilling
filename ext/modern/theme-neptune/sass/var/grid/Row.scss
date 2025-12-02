@@ -1,0 +1,196 @@
+/**
+ * @class Ext.grid.Row
+ */
+
+//# fashion replaces $grid-cell-color
+/**
+ * @var {color}
+ * Grid row text color
+ */
+$gridrow-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Grid row text color when hovered
+ */
+$gridrow-hovered-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Grid row text color when pressed
+ */
+$gridrow-pressed-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Grid row text color when selected
+ */
+$gridrow-selected-color: dynamic(null);
+
+//# fashion replaces $grid-cell-background-color
+/**
+ * @var {color}
+ * Grid row background-color
+ */
+$gridrow-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * background-color for {@link Ext.dataview.List#striped striped} grid rows
+ */
+$gridrow-alt-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Grid row background-color when hovered
+ */
+$gridrow-hovered-background-color: dynamic(null);
+
+//# fashion replaces $grid-cell-pressed-background-color
+/**
+ * @var {color}
+ * Grid row background-color when pressed
+ */
+$gridrow-pressed-background-color: dynamic(null);
+
+//# fashion replaces $grid-cell-selected-background-color
+/**
+ * @var {color}
+ * Grid row background-color when selected
+ */
+$gridrow-selected-background-color: dynamic(null);
+
+/**
+ * @var {number}
+ * Grid row border-width
+ */
+$gridrow-border-width: dynamic(null);
+
+/**
+ * @var {string}
+ * Grid row border-style
+ */
+$gridrow-border-style: dynamic(null);
+
+//# fashion replaces $grid-cell-border-color
+/**
+ * @var {color}
+ * Grid row border-color
+ */
+$gridrow-border-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Grid row border-color when hovered
+ */
+$gridrow-hovered-border-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Grid row border-color when pressed
+ */
+$gridrow-pressed-border-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Grid row border-color when selected
+ */
+$gridrow-selected-border-color: dynamic(null);
+
+/**
+ * Creates a visual theme for a grid row.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=gridrow] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {color} $color
+ * Grid row text color
+ *
+ * @param {color} $hovered-color
+ * Grid row text color when hovered
+ *
+ * @param {color} $pressed-color
+ * Grid row text color when pressed
+ *
+ * @param {color} $selected-color
+ * Grid row text color when selected
+ *
+ * @param {color} $background-color
+ * Grid row background-color
+ *
+ * @param {color} $alt-background-color
+ * background-color for {@link Ext.grid.Grid#striped striped} grid rows
+ *
+ * @param {color} $hovered-background-color
+ * Grid row background-color when hovered
+ *
+ * @param {color} $pressed-background-color
+ * Grid row background-color when pressed
+ *
+ * @param {color} $selected-background-color
+ * Grid row background-color when selected
+ *
+ * @param {number} $border-width
+ * Grid row border-width
+ *
+ * @param {string} $border-style
+ * Grid row border-style
+ *
+ * @param {color} $border-color
+ * Grid row border-color
+ *
+ * @param {color} $hovered-border-color
+ * Grid row border-color when hovered
+ *
+ * @param {color} $pressed-border-color
+ * Grid row border-color when pressed
+ *
+ * @param {color} $selected-border-color
+ * Grid row border-color when selected
+ */
+@mixin gridrow-ui(
+    $ui: null,
+    $xtype: gridrow,
+    $color: null,
+    $hovered-color: null,
+    $pressed-color: null,
+    $selected-color: null,
+    $background-color: null,
+    $alt-background-color: null,
+    $hovered-background-color: null,
+    $pressed-background-color: null,
+    $selected-background-color: null,
+    $border-width: null,
+    $border-style: null,
+    $border-color: null,
+    $hovered-border-color: null,
+    $pressed-border-color: null,
+    $selected-border-color: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}gridrow#{$ui-suffix} {
+        @include listitem-base(
+            $xtype: $xtype,
+            $color: $color,
+            $hovered-color: $hovered-color,
+            $pressed-color: $pressed-color,
+            $selected-color: $selected-color,
+            $background-color: $background-color,
+            $alt-background-color: $alt-background-color,
+            $hovered-background-color: $hovered-background-color,
+            $pressed-background-color: $pressed-background-color,
+            $selected-background-color: $selected-background-color,
+            $border-width: $border-width,
+            $border-style: $border-style,
+            $border-color: $border-color,
+            $hovered-border-color: $hovered-border-color,
+            $pressed-border-color: $pressed-border-color,
+            $selected-border-color: $selected-border-color
+        );
+    }
+}

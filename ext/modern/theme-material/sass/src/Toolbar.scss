@@ -1,0 +1,31 @@
+.#{$prefix}toolbar {
+    //Material overrides this from base so that button ripples can expand beyond the left/right edges of the toolbar
+    .#{$prefix}inner {
+        overflow: visible;
+    }
+
+    // Titles in Toolbars
+    .#{$prefix}title {
+        transition: .25s padding ease-out;
+    }
+}
+
+// This needs to be moved into a UI for toolbars that are floating and docked to the bottom
+.#{$prefix}floating .#{$prefix}toolbar.#{$prefix}docked-bottom, .#{$prefix}floated .#{$prefix}toolbar.#{$prefix}docked-bottom {
+    padding: $content-padding/2 $content-padding;
+    background-color: $background-color;
+    color: $color;
+    height: auto;
+
+    .#{$prefix}button {
+        color: $base-color;
+
+        &.x-button-pressing, &.x-button.x-button-pressed {
+            color: $base-foreground-color;
+        }
+
+        &:last-child {
+            margin-right: -$content-padding/2;
+        }
+    }
+}

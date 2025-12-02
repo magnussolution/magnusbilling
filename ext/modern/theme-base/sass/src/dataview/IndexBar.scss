@@ -1,0 +1,35 @@
+.#{$prefix}indexbar-wrapper {
+    pointer-events: none;
+    @include st-box-pack(end);
+
+    &.#{$prefix}horizontal {
+        @include st-box-orient(horizontal);
+        @include st-box-pack(center);
+        @include st-box-align(end);
+    }
+}
+
+.#{$prefix}indexbar {
+    pointer-events: auto;
+    z-index: 2;
+
+    @include st-box-flex(0, auto, important);
+    @include st-box;
+
+    &.#{$prefix}vertical {
+        @include st-box-orient(vertical);
+    }
+
+    &.#{$prefix}horizontal {
+        width: auto;
+        @include st-box-orient(horizontal);
+    }
+}
+
+.#{$prefix}indexbar-item {
+    line-height: 0;
+    @include st-box-flex;
+    @include st-box;
+    @include st-box-align(center);
+    @include st-box-pack(center);
+}

@@ -1,0 +1,39 @@
+/**
+ * @class Global_CSS
+ */
+
+/**
+ * Adds a font specification to an element.
+ * Uses a single "font" property if possible, otherwise uses separate font-family, font-size,
+ * font-weight and line-height properties.
+ *
+ * @param {number/string} $font-weight
+ * The font-weight
+ *
+ * @param {number/string} $font-size
+ * The font-size
+ *
+ * @param {number/string} $line-height
+ * The line-height
+ *
+ * @param {string} $font-family
+ * The font-family
+ *
+ * @private
+ */
+@mixin font($font-weight: null, $font-size: null, $line-height: null, $font-family: null) {
+    @if $font-family == null or $font-size == null or $line-height == null {
+        // if font-family, line-height, or font-size is null we cannot use a single "font" declaration
+        // Single font declaration does not work without font-family and font-size, and
+        // omitting line-height results in an effective line-height of "normal" which may
+        // end up unintentionally overriding an explicit line-height set elsewhere.
+        font-weight: $font-weight;
+        font-size: $font-size;
+        line-height: $line-height;
+        font-family: $font-family;
+    } @else if $line-height == null {
+        font: $font-weight $font-size $font-family;
+    } @else {
+        font: $font-weight #{$font-size}/#{$line-height} $font-family;
+    }
+}

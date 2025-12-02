@@ -1,0 +1,3 @@
+$formpanel-body-background-color: dynamic($background-color);
+$formpanel-body-padding: dynamic(px-to-em($content-padding/2, 12px) px-to-em($content-padding, 12px));
+$formpanel-body-padding-big: dynamic(px-to-em($content-padding/2, 14px) px-to-em($content-padding, 14px));

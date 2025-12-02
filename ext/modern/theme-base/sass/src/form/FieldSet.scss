@@ -1,0 +1,21 @@
+.#{$prefix}form-fieldset {
+    .#{$prefix}form-fieldset-inner {
+        overflow: hidden;
+    }
+
+    .#{$prefix}dock {
+        .#{$prefix}dock-body {
+            @include st-box-flex(1);
+        }
+    }
+}
+
+.#{$prefix}form-fieldset-title {
+    .#{$prefix}innerhtml {
+        @include ellipsis();
+    }
+}
+
+.#{$prefix}form-fieldset-instructions {
+    text-align: center;
+}

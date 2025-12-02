@@ -1,0 +1,79 @@
+.#{$prefix}gridviewoptions {
+    background-color: $background-color;
+    border-color: $sheet-border-color;
+}
+
+.#{$prefix}column-options-sortablehandle,
+.#{$prefix}column-options-visibleindicator,
+.#{$prefix}column-options-groupindicator,
+.#{$prefix}column-options-folder,
+.#{$prefix}column-options-leaf {
+    height: $gridviewoptions-icon-size;
+    width: $gridviewoptions-icon-size;
+
+    @if $enable-big {
+        .#{$prefix}big & {
+            height: $gridviewoptions-icon-size;
+            width: $gridviewoptions-icon-size;
+        }
+    }
+
+    @include icon($font-size: $gridviewoptions-icon-font-size, $font-size-big: $gridviewoptions-icon-font-size-big);
+}
+
+.#{$prefix}column-options-itemwrap {
+    @include st-box;
+    @include st-box-align(center);
+
+    > * {
+        margin-right: .5em;
+    }
+
+    > :last-child {
+        margin-right: 0;
+    }
+}
+
+.#{$prefix}column-options-sortablehandle {
+    @include icon($gridviewoptions-sortablehandle-icon);
+    color: $neutral-dark-color;
+}
+
+.#{$prefix}column-options-text {
+    @include st-box-flex;
+}
+
+.#{$prefix}column-options-visibleindicator {
+    @include icon($gridviewoptions-visibleindicator-icon);
+    color: $base-color;
+}
+
+.#{$prefix}column-options-groupindicator {
+    @include icon($gridviewoptions-groupindicator-icon);
+    color: $neutral-dark-color;
+}
+
+.#{$prefix}column-options-folder,
+.#{$prefix}column-options-leaf {
+    color: #91E698;
+}
+
+.#{$prefix}column-options-folder {
+    @include icon($gridviewoptions-folder-icon);
+}
+.#{$prefix}column-options-leaf {
+    @include icon($gridviewoptions-leaf-icon);
+}
+
+.#{$prefix}column-options-hidden {
+    .#{$prefix}column-options-visibleindicator,
+    .#{$prefix}column-options-text,
+    .#{$prefix}column-options-folder,
+    .#{$prefix}column-options-leaf {
+        color: $neutral-dark-color;
+    }
+}
+
+.#{$prefix}column-options-grouped .#{$prefix}column-options-groupindicator {
+    color: $base-color;
+}

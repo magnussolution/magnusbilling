@@ -1,0 +1,145 @@
+/**
+ * @class Global_CSS
+ */
+
+/**
+ * Creates a border on an element.
+ * If any of the parameters is specified as a list, or if any paramter is null,
+ * border-style, border-width, and border-color will be specified as separate properties,
+ * otherwise all will be collapsed into a single "border" property.
+ *
+ * @param {number/list} $width
+ * The border-width
+ *
+ * @param {string/list} $style
+ * The border-style
+ *
+ * @param {color/list} $color
+ * The border-color
+ *
+ * @private
+ */
+@mixin border($width: null, $style: null, $color: null) {
+    @if $width != null and $style != null and $color != null and
+            length($width) == 1 and length($style) == 1 and length($color) == 1 {
+        border: $width $style $color;
+    } @else {
+        @if length($width) > 1 and boxContainsNull($width) {
+            border-top-width: top($width);
+            border-right-width: right($width);
+            border-bottom-width: bottom($width);
+            border-left-width: left($width);
+        } @else {
+            border-width: $width;
+        }
+
+        @if length($style) > 1 and boxContainsNull($style) {
+            border-top-style: top($style);
+            border-right-style: right($style);
+            border-bottom-style: bottom($style);
+            border-left-style: left($style);
+        } @else {
+            border-style: $style;
+        }
+
+        @if length($color) > 1 and boxContainsNull($color) {
+            border-top-color: top($color);
+            border-right-color: right($color);
+            border-bottom-color: bottom($color);
+            border-left-color: left($color);
+        } @else {
+            border-color: $color;
+        }
+    }
+}
+
+/**
+ * Creates a top border.  If all arguments are non-null they will be collapsed into a single
+ * border property.
+ *
+ * @param {number/list} $width
+ * The border-width
+ *
+ * @param {string/list} $style
+ * The border-style
+ *
+ * @param {color/list} $color
+ * The border-color
+ *
+ * @private
+ */
+@mixin border-top($width: null, $style: null, $color: null) {
+    @include border-side(top, $width, $style, $color);
+}
+
+/**
+ * Creates a right border.  If all arguments are non-null they will be collapsed into a single
+ * border property.
+ *
+ * @param {number/list} $width
+ * The border-width
+ *
+ * @param {string/list} $style
+ * The border-style
+ *
+ * @param {color/list} $color
+ * The border-color
+ *
+ * @private
+ */
+@mixin border-right($width: null, $style: null, $color: null) {
+    @include border-side(right, $width, $style, $color);
+}
+
+/**
+ * Creates a bottom border.  If all arguments are non-null they will be collapsed into a single
+ * border property.
+ *
+ * @param {number/list} $width
+ * The border-width
+ *
+ * @param {string/list} $style
+ * The border-style
+ *
+ * @param {color/list} $color
+ * The border-color
+ *
+ * @private
+ */
+@mixin border-bottom($width: null, $style: null, $color: null) {
+    @include border-side(bottom, $width, $style, $color);
+}
+
+/**
+ * Creates a left border.  If all arguments are non-null they will be collapsed into a single
+ * border property.
+ *
+ * @param {number/list} $width
+ * The border-width
+ *
+ * @param {string/list} $style
+ * The border-style
+ *
+ * @param {color/list} $color
+ * The border-color
+ *
+ * @private
+ */
+@mixin border-left($width: null, $style: null, $color: null) {
+    @include border-side(left, $width, $style, $color);
+}
+
+/**
+ * Convenience mixin for border-top, border-right, border-bottom, and border-left
+ * @private
+ */
+@mixin border-side($side, $width: null, $style: null, $color: null) {
+    @if $width != null and $style != null and $color != null {
+        border-#{$side}: $width $style $color;
+    } @else {
+        border-#{$side}-width: $width;
+        border-#{$side}-style: $style;
+        border-#{$side}-color: $color;
+    }
+}
+

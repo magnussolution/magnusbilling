@@ -1,0 +1,17 @@
+@include gridrow-ui(
+    $color: $gridrow-color,
+    $hovered-color: $gridrow-hovered-color,
+    $pressed-color: $gridrow-pressed-color,
+    $selected-color: $gridrow-selected-color,
+    $background-color: $gridrow-background-color,
+    $alt-background-color: $gridrow-alt-background-color,
+    $hovered-background-color: $gridrow-hovered-background-color,
+    $pressed-background-color: $gridrow-pressed-background-color,
+    $selected-background-color: $gridrow-selected-background-color,
+    $border-width: $gridrow-border-width,
+    $border-style: $gridrow-border-style,
+    $border-color: $gridrow-border-color,
+    $hovered-border-color: $gridrow-hovered-border-color,
+    $pressed-border-color: $gridrow-pressed-border-color,
+    $selected-border-color: $gridrow-selected-border-color
+);

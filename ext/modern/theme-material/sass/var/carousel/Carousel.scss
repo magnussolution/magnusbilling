@@ -1,0 +1,20 @@
+$carousel-indicator-size: dynamic(10px);
+$carousel-indicator-spacing: dynamic(3px);
+$carousel-indicator-border-radius: dynamic(50%);
+$carousel-indicator-active-size: dynamic(16px);
+
+@mixin carousel-light-ui {
+  @include sencha-carousel-indicator-ui(
+  $ui-label: 'light',
+  $color: $reverse-disabled-color,
+  $active-color: $base-color
+  )
+}
+
+@mixin carousel-dark-ui {
+  @include sencha-carousel-indicator-ui(
+  $ui-label: 'dark',
+  $color: $disabled-color,
+  $active-color: $base-color
+  );
+}

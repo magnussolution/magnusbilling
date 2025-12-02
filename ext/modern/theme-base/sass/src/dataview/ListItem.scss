@@ -1,0 +1,31 @@
+.#{$prefix}listitem {
+    position: relative;
+    @include st-box;
+    @include st-box-orient(vertical);
+    @include st-box-pack(center);
+}
+
+.#{$prefix}no-row-lines > {
+    .#{$prefix}listitem:not(.#{$prefix}group-first) {
+        border-top: 0 !important;
+    }
+    .#{$prefix}listitem.#{$prefix}last {
+        border-bottom: 0 !important;
+    }
+}
+
+.#{$prefix}listitem-disclosure {
+    cursor: pointer;
+    @include st-box;
+    @include st-box-orient(vertical);
+    @include st-box-pack(center)
+}
+
+.#{$prefix}listitem.#{$prefix}first,
+.#{$prefix}listitem.#{$prefix}group-first {
+    // This rule should be more specific than .x-list-item-foo, but less than or equal
+    // to .x-list-item-foo:hover in specificity.
+    // this ensures the first row of the list does not have a top border by default
+    // but gains one when hovered, selected, etc
+    border-top-color: transparent;
+}

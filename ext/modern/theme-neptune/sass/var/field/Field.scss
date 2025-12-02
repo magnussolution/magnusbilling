@@ -1,0 +1,370 @@
+/**
+ * @class Ext.field.Field
+ */
+
+/**
+ * @var {color}
+ * Field background-color
+ */
+$field-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Field background-color when focused
+ */
+$field-focused-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Field background-color when invalid
+ */
+$field-invalid-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Field background-color when disabled
+ */
+$field-disabled-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Field label text color
+ */
+$field-label-color: dynamic($color);
+
+/**
+ * @var {color}
+ * Field label text color when focused
+ */
+$field-focused-label-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Field label text color when invalid
+ */
+$field-invalid-label-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Field label text color when disabled
+ */
+$field-disabled-label-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Field label background-color
+ */
+$field-label-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Field label background-color when focused
+ */
+$field-focused-label-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Field label background-color when invalid
+ */
+$field-invalid-label-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Field label background-color when disabled
+ */
+$field-disabled-label-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Field label padding
+ */
+$field-label-padding: dynamic(px-to-em(3px 6px 3px 0, 13px));
+
+/**
+ * @var {color}
+ * Field label padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$field-label-padding-big: dynamic(px-to-em(3px 6px 3px 0, 15px));
+
+/**
+ * @var {string/number}
+ * Field label font-weight
+ */
+$field-label-font-weight: dynamic($font-weight-bold);
+
+/**
+ * @var {number}
+ * Field label font-size
+ */
+$field-label-font-size: dynamic(1rem);
+
+/**
+ * @var {number}
+ * Field label font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$field-label-font-size-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Field label line-height
+ */
+$field-label-line-height: dynamic(px-to-em(16px, 13px));
+
+/**
+ * @var {number}
+ * Field label line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$field-label-line-height-big: dynamic(px-to-em(24px, 15px));
+
+/**
+ * @var {string}
+ * Field label font-family
+ */
+$field-label-font-family: dynamic($font-family);
+
+/**
+ * @var {number}
+ * Opacity of form fields when disabled
+ */
+$field-disabled-opacity: dynamic(.3);
+
+/**
+ * @var {string/number}
+ * Field {@link #required} indicator font-weight
+ */
+$field-required-indicator-font-weight: dynamic(null);
+
+/**
+ * @var {number}
+ * Field {@link #required} indicator font-size
+ */
+$field-required-indicator-font-size: dynamic(null);
+
+/**
+ * @var {number}
+ * Field {@link #required} indicator line-height
+ */
+$field-required-indicator-line-height: dynamic(null);
+
+/**
+ * @var {string}
+ * Field {@link #required} indicator font-family
+ */
+$field-required-indicator-font-family: dynamic(null);
+
+/**
+ * @var {number}
+ * Field {@link #required} indicator margin
+ */
+$field-required-indicator-margin: dynamic(-.2em null null .3em);
+
+/**
+ * @var {number}
+ * Field {@link #required} indicator margin in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$field-required-indicator-margin-big: dynamic(null);
+
+/**
+ * Creates a visual theme for a Field
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=field] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {color} $background-color
+ * Field background-color
+ *
+ * @param {color} $focused-background-color
+ * Field background-color when focused
+ *
+ * @param {color} $invalid-background-color
+ * Field background-color when invalid
+ *
+ * @param {color} $disabled-background-color
+ * Field background-color when disabled
+ *
+ * @param {color} $label-color
+ * Field label text color
+ *
+ * @param {color} $focused-label-color
+ * Field label text color when focused
+ *
+ * @param {color} $invalid-label-color
+ * Field label text color when invalid
+ *
+ * @param {color} $disabled-label-color
+ * Field label text color when disabled
+ *
+ * @param {color} $label-background-color
+ * Field label background-color
+ *
+ * @param {color} $focused-label-background-color
+ * Field label background-color when focused
+ *
+ * @param {color} $invalid-label-background-color
+ * Field label background-color when invalid
+ *
+ * @param {color} $disabled-label-background-color
+ * Field label background-color when disabled
+ *
+ * @param {color} $label-padding
+ * Field label padding
+ *
+ * @param {color} $label-padding-big
+ * Field label padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string/number} $label-font-weight
+ * Field label font-weight
+ *
+ * @param {number} $label-font-size
+ * Field label font-size
+ *
+ * @param {number} $label-font-size-big
+ * Field label font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $label-line-height
+ * Field label line-height
+ *
+ * @param {number} $label-line-height-big
+ * Field label line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $label-font-family
+ * Field label font-family
+ *
+ * @param {number} $disabled-opacity
+ * Opacity of form fields when disabled
+ *
+ * @param {string/number} $required-indicator-font-weight
+ * Field {@link #required} indicator font-weight
+ *
+ * @param {number} $required-indicator-font-size
+ * Field {@link #required} indicator font-size
+ *
+ * @param {number} $required-indicator-line-height
+ * Field {@link #required} indicator line-height
+ *
+ * @param {string} $required-indicator-font-family
+ * Field {@link #required} indicator font-family
+ *
+ * @param {number} $required-indicator-margin
+ * Field {@link #required} indicator margin
+ *
+ * @param {number} $required-indicator-margin-big
+ * Field {@link #required} indicator margin in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin field-ui(
+    $ui: null,
+    $xtype: field,
+    $background-color: null,
+    $focused-background-color: null,
+    $invalid-background-color: null,
+    $disabled-background-color: null,
+    $label-color: null,
+    $focused-label-color: null,
+    $invalid-label-color: null,
+    $disabled-label-color: null,
+    $label-background-color: null,
+    $focused-label-background-color: null,
+    $invalid-label-background-color: null,
+    $disabled-label-background-color: null,
+    $label-padding: null,
+    $label-padding-big: null,
+    $label-font-weight: null,
+    $label-font-size: null,
+    $label-font-size-big: null,
+    $label-line-height: null,
+    $label-line-height-big: null,
+    $label-font-family: null,
+    $disabled-opacity: null,
+    $required-indicator-font-weight: null,
+    $required-indicator-font-size: null,
+    $required-indicator-line-height: null,
+    $required-indicator-font-family: null,
+    $required-indicator-margin: null,
+    $required-indicator-margin-big: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}#{$xtype}#{$ui-suffix} {
+        background-color: $background-color;
+
+        .#{$prefix}label-el {
+            color: $label-color;
+            background-color: $label-background-color;
+            padding: $label-padding;
+
+            @include font($label-font-weight, $label-font-size, $label-line-height, $label-font-family);
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    padding: $label-padding-big;
+                    font-size: $label-font-size-big;
+                    line-height: $label-line-height-big;
+                }
+            }
+        }
+
+        &.#{$prefix}focused {
+            background-color: $focused-background-color;
+
+            .#{$prefix}label-el {
+                color: $focused-label-color;
+                background-color: $focused-label-background-color;
+            }
+        }
+
+        &.#{$prefix}invalid {
+            background-color: $invalid-background-color;
+
+            .#{$prefix}label-el {
+                color: $invalid-label-color;
+                background-color: $invalid-label-background-color;
+            }
+        }
+
+        &.#{$prefix}disabled {
+            background-color: $disabled-background-color;
+
+            // apply opacity to the label and component separately so that if the field's component has its
+            // own disabled opacity it will be applied to the same element and not layered.
+            .#{$prefix}label-el {
+                opacity: $disabled-opacity;
+                color: $disabled-label-color;
+                background-color: $disabled-label-background-color;
+            }
+
+            .#{$prefix}body-el > .#{$prefix}component {
+                opacity: $disabled-opacity;
+            }
+        }
+
+        &.#{$prefix}required .#{$prefix}label-el:after {
+            @include font($required-indicator-font-weight, $required-indicator-font-size, $required-indicator-line-height, $required-indicator-font-family);
+            margin: $required-indicator-margin;
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    margin: $required-indicator-margin-big;
+                }
+            }
+        }
+    }
+}
+
+
+// The following variables are not configurable per-UI
+
+/**
+ * @var {number}
+ * Vertical space in between form fields
+ */
+$field-vertical-spacing: dynamic(0.385em);
+
+/**
+ * @var {number}
+ * Vertical space in between form fields in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$field-vertical-spacing-big: dynamic(0.534em);

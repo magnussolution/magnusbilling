@@ -1,0 +1,16 @@
+/**
+ * @class Ext.form.Panel
+ */
+
+.x-field {
+    .x-label-el {
+        @include label();
+        padding: $form-spacing;
+    }
+
+    &.x-label-align-top .x-label-el {
+        border-bottom: 1px solid $base-color;
+    }
+}
+
+

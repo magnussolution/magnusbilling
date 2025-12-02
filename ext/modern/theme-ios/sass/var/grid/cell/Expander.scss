@@ -1,0 +1,5 @@
+$expandercell-icon-color: dynamic($base-color);
+$expandercell-icon-size: dynamic(px-to-em(16px, 14px));
+$expandercell-icon-size-big: dynamic(px-to-em(24px, 16px));
+$expandercell-expand-icon: dynamic($ios-row-expander-expand iOS);
+$expandercell-collapse-icon: dynamic($ios-row-expander-collapse iOS);

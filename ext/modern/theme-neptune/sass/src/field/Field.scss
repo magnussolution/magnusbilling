@@ -1,0 +1,57 @@
+@include field-ui(
+    $background-color: $field-background-color,
+    $focused-background-color: $field-focused-background-color,
+    $invalid-background-color: $field-invalid-background-color,
+    $disabled-background-color: $field-disabled-background-color,
+    $label-color: $field-label-color,
+    $focused-label-color: $field-focused-label-color,
+    $invalid-label-color: $field-invalid-label-color,
+    $disabled-label-color: $field-disabled-label-color,
+    $label-background-color: $field-label-background-color,
+    $focused-label-background-color: $field-focused-label-background-color,
+    $invalid-label-background-color: $field-invalid-label-background-color,
+    $disabled-label-background-color: $field-disabled-label-background-color,
+    $label-padding: $field-label-padding,
+    $label-padding-big: $field-label-padding-big,
+    $label-font-weight: $field-label-font-weight,
+    $label-font-size: $field-label-font-size,
+    $label-font-size-big: $field-label-font-size-big,
+    $label-line-height: $field-label-line-height,
+    $label-line-height-big: $field-label-line-height-big,
+    $label-font-family: $field-label-font-family,
+    $disabled-opacity: $field-disabled-opacity,
+    $required-indicator-font-weight: $field-required-indicator-font-weight,
+    $required-indicator-font-size: $field-required-indicator-font-size,
+    $required-indicator-line-height: $field-required-indicator-line-height,
+    $required-indicator-font-family: $field-required-indicator-font-family,
+    $required-indicator-margin: $field-required-indicator-margin,
+    $required-indicator-margin-big: $field-required-indicator-margin-big
+);
+
+.#{$prefix}field {
+    &.#{$prefix}layout-auto-item,
+    &.#{$prefix}layout-vbox-item {
+        // the bottom spacing is implemented as padding so that when you are using
+        // fieldSeparators: true and inputBorders:false, each field's content appears
+        // centered vertically between the separators
+        @if $field-vertical-spacing != null {
+            margin-top: $field-vertical-spacing / 2;
+            padding-bottom: $field-vertical-spacing / 2;
+        }
+
+        @if $enable-big and $field-vertical-spacing-big != null {
+            .#{$prefix}big & {
+                margin-top: $field-vertical-spacing-big / 2;
+                padding-bottom: $field-vertical-spacing-big / 2;
+            }
+        }
+
+        &:first-child {
+            margin-top: 0;
+        }
+
+        &:last-child {
+            padding-bottom: 0;
+        }
+    }
+}

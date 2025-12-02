@@ -1,0 +1,17 @@
+/** @class Ext.pivot.plugin.configurator.Panel */
+
+/**
+ * @var {number}
+ * The border-width of the configurator panel's body.
+ */
+$pivot-grid-config-panel-body-border-width: dynamic(0 0 0 1px);
+/**
+ * @var {string}
+ * The border-style of the configurator panel's body.
+ */
+$pivot-grid-config-panel-body-border-style: dynamic(solid);
+/**
+ * @var {color}
+ * The border color of the configurator panel's body.
+ */
+$pivot-grid-config-panel-body-border-color: dynamic(top($panel-body-border-color));

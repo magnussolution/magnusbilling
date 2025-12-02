@@ -1,0 +1,21 @@
+.x-tab {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    min-width : 3.3em;
+}
+
+.x-tabbar {
+    border-color: #ccc;
+    border-style: solid;
+    border-width: 0;
+    background-color: #eee;
+}
+
+.x-tabbar.x-docked-top {
+    border-bottom-width: 1px;
+}
+
+.x-tabbar.x-docked-bottom {
+    border-top-width: 1px;
+}
+

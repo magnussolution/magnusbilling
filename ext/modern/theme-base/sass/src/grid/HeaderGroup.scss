@@ -1,0 +1,16 @@
+.#{$prefix}headergroup {
+    @include st-box;
+    @include st-box-orient(vertical);
+    flex-shrink: 0;
+
+    // the group header is just an element with the x-gridcolumn class on it, it is not
+    // an actual component, therefore we need an extra rule to turn off its border whenever
+    // the group is configured with border: false
+    &.#{$prefix}noborder-trbl > .#{$prefix}gridcolumn {
+        border: 0 !important
+    }
+
+}
+.#{$prefix}headergroup-inner {
+    @include st-box-flex;
+}

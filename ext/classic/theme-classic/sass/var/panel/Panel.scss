@@ -1,0 +1,25 @@
+/** @class Ext.panel.Panel */
+//
+
+$panel-base-color: dynamic(adjust-color($base-color, $hue: 0deg, $saturation: 0.542%, $lightness: 7.843%)); //#DFE8F6
+$panel-border-color: dynamic(adjust-color($base-color, $hue: 0deg, $saturation: 7.644%, $lightness: -8.627%));
+$panel-header-border-color: dynamic($panel-border-color);
+$panel-header-font-size: dynamic(ceil($font-size * .9));  //11px
+$panel-header-color: dynamic(adjust-color($panel-base-color, $hue: 0deg, $saturation: 38.347%, $lightness: -63.725%));
+$panel-header-line-height: dynamic(15px);
+$panel-header-padding: dynamic(5px);
+$panel-header-text-padding: dynamic(0 2px 1px);
+$panel-header-background-gradient: dynamic('panel-header');
+$panel-header-inner-border-color: dynamic(adjust-color($panel-base-color, $hue: 0deg, $saturation: -6.098%, $lightness: 4.902%));
+$panel-header-inner-border-width: dynamic(1px 0 0);
+$panel-header-background-color: dynamic(adjust-color($panel-base-color, $hue: 0deg, $saturation: 6.402%, $lightness: -4.51%));
+$panel-frame-header-inner-border-color: dynamic($panel-header-inner-border-color);
+$panel-frame-header-inner-border-width: dynamic(1px 1px 0);
+$panel-ghost-opacity: dynamic(0.65);
+$panel-frame-base-color: dynamic($panel-base-color);
+$panel-frame-background-color: dynamic($panel-frame-base-color);
+$panel-frame-body-border-width: dynamic(0);
+$panel-tool-spacing: dynamic(2px);
+$panel-header-icon-spacing: dynamic(2px);
+$panel-tool-focus-outline-color: dynamic(adjust-color($neutral-color, $hue: 0deg, $saturation: 0%, $lightness: -66%));
+$panel-tool-focus-outline-style: dynamic(dotted);

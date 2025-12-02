@@ -1,0 +1,17 @@
+@include rowheader-ui(
+    $color: $rowheader-color,
+    $background-color: $rowheader-background-color,
+    $pinned-color: $rowheader-pinned-color,
+    $pinned-background-color: $rowheader-pinned-background-color,
+    $border-width: $rowheader-border-width,
+    $border-style: $rowheader-border-style,
+    $border-color: $rowheader-border-color,
+    $font-weight: $rowheader-font-weight,
+    $font-size: $rowheader-font-size,
+    $font-size-big: $rowheader-font-size-big,
+    $line-height: $rowheader-line-height,
+    $line-height-big: $rowheader-line-height-big,
+    $font-family: $rowheader-font-family,
+    $padding: $rowheader-padding,
+    $padding-big: $rowheader-padding-big
+);

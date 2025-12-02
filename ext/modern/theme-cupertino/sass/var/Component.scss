@@ -1,0 +1,13 @@
+$touch-theme-cupertino: true;
+
+$background-color: dynamic(#fff);
+$primary-text-color: dynamic(#000);
+$color: $primary-text-color;
+
+$ios7-blue: dynamic(#157efb);
+$ios7-red: dynamic(#fc3e39);
+$ios7-green: dynamic(#53d769);
+
+$ios7-blue-lighten: dynamic(lighten($ios7-blue, 30%));
+$ios7-red-lighten: dynamic(lighten($ios7-red, 30%));
+$ios7-green-lighten: dynamic(lighten($ios7-green, 30%));

@@ -1,0 +1,7 @@
+.x-placeholderlabel {
+    &.x-focused {
+        .x-label-el {
+            color: $ios7-blue;
+        }
+    }
+}

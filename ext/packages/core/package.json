@@ -1,0 +1,32 @@
+{
+    "name": "core",
+    "type": "code",
+    "alternateName": [
+        "sencha-core"
+    ],
+
+    "creator": "Sencha",
+    "summary": "Sencha Core",
+    "detailedDescription": "Sencha Core is the core package used by Sencha frameworks",
+
+    "version": "6.2.0.981",
+    "compatVersion": "6.0.0",
+    "format": "1",
+
+    "output": "${package.dir}/build",
+    "local": true,
+
+    "sass": {
+        "namespace": "Ext",
+
+        "etc": "${package.dir}/sass/etc/all.scss",
+
+        "var": "${package.dir}/sass/var",
+
+        "src": "${package.dir}/sass/src"
+    },
+
+    "classpath": "${package.dir}/src",
+
+    "overrides": "${package.dir}/overrides"
+}

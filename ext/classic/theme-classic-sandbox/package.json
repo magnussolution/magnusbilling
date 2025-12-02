@@ -1,0 +1,56 @@
+{
+    /**
+     * The namespace of this package.
+     *
+     * As a general rule, all classes that belong to this package should be under this namespace
+     * if multiple namespaces are part of this package, set this to "".
+     */
+    "namespace": "Ext",
+
+    "name": "theme-classic-sandbox",
+    "type": "theme",
+    "extend": "theme-classic",
+    "alternateName": [
+        "ext-theme-classic-sandbox"
+    ],
+
+    "framework": "ext",
+    "toolkit": "classic",
+    //"requires": [
+    //    ...
+    //],
+
+    "creator": "Sencha",
+    "summary": "Ext JS Classic Sandbox Theme",
+    "detailedDescription": "The same visuals as the Classic Theme but in a CSS sandbox",
+
+    "version": "6.2.0.981",
+    "compatVersion": "6.0.0",
+    "format": "1",
+
+    "output": "${workspace.subpkg.prefix}/${package.name}",
+    "local": true,
+
+    "sass": {
+        "namespace": "Ext",
+
+        "etc": "${package.dir}/sass/etc/all.scss",
+
+        "var": "${package.dir}/sass/var",
+
+        "src": "${package.dir}/sass/src"
+    },
+
+    "classpath": "${package.dir}/src",
+
+    "overrides": "${package.dir}/overrides",
+
+    "slicer": {
+        "js": [
+            {
+                "path": "${package.dir}/sass/example/custom.js",
+                "isWidgetManifest": true
+            }
+        ]
+    }
+}

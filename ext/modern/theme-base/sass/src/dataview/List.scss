@@ -1,0 +1,40 @@
+.#{$prefix}list {
+    overflow: hidden;
+
+    .#{$prefix}list-inner {
+        width: 100% !important;
+    }
+
+    .#{$prefix}empty-text {
+        text-align: center;
+        pointer-events: none;
+        @include st-box();
+        @include st-box-orient(vertical);
+        @include st-box-pack(center);
+    }
+
+    .#{$prefix}scrolldock {
+        position: absolute !important;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    &.#{$prefix}infinite {
+        .#{$prefix}listitem,
+        .#{$prefix}itemheader {
+            width: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+    }
+}
+
+.#{$prefix}list.#{$prefix}inline .#{$prefix}listitem {
+    display: inline-block;
+}
+
+.#{$prefix}list.#{$prefix}nowrap .#{$prefix}listitem {
+    white-space: nowrap;
+}

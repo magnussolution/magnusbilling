@@ -1,0 +1,84 @@
+/**
+ * @class Ext.grid.plugin.SummaryRow
+ */
+
+//# fashion replaces $grid-summary-row-cell-color
+/**
+ * @var {color}
+ * Summary row text color
+ */
+$summaryrow-color: dynamic(null);
+
+//# fashion replaces $grid-summary-row-background-color
+/**
+ * @var {color}
+ * Summary row background-color
+ */
+$summaryrow-background-color: dynamic(null);
+
+/**
+ * @var {number}
+ * Summary row border-width
+ */
+$summaryrow-border-width: dynamic(null);
+
+/**
+ * @var {string}
+ * Summary row border-style
+ */
+$summaryrow-border-style: dynamic(null);
+
+//# fashion replaces $grid-summary-row-cell-border-color
+/**
+ * @var {color}
+ * Summary row border-color
+ */
+$summaryrow-border-color: dynamic(null);
+
+/**
+ * Creates a visual theme for a grid summary row.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=summaryrow] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {color} $color
+ * Summary row text color
+ *
+ * @param {color} $background-color
+ * Summary row background-color
+ *
+ * @param {number} $border-width
+ * Summary row border-width
+ *
+ * @param {string} $border-style
+ * Summary row border-style
+ *
+ * @param {color} $border-color
+ * Summary row border-color
+ */
+@mixin summaryrow-ui(
+    $ui: null,
+    $xtype: summaryrow,
+    $color: null,
+    $background-color: null,
+    $border-width: null,
+    $border-style: null,
+    $border-color: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}summaryrow#{$ui-suffix} {
+        @include listitem-base(
+            $xtype: $xtype,
+            $color: $color,
+            $background-color: $background-color,
+            $border-width: $border-width,
+            $border-style: $border-style,
+            $border-color: $border-color
+        );
+    }
+}

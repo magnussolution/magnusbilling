@@ -1,0 +1,410 @@
+/**
+ * @class Ext.grid.column.Check
+ */
+
+/**
+ * @var {color}
+ * Check column text color
+ */
+$checkcolumn-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Check column background-color
+ */
+$checkcolumn-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Check column background-color
+ */
+$checkcolumn-sorted-background-color: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Check column border-width
+ */
+$checkcolumn-border-width: dynamic(null);
+
+/**
+ * @var {string/list}
+ * Check column border-style
+ */
+$checkcolumn-border-style: dynamic(null);
+
+/**
+ * @var {color}
+ * Check column background-color
+ */
+$checkcolumn-border-color: dynamic(null);
+
+/**
+ * @var {string/number}
+ * Check column font-weight
+ */
+$checkcolumn-font-weight: dynamic(null);
+
+/**
+ * @var {number}
+ * Check column font-size
+ */
+$checkcolumn-font-size: dynamic(null);
+
+/**
+ * @var {number}
+ * Check column font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$checkcolumn-font-size-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Check column line-height
+ */
+$checkcolumn-line-height: dynamic(null);
+
+/**
+ * @var {number}
+ * Check column line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$checkcolumn-line-height-big: dynamic(null);
+
+/**
+ * @var {string}
+ * Check column font-family
+ */
+$checkcolumn-font-family: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Check column padding
+ */
+$checkcolumn-padding: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Check column padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$checkcolumn-padding-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Check column sort icon margin
+ */
+$checkcolumn-sort-icon-margin: dynamic(null);
+
+/**
+ * @var {number}
+ * Check column sort icon margin in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$checkcolumn-sort-icon-margin-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Check column sort icon size
+ */
+$checkcolumn-sort-icon-size: dynamic(null);
+
+/**
+ * @var {number}
+ * Check column sort icon size in the {@link global_css#$enable-big big} sizing scheme
+ */
+$checkcolumn-sort-icon-size-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Check column sort icon font size
+ */
+$checkcolumn-sort-icon-font-size: dynamic(null);
+
+/**
+ * @var {number}
+ * Check column sort icon font size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$checkcolumn-sort-icon-font-size-big: dynamic(null);
+
+/**
+ * @var {color}
+ * Check column sort icon color
+ */
+$checkcolumn-sort-icon-color: dynamic(null);
+
+/**
+ * @var {string/list}
+ * Check column sort ascending icon
+ */
+$checkcolumn-sort-asc-icon: dynamic(null);
+
+/**
+ * @var {string/list}
+ * Check column sort descending icon
+ */
+$checkcolumn-sort-desc-icon: dynamic(null);
+
+/**
+ * @var {number}
+ * Check column checkbox size
+ */
+$checkcolumn-checkbox-size: dynamic($checkboxfield-checkbox-size);
+
+/**
+ * @var {number}
+ * Check column checkbox size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$checkcolumn-checkbox-size-big: dynamic($checkboxfield-checkbox-size-big);
+
+/**
+ * @var {number}
+ * Check column checkbox font-size
+ */
+$checkcolumn-checkbox-font-size: dynamic($checkboxfield-checkbox-font-size);
+
+/**
+ * @var {number}
+ * Check column checkbox font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$checkcolumn-checkbox-font-size-big: dynamic($checkboxfield-checkbox-font-size-big);
+
+/**
+ * @var {string/list}
+ * Check column checkbox icon
+ */
+$checkcolumn-checkbox-icon: dynamic($checkboxfield-checkbox-icon);
+
+/**
+ * @var {string/list}
+ * Check column checkbox icon when checked
+ */
+$checkcolumn-checked-checkbox-icon: dynamic($checkboxfield-checked-checkbox-icon);
+
+/**
+ * @var {color}
+ * Check column checkbox color
+ */
+$checkcolumn-checkbox-color: dynamic($checkboxfield-checkbox-color);
+
+/**
+ * @var {color}
+ * Check column checkbox color when checked
+ */
+$checkcolumn-checked-checkbox-color: dynamic($checkboxfield-checked-checkbox-color);
+
+/**
+ * @var {color}
+ * Check column checkbox opacity when disabled
+ */
+$checkcolumn-disabled-checkbox-opacity: dynamic($field-disabled-opacity);
+
+/**
+ * @var {color}
+ * Check column checkbox color when disabled
+ */
+$checkcolumn-disabled-checkbox-color: dynamic($checkboxfield-disabled-checkbox-color);
+
+/**
+ * Creates a visual theme for a grid column.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=checkcolumn] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {color} $color
+ * Check column text color
+ *
+ * @param {color} $background-color
+ * Check column background-color
+ *
+ * @param {color} $sorted-background-color
+ * Check column background-color
+ *
+ * @param {number/list} $border-width
+ * Check column border-width
+ *
+ * @param {string/list} $border-style
+ * Check column border-style
+ *
+ * @param {color} $border-color
+ * Check column background-color
+ *
+ * @param {string/number} $font-weight
+ * Check column font-weight
+ *
+ * @param {number} $font-size
+ * Check column font-size
+ *
+ * @param {number} $font-size-big
+ * Check column font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $line-height
+ * Check column line-height
+ *
+ * @param {number} $line-height-big
+ * Check column line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $font-family
+ * Check column font-family
+ *
+ * @param {number/list} $padding
+ * Check column padding
+ *
+ * @param {number/list} $padding-big
+ * Check column padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $sort-icon-margin
+ * Check column sort icon margin
+ *
+ * @param {number} $sort-icon-margin-big
+ * Check column sort icon margin in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $sort-icon-size
+ * Check column sort icon size
+ *
+ * @param {number} $sort-icon-size-big
+ * Check column sort icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $sort-icon-font-size
+ * Check column sort icon font size
+ *
+ * @param {number} $sort-icon-font-size-big
+ * Check column sort font icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $sort-icon-color
+ * Check column sort icon color
+ *
+ * @param {string/list} $sort-asc-icon
+ * Check column sort ascending icon
+ *
+ * @param {string/list} $sort-desc-icon
+ * Check column sort descending icon
+ *
+ * @param {number} $checkbox-size
+ * Check column checkbox size
+ *
+ * @param {number} $checkbox-size-big
+ * Check column checkbox size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $checkbox-font-size
+ * Check column checkbox font-size
+ *
+ * @param {number} $checkbox-font-size-big
+ * Check column checkbox font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string/list} $checkbox-icon
+ * Check column checkbox icon
+ *
+ * @param {string/list} $checked-checkbox-icon
+ * Check column checkbox icon when checked
+ *
+ * @param {color} $checkbox-color
+ * Check column checkbox color
+ *
+ * @param {color} $checked-checkbox-color
+ * Check column checkbox color when checked
+ *
+ * @param {color} $disabled-checkbox-opacity
+ * Check column checkbox opacity when disabled
+ *
+ * @param {color} $disabled-checkbox-color
+ * Check column checkbox color when disabled
+ */
+@mixin checkcolumn-ui(
+    $ui: null,
+    $xtype: checkcolumn,
+    $color: null,
+    $background-color: null,
+    $sorted-background-color: null,
+    $border-width: null,
+    $border-style: null,
+    $border-color: null,
+    $font-weight: null,
+    $font-size: null,
+    $font-size-big: null,
+    $line-height: null,
+    $line-height-big: null,
+    $font-family: null,
+    $padding: null,
+    $padding-big: null,
+    $sort-icon-margin: null,
+    $sort-icon-margin-big: null,
+    $sort-icon-size: null,
+    $sort-icon-size-big: null,
+    $sort-icon-font-size: null,
+    $sort-icon-font-size-big: null,
+    $sort-icon-color: null,
+    $sort-asc-icon: null,
+    $sort-desc-icon: null,
+    $checkbox-size: null,
+    $checkbox-size-big: null,
+    $checkbox-font-size: null,
+    $checkbox-font-size-big: null,
+    $checkbox-icon: null,
+    $checked-checkbox-icon: null,
+    $checkbox-color: null,
+    $checked-checkbox-color: null,
+    $disabled-checkbox-opacity: null,
+    $disabled-checkbox-color: null
+) {
+
+    $ui-suffix: ui-suffix($ui);
+
+    @include gridcolumn-ui(
+        $ui: $ui,
+        $xtype: $xtype,
+        $color: $color,
+        $background-color: $background-color,
+        $sorted-background-color: $sorted-background-color,
+        $border-width: $border-width,
+        $border-style: $border-style,
+        $border-color: $border-color,
+        $font-weight: $font-weight,
+        $font-size: $font-size,
+        $font-size-big: $font-size-big,
+        $line-height: $line-height,
+        $line-height-big: $line-height-big,
+        $font-family: $font-family,
+        $padding: $padding,
+        $padding-big: $padding-big,
+        $sort-icon-margin: $sort-icon-margin,
+        $sort-icon-margin-big: $sort-icon-margin-big,
+        $sort-icon-size: $sort-icon-size,
+        $sort-icon-size-big: $sort-icon-size-big,
+        $sort-icon-font-size: $sort-icon-font-size,
+        $sort-icon-font-size-big: $sort-icon-font-size-big,
+        $sort-icon-color: $sort-icon-color,
+        $sort-asc-icon: $sort-asc-icon,
+        $sort-desc-icon: $sort-desc-icon
+    );
+
+    .#{$prefix}#{$xtype}#{$ui-suffix} {
+        .#{$prefix}checkbox-el {
+            height: $checkbox-size;
+            width: $checkbox-size;
+            color: $checkbox-color;
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    height: $checkbox-size-big;
+                    width: $checkbox-size-big;
+                }
+            }
+
+            @include icon(
+                $icon: $checkbox-icon,
+                $font-size: $checkbox-font-size,
+                $font-size-big: $checkbox-font-size-big
+            );
+        }
+
+        &.#{$prefix}checked .#{$prefix}checkbox-el {
+            color: $checked-checkbox-color;
+            @include icon($checked-checkbox-icon);
+        }
+
+        &.#{$prefix}disabled .#{$prefix}checkbox-el {
+            color: $disabled-checkbox-color;
+            opacity: $disabled-checkbox-opacity;
+        }
+    }
+}

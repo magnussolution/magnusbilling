@@ -1,0 +1,14 @@
+$toast-color: dynamic(#fff);
+$toast-background-color: dynamic(rgba(0,0,0,.6));
+$toast-border-width: dynamic(null);
+$toast-border-style: dynamic(null);
+$toast-border-color: dynamic(null);
+$toast-shadow: dynamic(null);
+
+$toast-font-size: dynamic(px-to-rem(14px, 14px));
+$toast-line-height: dynamic(px-to-em(18, 14));
+$toast-padding: dynamic(px-to-rem(5px, 14px));
+
+$toast-font-size-big: dynamic(px-to-rem(16px, 16px));
+$toast-line-height: dynamic(px-to-em(20, 16));
+$toast-padding-big: dynamic(px-to-rem(10px, 16px));

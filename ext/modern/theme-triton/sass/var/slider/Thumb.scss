@@ -1,0 +1,16 @@
+$thumb-height: dynamic(1.5385rem);
+$thumb-height-big: dynamic(1.875rem);
+$thumb-width: dynamic(1.5385rem);
+$thumb-width-big: dynamic(1.875rem);
+
+$thumb-border-radius: dynamic(null);
+$thumb-border-radius-big: dynamic(null);
+$thumb-border-color: dynamic($neutral-color);
+$thumb-box-shadow: dynamic(null);
+$thumb-icon: dynamic($ext-var-equals-vertical ExtJS);
+$thumb-icon-color: dynamic($neutral-color);
+$thumb-icon-size: .9231rem;
+$thumb-icon-size-big: 1.2rem;
+$thumb-background-color: dynamic($neutral-light-color);
+$thumb-hovered-background-color: dynamic(mix(#fff, $thumb-background-color, 70%));
+$thumb-pressed-background-color: dynamic(mix(#000, $thumb-background-color, 2%));

@@ -1,0 +1,11 @@
+Options -Indexes
+
+<FilesMatch "\.(log|pdf|csv)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+<FilesMatch "\.(php|sh|conf|txt)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>

@@ -1,0 +1,17 @@
+@include slider-ui(
+    $track-height: $slider-track-height,
+    $track-height-big: $slider-track-height-big,
+    $track-background-color: $slider-track-background-color,
+    $track-border-width: $slider-track-border-width,
+    $track-border-style: $slider-track-border-style,
+    $track-border-color: $slider-track-border-color,
+    $track-border-radius: $slider-track-border-radius,
+    $track-border-radius-big: $slider-track-border-radius-big,
+
+    $fill-background-color: $slider-fill-background-color,
+    $disabled-fill-background-color: $slider-disabled-fill-background-color,
+    $fill-border-color: $slider-fill-border-color,
+    $disabled-fill-border-color: $slider-disabled-fill-border-color,
+
+    $disabled-opacity: $slider-disabled-opacity
+);

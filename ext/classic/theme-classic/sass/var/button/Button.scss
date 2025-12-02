@@ -1,0 +1,50 @@
+/** @class Ext.button.Button */
+//
+
+$button-small-font-size: dynamic(ceil($font-size * .9));  //11px
+$button-medium-font-size: dynamic(ceil($font-size * .9));  //11px
+$button-large-font-size: dynamic(ceil($font-size * .9));  //11px
+
+$button-default-base-color: dynamic(adjust-color($neutral-color, $hue: 0deg, $saturation: -55.556%, $lightness: 12.745%));  //F7F7F7
+$button-default-base-color-over: dynamic(adjust-color($base-color, $hue: -6.667deg, $saturation: 44.444%, $lightness: 10.588%));  //E4F3FF
+$button-default-base-color-focus: dynamic($button-default-base-color);
+$button-default-base-color-pressed: dynamic(adjust-color($base-color, $hue: -0.725deg, $saturation: -9.556%, $lightness: -3.725%));  //B6CBE4
+$button-default-base-color-disabled: dynamic(adjust-color($base-color, $hue: 0deg, $saturation: -55.556%, $lightness: 12.745%));  //F7F7F7
+
+$button-default-border-color: dynamic(adjust-color($button-default-base-color, $hue: 0deg, $saturation: 0%, $lightness: -18.039%));
+$button-default-border-color-over: dynamic(adjust-color($button-default-base-color-over, $hue: 8.177deg, $saturation: -28.283%, $lightness: -12.745%));
+$button-default-border-color-focus: dynamic($button-default-border-color-over);
+$button-default-border-color-pressed: dynamic(adjust-color($button-default-base-color-pressed, $hue: 2.317deg, $saturation: 6.756%, $lightness: -5.294%));
+$button-default-border-color-disabled: dynamic(adjust-color($button-default-base-color-disabled, $hue: 0deg, $saturation: 0%, $lightness: -8.627%));
+
+$button-default-body-outline-width-focus: dynamic(1px);
+
+$button-default-color: dynamic(#333);
+$button-default-background-color-disabled: dynamic($button-default-base-color-disabled);
+
+$button-toolbar-border-color: dynamic(transparent);
+$button-toolbar-border-color-over: dynamic(adjust-color($base-color, $hue: 0.084deg, $saturation: -9.891%, $lightness: -18.039%));
+$button-toolbar-border-color-focus: dynamic(transparent);
+$button-toolbar-border-color-pressed: dynamic(adjust-color($base-color, $hue: 0.721deg, $saturation: -17.014%, $lightness: -21.765%));
+$button-toolbar-border-color-disabled: dynamic($button-default-border-color-disabled);
+
+$button-toolbar-background-color: dynamic(transparent);
+$button-toolbar-background-color-over: dynamic(adjust-color($base-color, $hue: -5deg, $saturation: 44.444%, $lightness: 8.824%));
+$button-toolbar-background-color-focus: dynamic($button-toolbar-background-color);
+$button-toolbar-background-color-pressed: dynamic(adjust-color($base-color, $hue: -1.138deg, $saturation: -11.47%, $lightness: -2.353%));
+$button-toolbar-background-color-disabled: dynamic(transparent);
+
+$button-toolbar-background-gradient: dynamic('none');
+$button-toolbar-background-gradient-disabled: dynamic('none');
+
+$button-toolbar-color: dynamic(#333);
+$button-toolbar-color-disabled: dynamic(lighten($button-toolbar-color, 35));
+
+$button-opacity-disabled: dynamic(1);
+$button-inner-opacity-disabled: dynamic(.5);
+
+$button-include-split-over-arrows: dynamic(true);
+$button-toolbar-include-split-noline-arrows: dynamic(true);
+
+$button-grid-cell-icon-size: dynamic(12px);
+$button-grid-cell-line-height: dynamic(12px);

@@ -1,0 +1,29 @@
+.#{$prefix}textfield {
+    .#{$prefix}input-el {
+        background-color: inherit;
+    }
+}
+
+.#{$prefix}textfield.#{$prefix}label-align-placeholder .#{$prefix}label-el {
+    position: relative;
+    opacity: 0;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.#{$prefix}textfield.#{$prefix}text-align-left .#{$prefix}input-el {
+     text-align: left;
+}
+
+.#{$prefix}textfield.#{$prefix}text-align-center .#{$prefix}input-el {
+    text-align: center;
+}
+.#{$prefix}textfield.#{$prefix}text-align-right .#{$prefix}input-el {
+    text-align: right;
+}
+
+.#{$prefix}ie .#{$prefix}field.#{$prefix}textfield {
+    .#{$prefix}mask-el {
+        z-index: -1;
+    }
+}

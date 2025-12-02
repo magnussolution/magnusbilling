@@ -1,0 +1,15 @@
+/** @class Ext.tab.Tab */
+//
+
+$tab-base-color: dynamic(#eaeaea);
+$tab-base-color-disabled: dynamic(#eeeeee);
+
+$tab-color-active: dynamic(#333333);
+$tab-color-disabled: dynamic(#b7b7b7);
+
+$tab-border-color-disabled: dynamic(#dadada);
+
+$tab-background-gradient: dynamic(color-stops(#dcdcdc, #eaeaea));
+$tab-background-gradient-over: dynamic(color-stops(#ffffff, #f0f0f0));
+$tab-background-gradient-active: dynamic(color-stops(#ffffff, #eaeaea));
+$tab-background-gradient-disabled: dynamic(color-stops(#eeeeee, #f4f4f4));

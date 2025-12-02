@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="modern" default=".help">
+    <!--
+    The build-impl.xml file imported here contains the guts of the build process. It is
+    a great idea to read that file to understand how the process works, but it is best to
+    limit your changes to this file.
+    -->
+    <import file="${basedir}/.sencha/package/build-impl.xml"/>
+    <import file="${basedir}/.sencha/test/test-impl.xml"/>
+
+    <!--
+    The following targets can be provided to inject logic before and/or after key steps
+    of the build process:
+
+        The "init-local" target is used to initialize properties that may be personalized
+        for the local machine.
+
+            <target name="-before-init-local"/>
+            <target name="-after-init-local"/>
+
+        The "clean" target is used to clean build output from the build.dir.
+
+            <target name="-before-clean"/>
+            <target name="-after-clean"/>
+
+        The general "init" target is used to initialize all other properties, including
+        those provided by Sencha Cmd.
+
+            <target name="-before-init"/>
+            <target name="-after-init"/>
+        
+        The "build" target performs the call to Sencha Cmd to build the application.
+
+            <target name="-before-build"/>
+            <target name="-after-build"/>
+    -->
+
+
+    <target name="-js">
+        <x-compile refid="${compiler.ref.id}">
+            <![CDATA[
+            --ignore=${classpath.excludes}
+            --include-preprocessor-tags=true
+            --options=debug:true,product:ext,minVersion:6,logger:yes
+                concatenate
+                    --output-file=${build.dir}/ext-modern-all-debug.js
+                and
+                union
+                    --tag=package-core,core
+                and
+                concatenate
+                    --output-file=${build.dir}/ext-modern-debug.js
+                and
+                include
+                    +all
+                and
+                exclude
+                    --tag=pacakge-core,core
+                and
+                metadata
+                    +append
+                    +alternates
+                    --base-path=${build.dir}
+                    --output-file=${build.dir}/ext-modern-debug.js
+                and
+                metadata
+                    +append
+                    +alias
+                    --base-path=${build.dir}
+                    --output-file=${build.dir}/ext-modern-debug.js
+                and
+            --options=debug:false,logger:no
+                union
+                    +all
+                and
+                concatenate
+                    +yui
+                    --output-file=${build.dir}/ext-modern-all.js
+            ]]>
+        </x-compile>
+    </target>
+
+    <target name="-after-js">
+
+        <x-compress-js
+                srcfile="${build.dir}/ext-modern-debug.js"
+                outfile="${build.dir}/ext-modern.js"/>
+
+        <x-compress-js
+                srcfile="${build.dir}/ext-modern-all-debug.js"
+                outfile="${build.dir}/ext-modern-all.js"/>
+
+        <for list="ext-modern,ext-modern-all"
+             param="file">
+            <sequential>
+                <x-strip-js srcfile="${build.dir}/@{file}-debug.js"
+                            outfile="${build.dir}/@{file}-debug.js"/>
+            </sequential>
+        </for>
+    </target>
+
+    <target name="charts" depends="init">
+        <x-compile refid="${compiler.ref.id}">
+            <![CDATA[
+            classpath
+                +new
+                -name=charts
+                -path=${framework.dir}/packages/charts/modern/src
+            and
+            classpath
+                -name=charts
+                -path=${framework.dir}/packages/charts/src
+            and
+            classpath
+                -name=charts
+                -path=${framework.dir}/packages/charts/modern/overrides
+                -tags=overrides
+            and
+            classpath
+                -name=charts
+                -path=${framework.dir}/packages/charts/overrides
+                -tags=overrides
+            and
+            include
+                -all
+        ]]>
+        </x-compile>
+    </target>
+
+    <target name="ux" depends="init">
+        <x-compile refid="${compiler.ref.id}">
+            <![CDATA[
+            classpath
+                +new
+                -name=ux
+                -path=${framework.dir}/packages/ux/modern/src
+            and
+            classpath
+                -name=ux
+                -path=${framework.dir}/packages/ux/src
+            and
+            classpath
+                -name=ux
+                -path=${framework.dir}/packages/ux/modern/overrides
+                -tags=overrides
+            and
+            classpath
+                -name=ux
+                -path=${framework.dir}/packages/ux/overrides
+                -tags=overrides
+            and
+            include
+                -all
+        ]]>
+        </x-compile>
+    </target>
+
+    <target name="exporter" depends="init">
+        <x-compile refid="${compiler.ref.id}">
+            <![CDATA[
+            classpath
+                +new
+                -name=ux
+                -path=${framework.dir}/../packages/exporter/modern/src
+            and
+            classpath
+                -name=ux
+                -path=${framework.dir}/../packages/exporter/src
+            and
+            classpath
+                -name=ux
+                -path=${framework.dir}/../packages/exporter/modern/overrides
+                -tags=overrides
+            and
+            classpath
+                -name=ux
+                -path=${framework.dir}/../packages/exporter/overrides
+                -tags=overrides
+            and
+            include
+                -all
+        ]]>
+        </x-compile>
+    </target>
+
+    <target name="pivot" depends="init">
+        <x-compile refid="${compiler.ref.id}">
+            <![CDATA[
+            classpath
+                +new
+                -name=ux
+                -path=${framework.dir}/../packages/pivot/modern/src
+            and
+            classpath
+                -name=ux
+                -path=${framework.dir}/../packages/pivot/src
+            and
+            classpath
+                -name=ux
+                -path=${framework.dir}/../packages/pivot/modern/overrides
+                -tags=overrides
+            and
+            classpath
+                -name=ux
+                -path=${framework.dir}/../packages/pivot/overrides
+                -tags=overrides
+            and
+            include
+                -all
+        ]]>
+        </x-compile>
+    </target>
+    
+    <target name="core-bootstrap" depends="init">
+        <local name="base.path"/>
+        <property name="base.path" value="${framework.dir}"/>
+
+        <delete file="${base.path}/bootstrap-modern-manifest.js"/>
+
+        <x-compile refid="${compiler.ref.id}">
+            <![CDATA[
+                include
+                    -all
+                and
+                exclude
+                    +recursive
+                    -class=Ext.Loader
+                and
+                metadata
+                    -tpl=var Ext = Ext || '{' '}'; Ext.manifest = {0};
+                    -info=AppManifest
+                    -basePath=${base.path}
+                    +append
+                    +bootRelative
+                    -output-file=${base.path}/bootstrap-modern-manifest.js
+            ]]>
+        </x-compile>
+
+        <x-bootstrap file="${base.path}/bootstrap.js"
+                     basedir="${base.path}"
+                     coreFilesFile="${base.path}/bootstrap-modern-files.js"
+                     classMetadataFile="${base.path}/bootstrap-modern-data.js"
+                     overridesFile="${base.path}/bootstrap-modern-data.js"
+                     includeBoot="true"
+                     includeCoreFiles="true"
+                     appendCoreFiles="false"
+                     appendClassMetadata="false"
+                     appendOverrides="true"
+                     coreFilesJsonpTpl="Ext.Boot.loadSyncBasePrefix"
+                     loaderConfigJsonpTpl="Ext.Loader.addBaseUrlClassPathMappings"
+                     overrideTpl="Ext.Loader.loadScriptsSyncBasePrefix"
+                     overrideTplType="jsonp"
+                     overrideExcludeTags="">
+            <![CDATA[
+Ext.Boot.loadSyncBasePrefix([
+    "bootstrap-modern-manifest.js",
+    "bootstrap-modern-files.js"
+]);
+]]>
+        </x-bootstrap>
+
+        <!--
+        Duplicate the "ext.js" dev-mode bootstrap file to the other deployed names
+        -->
+        <for list="ext-modern,ext-modern-all" param="part1">
+            <sequential>
+                <for list=".,-debug." param="part2">
+                    <sequential>
+                        <local name="out"/>
+                        <property name="out" value="@{part1}@{part2}js"/>
+                        <echo>Generating ${out}</echo>
+                        <copy file="${base.path}/bootstrap.js" tofile="${base.path}/${out}"
+                              overwrite="true"/>
+                        <replace file="${base.path}/${out}"
+                                 token="bootstrapper"
+                                 value="bootstrapper :: GENERATED COPY! Edit &quot;core/bootstrap.js&quot;"/>
+                    </sequential>
+                </for>
+            </sequential>
+        </for>
+        <delete file="${base.path}/bootstrap.js"/>
+    </target>
+
+    <target name="bootstrap"
+            description="*** Regenerate files needed by standalone examples and unit tests ***"
+            depends="charts,ux,pivot,exporter,core-bootstrap,test-bootstrap"/>
+
+</project>

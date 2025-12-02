@@ -1,0 +1,145 @@
+/**
+ * @class Ext.field.Radio
+ */
+
+/**
+ * @var {number}
+ * Radio Field checkbox size
+ */
+$radiofield-checkbox-size: dynamic(null);
+
+/**
+ * @var {number}
+ * Radio Field checkbox size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$radiofield-checkbox-size-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Radio Field checkbox font size
+ */
+$radiofield-checkbox-font-size: dynamic($radiofield-checkbox-size);
+
+/**
+ * @var {number}
+ * Radio checkbox font size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$radiofield-checkbox-font-size-big: dynamic($radiofield-checkbox-size-big);
+
+/**
+ * @var {number}
+ * Radio checkbox margin
+ */
+$radiofield-checkbox-margin: dynamic(null);
+
+/**
+ * @var {number}
+ * Radio checkbox margin in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$radiofield-checkbox-margin-big: dynamic(null);
+
+/**
+ * @var {string/list}
+ * Radio Field checkbox icon
+ */
+$radiofield-checkbox-icon: dynamic($fa-var-circle-o);
+
+/**
+ * @var {string/list}
+ * Radio Field checkbox icon when checked
+ */
+$radiofield-checked-checkbox-icon: dynamic($fa-var-dot-circle-o);
+
+/**
+ * @var {color}
+ * Radio Field checkbox color
+ */
+$radiofield-checkbox-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Radio Field checkbox color when checked
+ */
+$radiofield-checked-checkbox-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Radio Field checkbox color when disabled
+ */
+$radiofield-disabled-checkbox-color: dynamic(null);
+
+/**
+ * Creates a visual theme for a Radio Field
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=radiofield] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {number} $checkbox-size
+ * Radio Field checkbox size
+ *
+ * @param {number} $checkbox-size-big
+ * Radio Field checkbox size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $checkbox-font-size
+ * Radio Field checkbox font size
+ *
+ * @param {number} $checkbox-font-size-big
+ * Radio checkbox font size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $checkbox-margin
+ * Radio checkbox margin
+ *
+ * @param {number} $checkbox-margin-big
+ * Radio checkbox margin in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string/list} $checkbox-icon
+ * Radio Field checkbox icon
+ *
+ * @param {string/list} $checked-checkbox-icon
+ * Radio Field checkbox icon when checked
+ *
+ * @param {color} $checkbox-color
+ * Radio Field checkbox color
+ *
+ * @param {color} $checked-checkbox-color
+ * Radio Field checkbox color when checked
+ *
+ * @param {color} $disabled-checkbox-color
+ * Radio Field checkbox color when disabled
+ */
+@mixin radiofield-ui(
+    $ui: null,
+    $xtype: radiofield,
+    $checkbox-size: null,
+    $checkbox-size-big: null,
+    $checkbox-font-size: null,
+    $checkbox-font-size-big: null,
+    $checkbox-margin: null,
+    $checkbox-margin-big: null,
+    $checkbox-icon: null,
+    $checked-checkbox-icon: null,
+    $checkbox-color: null,
+    $checked-checkbox-color: null,
+    $disabled-checkbox-color: null
+) {
+    @include checkboxfield-ui(
+        $ui: $ui,
+        $xtype: $xtype,
+        $checkbox-size: $checkbox-size,
+        $checkbox-size-big: $checkbox-size-big,
+        $checkbox-font-size: $checkbox-font-size,
+        $checkbox-font-size-big: $checkbox-font-size-big,
+        $checkbox-margin: $checkbox-margin,
+        $checkbox-margin-big: $checkbox-margin-big,
+        $checkbox-icon: $checkbox-icon,
+        $checked-checkbox-icon: $checked-checkbox-icon,
+        $checkbox-color: $checkbox-color,
+        $checked-checkbox-color: $checked-checkbox-color,
+        $disabled-checkbox-color: $disabled-checkbox-color
+    );
+}
+

@@ -1,0 +1,11 @@
+.#{$prefix}pagingtoolbar {
+    > .#{$prefix}body {
+        @include st-box-align(center);
+    }
+}
+
+.#{$prefix}pagingtoolbar-summary {
+    text-align: center;
+    white-space: nowrap;
+    min-width: 4em;
+}

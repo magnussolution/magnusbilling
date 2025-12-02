@@ -1,0 +1,27 @@
+/** @class Ext.tab.Tab */
+//
+
+$tab-base-color: dynamic(adjust-color($base-color, $hue: 0deg, $saturation: 33.016%, $lightness: 9.02%)); //#deecfd
+$tab-base-color-over: dynamic(adjust-color($tab-base-color, $hue: 0deg, $saturation: 11.429%, $lightness: 2.353%));
+$tab-base-color-disabled: dynamic(adjust-color($base-color, $hue: 0deg, $saturation: 15.873%, $lightness: 9.02%));  //E1ECFA
+
+$tab-color: dynamic(adjust-color($tab-base-color, $hue: 0deg, $saturation: -45.589%, $lightness: -48.431%));
+$tab-color-active: dynamic(adjust-color($tab-color, $hue: 0deg, $saturation: 30.768%, $lightness: -13.333%));
+$tab-color-disabled: dynamic(#c3b3b3);
+
+$tab-font-size: dynamic(ceil($font-size * .9));  //11px
+$tab-line-height: dynamic(13px);
+
+$tab-border-width: dynamic(1px 1px 0);
+$tab-inner-border-width: dynamic(1px 1px 0);
+$tab-border-color: dynamic(adjust-color($tab-base-color, $hue:0deg, $saturation: -28.008%, $lightness: -20.98%));
+$tab-border-color-disabled: dynamic(adjust-color($base-color, $hue:0deg, $saturation: 6.349%, $lightness: -0.588%));
+
+$tab-inner-border-color: dynamic(adjust-color($tab-base-color, $hue: 0deg, $saturation: -8.571%, $lightness: 8.941%));
+$tab-inner-border-collapse: dynamic(true);
+$tab-body-outline-width-focus: dynamic(1px);
+
+$tab-text-opacity-disabled: dynamic(1);
+
+$tab-closable-icon-opacity: dynamic(.6);
+$tab-closable-icon-opacity-disabled: dynamic(.3);

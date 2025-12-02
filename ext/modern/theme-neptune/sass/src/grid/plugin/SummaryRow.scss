@@ -1,0 +1,7 @@
+@include summaryrow-ui(
+    $color: $summaryrow-color,
+    $background-color: $summaryrow-background-color,
+    $border-width: $summaryrow-border-width,
+    $border-style: $summaryrow-border-style,
+    $border-color: $summaryrow-border-color
+);

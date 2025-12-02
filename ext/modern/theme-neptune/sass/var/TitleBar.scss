@@ -1,0 +1,338 @@
+/**
+ * @class Ext.Titlebar
+ */
+
+/**
+ * @var {color}
+ * Titlebar background-color
+ */
+$titlebar-background-color: dynamic($base-color);
+
+/**
+ * @var {string/list}
+ * Titlebar background-gradient. Can be either the name of a gradient defined by
+ * {@link Global_CSS#background-gradient} or a list of color stops.
+ */
+$titlebar-background-gradient: dynamic(null);
+
+/**
+ * @var {color}
+ * Titlebar color
+ */
+$titlebar-color: dynamic(#fff);
+
+/**
+ * @var {number/list}
+ * Titlebar border-width
+ */
+$titlebar-border-width: dynamic(1px);
+
+/**
+ * @var {string/list}
+ * Titlebar border-style
+ */
+$titlebar-border-style: dynamic(solid);
+
+/**
+ * @var {color/list}
+ * Titlebar border-color
+ */
+$titlebar-border-color: dynamic($neutral-medium-dark-color);
+
+/**
+ * @var {list}
+ * Titlebar box-shadow
+ */
+$titlebar-box-shadow: dynamic(null);
+
+/**
+ * @var {string/number}
+ * Titlebar font-weight
+ */
+$titlebar-font-weight: dynamic($font-weight-bold);
+
+/**
+ * @var {number}
+ * Titlebar font-size
+ */
+$titlebar-font-size: dynamic(1rem);
+
+/**
+ * @var {number}
+ * Titlebar font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$titlebar-font-size-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Titlebar line-height
+ */
+$titlebar-line-height: dynamic(1.25em);
+
+/**
+ * @var {number}
+ * Titlebar line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$titlebar-line-height-big: dynamic(null);
+
+/**
+ * @var {string}
+ * Titlebar font-family
+ */
+$titlebar-font-family: dynamic($font-family);
+
+/**
+ * @var {number/list}
+ * Titlebar padding
+ */
+$titlebar-padding: dynamic(.4616em .5em);
+
+/**
+ * @var {number/list}
+ * Titlebar padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$titlebar-padding-big: dynamic(.4em .67em);
+
+/**
+ * @var {number}
+ * The space in between horizontally aligned Titlebar items
+ */
+$titlebar-horizontal-spacing: dynamic(.2rem);
+
+/**
+ * @var {number}
+ * The space in between horizontally aligned Titlebar items in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$titlebar-horizontal-spacing-big: dynamic(.3rem);
+
+/**
+ * @var {number}
+ * The space in between vertically aligned Titlebar items
+ */
+$titlebar-vertical-spacing: dynamic(.2rem);
+
+/**
+ * @var {number}
+ * The space in between vertically aligned Titlebar items in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$titlebar-vertical-spacing-big: dynamic(.3rem);
+
+/**
+ * @var {color}
+ * Titlebar {@link Ext.Title Title} color
+ */
+$titlebar-title-color: dynamic(#fff);
+
+/**
+ * @var {string/number}
+ * Titlebar {@link Ext.Title Title} font-weight
+ */
+$titlebar-title-font-weight: dynamic($titlebar-font-weight);
+
+/**
+ * @var {number}
+ * Titlebar {@link Ext.Title Title} font-size
+ */
+$titlebar-title-font-size: dynamic($titlebar-font-size);
+
+/**
+ * @var {number}
+ * Titlebar {@link Ext.Title Title} font-size in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$titlebar-title-font-size-big: dynamic($titlebar-font-size-big);
+
+/**
+ * @var {string}
+ * Titlebar {@link Ext.Title Title} font-family
+ */
+$titlebar-title-font-family: dynamic($font-family);
+
+/**
+ * @var {number}
+ * Titlebar {@link Ext.Title Title} title-padding
+ */
+$titlebar-title-padding: dynamic(null);
+
+/**
+ * @var {number}
+ * Titlebar {@link Ext.Title Title} title-padding in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$titlebar-title-padding-big: dynamic(null);
+
+/**
+ * @var {number}
+ * Titlebar min-height
+ */
+$titlebar-min-height: dynamic(2.7693em);
+
+/**
+ * @var {number}
+ * Titlebar min-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$titlebar-min-height-big: dynamic(2.9334em);
+
+/**
+ * Creates a visual theme for a Titlebar.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=titlebar] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {color} $background-color
+ * Titlebar background-color
+ *
+ * @param {string/list} $background-gradient
+ * Titlebar background-gradient. Can be either the name of a gradient defined by
+ * {@link Global_CSS#background-gradient} or a list of color stops.
+ *
+ * @param {number/list} $border-width
+ * Titlebar border-width
+ *
+ * @param {string/list} $border-style
+ * Titlebar border-style
+ *
+ * @param {color} $border-color
+ * Titlebar border-color
+ *
+ * @param {color} $box-shadow
+ * Titlebar box-shadow
+ *
+ * @param {string/number} $font-weight
+ * Titlebar font-weight
+ *
+ * @param {number} $font-size
+ * Titlebar font-size
+ *
+ * @param {number} $font-size-big
+ * Titlebar font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $line-height
+ * Titlebar line-height
+ *
+ * @param {number} $line-height-big
+ * Titlebar line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $font-family
+ * Titlebar font-family
+ *
+ * @param {number/list} $padding
+ * Titlebar padding
+ *
+ * @param {number/list} $padding-big
+ * Titlebar padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $horizontal-spacing
+ * The space in between horizontally aligned Titlebar items
+ *
+ * @param {number} $horizontal-spacing-big
+ * The space in between horizontally aligned Titlebar items in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $vertical-spacing
+ * The space in between vertically aligned Titlebar items
+ *
+ * @param {number} $vertical-spacing-big
+ * The space in between vertically aligned Titlebar items in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $title-color
+ * Titlebar {@link Ext.Title Title} color
+ *
+ * @param {string/number} $title-font-weight
+ * Titlebar {@link Ext.Title Title} font-weight
+ *
+ * @param {number} $title-font-size
+ * Titlebar {@link Ext.Title Title} font-size
+ *
+ * @param {number} $title-font-size-big
+ * Titlebar {@link Ext.Title Title} font-size in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $title-font-family
+ * Titlebar {@link Ext.Title Title} font-family
+ *
+ * @param {number} $title-padding
+ * Titlebar {@link Ext.Title Title} padding
+ *
+ * @param {number} $title-padding-big
+ * Titlebar {@link Ext.Title Title} padding in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $min-height
+ * Titlebar min-height
+ *
+ * @param {number} $min-height-big
+ * Titlebar min-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin titlebar-ui(
+    $ui: null,
+    $xtype: titlebar,
+    $background-color: null,
+    $background-gradient: null,
+    $color: null,
+    $border-width: null,
+    $border-style: null,
+    $border-color: null,
+    $box-shadow: null,
+    $font-weight: null,
+    $font-size: null,
+    $font-size-big: null,
+    $line-height: null,
+    $line-height-big: null,
+    $font-family: null,
+    $padding: null,
+    $padding-big: null,
+    $horizontal-spacing: null,
+    $horizontal-spacing-big: null,
+    $vertical-spacing: null,
+    $vertical-spacing-big: null,
+    $title-color: null,
+    $title-font-weight: null,
+    $title-font-size: null,
+    $title-font-size-big: null,
+    $title-font-family: null,
+    $title-padding: null,
+    $title-padding-big: null,
+    $min-height: null,
+    $min-height-big: null
+) {
+    @include toolbar-ui(
+        $ui: $ui,
+        $xtype: $xtype,
+        $background-color: $background-color,
+        $background-gradient: $background-gradient,
+        $color: $color,
+        $border-width: $border-width,
+        $border-style: $border-style,
+        $border-color: $border-color,
+        $box-shadow: $box-shadow,
+        $font-weight: $font-weight,
+        $font-size: $font-size,
+        $font-size-big: $font-size-big,
+        $line-height: $line-height,
+        $line-height-big: $line-height-big,
+        $font-family: $font-family,
+        $padding: $padding,
+        $padding-big: $padding-big,
+        $horizontal-spacing: $horizontal-spacing,
+        $horizontal-spacing-big: $horizontal-spacing-big,
+        $vertical-spacing: $vertical-spacing,
+        $vertical-spacing-big: $vertical-spacing-big,
+        $title-color: $title-color,
+        $title-font-weight: $title-font-weight,
+        $title-font-size: $title-font-size,
+        $title-font-size-big: $title-font-size-big,
+        $title-font-family: $title-font-family,
+        $title-padding: $title-padding,
+        $title-padding-big: $title-padding-big,
+        $min-height: $min-height,
+        $min-height-big: $min-height-big
+    );
+}

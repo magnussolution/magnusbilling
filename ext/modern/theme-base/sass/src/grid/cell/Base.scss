@@ -1,0 +1,19 @@
+.#{$prefix}gridcell {
+    display: table-cell;
+    vertical-align: middle;
+    overflow: hidden;
+}
+
+.#{$prefix}gridcell .#{$prefix}inner-el {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.#{$prefix}gridcell.#{$prefix}align-center {
+    text-align: center;
+}
+
+.#{$prefix}gridcell.#{$prefix}align-right {
+    text-align: right;
+}

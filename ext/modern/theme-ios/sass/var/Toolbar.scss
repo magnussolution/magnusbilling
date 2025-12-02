@@ -1,0 +1,13 @@
+$toolbar-title-color: dynamic($color);
+
+$toolbar-title-font-size: dynamic(1rem);
+$toolbar-background-color: dynamic($neutral-light-color);
+$toolbar-border-color: dynamic($neutral-color);
+
+$toolbar-padding: dynamic(0.4286em 0.714em);
+$toolbar-padding-big: dynamic(0 .625em);
+$toolbar-min-height: dynamic(2.5715em);
+$toolbar-min-height-big: dynamic(2.75em);
+
+$toolbar-horizontal-spacing: dynamic(0.2rem);
+$toolbar-horizontal-spacing-big: dynamic(0.4rem);

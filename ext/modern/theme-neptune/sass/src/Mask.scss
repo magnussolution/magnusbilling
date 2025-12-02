@@ -1,0 +1,17 @@
+.#{$prefix}mask {
+    opacity: $mask-opacity;
+    background-color: $mask-background-color;
+
+    .#{$prefix}mask-message {
+        color: $mask-message-color;
+    }
+
+    @if ($mask-page-opacity != $mask-opacity) or
+            ($mask-page-background-color != $mask-background-color) {
+        #ext-viewport > .#{$prefix}body > &,
+        .#{$prefix}float-wrap > & {
+            opacity: $mask-page-opacity;
+            background-color: $mask-page-background-color;
+        }
+    }
+}

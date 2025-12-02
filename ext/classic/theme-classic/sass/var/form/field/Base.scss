@@ -1,0 +1,10 @@
+/** @class Ext.form.field.Base */
+//
+
+$form-field-height: dynamic(22px);
+$form-toolbar-field-height: dynamic(20px);
+$form-field-border-color: dynamic(#B5B8C8);
+$form-field-focus-border-color: dynamic(adjust-color($base-color, $hue: -4.322deg, $saturation: -1.065%, $lightness: -16.863%));
+$form-field-font-size: dynamic($font-size);
+$form-toolbar-field-font-size: dynamic(ceil($font-size * .9));
+$include-field-toolbar-ui: dynamic($include-default-uis and $include-ext-toolbar-toolbar);

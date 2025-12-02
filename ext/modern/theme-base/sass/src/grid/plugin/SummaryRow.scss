@@ -1,0 +1,9 @@
+// Summary Rows do not get expanders
+.#{$prefix}summaryrow {
+    position: relative !important;
+
+    .#{$prefix}expandercell .#{$prefix}inner-el:before {
+        display: none
+    }
+
+}

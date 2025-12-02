@@ -1,0 +1,61 @@
+.x-list {
+    .x-listitem {
+        > .x-dock {
+            height: auto;
+        }
+
+        .x-dock-horizontal {
+            border-top: 1px solid #ccc;
+        }
+
+        &.x-selected .x-dock-horizontal,
+        &.x-selected.x-simplelistitem {
+            background-color: #ccc;
+        }
+
+        &.x-pressed {
+            &.x-simplelistitem,
+            .x-dock-horizontal {
+                background-color: #ddd;
+            }
+        }
+
+        .x-listitem-body {
+            padding: 5px;
+        }
+    }
+    .x-list-item.x-selected .x-listitem-disclosure {
+        background-color: #fff;
+    }
+
+    .x-itemheader {
+        background-color: #eee;
+        border-top: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+        font-weight: bold;
+    }
+
+    .x-listitem-disclosure {
+        margin: 5px 15px 5px 0;
+        overflow: visible;
+        width: 20px;
+        height: 20px;
+        border: 1px solid #ccc;
+        background-color: #eee;
+    }
+
+    .x-simplelistitem .x-listitem-disclosure {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+    }
+
+
+    &.x-indexed-vertical .x-listitem-disclosure {
+        margin-right: 35px;
+    }
+}
+
+.x-list.x-grouped .x-itemheader .x-dock-horizontal {
+    border-top: 0;
+}

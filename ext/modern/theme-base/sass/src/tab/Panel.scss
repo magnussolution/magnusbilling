@@ -1,0 +1,32 @@
+/**
+ * @class Ext.tab.Panel
+ */
+
+.x-tabbar.x-docked-top {
+    .x-tab .x-button-icon {
+        position: relative;
+
+        &.x-shown {
+            display: inline-block;
+        }
+
+        &.x-hidden {
+            display: none;
+        }
+    }
+}
+
+.x-tabbar.x-docked-bottom {
+    .x-tab .x-button-icon {
+        display: block;
+        position: relative;
+
+        &.x-shown {
+            visibility: visible;
+        }
+
+        &.x-hidden {
+            visibility: hidden;
+        }
+    }
+}

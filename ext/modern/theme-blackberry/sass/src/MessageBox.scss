@@ -1,0 +1,42 @@
+/**
+ * Includes default message box styles.
+ *
+ * @member Ext.MessageBox
+ */
+
+.x-msgbox {
+    padding: 0;
+    border: 0;
+    background: #fff;
+    @include border-radius(10px);
+
+    .x-msgbox-title {
+        @include box-shadow(none);
+        @include border-top-radius(5px);
+    }
+
+    .x-msgbox-buttons {
+        border: 1px solid red;
+        @include border-bottom-radius(5px);
+    }
+
+    .x-input {
+        padding: 0 10px 5px;
+
+        .x-cleartrigger .x-icon-el {
+            top: 6px;
+            right: 14px;
+        }
+    }
+}
+
+.x-panel.x-floating {
+    background: #fff;
+    padding: 0;
+    border: 0;
+}
+
+.x-msgbox-text {
+    padding: 10px;
+    font-size: 14px;
+}

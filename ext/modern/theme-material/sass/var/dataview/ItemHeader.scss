@@ -1,0 +1,12 @@
+$itemheader-color: dynamic($highlight-color);
+$itemheader-background-color: dynamic($background-color);
+$itemheader-pinned-color: dynamic($color);
+$itemheader-pinned-background-color: dynamic($background-color);
+$itemheader-font-size: dynamic(px-to-rem(14px, 12px));
+$itemheader-font-size-big: dynamic(px-to-rem(16px, 14px));
+$itemheader-font-weight: dynamic(400);
+$itemheader-padding: dynamic(px-to-em($content-padding / 2, 14px) px-to-em($content-padding, 14px));
+$itemheader-padding-big: dynamic(px-to-em($content-padding / 2, 16px) px-to-em($content-padding, 16px));
+$itemheader-border-width: dynamic(null);
+$itemheader-border-style: dynamic(null);
+$itemheader-border-color: dynamic(null);

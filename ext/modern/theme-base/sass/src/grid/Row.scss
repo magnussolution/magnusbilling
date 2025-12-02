@@ -1,0 +1,12 @@
+.#{$prefix}grid.#{$prefix}infinite .#{$prefix}gridrow {
+    width: auto;
+}
+
+.#{$prefix}gridrow .#{$prefix}cells-el {
+    display: table;
+    table-layout: fixed;
+    // An explicit width is required for table-layout: fixed to be applied, even if the columns
+    // have their own explicit widths set
+    // http://www.w3.org/TR/CSS21/tables.html#fixed-table-layout
+    width: 0;
+}

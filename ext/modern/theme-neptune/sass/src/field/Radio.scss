@@ -1,0 +1,13 @@
+@include radiofield-ui(
+    $checkbox-size: $radiofield-checkbox-size,
+    $checkbox-size-big: $radiofield-checkbox-size-big,
+    $checkbox-font-size: $radiofield-checkbox-font-size,
+    $checkbox-font-size-big: $radiofield-checkbox-font-size-big,
+    $checkbox-margin: $radiofield-checkbox-margin,
+    $checkbox-margin-big: $radiofield-checkbox-margin-big,
+    $checkbox-icon: $radiofield-checkbox-icon,
+    $checked-checkbox-icon: $radiofield-checked-checkbox-icon,
+    $checkbox-color: $radiofield-checkbox-color,
+    $checked-checkbox-color: $radiofield-checked-checkbox-color,
+    $disabled-checkbox-color: $radiofield-disabled-checkbox-color
+);

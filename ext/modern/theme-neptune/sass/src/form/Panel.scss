@@ -1,0 +1,12 @@
+/**
+ * @class Ext.form.Panel
+ */
+
+.x-formpanel-inner {
+    background-color: $formpanel-body-background-color;
+    padding: $formpanel-body-padding;
+
+    .#{$prefix}big & {
+        padding: $formpanel-body-padding-big;
+    }
+}

@@ -1,0 +1,18 @@
+.x-sheet,
+.x-picker,
+.x-sheet-action {
+    padding: $sheet-padding;
+    background-color: $sheet-background-color;
+    border-top: 1px solid $sheet-border-color;
+}
+
+.x-sheet-inner,
+.x-sheet-action-inner {
+    > .x-button {
+        margin-bottom: $sheet-button-spacing;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}

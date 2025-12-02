@@ -1,0 +1,13 @@
+$touch-theme-mountainview: true;
+
+$dark-theme: dynamic(true);
+
+$base-color: dynamic(#4abce7);
+
+$background-color: dynamic(if($dark-theme, #323232, #f9f9f9));
+$foreground-color: dynamic(if($dark-theme, #5b5b5b, #d2d2d2));
+$secondary-color: dynamic(if($dark-theme, #3a3a3a, #e6e6e6));
+$primary-text-color: dynamic(if($dark-theme, #fff, #231f20));
+$secondary-text-color: dynamic(if($dark-theme, #808183, #818285));
+
+$color: $primary-text-color;

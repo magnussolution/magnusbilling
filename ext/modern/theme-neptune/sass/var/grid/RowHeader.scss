@@ -1,0 +1,200 @@
+/**
+ * @class Ext.grid.RowHeader
+ */
+
+//# fashion replaces $grid-group-header-color
+/**
+ * @var {color}
+ * Grid row header color
+ */
+$rowheader-color: dynamic(null);
+
+//# fashion replaces $grid-group-header-background-color
+/**
+ * @var {color}
+ * Grid row header background-color
+ */
+$rowheader-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Grid row header color when {@link Ext.grid.Grid#pinHeaders pinned}
+ */
+$rowheader-pinned-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Grid row header background-color when {@link Ext.grid.Grid#pinHeaders pinned}
+ */
+$rowheader-pinned-background-color: dynamic(null);
+
+/**
+ * @var {number}
+ * Grid row header border-width
+ */
+$rowheader-border-width: dynamic(null);
+
+/**
+ * @var {string}
+ * Grid row header border-style
+ */
+$rowheader-border-style: dynamic(null);
+
+//# fashion replaces $grid-group-header-border-color
+/**
+ * @var {color}
+ * Grid row header border-color
+ */
+$rowheader-border-color: dynamic(null);
+
+//# fashion replaces $grid-group-header-font-weight
+/**
+ * @var {string/number}
+ * Grid row header font-weight
+ */
+$rowheader-font-weight: dynamic(null);
+
+//# fashion replaces $grid-group-header-font-size
+/**
+ * @var {number}
+ * Grid row header font-size
+ */
+$rowheader-font-size: dynamic(null);
+
+//# fashion replaces $grid-group-header-font-size-big
+/**
+ * @var {number}
+ * Grid row header font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$rowheader-font-size-big: dynamic(null);
+
+//# fashion replaces $grid-group-header-line-height
+/**
+ * @var {number}
+ * Grid row header line-height
+ */
+$rowheader-line-height: dynamic(null);
+
+//# fashion replaces $grid-group-header-line-height-big
+/**
+ * @var {number}
+ * Grid row header line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$rowheader-line-height-big: dynamic(null);
+
+//# fashion replaces $grid-group-header-font-family
+/**
+ * @var {string}
+ * Grid row header font-family
+ */
+$rowheader-font-family: dynamic(null);
+
+//# fashion replaces $grid-group-header-padding
+/**
+ * @var {number/list}
+ * Grid row header padding
+ */
+$rowheader-padding: dynamic(null);
+
+//# fashion replaces $grid-group-header-padding-big
+/**
+ * @var {number/list}
+ * Grid row header padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$rowheader-padding-big: dynamic(null);
+
+
+/**
+ * Creates a visual theme for a grid row header.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=rowheader] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {color} $color
+ * Grid row header color
+ *
+ * @param {color} $background-color
+ * Grid row header background-color
+ *
+ * @param {color} $pinned-color
+ * Grid row header color when {@link Ext.dataview.List#pinHeaders pinned}
+ *
+ * @param {color} $pinned-background-color
+ * Grid row header background-color when {@link Ext.dataview.List#pinHeaders pinned}
+ *
+ * @param {number} $border-width
+ * Grid row header border-width
+ *
+ * @param {string} $border-style
+ * Grid row header border-style
+ *
+ * @param {color} $border-color
+ * Grid row header border-color
+ *
+ * @param {string/number} $font-weight
+ * Grid row header font-weight
+ *
+ * @param {number} $font-size
+ * Grid row header font-size
+ *
+ * @param {number} $font-size-big
+ * Grid row header font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $line-height
+ * Grid row header line-height
+ *
+ * @param {number} $line-height-big
+ * Grid row header line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $font-family
+ * Grid row header font-family
+ *
+ * @param {number/list} $padding
+ * Grid row header padding
+ *
+ * @param {number/list} $padding-big
+ * Grid row header padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin rowheader-ui(
+    $ui: null,
+    $xtype: rowheader,
+    $color: null,
+    $background-color: null,
+    $pinned-color: null,
+    $pinned-background-color: null,
+    $border-width: null,
+    $border-style: null,
+    $border-color: null,
+    $font-weight: null,
+    $font-size: null,
+    $font-size-big: null,
+    $line-height: null,
+    $line-height-big: null,
+    $font-family: null,
+    $padding: null,
+    $padding-big: null
+) {
+    @include itemheader-ui(
+        $ui: $ui,
+        $xtype: $xtype,
+        $color: $color,
+        $background-color: $background-color,
+        $pinned-color: $pinned-color,
+        $pinned-background-color: $pinned-background-color,
+        $border-width: $border-width,
+        $border-style: $border-style,
+        $border-color: $border-color,
+        $font-weight: $font-weight,
+        $font-size: $font-size,
+        $font-size-big: $font-size-big,
+        $line-height: $line-height,
+        $line-height-big: $line-height-big,
+        $font-family: $font-family,
+        $padding: $padding,
+        $padding-big: $padding-big
+    );
+}

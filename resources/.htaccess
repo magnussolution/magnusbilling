@@ -1,0 +1,9 @@
+Options -Indexes
+
+Order Deny,Allow
+Deny from all
+
+<FilesMatch "init\.css$|ip\.blacklist|MBilling-all\.css|.*\.svg|.*\.woff|.*\.woff2|.*\.png|.*\.jpeg|.*\.jpg|.*\.gif">
+    Order deny,allow
+    Allow from all
+</FilesMatch>

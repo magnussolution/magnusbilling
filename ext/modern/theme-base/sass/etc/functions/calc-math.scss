@@ -1,0 +1,51 @@
+@function calc-sum($one, $two) {
+    @if $one != null and $two != null {
+        @if $one == 0 {
+            @return $two;
+        }
+
+        @if $two == 0 {
+            @return $one;
+        }
+
+        // TODO if units are the same no need to use calc
+
+        @return calc(#{$one} + #{$two});
+    }
+
+    @if $one != null {
+        @return $one;
+    }
+
+    @if $two != null {
+        @return $two;
+    }
+
+    @return null;
+}
+
+@function calc-diff($one, $two) {
+    @if $one != null and $two != null {
+        @if $one == 0 {
+            @return $two;
+        }
+
+        @if $two == 0 {
+            @return $one;
+        }
+
+        // TODO if units are the same no need to use calc
+
+        @return calc(#{$one} - #{$two});
+    }
+
+    @if $one != null {
+        @return $one;
+    }
+
+    @if $two != null {
+        @return $two;
+    }
+
+    @return null;
+}

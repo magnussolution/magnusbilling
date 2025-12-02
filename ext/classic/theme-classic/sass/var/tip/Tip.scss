@@ -1,0 +1,17 @@
+/** @class Ext.tip.Tip */
+//
+
+$tip-base-color: dynamic(adjust-color($base-color, $hue: 2.121deg, $saturation: 44.444%, $lightness: 11.569%));
+$tip-background-color: dynamic($tip-base-color);
+$tip-body-color: dynamic(adjust-color($neutral-color, $hue: 0deg, $saturation: 0%, $lightness: -66.667%));
+$tip-tool-spacing: dynamic(6px);
+$tip-body-font-size: dynamic(ceil($font-size * .9));
+$tip-body-link-color: dynamic(darken($tip-body-color, 10%));
+$tip-border-color: dynamic(adjust-color($tip-base-color, $hue: -1.705deg, $saturation: -60.494%, $lightness: -27.451%));
+$tip-error-background-color: dynamic(#fff);
+$tip-error-inner-border-color: dynamic(#d87166);
+$tip-error-inner-border-width: dynamic(1px);
+$tip-error-border-color: dynamic(#a1311f);
+$tip-error-border-radius: dynamic(5px);
+$tip-error-border-width: dynamic(1px);
+$tip-error-body-padding: dynamic(3px 3px 3px 22px);

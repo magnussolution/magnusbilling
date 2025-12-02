@@ -1,0 +1,50 @@
+@include trigger-ui(
+    $width: $trigger-width,
+    $width-big: $trigger-width-big,
+    $background-color: $trigger-background-color,
+    $hovered-background-color: $trigger-hovered-background-color,
+    $pressed-background-color: $trigger-pressed-background-color,
+    $icon: $trigger-icon,
+    $icon-color: $trigger-icon-color,
+    $hovered-icon-color: $trigger-hovered-icon-color,
+    $pressed-icon-color: $trigger-pressed-icon-color,
+    $icon-background-color: $trigger-icon-background-color,
+    $hovered-icon-background-color: $trigger-hovered-icon-background-color,
+    $pressed-icon-background-color: $trigger-pressed-icon-background-color,
+    $icon-border-radius: $trigger-icon-border-radius,
+    $icon-size: $trigger-icon-size,
+    $icon-size-big: $trigger-icon-size-big,
+    $icon-font-size: $trigger-icon-font-size,
+    $icon-font-size-big: $trigger-icon-font-size-big
+);
+
+.#{$prefix}trigger.#{$prefix}grouped {
+    @include st-box;
+    @include st-box-orient($trigger-grouped-align);
+
+    @mixin vertical-trigger() {
+        @include st-box-direction(reverse, column);
+
+        .#{$prefix}trigger {
+            @include st-box;
+            @include st-box-orient(vertical);
+            @include st-box-pack(center);
+        }
+    }
+
+    @if $trigger-grouped-align == vertical {
+        @include vertical-trigger();
+    }
+
+    @if $enable-big {
+        .x-big & {
+            @include st-box-orient($trigger-grouped-align-big);
+
+            @if $trigger-grouped-align-big == vertical {
+                @include vertical-trigger();
+            } @else {
+                @include st-box-direction(normal, row);
+            }
+        }
+    }
+}

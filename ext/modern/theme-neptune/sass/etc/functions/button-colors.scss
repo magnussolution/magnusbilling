@@ -1,0 +1,55 @@
+@function button-pressed-background-color($background-color) {
+    @if $background-color == transparent or $background-color == null {
+        @return $background-color;
+    } @else {
+        @return darken($background-color, 12%);
+    }
+}
+
+@function button-border-color($background-color) {
+    @if $background-color == transparent or $background-color == null {
+        @return $background-color;
+    } @else {
+        @return darken($background-color, 8%);
+    }
+}
+
+@function button-pressed-border-color($background-color) {
+    @if $background-color == transparent or $background-color == null {
+        @return $background-color;
+    } @else {
+        @return darken($background-color, 8%);
+    }
+}
+
+@function button-color($background-color) {
+    @return color-by-background($background-color);
+}
+
+@function button-pressed-color($background-color) {
+    @return color-by-background($background-color);
+}
+
+@function button-background-gradient($background-color) {
+    @if $background-color != transparent and $background-color != null {
+        @return color_stops(
+            mix(#fff, $background-color, 10%),
+            $background-color 50%,
+            mix(#000, $background-color, 5%) 51%,
+            $background-color
+        );
+    }
+    @return null;
+}
+
+@function button-pressed-background-gradient($background-color) {
+    @if $background-color != transparent and $background-color != null {
+        @return color_stops(
+            $background-color,
+            mix(#000, $background-color, 5%) 50%,
+            $background-color 51%,
+            mix(#fff, $background-color, 10%)
+        );
+    }
+    @return null;
+}

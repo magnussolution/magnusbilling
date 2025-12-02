@@ -1,0 +1,34 @@
+{
+    "namespace": "Ext",
+
+    "name": "theme-material",
+    "type": "theme",
+    "extend": "theme-neptune",
+
+    "framework": "ext",
+    "toolkit": "modern",
+    //"requires": [
+    //    ...
+    //],
+
+    "creator": "Sencha",
+    "summary": "Ext JS Modern Material Design Theme",
+    "detailedDescription": "Material Design theme for modern browsers",
+
+    "version": "6.2.0.981",
+    "compatVersion": "6.2.0",
+    "format": "1",
+
+    "output": "${workspace.subpkg.prefix}/${package.name}",
+    "local": true,
+
+    "sass": {
+        "namespace": "Ext",
+        "etc": "${package.dir}/sass/etc/all.scss",
+        "var": "${package.dir}/sass/var",
+        "src": "${package.dir}/sass/src"
+    },
+
+    "classpath": "${package.dir}/src",
+    "overrides": "${package.dir}/overrides"
+}

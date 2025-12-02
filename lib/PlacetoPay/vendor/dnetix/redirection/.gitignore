@@ -1,0 +1,4 @@
+.idea
+.project
+vendor
+tests/coverage

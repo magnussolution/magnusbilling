@@ -1,0 +1,6 @@
+{
+    "name": "magnusbilling/stripe",
+    "require": {
+        "stripe/stripe-php": "^16.5"
+    }
+}

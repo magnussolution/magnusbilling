@@ -1,0 +1,31 @@
+{
+  "name": "dnetix/redirection",
+  "description": "Library to connect with PlacetoPay Redirection service",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Diego Calle",
+      "email": "dnetix@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.4",
+    "ext-soap": "*",
+    "guzzlehttp/guzzle": ">=5.3"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4.8",
+    "illuminate/support": "^5.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Dnetix\\Redirection\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "classmap": [
+      "tests/"
+    ]
+  }
+}

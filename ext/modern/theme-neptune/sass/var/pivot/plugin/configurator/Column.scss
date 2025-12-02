@@ -1,0 +1,71 @@
+/** @class Ext.pivot.plugin.configurator.Column */
+
+/**
+ * @var {number}
+ * The width of a configurator field button
+ */
+$pivot-grid-config-column-btn-width: dynamic(1em);
+/**
+ * @var {number}
+ * The height of a configurator field button
+ */
+$pivot-grid-config-column-btn-height: dynamic(1em);
+/**
+ * @var {color}
+ * The color of a configurator field button
+ */
+$pivot-grid-config-column-btn-color: dynamic($neutral-dark-color);
+/**
+ * @var {number}
+ * The font size of a configurator field button
+ */
+$pivot-grid-config-column-btn-font-size: dynamic($gridviewoptions-icon-font-size);
+/**
+ * @var {number}
+ * The big font size of a configurator field button
+ */
+$pivot-grid-config-column-btn-font-size-big: dynamic($gridviewoptions-icon-font-size-big);
+
+/**
+ * @var {string}
+ * The icon of the configurator field delete button
+ */
+$pivot-grid-config-column-btn-delete-icon: $fa-var-minus-circle FontAwesome;
+/**
+ * @var {color}
+ * The color of the configurator field delete button
+ */
+$pivot-grid-config-column-btn-delete-color: dynamic($pivot-grid-config-column-btn-color);
+
+/**
+ * @var {string}
+ * The icon of the configurator field move button
+ */
+$pivot-grid-config-column-btn-move-icon: $fa-var-bars FontAwesome;
+/**
+ * @var {color}
+ * The color of the configurator field move button
+ */
+$pivot-grid-config-column-btn-move-color: dynamic($pivot-grid-config-column-btn-color);
+
+/**
+ * @var {string}
+ * The icon of the configurator field sort button ASC
+ */
+$pivot-grid-config-column-btn-sort-asc-icon: $fa-var-long-arrow-up FontAwesome;
+/**
+ * @var {color}
+ * The color of the configurator field sort button ASC
+ */
+$pivot-grid-config-column-btn-sort-asc-color: dynamic($pivot-grid-config-column-btn-color);
+
+/**
+ * @var {string}
+ * The icon of the configurator field sort button DESC
+ */
+$pivot-grid-config-column-btn-sort-desc-icon: $fa-var-long-arrow-down FontAwesome;
+/**
+ * @var {color}
+ * The color of the configurator field sort button DESC
+ */
+$pivot-grid-config-column-btn-sort-desc-color: dynamic($pivot-grid-config-column-btn-color);

@@ -1,0 +1,18 @@
+.x-button {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    line-height: normal;
+}
+
+.x-badge {
+    @extend .x-button-label;
+    background-color: #ccc;
+    border: 1px solid #aaa;
+    position: absolute !important;
+    width: auto;
+    font-size: .6em;
+    right: 0;
+    top: 0;
+    max-width: 95%;
+    display: inline-block;
+}

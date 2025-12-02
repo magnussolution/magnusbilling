@@ -1,0 +1,43 @@
+.#{$prefix}segmentedbutton {
+    .#{$prefix}horizontal .#{$prefix}button {
+        &:not(.#{$prefix}first) {
+            border-left: 0;
+        }
+
+        @if $enable-border-radius {
+            &:not(.#{$prefix}first):not(.#{$prefix}last) {
+                border-radius: 0;
+            }
+
+            &.#{$prefix}first {
+                @include border-right-radius(0);
+            }
+
+            &.#{$prefix}last {
+                @include border-left-radius(0);
+            }
+        }
+    }
+
+    &.#{$prefix}vertical .#{$prefix}button {
+        margin: 0;
+        
+        &:not(.#{$prefix}first) {
+            border-top: 0;
+        }
+
+        @if $enable-border-radius {
+            &:not(.#{$prefix}first):not(.#{$prefix}last) {
+                border-radius: 0;
+            }
+
+            &.#{$prefix}first {
+                @include border-bottom-radius(0);
+            }
+
+            &.#{$prefix}last {
+                @include border-top-radius(0);
+            }
+        }
+    }
+}

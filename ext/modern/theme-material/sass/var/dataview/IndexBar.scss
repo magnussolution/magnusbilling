@@ -1,0 +1,14 @@
+$indexbar-width: dynamic(32px);
+$indexbar-height: dynamic(100%);
+$indexbar-background-color: dynamic(transparent);
+$indexbar-color: dynamic($color);
+$indexbar-margin: dynamic(null);
+
+$indexbar-opacity: dynamic(0);
+
+$indexbar-pressed-background-color: dynamic(transparent);
+$indexbar-pressed-opacity: dynamic(1);
+
+$indexbar-font-size: dynamic(px-to-rem(12px, 12px));
+$indexbar-font-weight: dynamic(400);
+$indexbar-font-family: dynamic($font-family);

@@ -1,0 +1,12 @@
+$listitem-disclosure-icon: dynamic($ios-arrow-right iOS);
+$listitem-disclosure-icon-size: dynamic(0.875em);
+$listitem-disclosure-icon-size-big: dynamic(0.875em);
+$listitem-selected-background-color: dynamic(ext-mix(#000, $neutral-color, 5%));
+$listitem-hovered-background-color: dynamic(null);
+$listitem-pressed-background-color: dynamic(null);
+$listitem-hovered-border-color: dynamic(null);
+$listitem-pressed-border-color: dynamic(null);
+$listitem-selected-border-color: dynamic($listitem-selected-background-color);
+
+$listitem-line-height: dynamic(1.2858em);
+$listitem-padding: dynamic(.5em .714em);

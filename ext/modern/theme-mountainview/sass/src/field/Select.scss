@@ -1,0 +1,20 @@
+/**
+ * @class Ext.field.Select
+ */
+
+.x-panel.x-selectfield-overlay {
+    background: $background-color;
+
+    > .x-panel-inner {
+        overflow: hidden;
+        background: $background-color;
+    }
+
+    .x-list {
+        background: transparent !important;
+    }
+
+    .x-listitem {
+        color: $primary-text-color;
+    }
+}

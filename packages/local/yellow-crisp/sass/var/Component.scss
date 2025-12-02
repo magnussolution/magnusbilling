@@ -1,0 +1,609 @@
+$base-color: dynamic(#d5d710);
+$base-color-sub-menu: dynamic(#d5d710);
+$base-color-menu-over: dynamic(#d5d710);
+$base-color-dashboar-text: dynamic($base-color);
+
+
+.graph-analysis-left .x-progress-bar {
+    background-color: $progress-bar-background-color;
+}
+
+.quick-graph-panel {
+    .x-panel-header {
+        padding-left: 22px;
+    }
+
+    .x-title-icon {
+        position: relative;
+
+        &:before {
+            position: absolute;
+            height: 30px;
+            width: 30px;
+            top: -7px;
+            left: -7px;
+            border-radius: 15px;
+            background-color: #f1f1f1;
+            line-height: 30px;
+            text-align: center;
+        }
+    }
+
+    .x-title-text {
+        padding-left: 8px;
+    }
+}
+
+.graph-analysis-right{
+    .right-value{
+        text-align:right;
+    }
+}
+
+.dashboard-member-grid .x-fa, .user-grid .x-fa{
+    height: 20px;
+    width: 20px;
+    background: #e9e9e9;
+    line-height: 20px;
+    float: left;
+    margin-right:10px;
+    &:before{
+        display:block;
+        line-height:20px;
+        text-align:center;
+    }
+
+    &.x-action-col-icon{
+        font-size: 13px !important;
+    }
+}
+
+.overflow-ellipsis{
+    overflow:hidden;
+}
+.pie-legend-container {
+    font-size: 11px;
+    text-overflow:ellipsis;
+    .quick-graph-pie-legend{
+        height: 15px;
+        width: 15px;
+    }
+    .x-autocontainer-innerCt{
+        padding-left: 10px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        line-height:14px;
+    }
+}
+
+.bottom-indent {
+    margin-bottom: 16px;
+}
+
+.left-aligned-div{
+    float:left;
+}
+
+.right-aligned-div{
+    float: right;
+}
+.services-text {
+    margin: 0 0 10px 5px;
+    height: 86px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.services-legend {
+    min-width: 240px;
+    div {
+        width: 15px;
+        height: 15px;
+        float: left;
+        margin: 1px 5px 0 0;
+    }
+    span {
+        font-size: 11px;
+        width: 33%;
+        display: inline-block;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+}
+
+
+
+.white-panel {
+    background: #fff;
+}
+
+
+
+/*colors */
+
+/*
+ * This file defines variables used throughout the application for modern and
+ * classic builds.
+ */
+
+
+
+//Form and Toolbar Button UI colors
+
+$color-blue: #167abc;
+$color-soft-cyan: #03b4d5;
+$color-soft-blue: #2eadf5;
+$color-soft-green: #9cc96b;
+$color-soft-orange: #ffc107;
+$color-soft-red: #e44959;
+$color-soft-purple: #925e8b;
+$color-gray: #949495;
+$color-green: #16b603;
+
+$chart-icon-background-color: #f1f1f1;
+
+$grid-item-edit-btn-color: #e9e9e9;
+$grid-item-close-btn-color: #fc8999;
+$grid-item-ban-btn-color: #ffc000;
+$legend-research: #6aa5db;
+$legend-marketing: #ee929c;
+
+$force-background-color: #56B750;
+
+//----------------------------------------------------
+// Wizards
+
+$wizard-primary-background-color: #579ddb;
+$wizard-button-background-color: #579ddb;
+
+$wizard-two-primary-background-color: #986291;
+$wizard-two-button-background-color: #925e8b;
+
+$wizard-three-primary-background-color: #9cc96b;
+$wizard-three-button-background-color: #9cc96b;
+$base-border-color: #ddd;
+
+
+
+
+
+.graph-analysis-left .x-progress-bar {
+    background-color: $progress-bar-background-color;
+}
+
+.dashboard-graph-analysis-left {
+    border-right: 1px solid #ddd;
+}
+
+.top-info-container{
+    color: $progress-bar-background-color;
+    font-size: 13px;
+    font-family: "Open Sans";
+    .inner {
+        white-space: nowrap;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .dashboard-analytics-percentage{
+        font-size: 14px;
+    }
+}
+
+.top-info-container{
+    color: $base-color-dashboar-text
+    .inner {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+.graph-analysis-right{
+    border-left: 1px solid $base-border-color;
+    .right-value{
+        text-align:right;
+    }
+}
+
+.graph-analysis-right-inner-container.right-value {
+    text-align: right;
+}
+
+.graph-analysis-right {
+    padding-left: 15px;
+}
+
+@media (max-width: 699px) {
+    .graph-analysis-right {
+        padding-left: 0;
+    }
+}
+
+.dashboard-graph-analysis-left {
+    border-right: 1px solid #ddd;
+}
+
+.graph-analysis-right-inner-container.right-value {
+    text-align: right;
+}
+
+.graph-analysis-right {
+    padding-left: 15px;
+}
+
+.weather-panel {
+    background: #fff;
+}
+.weather-image-container {    
+    width: 100px;
+    float: left;
+    background: $base-color-sub-menu;
+    text-align: center;
+    padding-top: 20px;
+}
+.weather-details-container {
+    color: $base-color-dashboar-text;
+    line-height: 20px;
+    float: left;
+    padding: 20px;
+    :first-child {
+        margin-bottom: 4px;
+        font-size: 30px;
+    }
+}
+.dashboard-main-chart {
+    .x-panel-body-default {
+        color: $base-color-dashboar-text;
+    }
+}
+.shadow {
+    @include box-shadow(0 1px 2px 0 rgba(0, 0, 0, 0.2));
+}
+
+
+$responsivecolumn-item-spacing: dynamic(20px);
+@mixin responsivecolumn-item($width: 100%, $spacing: $responsivecolumn-item-spacing) {
+  width: calc(#{$width} - #{$spacing});
+}
+
+
+.x-tree-lines .x-tree-elbow{
+    height: 0;
+}
+
+.x-tree-lines .x-tree-elbow-end{
+    height: 0;
+}
+
+
+.legend-trunk1 {
+    background-color: #ffc000;
+}
+
+.legend-trunk2 {
+    background-color: #6aa5db;
+}
+
+.legend-trunk3 {
+    background-color: #ee929c;
+}
+
+
+//--------------------------------------------------------
+// Create classes for full-size responsive items
+
+.big-100 {
+    @include responsivecolumn-item(100%);
+}
+
+.big-60 {
+    @include responsivecolumn-item(60%);
+}
+
+.big-50 {
+    @include responsivecolumn-item(50%);
+}
+
+.big-40 {
+    @include responsivecolumn-item(40%);
+}
+
+.big-33 {
+    @include responsivecolumn-item(33.33%);
+}
+
+.big-20 {
+    @include responsivecolumn-item(20%);
+}
+
+ .x-responsivecolumn-small {
+     > .small-100 {
+         @include responsivecolumn-item(100%);
+     }
+
+     > .small-50 {
+         @include responsivecolumn-item(50%);
+     }
+}
+
+
+
+
+$circle-border-radius:50%;
+$lightest-color:#fff;
+$dialog-trigger-color: #e5e5e5;
+$create-account-background-color: #a1a1a2;
+$blank-page-color :#cacaca;
+
+.auth-locked-window {
+    .x-window-body {
+        background-image: url('../../resources/images/lock-screen-background.jpg');
+        background-size: cover;
+        background-repeat: repeat;
+    }
+    &.x-window-default {
+        border: none;
+        border-radius: 0;
+        padding: 0;
+    }
+}
+
+
+.x-btn-pressed {
+    .x-btn-icon-el-wizard-blue-small {
+        color: #579ddb;
+    }
+
+    &.x-btn-disabled {
+        &.x-btn-wizard-soft-purple-small,
+        .x-btn-wizard-soft-purple-small-mc {
+            background-color: #925e8b;
+        }
+    }
+
+    .x-btn-icon-el-wizard-soft-purple-small {
+        color: #fff;
+    }
+
+    .x-btn-icon-el-wizard-soft-green-small {
+        color: $color;
+    }
+}
+
+.auth-dialog{
+
+    .auth-profile-wrap{
+        background:$base-color;
+        color:$lightest-color;
+        line-height:24px;
+        .user-name-text{
+            font-size: 18px;
+            font-weight:bold;
+        }
+        .user-post-text{
+            font-size:14px;
+        }
+        .auth-profile-img{
+            @include border-radius($circle-border-radius);
+        }
+    }
+    
+    .x-form-text-default, .x-placeholder-label-default {
+        padding: 15px;
+    }
+
+
+    .register-page-back-button,
+    .register-page-back-button .x-frame-mc{
+        background-color: $lightest-color;
+        border:none;
+        padding:5px 0 0 0;
+        .x-btn-inner-default-small{
+            padding : 0;
+            height:20px;
+            color: $base-color;
+            &:hover{
+                text-decoration:underline;
+            }
+        }
+        &.x-btn-pressed.x-btn-default-small{
+            background-color: transparent;
+        }
+    }
+    .trigger-glyph-noop {
+        cursor:default;
+    }
+    .x-form-trigger{
+        text-align:right;
+        width:50px;
+    }
+    .password-trigger,
+    .auth-email-trigger,
+    .auth-password-trigger,
+    .auth-envelope-trigger,
+    .seperator{
+        text-align: center;
+        color: $create-account-background-color;
+        font-family: "Open Sans";
+        display: inline-block;
+        background: $lightest-color;
+        position: relative;
+        z-index: 1;
+        padding: 0 8px;
+    }
+    .link-forgot-password {
+        line-height:32px;
+        color: $base-color;
+        text-decoration:none;
+        margin-left:5px;
+        &:hover{
+            text-decoration:underline;
+        }
+    }
+
+    .x-btn{
+        .x-btn-icon-el{
+            &:before{
+                right: 10px;
+                font-size: 24px;
+                position: absolute;
+            }
+        }
+    }
+
+    .auth-facebook-button .x-fa{
+        color: $lightest-color;
+        font-size: 24px;
+        top:10px;
+        right: 13px;
+    }
+
+    .auth-login-button .x-fa,
+    .auth-resetpassword-button .x-fa{
+        font-size: 32px;
+        right: 11px;
+        top:10px;
+        line-height: 16px;
+    }
+    .auth-create-account-button .x-fa {
+        color: $lightest-color;
+        right: 24px;
+        top:10px;
+    }
+
+    .outer-div{
+        width:100%;
+        text-align: center;
+        &:after{
+            content: " ";
+            width:100%;
+            height: 1px;
+            background-color: $blank-page-color;
+            position:absolute;
+            left: 0;
+            top: 9px;
+        }
+    }
+}
+
+
+
+
+
+.graph-analysis-left .x-progress-bar {
+    background-color: $progress-bar-background-color;
+}
+
+.quick-graph-panel {
+    .x-panel-header {
+        padding-left: 22px;
+    }
+
+    .x-title-icon {
+        position: relative;
+
+        &:before {
+            position: absolute;
+            height: 30px;
+            width: 30px;
+            top: -7px;
+            left: -7px;
+            border-radius: 15px;
+            background-color: #f1f1f1;
+            line-height: 30px;
+            text-align: center;
+        }
+    }
+
+    .x-title-text {
+        padding-left: 8px;
+    }
+}
+
+.graph-analysis-right{
+    .right-value{
+        text-align:right;
+    }
+}
+
+.dashboard-member-grid .x-fa, .user-grid .x-fa{
+    height: 20px;
+    width: 20px;
+    background: #e9e9e9;
+    line-height: 20px;
+    float: left;
+    margin-right:10px;
+    &:before{
+        display:block;
+        line-height:20px;
+        text-align:center;
+    }
+
+    &.x-action-col-icon{
+        font-size: 13px !important;
+    }
+}
+
+.overflow-ellipsis{
+    overflow:hidden;
+}
+.pie-legend-container {
+    font-size: 11px;
+    text-overflow:ellipsis;
+    .quick-graph-pie-legend{
+        height: 15px;
+        width: 15px;
+    }
+    .x-autocontainer-innerCt{
+        padding-left: 10px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        line-height:14px;
+    }
+}
+
+.bottom-indent {
+    margin-bottom: 16px;
+}
+
+.left-aligned-div{
+    float:left;
+}
+
+.right-aligned-div{
+    float: right;
+}
+.services-text {
+    margin: 0 0 10px 5px;
+    height: 86px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.services-legend {
+    min-width: 240px;
+    div {
+        width: 15px;
+        height: 15px;
+        float: left;
+        margin: 1px 5px 0 0;
+    }
+    span {
+        font-size: 11px;
+        width: 33%;
+        display: inline-block;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+}
+
+
+
+.white-panel {
+    background: #fff;
+}
+
+
+
+

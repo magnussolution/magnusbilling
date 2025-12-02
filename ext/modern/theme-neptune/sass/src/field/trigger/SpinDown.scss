@@ -1,0 +1,20 @@
+@include spindowntrigger-ui(
+    $width: $spindowntrigger-width,
+    $width-big: $spindowntrigger-width-big,
+    $background-color: $spindowntrigger-background-color,
+    $hovered-background-color: $spindowntrigger-hovered-background-color,
+    $pressed-background-color: $spindowntrigger-pressed-background-color,
+    $icon: $spindowntrigger-icon,
+    $icon-big: $spindowntrigger-icon-big,
+    $icon-color: $spindowntrigger-icon-color,
+    $hovered-icon-color: $spindowntrigger-hovered-icon-color,
+    $pressed-icon-color: $spindowntrigger-pressed-icon-color,
+    $icon-background-color: $spindowntrigger-icon-background-color,
+    $hovered-icon-background-color: $spindowntrigger-hovered-icon-background-color,
+    $pressed-icon-background-color: $spindowntrigger-pressed-icon-background-color,
+    $icon-border-radius: $spindowntrigger-icon-border-radius,
+    $icon-size: $spindowntrigger-icon-size,
+    $icon-size-big: $spindowntrigger-icon-size-big,
+    $icon-font-size: $spindowntrigger-icon-font-size,
+    $icon-font-size-big: $spindowntrigger-icon-font-size-big
+);

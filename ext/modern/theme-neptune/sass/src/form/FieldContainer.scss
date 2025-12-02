@@ -1,0 +1,23 @@
+.#{$prefix}form-field-separators {
+    > .#{$prefix}field {
+        border-bottom: 1px solid bottom($textfield-input-border-color);
+    }
+
+    > .#{$prefix}textfield {
+        &.#{$prefix}focused {
+            @include border(
+                bottom($textfield-focused-input-border-width),
+                bottom($textfield-focused-input-border-style),
+                bottom($textfield-focused-input-border-color)
+            );
+        }
+
+        &.#{$prefix}invalid {
+            @include border(
+                bottom($textfield-invalid-input-border-width),
+                bottom($textfield-invalid-input-border-style),
+                bottom($textfield-invalid-input-border-color)
+            );
+        }
+    }
+}

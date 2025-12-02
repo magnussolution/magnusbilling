@@ -1,0 +1,17 @@
+language: php
+dist: trusty
+php:
+- '5.5'
+- '5.6'
+- '7.0'
+- '7.1'
+notifications:
+  email: false
+install:
+- composer install
+script: vendor/bin/phpunit -c config.xml
+env:
+  secure: "VioTqvOA/qoJbA1yHS5RslsUNvFafK4IHI/ncYhWLBI97DO5tcC1juqnk9W/chf6c1GpfUab/S9RE1U3kTGADo9njGRRpf6c7AIyBBNCuRenR52u30W8PkaeIHSIegQU1on9zqApAoHPD1lt4GPU4DieE7Pm2UcNf4lFFZNRI72sLaNH3I0cjVRAC+MEv/HyitDPAxiwHFitlIXa/arlhyTKEP3bmnNAjhKiGoi64aRwbhJp8V83pxLxx0C+wmTyHxv5rO7CEongUJX1dHhnsTFDAYu1SFxMGdF33QVt5RK3DVmnjr+yTUv6R9PqVwg18tvQ0zaiGaeb4QF6ss3gdk/NHkj1LenmF41ndn9C/QgY5+/T6JYQL1I1BO9NFquFQjBVDSt8RDH+8ptzFoZFWwFhIGI8ir3uS3ciAfHzxMCT29Ksh1NPBsQ9bd4rjh49+DxXKluQoRUssQAgFJBvCNoH4O50xFthxnFhsNS1lB9aZNODswzucynqkEjjYVOX/6uqXm2sjPT9bXtwjzm7SOLeeFRxJjolcoBjpxiRQewt/32X2VTQy6HLKaIX0lUg08MAySqkvftssFLcgHqVbwBErCstGdn7KaFxTi07+o6N4ygsxWUcDvd1o8003MvLSJfEBM+IuAqMb9KLk4J5dhpR7PkWkdJXI0i10XdGz0w="
+after_script:
+- vendor/bin/test-reporter --stdout > codeclimate.json
+- "curl -X POST -d @codeclimate.json -H 'Content-Type: application/json' -H 'User-Agent: Code Climate (PHP Test Reporter v0.1.1)' https://codeclimate.com/test_reports"

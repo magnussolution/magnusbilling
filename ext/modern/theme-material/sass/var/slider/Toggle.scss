@@ -1,0 +1,19 @@
+$toggleslider-width: dynamic(32px);
+$toggleslider-track-height-big: dynamic(32px);
+$toggleslider-track-height: dynamic(16px);
+$toggleslider-track-height-big: dynamic(16px);
+$toggleslider-track-border-radius: dynamic(8px);
+
+@mixin thumb-toggle-on-ui {
+    @include thumb-ui(
+        $ui: 'toggle-on',
+        $background-color: $base-color
+    );
+}
+
+@mixin thumb-toggle-off-ui {
+    @include thumb-ui(
+        $ui: 'toggle-off',
+        $background-color: $faded-color
+    );
+}

@@ -1,0 +1,196 @@
+/**
+ * @class Ext.slider.Slider
+ */
+
+/**
+ * @var {number}
+ * The height of the slider track
+ */
+$slider-track-height: dynamic(0.6925rem);
+
+/**
+ * @var {number}
+ * The height of the slider track in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$slider-track-height-big: dynamic(1.2rem);
+
+/**
+ * @var {color/list}
+ * The background-color of the slider track
+ */
+$slider-track-background-color: dynamic($neutral-light-color);
+
+/**
+ * @var {number/list}
+ * The border-width of the slider track
+ */
+$slider-track-border-width: dynamic(1px);
+
+/**
+ * @var {string/list}
+ * The border-style of the slider track
+ */
+$slider-track-border-style: dynamic(solid);
+
+/**
+ * @var {color/list}
+ * The border-color of the slider track
+ */
+$slider-track-border-color: dynamic(mix(#000, $neutral-color, 6%));
+
+/**
+ * @var {number}
+ * The border-radius of the slider track
+ */
+$slider-track-border-radius: dynamic($slider-track-height / 2);
+
+/**
+ * @var {number}
+ * The border-radius of the slider track in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$slider-track-border-radius-big: dynamic($slider-track-height-big / 2);
+
+/**
+ * @var {color}
+ * The background-color of the fill element
+ */
+$slider-fill-background-color: dynamic(mix(#fff, $base-light-color, 25%));
+
+/**
+ * @var {color}
+ * The background-color of the fill element when disabled
+ */
+$slider-disabled-fill-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The border-color of the fill element
+ */
+$slider-fill-border-color: dynamic($slider-track-border-color);
+
+/**
+ * @var {color}
+ * The border-color of the fill element when disabled
+ */
+$slider-disabled-fill-border-color: dynamic(null);
+
+/**
+ * @var {number}
+ * Opacity of the slider when disabled
+ */
+$slider-disabled-opacity: dynamic(.3);
+
+/**
+ * Creates a visual theme for a Slider.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=slider] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {number} $track-height
+ * The height of the slider track
+ *
+ * @param {number} $track-height-big
+ * The height of the slider track in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color/list} $track-background-color
+ * The background-color of the slider track
+ *
+ * @param {number/list} $track-border-width
+ * The border-width of the slider track
+ *
+ * @param {string/list} $track-border-style
+ * The border-style of the slider track
+ *
+ * @param {color/list} $track-border-color
+ * The border-color of the slider track
+ *
+ * @param {number} $track-border-radius
+ * The border-radius of the slider track
+ *
+ * @param {number} $track-border-radius-big
+ * The border-radius of the slider track in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $fill-background-color
+ * The background-color of the fill element
+ *
+ * @param {color} $disabled-fill-background-color
+ * The background-color of the fill element when disabled
+ *
+ * @param {color} $fill-border-color
+ * The border-color of the fill element
+ *
+ * @param {color} $disabled-fill-border-color
+ * The border-color of the fill element when disabled
+ *
+ * @param {number} $disabled-opacity
+ * Opacity of the slider when disabled
+ */
+@mixin slider-ui(
+    $ui: null,
+    $xtype: slider,
+    $track-height: null,
+    $track-height-big: null,
+    $track-background-color: null,
+    $track-border-width: null,
+    $track-border-style: null,
+    $track-border-color: null,
+    $track-border-radius: null,
+    $track-border-radius-big: null,
+
+    $fill-background-color: null,
+    $disabled-fill-background-color: null,
+    $fill-border-color: null,
+    $disabled-fill-border-color: null,
+
+    $disabled-opacity: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}#{$xtype}#{$ui-suffix} {
+        .#{$prefix}track-el {
+            height: $track-height;
+            background-color: $track-background-color;
+
+            @include border($track-border-width, $track-border-style, $track-border-color);
+            border-radius: $track-border-radius;
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    height: $track-height-big;
+                    @include border-radius($track-border-radius-big);
+                }
+            }
+        }
+
+        .#{$prefix}fill-el {
+            height: $track-height;
+            background-color: $fill-background-color;
+            @include border($track-border-width, $track-border-style, $fill-border-color);
+            border-radius: $track-border-radius;
+
+            @if $track-border-width != null {
+                margin: #{-(top($track-border-width))} 0 0 #{-(left($track-border-width))};
+            }
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    height: $track-height-big;
+                    border-radius: $track-border-radius-big;
+                }
+            }
+        }
+
+        &.#{$prefix}disabled {
+            opacity: $disabled-opacity;
+
+            .#{$prefix}fill-el {
+                background-color: $disabled-fill-background-color;
+                @include border($track-border-width, $track-border-style, $disabled-fill-border-color);
+            }
+        }
+    }
+}

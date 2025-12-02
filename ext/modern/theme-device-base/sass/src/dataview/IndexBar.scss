@@ -1,0 +1,26 @@
+.x-indexbar-item {
+    font-size: 0.6em;
+    text-align: center;
+    line-height: 1.1em;
+    font-weight: bold;
+}
+
+.x-indexbar.x-vertical {
+    width: 15px;
+    margin-right: 15px;
+}
+
+.x-indexbar.x-horizontal {
+    height: 15px;
+}
+
+.x-phone.x-landscape .x-indexbar {
+    > div {
+        font-size: 0.38em;
+        line-height: 1em;
+    }
+}
+
+.x-indexbar:active {
+    background-color: #ccc;
+}

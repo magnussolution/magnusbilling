@@ -1,0 +1,47 @@
+$panel-border-color: dynamic($faded-color);
+$panel-border-width: dynamic(1px);
+$panel-border-style: dynamic(solid);
+$panel-body-background-color: dynamic($background-color);
+$panel-body-border-color: dynamic($panel-border-color);
+$panel-body-border-width: dynamic($panel-border-width);
+$panel-body-border-style: dynamic($panel-border-style);
+
+$panel-body-font-weight: dynamic(400);
+
+$panel-body-font-size: dynamic(px-to-rem(12px, 12px));
+$panel-body-font-size-big: dynamic(px-to-rem(14px, 14px));
+$panel-body-line-height: dynamic(px-to-em(18px, 12px));
+$panel-body-line-height-big: dynamic(px-to-em(20px, 14px));
+
+$panel-body-padding: dynamic(px-to-em($content-padding, 12px));
+$panel-body-padding-big: dynamic(px-to-em($content-padding, 14px));
+$panel-header-color: dynamic($base-foreground-color);
+$panel-header-background-color: dynamic($base-color);
+$panel-header-border-color: dynamic($panel-border-color);
+$panel-header-border-width: dynamic($panel-border-style);
+$panel-header-border-style: dynamic($panel-border-width);
+
+$panel-header-font-size: dynamic(px-to-rem(18px, 12px));
+$panel-header-font-size-big: dynamic(px-to-rem(20px, 14px));
+$panel-header-font-weight: dynamic(600);
+$panel-header-line-height: dynamic(px-to-em(26px, 18px));
+$panel-header-line-height-big: dynamic(px-to-em(26px, 20px));
+
+$panel-header-padding: dynamic(px-to-em($content-padding / 2, 18px) px-to-em($content-padding, 18px));
+$panel-header-padding-big: dynamic(px-to-em($content-padding / 2, 20px) px-to-em($content-padding, 20px));
+$panel-header-shadow: dynamic(null);
+
+
+$panel-tool-opacity: dynamic(1);
+$panel-tool-opacity-over: dynamic(.75);
+$panel-tool-opacity-pressed: dynamic(.5);
+
+
+// Calendar uses light-ui, material theme is always dark or light
+@mixin panel-light-ui {
+    @include panel-ui(
+    $ui: 'light',
+    $header-background-color: $alt-background-color,
+    $header-color: $color
+    );
+}

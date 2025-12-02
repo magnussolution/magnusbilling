@@ -1,0 +1,108 @@
+/**
+ * @class Ext.form.FieldSet
+ */
+
+.x-form-fieldset {
+    margin: $fieldset-margin;
+
+    .x-form-fieldset-inner {
+        @include border($fieldset-border-width, $fieldset-border-style, $fieldset-border-color);
+        background: $field-background-color;
+        padding: $fieldset-padding;
+        @if $enable-border-radius {
+            @include border-radius($fieldset-border-radius);
+        }
+    }
+
+    .x-field {
+        // When using a fieldset border the fieldset will use fields
+        @if $fieldset-border-width != null {
+
+            &:first-child {
+                @if $enable-border-radius {
+                    @include border-top-radius($fieldset-border-radius);
+                }
+            }
+
+            &:last-child {
+                border-bottom: 0;
+
+                @if $enable-border-radius {
+                    @include border-bottom-radius($fieldset-border-radius);
+                }
+            }
+        }
+        background: transparent;
+    }
+}
+
+.x-form-fieldset-title {
+    @include font($fieldset-title-font-weight, $fieldset-title-font-size, $fieldset-title-line-height, $fieldset-title-font-family);
+    margin: $fieldset-title-margin;
+    color: $fieldset-title-color;
+
+    .#{$prefix}big & {
+        @include font($fieldset-title-font-weight, $fieldset-title-font-size-big, $fieldset-title-line-height-big, $fieldset-title-font-family);
+    }
+}
+
+
+
+.x-form-fieldset-instructions {
+    @include font($fieldset-instructions-font-weight, $fieldset-instructions-font-size, $fieldset-instructions-line-height, $fieldset-instructions-font-family);
+    color: $fieldset-instructions-color;
+    margin: $fieldset-instructions-margin;
+    text-align: $fieldset-instructions-text-align;
+
+    .#{$prefix}big & {
+        @include font($fieldset-instructions-font-weight, $fieldset-instructions-font-size-big, $fieldset-instructions-line-height-big, $fieldset-instructions-font-family);
+    }
+}
+
+@if $enable-border-radius {
+    .x-field.x-label-align-left {
+        &:first-child {
+            .x-label-el {
+                @include border-top-left-radius($fieldset-border-radius);
+            }
+        }
+
+        &:last-child {
+            .x-label-el {
+                @include border-bottom-left-radius($fieldset-border-radius);
+            }
+        }
+    }
+
+    .x-field.x-label-align-right {
+        &:first-child {
+            .x-label-el {
+              @include border-top-right-radius($fieldset-border-radius);
+            }
+        }
+
+        &:last-child {
+            border-bottom: 0;
+
+            .x-label-el {
+                @include border-bottom-right-radius($fieldset-border-radius);
+            }
+        }
+    }
+
+    .x-field.x-label-align-top {
+        &:first-child {
+            .x-label-el {
+                @include border-top-radius($fieldset-border-radius);
+            }
+        }
+    }
+
+    .x-field.x-label-align-bottom {
+        &:last-child {
+            .x-label-el {
+                @include border-bottom-radius($fieldset-border-radius);
+            }
+        }
+    }
+}

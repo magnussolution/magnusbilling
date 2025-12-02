@@ -1,0 +1,16 @@
+// font-size must be set on the html element in order for rem units to be used throughout the theme
+html {
+	font: $font-weight-normal #{$font-size}/#{$line-height} $font-family;
+	color: $color;
+
+	&.x-big {
+		font-size: $font-size-big;
+	}
+}
+
+.#{$prefix}font-icon {
+	font-family: $font-icon-font-family;
+	// ensure that font icon does not inherit font-weight from parent node
+}
+
+@include st-loading-spinner(1em, $loading-spinner-color, .1em, .25em);

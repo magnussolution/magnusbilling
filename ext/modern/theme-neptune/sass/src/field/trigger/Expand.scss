@@ -1,0 +1,19 @@
+@include expandtrigger-ui(
+    $width: $expandtrigger-width,
+    $width-big: $expandtrigger-width-big,
+    $background-color: $expandtrigger-background-color,
+    $hovered-background-color: $expandtrigger-hovered-background-color,
+    $pressed-background-color: $expandtrigger-pressed-background-color,
+    $icon: $expandtrigger-icon,
+    $icon-color: $expandtrigger-icon-color,
+    $hovered-icon-color: $expandtrigger-hovered-icon-color,
+    $pressed-icon-color: $expandtrigger-pressed-icon-color,
+    $icon-background-color: $expandtrigger-icon-background-color,
+    $hovered-icon-background-color: $expandtrigger-hovered-icon-background-color,
+    $pressed-icon-background-color: $expandtrigger-pressed-icon-background-color,
+    $icon-border-radius: $expandtrigger-icon-border-radius,
+    $icon-size: $expandtrigger-icon-size,
+    $icon-size-big: $expandtrigger-icon-size-big,
+    $icon-font-size: $expandtrigger-icon-font-size,
+    $icon-font-size-big: $expandtrigger-icon-font-size-big
+);

@@ -1,0 +1,126 @@
+.styled-select {
+    width: 240px;
+    height: 34px;
+    overflow: hidden;
+    background: url(../images/down_arrow_select.png) no-repeat right #ddd;
+    border: 1px solid #ccc;
+}
+.styled-select select {
+    background: transparent;
+    width: 268px;
+    padding: 5px;
+    font-size: 16px;
+    line-height: 1;
+    border: 0;
+    border-radius: 0;
+    height: 34px;
+    -webkit-appearance: none;
+}
+#contactform {
+    margin: 0 auto;
+    width: 655px;
+    padding: 5px;
+    background: #f0f0f0;
+    overflow: auto;
+    /* Border style */
+    border: 1px solid #cccccc;
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+    border-radius: 7px;
+    /* Border Shadow */
+    -moz-box-shadow: 2px 2px 2px #cccccc;
+    -webkit-box-shadow: 2px 2px 2px #cccccc;
+    box-shadow: 2px 2px 2px #cccccc;
+}
+label {
+    font-family: Arial, Verdana;
+    text-shadow: 2px 2px 2px #ccc;
+    display: block;
+    float: left;
+    margin-right: 15px;
+    font-weight: bold;
+    margin-right: 10px;
+    text-align: right;
+    width: 230px;
+    line-height: 25px;
+    font-size: 15px;
+}
+.input {
+    font-family: Arial, Verdana;
+    font-size: 15px;
+    padding: 5px;
+    border: 1px solid #b9bdc1;
+    width: 380px;
+    color: #797979;
+}
+.hint {
+    display: none;
+}
+.field:hover .hint {
+    position: absolute;
+    display: block;
+    margin: -0px 0 0 285px;
+    color: #FFFFFF;
+    padding: 7px 10px;
+    background: rgba(0, 0, 0, 0.6);
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+    border-radius: 7px;
+}
+.button {
+    float: right;
+    margin-left: 15px;
+    margin: 10px 55px 10px 0;
+    font-weight: bold;
+    line-height: 1;
+    padding: 6px 10px;
+    cursor: pointer;
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 -1px 1px #64799e;
+    /* Background gradient */
+    background: #a5b8da;
+    background: -moz-linear-gradient (top, #a5b8da 0%, #7089b3 100%);
+    background: -webkit-gradient (linear, 0% 0%, 0% 100%, from(#a5b8da), to(#7089b3));
+    /* Border style */
+    border: 1px solid #5c6f91;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    /* Box shadow */
+    -moz-box-shadow: inset 0 1px 0 0 #aec3e5;
+    -webkit-box-shadow: inset 0 1px 0 0 #aec3e5;
+    box-shadow: inset 0 1px 0 0 #aec3e5;
+}
+.error {
+    font-family: Arial, Verdana;
+    font-size: 15px;
+    padding: 5px;
+    border: 1px solid #b9bdc1;
+    width: 400px;
+    color: red;
+}
+button.css3button {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #666;
+    padding: 1px 10px;
+    background: -moz-linear-gradient( top, #ffffff -5%, #ebebeb 10%, #ffffff 50%, #ffffff 75%, #d6d6d6);
+    background: -webkit-gradient( linear, left top, left bottom, from(#ffffff), color-stop(0.50, #666), color-stop(0.50, #666), color-stop(0.75, #666), to(#666));
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    border: 1px solid #0e0e0f;
+    -moz-box-shadow: 0px 1px 3px rgba(000, 000, 000, 0.5), inset 0px 0px 3px rgba(255, 255, 255, 1);
+    -webkit-box-shadow: 0px 1px 3px rgba(000, 000, 000, 0.5), inset 0px 0px 3px rgba(255, 255, 255, 1);
+    box-shadow: 0px 1px 3px rgba(000, 000, 000, 0.5), inset 0px 0px 3px rgba(255, 255, 255, 1);
+    text-shadow: 0px -1px 0px rgba(000, 000, 000, 0.1), 0px 1px 0px rgba(255, 255, 255, 1);
+}
+.hasDatepicker {
+    font-family: Arial, Verdana;
+    font-size: 15px;
+    padding: 5px;
+    border: 1px solid #b9bdc1;
+    width: 380px;
+    color: #797979;
+}

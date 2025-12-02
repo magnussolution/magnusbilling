@@ -1,0 +1,11 @@
+@if $include-tag-field-default-ui {
+    .#{$prefix}form-text-default .#{$prefix}tagfield-input-field {
+        color: $form-text-field-color;
+    }
+}
+
+@if $include-tag-field-toolbar-ui {
+    .#{$prefix}form-text-toolbar .#{$prefix}tagfield-input-field {
+        color: $form-text-field-color;
+    }
+}

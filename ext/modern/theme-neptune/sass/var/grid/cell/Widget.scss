@@ -1,0 +1,33 @@
+/**
+ * @class Ext.grid.cell.Widget
+ */
+
+/**
+ * @var {number/list}
+ * Widget cell padding
+ */
+$widgetcell-padding: dynamic(0);
+
+/**
+ * @var {number/list}
+ * Widget cell padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$widgetcell-padding-big: dynamic(0);
+
+@mixin widgetcell-ui(
+    $ui: null,
+    $padding: null,
+    $padding-big: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}widgetcell#{$ui-suffix} {
+        padding: $padding;
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                padding: $padding-big;
+            }
+        }
+    }
+}

@@ -1,0 +1,19 @@
+@include datetrigger-ui(
+    $width: $datetrigger-width,
+    $width-big: $datetrigger-width-big,
+    $background-color: $datetrigger-background-color,
+    $hovered-background-color: $datetrigger-hovered-background-color,
+    $pressed-background-color: $datetrigger-pressed-background-color,
+    $icon: $datetrigger-icon,
+    $icon-color: $datetrigger-icon-color,
+    $hovered-icon-color: $datetrigger-hovered-icon-color,
+    $pressed-icon-color: $datetrigger-pressed-icon-color,
+    $icon-background-color: $datetrigger-icon-background-color,
+    $hovered-icon-background-color: $datetrigger-hovered-icon-background-color,
+    $pressed-icon-background-color: $datetrigger-pressed-icon-background-color,
+    $icon-border-radius: $datetrigger-icon-border-radius,
+    $icon-size: $datetrigger-icon-size,
+    $icon-size-big: $datetrigger-icon-size-big,
+    $icon-font-size: $datetrigger-icon-font-size,
+    $icon-font-size-big: $datetrigger-icon-font-size-big
+);

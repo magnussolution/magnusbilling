@@ -1,0 +1,9 @@
+// Used to allow badges to escape from tabbars
+.#{$prefix}tabbar-inner {
+    overflow: visible;
+    padding: 0;
+
+    .x-big & {
+        padding: 0;
+    }
+}

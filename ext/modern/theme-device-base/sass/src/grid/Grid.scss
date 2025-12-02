@@ -1,0 +1,240 @@
+.#{$prefix}gridrow {
+    border-width: 0 0 1px 0;
+    border-style: solid;
+}
+
+.#{$prefix}gridcell {
+    line-height: 60px;
+    padding: 0 8px;
+    height: 60px;
+    border-width: 0 1px 0 0;
+}
+
+.#{$prefix}summaryrow {
+    height: 32px;
+    font-size: 0.8em;
+
+    .#{$prefix}gridcell {
+        height: 32px;
+        line-height: 30px;
+        border-width: 0 0 1px;
+        border-style: solid;
+    }
+}
+
+.#{$prefix}rowheader {
+    line-height: 44px;
+    font-weight: bold;
+}
+
+.#{$prefix}headercontainer {
+    border-width: 0 0 1px 1px;
+    border-style: solid;
+    height: 65px;
+    font-weight: bold;
+}
+
+.#{$prefix}gridcolumn {
+    height: 64px;
+    border-width: 1px 1px 0 0;
+    border-style: solid;
+    line-height: 64px;
+    vertical-align: middle;
+    padding: 0 8px;
+
+    .#{$prefix}text-el {
+        position: relative;
+        display: inline-block;
+    }
+
+    &.#{$prefix}sorted {
+        .#{$prefix}innerhtml:after {
+            position: absolute;
+            width: 12px;
+            line-height: 64px;
+            top: 0;
+            height: 64px;
+            font-family: 'Pictos';
+            font-size: 12px;
+        }
+    }
+
+    &.#{$prefix}column-align-left,
+    &.#{$prefix}column-align-center {
+        .#{$prefix}innerhtml:after {
+            right: -16px;
+        }
+    }
+    &.#{$prefix}column-align-right .#{$prefix}innerhtml:after {
+        left: -16px;
+    }
+
+    &.#{$prefix}sorted-asc .#{$prefix}innerhtml:after {
+        content: icon-character-for-name('up');
+    }
+    &.#{$prefix}sorted-desc .#{$prefix}innerhtml:after {
+        content: icon-character-for-name('down');
+    }
+}
+
+.#{$prefix}grid-headergroup {
+    display: inline-block;
+    position: relative;
+    vertical-align: bottom;
+    height: 64px;
+    border-style: solid;
+    border-width: 1px 0 0;
+
+    .#{$prefix}gridcolumn {
+        height: 32px !important;
+        line-height: 27px !important;
+        font-size: 0.7em;
+
+        &.#{$prefix}sorted-asc,
+        &.#{$prefix}sorted-desc {
+            .#{$prefix}text-el:after {
+                line-height: 27px;
+                height: 27px;
+            }
+        }
+    }
+}
+
+.#{$prefix}pagingtoolbar-prev {
+    @include font-icon($pictos-var-arrow_left Pictos);
+}
+
+.#{$prefix}pagingtoolbar-next {
+    @include font-icon($pictos-var-arrow_right Pictos);
+}
+
+.#{$prefix}gridviewoptions {
+    .#{$prefix}listitem .#{$prefix}innerhtml {
+        padding: 0px !important;
+    }
+
+    .#{$prefix}column-options-header {
+        height: 32px;
+        line-height: 28px;
+        vertical-align: middle;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        padding-left: 10px;
+    }
+
+    .#{$prefix}column-options-sortablehandle,
+    .#{$prefix}column-options-visibleindicator,
+    .#{$prefix}column-options-groupindicator,
+    .#{$prefix}column-options-folder,
+    .#{$prefix}column-options-leaf {
+        width: 40px;
+        height: 48px;
+        position: absolute;
+        bottom: 0;
+
+        &:after {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            text-align: center;
+            font-size: 24px;
+            line-height: 48px;
+            vertical-align: middle;
+            font-family: 'Pictos';
+        }
+    }
+
+    .#{$prefix}column-options-sortablehandle {
+        left: 0;
+        &:after {
+            line-height: 54px;
+            content: icon-character-for-name('list');
+        }
+    }
+    .#{$prefix}column-options-visibleindicator {
+        right: 0;
+        &:after {
+            font-size: 30px;
+            line-height: 54px;
+            content: icon-character-for-name('eye');
+        }
+    }
+
+    .#{$prefix}column-options-groupindicator {
+        right: 40px;
+        &:after {
+            font-size: 30px;
+            line-height: 54px;
+            content: icon-character-for-name('team');
+        }
+    }
+
+    .#{$prefix}column-options-folder,
+    .#{$prefix}column-options-leaf {
+        width: 30px;
+        left: 40px;
+
+        &:after {
+            line-height: 52px;
+            content: icon-character-for-name('folder');
+        }
+    }
+
+    .#{$prefix}column-options-leaf:after {
+        content: icon-character-for-name('file');
+    }
+
+    .#{$prefix}column-options-text {
+        display: block;
+        height: 30px;
+        margin: 10px 50px 5px 80px;
+        position: relative;
+        vertical-align: middle;
+        line-height: 28px;
+    }
+}
+
+//-----------------------------------------------
+
+.#{$prefix}selectioncolumn {
+    position: relative;
+    padding: 0;
+
+    &:after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 60px;
+        height: 64px;
+        line-height: 64px;
+        font-family: 'Pictos';
+        font-size: 26px;
+        text-align: center;
+        content: $pictos-var-check;
+    }
+}
+
+.#{$prefix}checkcell {
+    position: relative;
+    padding: 0;
+
+    &:after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 60px;
+        height: 60px;
+        line-height: 60px;
+        font-family: 'Pictos';
+        font-size: 20px;
+        text-align: center;
+        content: $pictos-var-minus2;
+    }
+}
+
+.#{$prefix}gridrow.#{$prefix}selected .#{$prefix}checkcell:after {
+    content: $pictos-var-check2;
+}

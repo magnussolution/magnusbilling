@@ -1,0 +1,47 @@
+{
+    /**
+     * The namespace of this package.
+     *
+     * As a general rule, all classes that belong to this package should be under this namespace
+     * if multiple namespaces are part of this package, set this to "".
+     */
+    "namespace": "Ext",
+
+    "name": "soap",
+    "type": "code",
+    "alternateName": [
+        "sencha-soap"
+    ],
+
+    "framework": "ext",
+    "toolkit": "classic",
+    "theme": "theme-neptune",
+    //"requires": [
+    //    ...
+    //],
+
+    "creator": "Sencha",
+    "summary": "SOAP Data Support",
+    "detailedDescription": "This package provides SOAP support for the Data package",
+
+    "version": "6.2.0.981",
+    "compatVersion": "6.0.0",
+    "format": "1",
+
+    "output": "${framework.dir}/build/packages/${package.name}",
+    "local": true,
+
+    "sass": {
+        "namespace": "Ext",
+
+        "etc": "${package.dir}/sass/etc/all.scss",
+
+        "var": "${package.dir}/sass/var",
+
+        "src": "${package.dir}/sass/src"
+    },
+
+    "classpath": "${package.dir}/src",
+
+    "overrides": "${package.dir}/overrides"
+}

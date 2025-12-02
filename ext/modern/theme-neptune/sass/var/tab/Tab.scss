@@ -1,0 +1,682 @@
+/**
+ * @class Ext.tab.Tab
+ */
+
+/**
+ * @var {color}
+ * Tab background-color
+ */
+$tab-background-color: dynamic(mix(#fff, $base-highlight-color, 10%));
+
+/**
+ * @var {color}
+ * Tab background-color when active
+ */
+$tab-active-background-color: dynamic($base-light-color);
+
+/**
+ * @var {string/list}
+ * Tab background-gradient.  Can be either the name of a gradient defined by
+ * {@link Global_CSS#background-gradient} or a list of color stops.
+ */
+$tab-background-gradient: dynamic(null);
+
+/**
+ * @var {string/list}
+ * Tab background-gradient when active.  Can be either the name of a gradient
+ * defined by {@link Global_CSS#background-gradient} or a list of color stops.
+ */
+$tab-active-background-gradient: dynamic(null);
+
+/**
+ * @var {color}
+ * Tab text color
+ */
+$tab-color: dynamic($light-color);
+
+/**
+ * @var {color}
+ * Tab text color when active
+ */
+$tab-active-color: dynamic($base-color);
+
+/**
+ * @var {color/list}
+ * Tab border-color
+ */
+$tab-border-color: dynamic($tab-background-color);
+
+/**
+ * @var {color/list}
+ * Tab border-color when active
+ */
+$tab-active-border-color: dynamic($tab-active-background-color);
+
+/**
+ * @var {number/list}
+ * Tab border-width
+ */
+$tab-border-width: dynamic(1px);
+
+/**
+ * @var {string/list}
+ * Tab border-style
+ */
+$tab-border-style: dynamic(solid);
+
+/**
+ * @var {number}
+ * Tab border-radius
+ */
+$tab-border-radius: dynamic(.25em);
+
+/**
+ * @var {number}
+ * Tab border-radius in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tab-border-radius-big: dynamic(.2em);
+
+/**
+ * @var {string/number}
+ * Tab font-weight
+ */
+$tab-font-weight: dynamic($font-weight-bold);
+
+/**
+ * @var {number}
+ * Tab font-size
+ */
+$tab-font-size: dynamic(1rem);
+
+/**
+ * @var {number}
+ * Tab font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tab-font-size-big: dynamic($tab-font-size);
+
+/**
+ * @var {number}
+ * Tab line-height
+ */
+$tab-line-height: dynamic(1.23em);
+
+/**
+ * @var {number}
+ * Tab line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tab-line-height-big: dynamic(1.6em);
+
+/**
+ * @var {string}
+ * Tab font-family
+ */
+$tab-font-family: dynamic($font-family);
+
+/**
+ * @var {number/list}
+ * Tab padding
+ */
+$tab-padding: dynamic(.23em .6em);
+
+/**
+ * @var {number/list}
+ * Tab padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tab-padding-big: dynamic(.2em .6em);
+
+/**
+ * @var {color}
+ * Tab icon color.
+ */
+$tab-icon-color: dynamic($tab-color);
+
+/**
+ * @var {color}
+ * Tab icon color when active
+ */
+$tab-active-icon-color: dynamic($tab-active-color);
+
+/**
+ * @var {number}
+ * Tab icon size.
+ */
+$tab-icon-size: dynamic($tab-line-height);
+
+/**
+ * @var {number}
+ * Tab icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tab-icon-size-big: dynamic($tab-line-height-big);
+
+/**
+ * @var {number}
+ * Tab icon font-size.  Used for configuring the size of font icons
+ */
+$tab-icon-font-size: dynamic($tab-icon-size);
+
+/**
+ * @var {number}
+ * Tab icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tab-icon-font-size-big: dynamic($tab-icon-size-big);
+
+/**
+ * @var {number}
+ * The space between the tab icon and text when the icon is horizontally aligned
+ */
+$tab-icon-horizontal-spacing: dynamic(.6em);
+
+/**
+ * @var {number}
+ * The space between the tab icon and text when the icon is horizontally aligned
+ * in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tab-icon-horizontal-spacing-big: dynamic($tab-icon-horizontal-spacing);
+
+/**
+ * @var {number}
+ * The space between the tab icon and text when the icon is vertically aligned
+ */
+$tab-icon-vertical-spacing: dynamic(.2em);
+
+/**
+ * @var {number}
+ * The space between the tab icon and text when the icon is vertically aligned
+ * in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tab-icon-vertical-spacing-big: dynamic($tab-icon-vertical-spacing);
+
+/**
+ * @var {number}
+ * Tab opacity when disabled
+ */
+$tab-disabled-opacity: dynamic(.5);
+
+/**
+ * @var {color}
+ * The background-color of the tab's {@link #badgeText badge}
+ */
+$tab-badge-background-color: dynamic(darken($alert-color, 10%));
+
+/**
+ * @var {string/list}
+ * The background-gradient of the tab's {@link #badgeText badge} Can be either the name
+ * of a gradient defined by {@link Global_CSS#background-gradient} or a list of color stops.
+ */
+$tab-badge-background-gradient: dynamic($base-background-gradient);
+
+/**
+ * @var {color}
+ * The text color of the tab's {@link #badgeText badge}
+ */
+$tab-badge-color: dynamic(color-by-background($tab-badge-background-color));
+
+/**
+ * @var {color}
+ * The border-color of the tab's {@link #badgeText badge}
+ */
+$tab-badge-border-color: dynamic(darken($tab-badge-background-color, 10%));
+
+/**
+ * @var {number/list}
+ * The border-radius of the tab's {@link #badgeText badge}
+ */
+$tab-badge-border-radius: dynamic(.2em);
+
+/**
+ * @var {number}
+ * The min-width of the tab's {@link #badgeText badge}
+ */
+$tab-badge-min-width: dynamic(2em);
+
+/**
+ * @var {number}
+ * The max-width of the tab's {@link #badgeText badge}
+ */
+$tab-badge-max-width: dynamic(95%);
+
+/**
+ * @var {string/number}
+ * The font-weight of the tab's {@link #badgeText badge}
+ */
+$tab-badge-font-weight: dynamic(null);
+
+/**
+ * @var {number}
+ * The font-size of the tab's {@link #badgeText badge}
+ */
+$tab-badge-font-size: dynamic(1em);
+
+/**
+ * @var {number}
+ * The font-size of the tab's {@link #badgeText badge} in the
+ {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tab-badge-font-size-big: dynamic(1em);
+
+/**
+ * @var {string}
+ * The font-family of the tab's {@link #badgeText badge}
+ */
+$tab-badge-font-family: dynamic($tab-font-family);
+
+/**
+ * @var {number}
+ * The line-height of the tab's {@link #badgeText badge}
+ */
+$tab-badge-line-height: dynamic($tab-line-height);
+
+/**
+ * @var {number}
+ * The line-height of the tab's {@link #badgeText badge} in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tab-badge-line-height-big: dynamic($tab-line-height-big);
+
+/**
+ * @var {number}
+ * Offset of the {@link #badgeText badge} from the top of the tab
+ */
+$tab-badge-top: dynamic(-.2em);
+
+/**
+ * @var {number}
+ * Offset of the {@link #badgeText badge} from the right of the tab
+ */
+$tab-badge-right: dynamic(0);
+
+/**
+ * @var {number}
+ * Offset of the {@link #badgeText badge} from the bottom of the tab
+ */
+$tab-badge-bottom: dynamic(null);
+
+/**
+ * @var {number}
+ * Offset of the {@link #badgeText badge} from the left of the tab
+ */
+$tab-badge-left: dynamic(null);
+
+/**
+ * @var {number}
+ * The padding of the tab's {@link #badgeText badge}
+ */
+$tab-badge-padding: dynamic(.1em .3em);
+
+/**
+ * @var {number}
+ * The padding of the tab's {@link #badgeText badge} in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tab-badge-padding-big: dynamic($tab-badge-padding);
+
+/**
+ * @var {shadow}
+ * The shadow for the active tab
+ */
+$tab-active-box-shadow: dynamic(null);
+
+/**
+ * Creates a visual theme for a Tab.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {color} $background-color
+ * Tab background-color
+ *
+ * @param {color} $active-background-color
+ * Tab background-color when active
+ *
+ * @param {string/list} $background-gradient
+ * Tab background-gradient.  Can be either the name of a gradient defined by
+ * {@link Global_CSS#background-gradient} or a list of color stops.
+ *
+ * @param {string/list} $active-background-gradient
+ * Tab background-gradient when active.  Can be either the name of a gradient
+ * defined by {@link Global_CSS#background-gradient} or a list of color stops.
+ *
+ * @param {color} $color
+ * Tab text color
+ *
+ * @param {color} $active-color
+ * Tab text color when active
+ *
+ * @param {color/list} $border-color
+ * Tab border-color
+ *
+ * @param {color/list} $active-border-color
+ * Tab border-color when active
+ *
+ * @param {number/list} $border-width
+ * Tab border-width
+ *
+ * @param {number/list} $border-style
+ * Tab border-style
+ *
+ * @param {number} $border-radius
+ * Tab border-radius
+ *
+ * @param {number} $border-radius-big
+ * Tab border-radius in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $font-weight
+ * Tab font-weight
+ *
+ * @param {number} $font-size
+ * Tab font-size
+ *
+ * @param {number} $font-size-big
+ * Tab font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $line-height
+ * Tab line-height
+ *
+ * @param {number} $line-height-big
+ * Tab line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {font-family} $font-family
+ * Tab font-family
+ *
+ * @param {number/list} $padding
+ * Tab padding
+ *
+ * @param {number/list} $padding-big
+ * Tab padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $icon-color
+ * Tab icon color.
+ *
+ * @var {color} $active-icon-color
+ * Tab icon color when active
+ *
+ * @param {number} $icon-size
+ * Tab icon size
+ *
+ * @param {number} $icon-size-big
+ * Tab icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $icon-font-size
+ * Tab icon font-size.  Used for configuring the size of font icons
+ *
+ * @param {number} $icon-font-size-big
+ * Tab icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $icon-horizontal-spacing
+ * The space between the button icon and text when the icon is horizontally aligned
+ *
+ * @param {number} $icon-horizontal-spacing-big
+ * The space between the button icon and text when the icon is horizontally aligned
+ * in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $icon-vertical-spacing
+ * The space between the button icon and text when the icon is vertically aligned
+ *
+ * @param {number} $icon-vertical-spacing-big
+ * The space between the button icon and text when the icon is vertically aligned
+ * in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $disabled-opacity
+ * Tab opacity when disabled
+ * @param {color} $badge-background-color
+ * The background-color of the button's {@link #badgeText badge}
+ *
+ * @param {string/list} $badge-background-gradient
+ * The background-gradient of the button's {@link #badgeText badge} Can be either the name
+ * of a gradient defined by {@link Global_CSS#background-gradient} or a list of color stops.
+ *
+ * @param {color} $badge-color
+ * The text color of the button's {@link #badgeText badge}
+ *
+ * @param {color} $badge-border-color
+ * The border-color of the button's {@link #badgeText badge}
+ *
+ * @param {number/list} $badge-border-radius
+ * The border-radius of the button's {@link #badgeText badge}
+ *
+ * @param {number} $badge-min-width
+ * The min-width of the button's {@link #badgeText badge}
+ *
+ * @param {number} $badge-max-width
+ * The max-width of the button's {@link #badgeText badge}
+ *
+ * @param {number} $badge-font-weight
+ * The font-weight of the button's {@link #badgeText badge}
+ *
+ * @param {number} $badge-font-size
+ * The font-size of the button's {@link #badgeText badge}
+ *
+ * @param {number} $badge-font-size-big
+ * The font-size of the button's {@link #badgeText badge} in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $badge-font-family
+ * The font-family of the button's {@link #badgeText badge}
+ *
+ * @param {number} $badge-line-height
+ * The line-height of the button's {@link #badgeText badge}
+ *
+ * @param {number} $badge-line-height-big
+ * The line-height of the button's {@link #badgeText badge} in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $badge-top
+ * Offset of the {@link #badgeText badge} from the top of the button
+ *
+ * @param {number} $badge-right
+ * Offset of the {@link #badgeText badge} from the right of the button
+ *
+ * @param {number} $badge-bottom
+ * Offset of the {@link #badgeText badge} from the bottom of the button
+ *
+ * @param {number} $badge-left
+ * Offset of the {@link #badgeText badge} from the left of the button
+ *
+ * @param {number} $badge-padding
+ * The padding of the button's {@link #badgeText badge}
+ *
+ * @member Ext.tab.Tab
+ */
+@mixin tab-ui(
+    $ui: null,
+
+    $background-color: null,
+    $active-background-color: null,
+
+    $background-gradient: null,
+    $active-background-gradient: null,
+
+    $color: null,
+    $active-color: null,
+
+    $border-color: null,
+    $active-border-color: null,
+
+    $border-width: null,
+    $border-style: null,
+
+    $border-radius: null,
+    $border-radius-big: null,
+
+    $active-box-shadow: null,
+
+    $font-weight: null,
+    $font-size: null,
+    $font-size-big: null,
+    $line-height: null,
+    $line-height-big: null,
+    $font-family: null,
+
+    $padding: null,
+    $padding-big: null,
+
+    $icon-color: null,
+    $active-icon-color: null,
+    $icon-size: null,
+    $icon-size-big: null,
+    $icon-font-size: null,
+    $icon-font-size-big: null,
+    $icon-horizontal-spacing: null,
+    $icon-horizontal-spacing-big: null,
+    $icon-vertical-spacing: null,
+    $icon-vertical-spacing-big: null,
+
+    $disabled-opacity: null,
+
+    $badge-background-color: null,
+    $badge-background-gradient: null,
+    $badge-color: null,
+    $badge-border-color: null,
+    $badge-border-radius: null,
+    $badge-min-width: null,
+    $badge-max-width: null,
+    $badge-font-weight: null,
+    $badge-font-size: null,
+    $badge-font-size-big: null,
+    $badge-font-family: null,
+    $badge-line-height: null,
+    $badge-line-height-big: null,
+    $badge-top: null,
+    $badge-right: null,
+    $badge-bottom: null,
+    $badge-left: null,
+    $badge-padding: null,
+    $badge-padding-big: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .x-tab#{$ui-suffix} {
+        color: $color;
+        padding: $padding;
+        @include font($font-weight, $font-size, $line-height, $font-family);
+        @include border($border-width, $border-style, $border-color);
+
+        @if $enable-border-radius {
+            @include border-radius($border-radius);
+        }
+
+        @if $enable-big {
+            .x-big & {
+                @if $padding-big != $padding {
+                    padding: $padding-big;
+                }
+                @if $font-size-big != $font-size {
+                    font-size: $font-size-big;
+                }
+                @if $line-height-big != $line-height {
+                    line-height: $line-height-big;
+                }
+                @if $enable-border-radius and ($border-radius-big != $border-radius) {
+                    @include border-radius($border-radius-big);
+                }
+            }
+        }
+
+        @include background-gradient($background-color, $background-gradient);
+
+        &.x-tab-active {
+            color: $active-color;
+            @include background-gradient($active-background-color, $active-background-gradient);
+            border-color: $active-border-color;
+            box-shadow: $active-box-shadow;
+        }
+
+        .x-button-icon {
+            width: $icon-size;
+            height: $icon-size;
+            @include icon($font-size: $icon-font-size, $font-size-big: $icon-font-size-big);
+
+            @if $enable-big {
+                .x-big & {
+                    width: $icon-size-big;
+                    height: $icon-size-big;
+                }
+            }
+
+            color: $icon-color;
+        }
+
+        &.x-tab-active .x-button-icon {
+            color: $active-icon-color;
+        }
+
+        &.x-iconalign-left .x-button-icon {
+            margin-right: $icon-horizontal-spacing;
+
+            @if $enable-big and $icon-horizontal-spacing-big != $icon-horizontal-spacing {
+                .x-big & {
+                    margin-right: $icon-horizontal-spacing-big;
+                }
+            }
+        }
+
+        &.x-iconalign-right .x-button-icon {
+            margin-left: $icon-horizontal-spacing;
+
+            @if $enable-big and $icon-horizontal-spacing-big != $icon-horizontal-spacing {
+                .x-big & {
+                    margin-left: $icon-horizontal-spacing-big;
+                }
+            }
+        }
+
+        &.x-iconalign-top .x-button-icon {
+            margin-bottom: $icon-vertical-spacing;
+
+            @if $enable-big and $icon-vertical-spacing-big != $icon-vertical-spacing {
+                .x-big & {
+                    margin-bottom: $icon-vertical-spacing-big;
+                }
+            }
+        }
+
+        &.x-iconalign-bottom .x-button-icon {
+            margin-top: $icon-vertical-spacing;
+
+            @if $enable-big and $icon-vertical-spacing-big != $icon-vertical-spacing {
+                .x-big & {
+                    margin-top: $icon-vertical-spacing-big;
+                }
+            }
+        }
+
+        .x-button-label {
+            // prevents the button height from shrinking when it has no text
+            min-height: $line-height;
+        }
+
+        &.x-disabled {
+            opacity: $disabled-opacity;
+        }
+
+        .x-badge {
+            border-color: $badge-border-color;
+            min-width: $badge-min-width;
+
+            @include font($badge-font-weight, $badge-font-size, $badge-line-height, $badge-font-family);
+
+            @if $enable-big {
+                .x-big & {
+                    font-size: $badge-font-size-big;
+                    line-height: $badge-line-height-big;
+                    padding: $badge-padding-big;
+                }
+            }
+
+            top: $badge-top;
+            right: $badge-right;
+            bottom: $badge-bottom;
+            left: $badge-left;
+            padding: $badge-padding;
+            max-width: $badge-max-width;
+            color: $badge-color;
+
+            @include background-gradient($badge-background-color, $badge-background-gradient);
+
+            @if $enable-border-radius {
+                @include border-radius($badge-border-radius);
+            }
+        }
+    }
+}

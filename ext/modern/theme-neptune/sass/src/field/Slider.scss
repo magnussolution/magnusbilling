@@ -1,0 +1,15 @@
+/**
+ * @class Ext.field.Slider
+ */
+
+.x-sliderfield {
+    .x-body-el {
+        padding: $sliderfield-padding;
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                padding: $sliderfield-padding-big;
+            }
+        }
+    }
+}

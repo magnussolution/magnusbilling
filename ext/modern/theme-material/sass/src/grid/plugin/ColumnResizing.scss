@@ -1,0 +1,14 @@
+.#{$prefix}gridcolumn:after {
+  content: '';
+  width: 0;
+  background-color: $accent-light-color;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.#{$prefix}gridcolumn.#{$prefix}resizing:after {
+  width: 16px;
+}
+

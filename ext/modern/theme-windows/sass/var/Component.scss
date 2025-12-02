@@ -1,0 +1,181 @@
+/**
+ * @class Global_CSS
+ */
+
+/**
+ * @var {boolean} $include-html-style
+ * Optionally remove included HTML styles/typography (for components with styleHtmlContent: true).
+ * Styles are scoped to .x-html. Set t o false to reduce CSS weight.
+ */
+$include-html-style: dynamic(true);
+
+/**
+ * @var {boolean} $include-form-sliders
+ * Decides if default HTML styles are included (for components with styleHtmlContent: true). Class is applied to .x-html.
+ */
+$include-form-sliders: dynamic(true);
+
+/**
+ * @var {boolean} $include-default-uis
+ * Decides whether or not to include the default UIs for all components.
+ */
+$include-default-uis: dynamic(true);
+
+/**
+ * @var {color} $active-color
+ * Color used for elements like selected rows, "action" UIs (eg. on buttons) and certain overlays like the picker mask.
+ */
+//$active-color: darken(saturate($base-color, 55%), 10%) !dynamic;
+
+/**
+ * @var {color} $page-bg-color
+ * Background color for fullscreen components.
+ */
+//$page-bg-color: #eee !dynamic;
+
+/**
+ * @var {measurement} $global-row-height
+ * The minimum row height for items like toolbars.
+ */
+$global-row-height: dynamic(2.6em);
+
+/**
+ * @var {measurement} $global-list-height
+ * The minimum row height for items like toolbars.
+ */
+$global-list-height: dynamic(46px);
+
+/**
+ * @var {color} $loading-spinner-color
+ * Background-color for the bars in the loading spinner.
+ */
+$loading-spinner-color: dynamic(#aaa);
+
+/**
+ * color styles
+ */
+
+$dark-theme: dynamic(true);
+$dialog-color: #1F1F1F;
+
+/**
+ * @var {color} $base-color
+ * The primary color variable from which most elements derive their color scheme.
+ */
+$base-color: dynamic(rgba(145,0,145,1)); // Triton Blue
+
+/**
+ * Light theme
+ */
+$light-background-color: dynamic(#fff);
+$light-foreground-color: dynamic(#111);
+$light-inactive-color: dynamic(#ddd);
+
+// Form fields
+$light-field-background-color: dynamic(#fff);
+$light-field-border-color: dynamic(#BABABA);
+$light-field-color: dynamic(#000);
+$light-field-placeholder-color: dynamic(#7A7A7A);
+$light-field-focus-background-color: dynamic(#fff);
+$light-field-focus-border-color: dynamic(#5C5C5C);
+$light-field-disabled-background-color: dynamic(#EAEAEA);
+$light-field-disabled-border-color: dynamic(#D9D9D9);
+$light-field-disabled-color: dynamic(#9F9F9F);
+$light-field-disabled-placeholder-color: dynamic(#BDBDBD);
+
+$light-form-slider-background-color: dynamic(#C6C6C6);
+$light-form-slider-value-background-color: dynamic($base-color);
+$light-form-slider-thumb-background-color: dynamic(#000);
+$light-form-slider-disabled-background-color: dynamic(#DBDBDB);
+$light-form-slider-disabled-value-background-color: dynamic(#BABABA);
+$light-form-slider-disabled-thumb-background-color: dynamic(#A0A0A0);
+
+$light-form-toggle-background-color: dynamic(#A6A6A6);
+$light-form-toggle-border-color: dynamic(#A6A6A6);
+$light-form-toggle-thumb-background-color: dynamic($light-form-slider-thumb-background-color);
+$light-form-toggle-disabled-background-color: dynamic(#E0E0E0);
+$light-form-toggle-disabled-border-color: dynamic(#CCCCCC);
+$light-form-toggle-disabled-thumb-background-color: dynamic(#A6A6A6);
+
+/**
+ * Dark theme
+ */
+$dark-background-color: dynamic(#111);
+$dark-foreground-color: dynamic(#fff);
+$dark-inactive-color: dynamic(#666);
+
+// Form fields
+$dark-field-background-color: dynamic(#D2D2D2);
+$dark-field-border-color: dynamic(#D2D2D2);
+$dark-field-color: dynamic(rgba(0,0,0,.8));
+$dark-field-placeholder-color: dynamic(rgba(0,0,0,.6));
+$dark-field-focus-background-color: dynamic(#FFFFFF);
+$dark-field-focus-border-color: dynamic(#FFFFFF);
+$dark-field-disabled-background-color: dynamic(#1D1D1D);
+$dark-field-disabled-border-color: dynamic(#777777);
+$dark-field-disabled-color: dynamic(rgba(255,255,255,.4));
+$dark-field-disabled-placeholder-color: dynamic(rgba(255,255,255,.2));
+
+$dark-form-slider-background-color: dynamic(#6C6C6C);
+$dark-form-slider-value-background-color: dynamic($base-color);
+$dark-form-slider-thumb-background-color: dynamic(#fff);
+$dark-form-slider-disabled-background-color: dynamic(#383838);
+$dark-form-slider-disabled-value-background-color: dynamic(#535353);
+$dark-form-slider-disabled-thumb-background-color: dynamic(#7E7E7E);
+
+$dark-form-toggle-background-color: dynamic(#6B6B6B);
+$dark-form-toggle-border-color: dynamic(#6C6C6C);
+$dark-form-toggle-thumb-background-color: dynamic($dark-form-slider-thumb-background-color);
+$dark-form-toggle-disabled-background-color: dynamic(#383838);
+$dark-form-toggle-disabled-border-color: dynamic(#4A4A4A);
+$dark-form-toggle-disabled-thumb-background-color: dynamic(#6C6C6C);
+
+/**
+ * Default values (light theme)
+ */
+
+$background-color: dynamic(if($dark-theme, $dark-background-color, $light-background-color));
+$foreground-color: dynamic(if($dark-theme, $dark-foreground-color, $light-foreground-color));
+$inactive-color: dynamic(if($dark-theme, $dark-inactive-color, $light-inactive-color));
+$color: $foreground-color;
+
+// Form fields
+$field-background-color: dynamic(if($dark-theme, $dark-field-background-color, $light-field-background-color));
+$field-border-color: dynamic(if($dark-theme, $dark-field-border-color, $light-field-border-color));
+$field-color: dynamic(if($dark-theme, $dark-field-color, $light-field-color));
+$field-placeholder-color: dynamic(if($dark-theme, $dark-field-placeholder-color, $light-field-placeholder-color));
+$field-focus-background-color: dynamic(if($dark-theme, $dark-field-focus-background-color, $light-field-focus-background-color));
+$field-focus-border-color: dynamic(if($dark-theme, $dark-field-focus-border-color, $light-field-focus-border-color));
+$field-disabled-background-color: dynamic(if($dark-theme, $dark-field-disabled-background-color, $light-field-disabled-background-color));
+$field-disabled-border-color: dynamic(if($dark-theme, $dark-field-disabled-border-color, $light-field-disabled-border-color));
+$field-disabled-color: dynamic(if($dark-theme, $dark-field-disabled-color, $light-field-disabled-color));
+$field-disabled-placeholder-color: dynamic(if($dark-theme, $dark-field-disabled-placeholder-color, $light-field-disabled-placeholder-color));
+
+$form-slider-background-color: dynamic(if($dark-theme, $dark-form-slider-background-color, $light-form-slider-background-color));
+$form-slider-value-background-color: dynamic(if($dark-theme, $dark-form-slider-value-background-color, $light-form-slider-value-background-color));
+$form-slider-thumb-background-color: dynamic(if($dark-theme, $dark-form-slider-thumb-background-color, $light-form-slider-thumb-background-color));
+$form-slider-disabled-background-color: dynamic(if($dark-theme, $dark-form-slider-disabled-background-color, $light-form-slider-disabled-background-color));
+$form-slider-disabled-value-background-color: dynamic(if($dark-theme, $dark-form-slider-disabled-value-background-color, $light-form-slider-disabled-value-background-color));
+$form-slider-disabled-thumb-background-color: dynamic(if($dark-theme, $dark-form-slider-disabled-thumb-background-color, $light-form-slider-disabled-thumb-background-color));
+
+$form-toggle-background-color: dynamic(if($dark-theme, $dark-form-toggle-background-color, $light-form-toggle-background-color));
+$form-toggle-border-color: dynamic(if($dark-theme, $dark-form-toggle-border-color, $light-form-toggle-border-color));
+$form-toggle-thumb-background-color: dynamic($form-slider-thumb-background-color);
+$form-toggle-disabled-background-color: dynamic(if($dark-theme, $dark-form-toggle-disabled-background-color, $light-form-toggle-disabled-background-color));
+$form-toggle-disabled-border-color: dynamic(if($dark-theme, $dark-form-toggle-disabled-border-color, $light-form-toggle-disabled-border-color));
+$form-toggle-disabled-thumb-background-color: dynamic(if($dark-theme, $dark-form-toggle-disabled-thumb-background-color, $light-form-toggle-disabled-thumb-background-color));
+
+$form-slider-height: dynamic(11px);
+
+$alert-color: dynamic(red);
+$confirm-color: dynamic(#92cf00);  // Green
+
+/**
+* font sizes
+*/
+$font-size-small: dynamic(10pt);
+$font-size-normal: dynamic(11pt);
+$font-size-medium: dynamic(15pt);
+$font-size-medium-large: dynamic(17pt);
+$font-size-large: dynamic(19pt);
+$font-size-extra-large: dynamic(24pt);

@@ -1,0 +1,33 @@
+$listitem-background-color: dynamic($background-color);
+$listitem-hovered-background-color: dynamic($overlay-color);
+$listitem-selected-color: dynamic($color);
+$listitem-selected-background-color: dynamic(if($dark-mode, material-color($base-color-name, '700'), material-color($base-color-name, '200')));
+$listitem-pressed-color: dynamic($reverse-color);
+$listitem-pressed-background-color: dynamic($base-pressed-color);
+
+$listitem-border-color: dynamic($divider-color);
+$listitem-border-width: dynamic(1px);
+$listitem-border-style: dynamic(solid);
+
+$listitem-pressed-color: dynamic($reverse-color);
+
+$listitem-font-size: dynamic(px-to-rem(14px, 12px));
+$listitem-font-size-big: dynamic(px-to-rem(16px, 14px));
+$listitem-line-height: dynamic(px-to-em(18px, 14px));
+$listitem-line-height-big: dynamic(px-to-em(20px, 16px));
+$listitem-font-weight: dynamic(400);
+$listitem-padding: dynamic(px-to-em(7px, 14px) px-to-em($content-padding, 14px));
+$listitem-padding-big: dynamic(px-to-em(14px, 16px) px-to-em($content-padding, 16px));
+
+$listitem-disclosure-icon-size: dynamic(px-to-rem(18px, 12px));
+$listitem-disclosure-icon-font-size: dynamic(px-to-rem(14px, 12px));
+$listitem-disclosure-icon-size-big: dynamic(px-to-rem(20px, 14px));
+$listitem-disclosure-icon-font-size-big: dynamic(px-to-rem(16px, 14px));
+$listitem-disclosure-icon-color: dynamic($highlight-color);
+$listitem-disclosure-pressed-icon-color: dynamic($reverse-color);
+$listitem-pressed-disclosure-icon-color: dynamic($reverse-color);
+$listitem-disclosure-icon: dynamic('arrow_forward');
+
+$listitem-disclosure-margin: dynamic(null 12px null $content-padding);
+$listitem-disclosure-border-radius: dynamic(50%);
+$listitem-disclosure-pressed-background-color: dynamic($base-pressed-color);

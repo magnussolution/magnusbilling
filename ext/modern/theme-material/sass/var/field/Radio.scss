@@ -1,0 +1,4 @@
+$radiofield-checkbox-font-size: dynamic(px-to-rem(16px, 12px));
+$radiofield-checkbox-font-size-big: dynamic(px-to-rem(18px, 14px));
+$radiofield-checkbox-icon: dynamic('radio_button_unchecked' $radiofield-checkbox-font-size);
+$radiofield-checked-checkbox-icon: dynamic('radio_button_checked' $radiofield-checkbox-font-size);

@@ -1,0 +1,570 @@
+/**
+ * @class Ext.dataview.ListItem
+ */
+
+// NOTE when adding or removing variables in this file - please remember to document them
+// over in SimpleListItem.scss as well
+
+//# fashion replaces $list-item-color
+/**
+ * @var {color}
+ * List item text color
+ */
+$listitem-color: dynamic($color);
+
+/**
+ * @var {color}
+ * List item text color when hovered
+ */
+$listitem-hovered-color: dynamic(null);
+
+/**
+ * @var {color}
+ * List item text color when pressed
+ */
+$listitem-pressed-color: dynamic(null);
+
+/**
+ * @var {color}
+ * List item text color when selected
+ */
+$listitem-selected-color: dynamic(null);
+
+//# fashion replaces $list-item-background-color
+/**
+ * @var {color}
+ * List item background-color
+ */
+$listitem-background-color: dynamic($background-color);
+
+/**
+ * @var {color}
+ * background-color for {@link Ext.dataview.List#striped striped} list items
+ */
+$listitem-alt-background-color: dynamic(darken($listitem-background-color, 2));
+
+/**
+ * @var {color}
+ * List item background-color when hovered
+ */
+$listitem-hovered-background-color: dynamic(mix(#fff, $base-light-color, 65%));
+
+//# fashion replaces $list-item-pressed-background-color
+/**
+ * @var {color}
+ * List item background-color when pressed
+ */
+$listitem-pressed-background-color: dynamic(null);
+
+//# fashion replaces $list-item-selected-background-color
+/**
+ * @var {color}
+ * List item background-color when selected
+ */
+$listitem-selected-background-color: dynamic(mix(#fff, $base-light-color, 25%));
+
+/**
+ * @var {number}
+ * List item border-width
+ */
+$listitem-border-width: dynamic(1px);
+
+/**
+ * @var {string}
+ * List item border-style
+ */
+$listitem-border-style: dynamic(solid);
+
+//# fashion replaces $list-item-border-color
+/**
+ * @var {color}
+ * List item border-color
+ */
+$listitem-border-color: dynamic($neutral-highlight-color);
+
+/**
+ * @var {color}
+ * List item border-color when hovered
+ */
+$listitem-hovered-border-color: dynamic($listitem-hovered-background-color);
+
+/**
+ * @var {color}
+ * List item border-color when pressed
+ */
+$listitem-pressed-border-color: dynamic($listitem-pressed-background-color);
+
+/**
+ * @var {color}
+ * List item border-color when selected
+ */
+$listitem-selected-border-color: dynamic($listitem-selected-background-color);
+
+//# fashion replaces $list-item-font-weight
+/**
+ * @var {string/number}
+ * List item font-weight
+ */
+$listitem-font-weight: dynamic($font-weight-normal);
+
+//# fashion replaces $list-item-font-size
+/**
+ * @var {number}
+ * List item font-size
+ */
+$listitem-font-size: dynamic(1rem);
+
+//# fashion replaces $list-item-font-size-big
+/**
+ * @var {number}
+ * List item font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$listitem-font-size-big: dynamic(null);
+
+//# fashion replaces $list-item-line-height
+/**
+ * @var {number}
+ * List item line-height
+ */
+$listitem-line-height: dynamic(1.25em);
+
+//# fashion replaces $list-item-line-height-big
+/**
+ * @var {number}
+ * List item line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$listitem-line-height-big: dynamic(1.2em);
+
+//# fashion replaces $list-item-font-family
+/**
+ * @var {string}
+ * List item font-family
+ */
+$listitem-font-family: dynamic($font-family);
+
+//# fashion replaces $list-item-padding
+/**
+ * @var {number/list}
+ * List item padding
+ */
+$listitem-padding: dynamic(.308em .6em);
+
+//# fashion replaces $list-item-padding-big
+/**
+ * @var {number/list}
+ * List item padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$listitem-padding-big: dynamic(.467em 1em);
+
+/**
+ * @var {color}
+ * List item disclosure background-color
+ */
+$listitem-disclosure-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * List item disclosure background-color when the list item is pressed
+ */
+$listitem-pressed-disclosure-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * List item disclosure background-color when the disclosure is pressed
+ */
+$listitem-disclosure-pressed-background-color: dynamic(null);
+
+/**
+ * @var {number/list}
+ * List item disclosure border radius
+ */
+$listitem-disclosure-border-radius: dynamic(null);
+
+/**
+ * @var {number/list}
+ * List item disclosure border radius in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$listitem-disclosure-border-radius-big: dynamic($listitem-disclosure-border-radius);
+
+/**
+ * @var {string}
+ * List item disclosure icon
+ */
+$listitem-disclosure-icon: dynamic($fa-var-arrow-circle-right);
+
+/**
+ * @var {color}
+ * List item disclosure icon color
+ */
+$listitem-disclosure-icon-color: dynamic($neutral-dark-color);
+
+/**
+ * @var {color}
+ * List item disclosure icon color when the list item is pressed
+ */
+$listitem-pressed-disclosure-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * List item disclosure icon color when the disclosure is pressed
+ */
+$listitem-disclosure-pressed-icon-color: dynamic(null);
+
+/**
+ * @var {number}
+ * List item disclosure icon size
+ */
+$listitem-disclosure-icon-size: dynamic(1.23em);
+
+/**
+ * @var {number}
+ * List item disclosure icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$listitem-disclosure-icon-size-big: dynamic(2em);
+
+/**
+ * @var {number}
+ * List item disclosure icon font-size
+ */
+$listitem-disclosure-icon-font-size: dynamic($listitem-disclosure-icon-size);
+
+/**
+ * @var {number}
+ * List item disclosure icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$listitem-disclosure-icon-font-size-big: dynamic($listitem-disclosure-icon-size-big);
+
+/**
+ * @var {number/list}
+ * List item disclosure margin
+ */
+$listitem-disclosure-margin: dynamic(null 0.6em null null);
+
+/**
+ * @var {number/list}
+ * List item disclosure margin in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$listitem-disclosure-margin-big: dynamic(null 0.6em null 1em);
+
+/**
+ * Creates a visual theme for a ListItem.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=listitem] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {color} $color
+ * List item text color
+ *
+ * @param {color} $hovered-color
+ * List item text color when hovered
+ *
+ * @param {color} $pressed-color
+ * List item text color when pressed
+ *
+ * @param {color} $selected-color
+ * List item text color when selected
+ *
+ * @param {color} $background-color
+ * List item background-color
+ *
+ * @param {color} $alt-background-color
+ * background-color for {@link Ext.dataview.List#striped striped} list items
+ *
+ * @param {color} $hovered-background-color
+ * List item background-color when hovered
+ *
+ * @param {color} $pressed-background-color
+ * List item background-color when pressed
+ *
+ * @param {color} $selected-background-color
+ * List item background-color when selected
+ *
+ * @param {number} $border-width
+ * List item border-width
+ *
+ * @param {string} $border-style
+ * List item border-style
+ *
+ * @param {color} $border-color
+ * List item border-color
+ *
+ * @param {color} $hovered-border-color
+ * List item border-color when hovered
+ *
+ * @param {color} $pressed-border-color
+ * List item border-color when pressed
+ *
+ * @param {color} $selected-border-color
+ * List item border-color when selected
+ *
+ * @param {string/number} $font-weight
+ * List item font-weight
+ *
+ * @param {number} $font-size
+ * List item font-size
+ *
+ * @param {number} $font-size-big
+ * List item font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $line-height
+ * List item line-height
+ *
+ * @param {number} $line-height-big
+ * List item line-height in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $font-family
+ * List item font-family
+ *
+ * @param {number/list} $padding
+ * List item padding
+ *
+ * @param {number/list} $padding-big
+ * List item padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $disclosure-background-color
+ * List item disclosure background-color
+ *
+ * @param {color} $pressed-disclosure-background-color
+ * List item disclosure background-color when the list item is pressed
+ *
+ * @param {color} $disclosure-pressed-background-color
+ * List item disclosure background-color when the disclosure is pressed
+ *
+ * @param {number/list} $disclosure-border-radius
+ * List item disclosure border radius
+ *
+ * @param {number/list} $disclosure-border-radius-big
+ * List item disclosure border radius in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {string} $disclosure-icon
+ * List item disclosure icon
+ *
+ * @param {color} $disclosure-icon-color
+ * List item disclosure icon color
+ *
+ * @param {color} $pressed-disclosure-icon-color
+ * List item disclosure icon color when the list item is pressed
+ *
+ * @param {color} $disclosure-pressed-icon-color
+ * List item disclosure icon color when the disclosure is pressed
+ *
+ * @param {number} $disclosure-icon-size
+ * List item disclosure icon size
+ *
+ * @param {number} $disclosure-icon-size-big
+ * List item disclosure icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $disclosure-icon-font-size
+ * List item disclosure icon font-size
+ *
+ * @param {number} $disclosure-icon-font-size-big
+ * List item disclosure icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $disclosure-margin
+ * List item disclosure margin
+ *
+ * @param {number} $disclosure-margin-big
+ * List item disclosure margin in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin listitem-ui(
+    $ui: null,
+    $xtype: listitem,
+    $color: null,
+    $hovered-color: null,
+    $pressed-color: null,
+    $selected-color: null,
+    $background-color: null,
+    $alt-background-color: null,
+    $hovered-background-color: null,
+    $pressed-background-color: null,
+    $selected-background-color: null,
+    $border-width: null,
+    $border-style: null,
+    $border-color: null,
+    $hovered-border-color: null,
+    $pressed-border-color: null,
+    $selected-border-color: null,
+    $font-weight: null,
+    $font-size: null,
+    $font-size-big: null,
+    $line-height: null,
+    $line-height-big: null,
+    $font-family: null,
+    $padding: null,
+    $padding-big: null,
+    $disclosure-background-color: null,
+    $pressed-disclosure-background-color: null,
+    $disclosure-pressed-background-color: null,
+    $disclosure-border-radius: null,
+    $disclosure-border-radius-big: null,
+    $disclosure-icon: null,
+    $disclosure-icon-color: null,
+    $pressed-disclosure-icon-color: null,
+    $disclosure-pressed-icon-color: null,
+    $disclosure-icon-size: null,
+    $disclosure-icon-size-big: null,
+    $disclosure-icon-font-size: null,
+    $disclosure-icon-font-size-big: null,
+    $disclosure-margin: null,
+    $disclosure-margin-big: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}#{$xtype}#{$ui-suffix} {
+        @include font($font-weight, $font-size, $line-height, $font-family);
+
+        @include listitem-base(
+            $xtype: $xtype,
+            $color: $color,
+            $hovered-color: $hovered-color,
+            $pressed-color: $pressed-color,
+            $selected-color: $selected-color,
+            $background-color: $background-color,
+            $alt-background-color: $alt-background-color,
+            $hovered-background-color: $hovered-background-color,
+            $pressed-background-color: $pressed-background-color,
+            $selected-background-color: $selected-background-color,
+            $border-width: $border-width,
+            $border-style: $border-style,
+            $border-color: $border-color,
+            $hovered-border-color: $hovered-border-color,
+            $pressed-border-color: $pressed-border-color,
+            $selected-border-color: $selected-border-color
+        );
+
+        @if $enable-big  {
+            .#{$prefix}big & {
+                font-size: $font-size-big;
+                line-height: $line-height-big;
+            }
+        }
+    }
+
+    .#{$prefix}#{$xtype}-body#{$ui-suffix} {
+        padding: $padding;
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                padding: $padding-big;
+            }
+        }
+    }
+
+    .#{$prefix}#{$xtype}-disclosure#{$ui-suffix} {
+        @include margin($disclosure-margin);
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                @include margin($disclosure-margin-big);
+            }
+        }
+
+        .#{$prefix}icon-el {
+            color: $disclosure-icon-color;
+            background-color: $disclosure-background-color;
+            border-radius: $disclosure-border-radius;
+            height: $disclosure-icon-size;
+            width: $disclosure-icon-size;
+
+
+            .#{$prefix}#{$xtype}.#{$prefix}pressed & {
+                color: $pressed-disclosure-icon-color;
+                background-color: $pressed-disclosure-background-color;
+            }
+
+            @if $enable-big {
+                .#{$prefix}big & {
+                    border-radius: $disclosure-border-radius-big;
+                    height: $disclosure-icon-size-big;
+                    width: $disclosure-icon-size-big;
+                }
+            }
+
+            @include icon(
+                $icon: $disclosure-icon,
+                $font-size: $disclosure-icon-font-size,
+                $font-size-big: $disclosure-icon-font-size-big
+            );
+
+            &:active {
+                background-color: $disclosure-pressed-background-color;
+                color: $disclosure-pressed-icon-color;
+            }
+        }
+    }
+}
+
+/**
+ * A private mixin that generates the styling common to the ListItem and GridRow ui mixins.
+ * Do not call this mixin directly. Use {@link Ext.dataview.ListItem#listitem-ui listitem-ui}
+ * or {@link Ext.grid.Row#$gridrow-ui gridrow-ui}.
+ * @private
+ */
+@mixin listitem-base(
+    $xtype: null,
+    $color: null,
+    $hovered-color: null,
+    $pressed-color: null,
+    $selected-color: null,
+    $background-color: null,
+    $alt-background-color: null,
+    $hovered-background-color: null,
+    $pressed-background-color: null,
+    $selected-background-color: null,
+    $border-width: null,
+    $border-style: null,
+    $border-color: null,
+    $hovered-border-color: null,
+    $pressed-border-color: null,
+    $selected-border-color: null
+) {
+    color: $color;
+    background-color: $background-color;
+    @include border-top($border-width, $border-style, $border-color);
+
+    &.#{$prefix}last {
+        @include border-bottom($border-width, $border-style, $border-color);
+    }
+
+    &.#{$prefix}odd {
+        background-color: $alt-background-color;
+    }
+
+    &.#{$prefix}hovered {
+        background-color: $hovered-background-color;
+        color: $hovered-color;
+        border-color: $hovered-border-color;
+
+        + .#{$prefix}#{$xtype} {
+            border-top-color: $hovered-border-color;
+        }
+    }
+
+    // This rule must be more specific than the ":hover + .x-[xtype]" rule above
+    // which is the reason for the extra x-[xtype] class in the selector.
+    // This ensures that selected border color always wins over hover
+    &.#{$prefix}#{$xtype}.#{$prefix}selected {
+        background-color: $selected-background-color;
+        color: $selected-color;
+        border-color: $selected-border-color;
+    }
+
+    &.#{$prefix}selected + .#{$prefix}#{$xtype} {
+        border-top-color: $selected-border-color;
+    }
+
+    // pressed specificity must be >= selected
+    &.#{$prefix}#{$xtype}.#{$prefix}pressed {
+        background-color: $pressed-background-color;
+        color: $pressed-color;
+        border-color: $pressed-border-color;
+    }
+
+    &.#{$prefix}pressed + .#{$prefix}#{$xtype} {
+        border-top-color: $pressed-border-color;
+    }
+}

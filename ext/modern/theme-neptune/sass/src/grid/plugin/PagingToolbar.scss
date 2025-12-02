@@ -1,0 +1,19 @@
+@include pagingtoolbar-ui(
+    $background-color: $pagingtoolbar-background-color,
+    $background-gradient: $pagingtoolbar-background-gradient,
+    $color: $pagingtoolbar-color,
+    $border-color: $pagingtoolbar-border-color,
+    $border-width: $pagingtoolbar-border-width,
+    $border-style: $pagingtoolbar-border-style,
+    $box-shadow: $pagingtoolbar-box-shadow,
+    $font-weight: $pagingtoolbar-font-weight,
+    $font-size: $pagingtoolbar-font-size,
+    $font-size-big: $pagingtoolbar-font-size-big,
+    $line-height: $pagingtoolbar-line-height,
+    $line-height-big: $pagingtoolbar-line-height-big,
+    $font-family: $pagingtoolbar-font-family,
+    $padding: $pagingtoolbar-padding,
+    $padding-big: $pagingtoolbar-padding-big,
+    $prev-icon: $pagingtoolbar-prev-icon,
+    $next-icon: $pagingtoolbar-next-icon
+);

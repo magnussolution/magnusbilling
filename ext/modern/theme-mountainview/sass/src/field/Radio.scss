@@ -1,0 +1,35 @@
+/**
+ * @class Ext.field.Radio
+ */
+
+.x-radiofield {
+    .x-mask-el {
+        &::before,
+        &::after {
+            @include border-radius(10px);
+        }
+
+        &::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            right: 5px;
+            margin-top: -5px;
+            border: transparent;
+        }
+    }
+
+    .x-input-el:checked + .x-mask-el::after {
+        background: $base-color;
+        @include box-shadow(0 0 3px 2px rgba($base-color, .6));
+    }
+
+
+    &.x-disabled {
+        .x-input-el:checked + .x-mask-el::after {
+            text-shadow: none;
+            background: $foreground-color;
+            @include box-shadow(none);
+        }
+    }
+}

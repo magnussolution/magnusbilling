@@ -1,0 +1,138 @@
+/**
+ * @class Ext.container.ButtonGroup
+ */
+
+/**
+ * @var {color}
+ * The background-color of the ButtonGroup
+ */
+$btn-group-background-color: dynamic(#fff);
+
+/**
+ * @var {color}
+ * The border-color of the ButtonGroup
+ */
+$btn-group-border-color: dynamic($base-color);
+
+/**
+ * @var {number}
+ * The border-radius of the ButtonGroup
+ */
+$btn-group-border-radius: dynamic(0px);
+
+/**
+ * @var {number}
+ * The border-radius of framed ButtonGroups
+ */
+$btn-group-framed-border-radius: dynamic(2px);
+
+/**
+ * @var {number}
+ * The border-width of the ButtonGroup
+ */
+$btn-group-border-width: dynamic(1px);
+
+/**
+ * @var {number/list}
+ * The body padding of the ButtonGroup
+ */
+$btn-group-padding: dynamic(0 1px);
+
+/**
+ * @var {number/list}
+ * The inner border-width of the ButtonGroup
+ */
+$btn-group-inner-border-width: dynamic(1px);
+
+/**
+ * @var {color}
+ * The inner border-color of the ButtonGroup
+ */
+$btn-group-inner-border-color: dynamic(#fff);
+
+/**
+ * @var {number/list}
+ * The margin of the header element. Used to add space around the header.
+ */
+$btn-group-header-margin: dynamic(0);
+
+/**
+ * @var {number}
+ * The font-size of the header
+ */
+$btn-group-header-font-size: dynamic($font-size);
+
+/**
+ * @var {number}
+ * The font-weight of the header
+ */
+$btn-group-header-font-weight: dynamic($font-weight);
+
+/**
+ * @var {number}
+ * The font-family of the header
+ */
+$btn-group-header-font-family: dynamic($font-family);
+
+// private
+$btn-group-header-font: dynamic($btn-group-header-font-weight $btn-group-header-font-size $btn-group-header-font-family);
+
+/**
+ * @var {number}
+ * The line-height of the header
+ */
+$btn-group-header-line-height: dynamic(16px);
+
+/**
+ * @var {number}
+ * The text color of the header
+ */
+$btn-group-header-color: dynamic(#000);
+
+/**
+ * @var {number}
+ * The padding of the header
+ */
+$btn-group-header-padding: dynamic(4px 5px);
+
+/**
+ * @var {number}
+ * The background-color of the header
+ */
+$btn-group-header-background-color: dynamic($base-color);
+
+/**
+ * @var {number}
+ * The border-spacing to use on the table layout element
+ */
+$btn-group-border-spacing: dynamic(0);
+
+/**
+ * @var {number}
+ * The background-color of framed ButtonGroups
+ */
+$btn-group-framed-background-color: dynamic($btn-group-background-color);
+
+/**
+ * @var {number}
+ * The border-width of framed ButtonGroups
+ */
+$btn-group-framed-border-width: dynamic(1px);
+
+/**
+ * @var {string}
+ * Sprite image to use for header {@link Ext.panel.Tool Tools}
+ */
+$btn-group-tool-background-image: dynamic('tools/tool-sprites');
+
+/**
+ * @var {boolean}
+ * True to include the "default" button group UI
+ */
+$include-btn-group-default-ui: dynamic($include-default-uis);
+
+/**
+ * @var {boolean}
+ * True to include the "default-framed" button group UI
+ */
+$include-btn-group-default-framed-ui: dynamic($include-default-uis);

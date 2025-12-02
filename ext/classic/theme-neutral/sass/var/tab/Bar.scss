@@ -1,0 +1,220 @@
+/**
+ * @class Ext.tab.Bar
+ */
+
+/**
+ * @var {number/list}
+ * The padding of the Tab Bar
+ */
+$tabbar-padding: dynamic(0);
+
+/**
+ * @var {number/list}
+ * The padding of the Tab Bar when {@link #plain} is `true`.
+ */
+$tabbar-plain-padding: dynamic($tabbar-padding);
+
+/**
+ * @var {color}
+ * The base color of the Tab Bar
+ */
+$tabbar-base-color: dynamic($base-color);
+
+/**
+ * @var {string/list}
+ * The background-gradient of the Tab Bar. Can be either the name of a predefined gradient
+ * or a list of color stops. Used as the `$type` parameter for 
+ * {@link Global_CSS#background-gradient}.
+ */
+$tabbar-background-gradient: dynamic('tabbar');
+
+/**
+ * @var {color}
+ * The border-color of the Tab Bar
+ */
+$tabbar-border-color: dynamic($panel-header-border-color);
+
+/**
+ * @var {number/list}
+ * The border-width of the Tab Bar
+ */
+$tabbar-border-width: dynamic(1px 1px 0);
+
+/**
+ * @var {number}
+ * The height of the Tab Bar strip
+ */
+$tabbar-strip-height: dynamic(3px);
+
+/**
+ * @var {color}
+ * The border-color of the Tab Bar strip
+ */
+$tabbar-strip-border-color: dynamic($panel-header-border-color);
+
+/**
+ * @var {color}
+ * The background-color of the Tab Bar strip
+ */
+$tabbar-strip-background-color: dynamic($tab-base-color-active);
+
+/**
+ * @var {number/list}
+ * The border-width of the Tab Bar strip
+ */
+$tabbar-strip-border-width: dynamic(1px 0 0);
+
+/**
+ * @var {number}
+ * The width of the Tab Bar scrollers
+ */
+$tabbar-scroller-width: dynamic(24px);
+
+/**
+ * @var {number}
+ * The height of the Tab Bar scrollers
+ */
+$tabbar-scroller-height: dynamic(24px);
+
+/**
+ * @var {number/list}
+ * The margin of "top" Tab Bar scroller buttons
+ */
+$tabbar-scroller-top-margin: dynamic(0);
+
+/**
+ * @var {number/list}
+ * The margin of "right" Tab Bar scroller buttons
+ */
+$tabbar-scroller-right-margin: dynamic(0);
+
+/**
+ * @var {number/list}
+ * The margin of "bottom" Tab Bar scroller buttons
+ */
+$tabbar-scroller-bottom-margin: dynamic(0);
+
+/**
+ * @var {number/list}
+ * The margin of "left" Tab Bar scroller buttons
+ */
+$tabbar-scroller-left-margin: dynamic(0);
+
+/**
+ * @var {string}
+ * The cursor of the Tab Bar scrollers
+ */
+$tabbar-scroller-cursor: dynamic(pointer);
+
+/**
+ * @var {string}
+ * The cursor of disabled Tab Bar scrollers
+ */
+$tabbar-scroller-cursor-disabled: dynamic(default);
+
+/**
+ * @var {number}
+ * The opacity of Tab Bar scrollers
+ */
+$tabbar-scroller-opacity: dynamic(0.5);
+
+/**
+ * @var {number}
+ * The opacity of hovered Tab Bar scrollers
+ */
+$tabbar-scroller-opacity-over: dynamic(0.6);
+
+/**
+ * @var {number}
+ * The opacity of pressed Tab Bar scrollers
+ */
+$tabbar-scroller-opacity-pressed: dynamic(0.7);
+
+/**
+ * @var {number}
+ * The opacity of disabled Tab Bar scrollers
+ */
+$tabbar-scroller-opacity-disabled: dynamic(0.25);
+
+/**
+ * @var {color}
+ * The color to use for Tab Bar scroller icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$tabbar-scroller-glyph-color: dynamic($neutral-color);
+
+/**
+ * @var {color}
+ * The color to use for "plain" Tab Bar scroller icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$tabbar-plain-scroller-glyph-color: dynamic($tabbar-scroller-glyph-color);
+
+/**
+ * @var {number}
+ * The font size for Tab Bar scroller icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$tabbar-scroller-glyph-font-size: dynamic(16px);
+
+/**
+ * @var {string/list}
+ * Glyph for the "top" scroller icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$tabbar-scroller-top-glyph: dynamic($fa-var-chevron-up $tabbar-scroller-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the "right" scroller icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$tabbar-scroller-right-glyph: dynamic($fa-var-chevron-right $tabbar-scroller-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the "bottom" scroller icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$tabbar-scroller-bottom-glyph: dynamic($fa-var-chevron-down $tabbar-scroller-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the "left" scroller icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$tabbar-scroller-left-glyph: dynamic($fa-var-chevron-left $tabbar-scroller-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {boolean}
+ * `true` to use classic-style scroller buttons.  When `true` scroller buttons are given their
+ * hover state by changing their background-position,  When `false` scroller buttons are
+ * given their hover state by applying opacity.
+ */
+$tabbar-classic-scrollers: dynamic(false);
+
+/**
+ * @var {boolean}
+ * true to include separate scroller icons for "plain" tabbars
+ */
+$tabbar-scroller-include-plain-icon: dynamic(false);
+
+/**
+ * @var {boolean}
+ * if true, the tabbar will use symmetrical scroller icons.  Top and bottom tabbars
+ * will share icons, and Left and right will share icons.
+ */
+$tabbar-scroller-symmetrical-icons: dynamic(true);
+
+/**
+ * @var {color}
+ * The color to use for the {@link #overflowHandler menu overflow} "more" icon when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$tabbar-menu-overflow-glyph-color: dynamic($button-default-glyph-color);
+ 
+/**
+ * @var {string/list}
+ * Glyph for the {@link #overflowHandler menu overflow} "more" icon when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$tabbar-menu-overflow-glyph: dynamic($fa-var-bars $button-small-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {boolean}
+ * True to include the "default" tabbar UI
+ */
+$include-tabbar-default-ui: dynamic($include-default-uis);

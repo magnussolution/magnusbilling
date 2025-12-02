@@ -1,0 +1,25 @@
+.#{$prefix}msgbox,
+.#{$prefix}container.#{$prefix}floated,
+.#{$prefix}panel.#{$prefix}floated {
+  background-color: $background-color;
+
+  .#{$prefix}panel-header {
+    background-color: $background-color;
+    color: $color;
+    box-shadow: none;
+  }
+
+  .#{$prefix}toolbar-docked-bottom {
+
+    .#{$prefix}button {
+      color: $base-color;
+    }
+  }
+}
+
+.#{$prefix}floating {
+  .#{$prefix}msgbox-inner, .#{$prefix}panel-inner:not(.#{$prefix}menu-inner) {
+    color: $highlight-color;
+    padding: 0 24px 24px 24px;
+  }
+}

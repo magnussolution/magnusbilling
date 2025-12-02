@@ -1,0 +1,23 @@
+/**
+ * @class Ext.field.TextArea
+ */
+
+.#{$prefix}textareafield {
+    &.#{$prefix}label-align-left, &.#{$prefix}label-align-right {
+        @include st-box-align(stretch);
+    }
+
+    .#{$prefix}body-el {
+        @include st-box;
+        @include st-box-orient(vertical);
+    }
+
+    .#{$prefix}input {
+        @include st-box-flex;
+        @include st-box-align(stretch);
+    }
+
+    .#{$prefix}input-el {
+        resize: none;
+    }
+}

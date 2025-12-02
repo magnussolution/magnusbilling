@@ -1,0 +1,5 @@
+$tag-field-item-color: dynamic($form-text-field-color);
+$tag-field-item-background-color: dynamic($base-highlight-color);
+
+$tag-field-item-selected-color: dynamic(mix(#000, $tag-field-item-background-color, 5%));
+$tag-field-item-selected-background-color: dynamic(mix(#fff, $neutral-color, 15%));

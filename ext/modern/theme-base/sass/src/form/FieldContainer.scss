@@ -1,0 +1,11 @@
+.#{$prefix}form-no-input-borders > .#{$prefix}field {
+    .#{$prefix}input {
+        border: 0 !important;
+    }
+}
+
+.#{$prefix}form-no-input-borders:not(.#{$prefix}form-field-separators) .#{$prefix}input-el {
+    // textfield sass may add negative margins to account for different border
+    // widths between states.
+    margin: 0 !important;
+}

@@ -1,0 +1,75 @@
+$enable-font-open-sans: dynamic(true);
+@if $enable-font-open-sans {
+    $triton-font-path: get-resource-path('fonts', 'shared');
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-Light.ttf');
+        font-weight: 300;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-LightItalic.ttf');
+        font-weight: 300;
+        font-style: italic;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-Regular.ttf');
+        font-weight: 400;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-Italic.ttf');
+        font-weight: 400;
+        font-style: italic;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-Semibold.ttf');
+        font-weight: 600;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-SemiboldItalic.ttf');
+        font-weight: 600;
+        font-style: italic;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-Bold.ttf');
+        font-weight: 700;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-BoldItalic.ttf');
+        font-weight: 700;
+        font-style: italic;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-ExtraBold.ttf');
+        font-weight: 800;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-ExtraBoldItalic.ttf');
+        font-weight: 800;
+        font-style: italic;
+    }
+}
+
+@import 'functions';

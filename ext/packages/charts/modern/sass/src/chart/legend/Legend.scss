@@ -1,0 +1,42 @@
+.#{$prefix}legend {
+    .#{$prefix}dataview-container {
+        display: inline-block;
+        white-space: nowrap !important;
+        line-height: 0;
+        background: $chart-legend-background-color;
+
+        @if (lightness($chart-legend-background-color) > 30) {
+            @include box-shadow(rgba(#fff, .6) 0 1px 1px);
+        } @else {
+            @include box-shadow(rgba(#fff, .2) 0 1px 0);
+        }
+    }
+}
+
+.#{$prefix}legend-item {
+    font-size: $font-size * 1.5;
+    line-height: $font-size * 1.5;
+}
+
+.#{$prefix}legend-item-marker {
+    top: .95em;
+}
+
+.#{$prefix}legend-inner {
+    display: flex !important; // override "display: table" in DataView.scss
+    white-space: nowrap;
+    align-items: center !important;
+    justify-content: center;
+}
+
+.#{$prefix}legend-vertical {
+    .#{$prefix}legend-inner {
+        display: -webkit-box;
+        -webkit-box-align: center;
+        -webkit-box-pack: center;
+
+        display: flex;
+        align-items: center;     // center vertically
+        justify-content: center; // center horizontally
+    }
+}

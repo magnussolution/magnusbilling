@@ -1,0 +1,13 @@
+$grid-row-cell-font-size: dynamic(14px);
+$grid-row-cell-line-height: dynamic(17px);
+$grid-row-cell-color: dynamic(#fff);
+$grid-row-cell-background-color: dynamic(#1f2933);
+$grid-row-cell-alt-background-color: dynamic(#1a232b);
+$grid-row-cell-over-background-color: dynamic(#7e552f);
+$grid-row-cell-focus-background-color: dynamic($grid-row-cell-over-background-color);
+$grid-row-cell-over-border-color: dynamic(#101010);
+$grid-row-cell-selected-color: dynamic(#000);
+$grid-row-cell-selected-background-color: dynamic($focus-color);
+$grid-row-cell-selected-border-color: dynamic(#101010);
+$grid-row-cell-over-background-gradient: dynamic('flat');
+$grid-row-cell-focus-background-gradient: dynamic('flat');

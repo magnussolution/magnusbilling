@@ -1,0 +1,74 @@
+html,
+body {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.#{$prefix}fullscreen {
+    position: absolute !important;
+}
+
+.#{$prefix}body {
+    position: relative;
+    z-index: 0;
+}
+
+#ext-viewport > .#{$prefix}body {
+    background-color: $panel-body-background-color;
+}
+
+.#{$prefix}body, .#{$prefix}inner {
+    width: 100%;
+    height: 100%;
+
+    // When the component is not heighted (either explicitly or via flexing/stretching)
+    // height 100% causes the x-body/x-inner to shrink down to 0 height.  Since the 100%
+    // height serves no purpose for non-heighted components (there is no explicit height
+    // for the body/inner to be 100% of) we can just fall back to auto-heighting.
+    &:not(.#{$prefix}heighted) {
+        height: auto;
+    }
+}
+
+.#{$prefix}sized {
+    position: relative;
+}
+
+.#{$prefix}innerhtml {
+    width: 100%;
+}
+
+.#{$prefix}float-wrap {
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    top: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    overflow: visible;
+
+    > .#{$prefix}floated {
+        position: absolute;
+        pointer-events: all;
+    }
+}
+
+// 100vh works on chromeios, 100% causes the body to be able
+// to be scrolled out of view.
+body.#{$prefix}chromeios {
+    height: 100vh!important;
+    .#{$prefix}float-wrap {
+        height: 100vh;
+    }
+}
+
+.#{$prefix}ios {
+    .#{$prefix}float-wrap {
+        // Must use height:100% on iOS, 100vh is the full device height including
+        // browser chrome, so sizing the float-wrap to that causes overflow.
+        // float-wrap is inside the ext-viewport container which itself is 100% height.
+        height: 100%;
+    }
+}

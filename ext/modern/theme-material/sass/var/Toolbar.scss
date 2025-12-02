@@ -1,0 +1,16 @@
+$toolbar-background-color: dynamic($alt-background-color);
+$toolbar-color: dynamic($color);
+$toolbar-min-height: dynamic(px-to-rem(48px, 12px));
+$toolbar-min-height-big: dynamic(px-to-rem(64px, 14px));
+$toolbar-font-size: dynamic(px-to-rem(16px, 12px));
+$toolbar-font-size-big: dynamic(px-to-rem(18px, 14px));
+$toolbar-font-weight: dynamic($font-weight-bold);
+$toolbar-border-color: dynamic(null);
+$toolbar-border-width: dynamic(null);
+$toolbar-border-style: dynamic(null);
+$toolbar-box-shadow: dynamic($material-shadow-1);
+$toolbar-title-color: dynamic($color);
+$toolbar-padding: dynamic(px-to-em(12px, 16px) px-to-em($content-padding, 16px));
+$toolbar-padding-big: dynamic(px-to-em(14px, 18px) px-to-em($content-padding, 18px));
+$toolbar-horizontal-spacing: dynamic(0);
+$toolbar-horizontal-spacing-big: dynamic(null);

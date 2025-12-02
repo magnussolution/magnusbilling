@@ -1,0 +1,19 @@
+@include searchtrigger-ui(
+    $width: $searchtrigger-width,
+    $width-big: $searchtrigger-width-big,
+    $background-color: $searchtrigger-background-color,
+    $hovered-background-color: $searchtrigger-hovered-background-color,
+    $pressed-background-color: $searchtrigger-pressed-background-color,
+    $icon: $searchtrigger-icon,
+    $icon-color: $searchtrigger-icon-color,
+    $hovered-icon-color: $searchtrigger-hovered-icon-color,
+    $pressed-icon-color: $searchtrigger-pressed-icon-color,
+    $icon-background-color: $searchtrigger-icon-background-color,
+    $hovered-icon-background-color: $searchtrigger-hovered-icon-background-color,
+    $pressed-icon-background-color: $searchtrigger-pressed-icon-background-color,
+    $icon-border-radius: $searchtrigger-icon-border-radius,
+    $icon-size: $searchtrigger-icon-size,
+    $icon-size-big: $searchtrigger-icon-size-big,
+    $icon-font-size: $searchtrigger-icon-font-size,
+    $icon-font-size-big: $searchtrigger-icon-font-size-big
+);

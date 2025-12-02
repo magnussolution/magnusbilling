@@ -1,0 +1,38 @@
+/** @class Ext.pivot.plugin.configurator.Container */
+
+/**
+ * @var {number}
+ * The border-width of the container's body that holds dimension fields.
+ */
+$pivot-grid-config-container-body-border-width: dynamic(0 0 0 1px);
+/**
+ * @var {string}
+ * The border-style of the container's body that holds dimension fields.
+ */
+$pivot-grid-config-container-body-border-style: dynamic(solid);
+/**
+ * @var {color}
+ * The border color of the container's body that holds dimension fields.
+ */
+$pivot-grid-config-container-body-border-color: dynamic(top($panel-body-border-color));
+
+/**
+ * @var {string}
+ * The icon of DND left indicator
+ */
+$pivot-grid-left-indicator-icon: $fa-var-long-arrow-left FontAwesome;
+/**
+ * @var {string}
+ * The icon of DND right indicator
+ */
+$pivot-grid-right-indicator-icon: $fa-var-long-arrow-right FontAwesome;
+/**
+ * @var {string}
+ * The icon of the valid state of the DND proxy placeholder
+ */
+$pivot-drag-proxy-placeholder-valid-icon: $fa-var-check FontAwesome;
+/**
+ * @var {string}
+ * The icon of the invalid state of the DND proxy placeholder
+ */
+$pivot-drag-proxy-placeholder-invalid-icon: $fa-var-close FontAwesome;

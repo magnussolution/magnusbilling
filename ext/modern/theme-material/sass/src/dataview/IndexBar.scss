@@ -1,0 +1,39 @@
+.#{$prefix}indexbar {
+    transition: .4s opacity;
+}
+
+// Material Indicator
+.#{$prefix}indexbar-indicator {
+    width: 64px;
+    height: 64px;
+    background-color: #2196f3;
+    position: absolute;
+    top: 0;
+    right: 42px;
+    border-top-left-radius: 100%;
+    border-bottom-left-radius: 100%;
+    border-top-right-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    @include rotate(-45);
+    @include material-shadow(2);
+
+    .#{$prefix}big & {
+        width: 92px;
+        height: 92px;
+    }
+
+    .#{$prefix}indexbar-indicator-inner {
+        color: $reverse-color;
+        @include rotate(45);
+
+        font-size: px-to-rem(14px, 12px);
+        line-height: px-to-em(25px, 14px);
+        font-weight: 400;
+        .#{$prefix}big & {
+            font-size: px-to-rem(16px, 14px);
+            line-height: px-to-em(32px, 16px);
+        }
+    }
+}

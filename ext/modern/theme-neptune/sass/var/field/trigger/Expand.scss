@@ -1,0 +1,215 @@
+/**
+ * @class Ext.field.trigger.Expand
+ */
+
+/**
+ * @var {number}
+ * Expand Trigger width
+ */
+$expandtrigger-width: dynamic(null);
+
+/**
+ * @var {number}
+ * Expand Trigger width in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$expandtrigger-width-big: dynamic(null);
+
+/**
+ * @var {color}
+ * Expand Trigger background-color
+ */
+$expandtrigger-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Expand Trigger background-color when hovered
+ */
+$expandtrigger-hovered-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Expand Trigger background-color when pressed
+ */
+$expandtrigger-pressed-background-color: dynamic(null);
+
+//# fashion replaces $selectfield-trigger-icon
+/**
+ * @var {string}
+ * Expand Trigger icon
+ */
+$expandtrigger-icon: dynamic(null);
+
+//# fashion replaces $selectfield-trigger-color
+/**
+ * @var {color}
+ * Expand Trigger icon color
+ */
+$expandtrigger-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Expand Trigger icon color when hovered
+ */
+$expandtrigger-hovered-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Expand Trigger icon color when pressed
+ */
+$expandtrigger-pressed-icon-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Expand Trigger icon background-color
+ */
+$expandtrigger-icon-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Expand Trigger icon background-color when hovered
+ */
+$expandtrigger-hovered-icon-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * Expand Trigger icon background-color when pressed
+ */
+$expandtrigger-pressed-icon-background-color: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Expand Trigger icon border-radius
+ */
+$expandtrigger-icon-border-radius: dynamic(null);
+
+//# fashion replaces $selectfield-trigger-size
+/**
+ * @var {number}
+ * Expand Trigger icon size
+ */
+$expandtrigger-icon-size: dynamic(null);
+
+/**
+ * @var {number}
+ * Expand Trigger icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$expandtrigger-icon-size-big: dynamic(null);
+
+//# fashion replaces $selectfield-trigger-font-size
+/**
+ * @var {number}
+ * Expand Trigger icon font-size
+ */
+$expandtrigger-icon-font-size: dynamic($expandtrigger-icon-size);
+
+//# fashion replaces $selectfield-trigger-font-size-big
+/**
+ * @var {number}
+ * Expand Trigger icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$expandtrigger-icon-font-size-big: dynamic($expandtrigger-icon-size-big);
+
+/**
+ * Creates a visual theme for a Expand Trigger.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=expandtrigger] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {number} $width
+ * Expand Trigger width
+ *
+ * @param {number} $width-big
+ * Expand Trigger width in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $background-color
+ * Expand Trigger background-color
+ *
+ * @param {color} $hovered-background-color
+ * Expand Trigger background-color when hovered
+ *
+ * @param {color} $pressed-background-color
+ * Expand Trigger background-color when pressed
+ *
+ * @param {string} $icon
+ * Expand Trigger icon
+ *
+ * @param {color} $icon-color
+ * Expand Trigger icon color
+ *
+ * @param {color} $hovered-icon-color
+ * Expand Trigger icon color when hovered
+ *
+ * @param {color} $pressed-icon-color
+ * Expand Trigger icon color when pressed
+ *
+ * @param {color} $icon-background-color
+ * Expand Trigger icon background-color
+ *
+ * @param {color} $hovered-icon-background-color
+ * Expand Trigger icon background-color when hovered
+ *
+ * @param {color} $pressed-icon-background-color
+ * Expand Trigger icon background-color when pressed
+ *
+ * @param {number/list} $icon-border-radius
+ * Expand Trigger icon border-radius
+ *
+ * @param {number} $icon-size
+ * Expand Trigger icon size
+ *
+ * @param {number} $icon-size-big
+ * Expand Trigger icon size in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {number} $icon-font-size
+ * Expand Trigger icon font-size
+ *
+ * @param {number} $icon-font-size-big
+ * Expand Trigger icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+@mixin expandtrigger-ui(
+    $ui: null,
+    $xtype: expandtrigger,
+    $width: null,
+    $width-big: null,
+    $background-color: null,
+    $hovered-background-color: null,
+    $pressed-background-color: null,
+    $icon: null,
+    $icon-color: null,
+    $hovered-icon-color: null,
+    $pressed-icon-color: null,
+    $icon-background-color: null,
+    $hovered-icon-background-color: null,
+    $pressed-icon-background-color: null,
+    $icon-border-radius: null,
+    $icon-size: null,
+    $icon-size-big: null,
+    $icon-font-size: null,
+    $icon-font-size-big: null
+) {
+    @include trigger-ui(
+        $ui: $ui,
+        $xtype: $xtype,
+        $width: $width,
+        $width-big: $width-big,
+        $background-color: $background-color,
+        $hovered-background-color: $hovered-background-color,
+        $pressed-background-color: $pressed-background-color,
+        $icon: $icon,
+        $icon-color: $icon-color,
+        $hovered-icon-color: $hovered-icon-color,
+        $pressed-icon-color: $pressed-icon-color,
+        $icon-background-color: $icon-background-color,
+        $hovered-icon-background-color: $hovered-icon-background-color,
+        $pressed-icon-background-color: $pressed-icon-background-color,
+        $icon-border-radius: $icon-border-radius,
+        $icon-size: $icon-size,
+        $icon-size-big: $icon-size-big,
+        $icon-font-size: $icon-font-size,
+        $icon-font-size-big: $icon-font-size-big
+    );
+}
