@@ -112,7 +112,9 @@ class Magnus
 
     public function get_agi_request_parameter($agi)
     {
-        $this->accountcode = $agi->request['agi_accountcode'];
+
+
+        $this->accountcode = $agi->get_variable("MB_ACC", true);
         $this->dnid        = $agi->request['agi_extension'];
 
         $this->CallerID = $agi->request['agi_callerid'];

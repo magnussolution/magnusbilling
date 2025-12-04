@@ -104,9 +104,9 @@ sleep 1
 cd /usr/src
 rm -rf asterisk*
 clear
-wget https://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-23.0.0.tar.gz
-tar xzvf asterisk-23.0.0.tar.gz
-rm -rf asterisk-23.0.0.tar.gz
+mv /var/www/html/mbilling/script/asterisk-20.9.2.tar.gz /usr/src/
+tar xzvf asterisk-20.9.2.tar.gz
+rm -rf asterisk-20.9.2.tar.gz
 cd asterisk-*
 useradd -c 'Asterisk PBX' -d /var/lib/asterisk asterisk
 mkdir /var/run/asterisk
@@ -796,6 +796,107 @@ echo
 
 /var/www/html/mbilling/protected/commands/update.sh
 
+
+p4_proc()
+{
+    set $(grep "model name" /proc/cpuinfo);
+
+    if [ "$4" == "Celeron" ]; then
+
+        wget https://www.magnusbilling.org/download/codecs/codec_g723-ast200-gcc4-glibc-pentium.so
+        wget https://www.magnusbilling.org/download/codecs/codec_g729-ast200-gcc4-glibc-pentium.so
+        cp /usr/src/codec_g723-ast200-gcc4-glibc-pentium.so /usr/lib/asterisk/modules/codec_g723.so
+        cp /usr/src/codec_g729-ast200-gcc4-glibc-pentium.so /usr/lib/asterisk/modules/codec_g729.so
+         
+        return 0;
+    fi
+
+    wget https://www.magnusbilling.org/download/codecs/codec_g723-ast200-gcc4-glibc-pentium4.so   
+    wget https://www.magnusbilling.org/download/codecs/codec_g729-ast200-gcc4-glibc-pentium4.so
+    mv /usr/src/codec_g723-ast200-gcc4-glibc-pentium4.so  /usr/lib/asterisk/modules/codec_g723.so
+    mv codec_g729-ast200-gcc4-glibc-pentium4.so /usr/lib/asterisk/modules/codec_g729.so            
+
+}
+p4_x64_proc()
+{         
+    wget https://www.magnusbilling.org/download/codecs/codec_g723-ast200-gcc4-glibc-x86_64-pentium4.so
+    wget https://www.magnusbilling.org/download/codecs/codec_g729-ast200-gcc4-glibc-x86_64-pentium4.so
+    mv /usr/src/codec_g723-ast200-gcc4-glibc-x86_64-pentium4.so /usr/lib/asterisk/modules/codec_g723.so
+    mv /usr/src/codec_g729-ast200-gcc4-glibc-x86_64-pentium4.so /usr/lib/asterisk/modules/codec_g729.so
+      
+}
+p3_proc()
+{       
+    set $(grep "model name" /proc/cpuinfo);
+    if [ "$4" == "Intel(R)" &&  "$5" == "Pentium(R)" && "$6"== "III" ];then
+        wget https://www.magnusbilling.org/download/codecs/codec_g723-ast200-gcc4-glibc-pentium.so   
+        wget https://www.magnusbilling.org/download/codecs/codec_g729-ast200-gcc4-glibc-pentium.so
+        mv /usr/src/codec_g723-ast200-gcc4-glibc-pentium.so /usr/lib/asterisk/modules/codec_g723.so
+        mv /usr/src/codec_g729-ast200-gcc4-glibc-pentium.so /usr/lib/asterisk/modules/codec_g729.so
+        return 0;
+    fi
+    wget https://www.magnusbilling.org/download/codecs/codec_g723-ast200-gcc4-glibc-pentium3.so
+    wget https://www.magnusbilling.org/download/codecs/codec_g729-ast200-gcc4-glibc-pentium3.so
+    mv /usr/src/codec_g723-ast200-gcc4-glibc-pentium3.so /usr/lib/asterisk/modules/codec_g723.so
+    mv /usr/src/codec_g729-ast200-gcc4-glibc-pentium3.so /usr/lib/asterisk/modules/codec_g729.so
+
+}
+AMD_proc()
+{
+    wget https://www.magnusbilling.org/download/codecs/codec_g729-ast200-gcc4-glibc-athlon-sse.so
+    wget https://www.magnusbilling.org/download/codecs/codec_g723-ast200-gcc4-glibc-athlon-sse.so
+    mv /usr/src/codec_g723-ast200-gcc4-glibc-athlon-sse.so /usr/lib/asterisk/modules/codec_g723.so
+    mv /usr/src/codec_g729-ast200-gcc4-glibc-athlon-sse.so /usr/lib/asterisk/modules/codec_g729.so
+
+}
+
+processor_type()
+{
+    _UNAME=`uname -a`;
+    _IS_64_BIT=`echo "$_UNAME"  | grep x86_64`
+    if [ -n "$_IS_64_BIT" ];
+        then _64BIT=1;
+        else _64BIT=0;
+    fi;
+}
+
+cd /usr/src/asterisk-*
+make config
+
+echo "INSTALLING G723 and G729 CODECS......... FROM http://asterisk.hosting.lv";   
+cd /usr/src
+rm -rf codec_*
+processor_type;
+    _IS_AMD=`cat /proc/cpuinfo | grep AMD`;
+    _P3=`cat /proc/cpuinfo | grep "Pentium III"`;
+    _P3_R=`cat /proc/cpuinfo | grep "Pentium(R) III"`;
+    _INTEL=`cat /proc/cpuinfo | grep Intel`;
+    if [ -n "$_IS_AMD" ];
+      then 
+          echo "Processor type detected: AMD";
+          if  [ "$_64BIT" == 1 ]; then 
+            echo "It is a x64 proc";
+               p4_x64_proc;
+          else 
+            echo "AMD processor detected"; 
+            AMD_proc;
+          fi
+       
+    elif [ -n "$_P3_R" ]; then echo "Pentium(R) III processor detected"; p3_proc;           
+    elif [ "$_64BIT" == 1 ]; then echo "Processor type detected: INTEL x64"; p4_x64_proc;       
+    elif [ -n "$_INTEL" ]; then echo "Pentium IV processor detected"; p4_proc;
+    elif [ -n "$_P3" ]; then echo "Pentium III processor detected"; p3_proc;
+    else
+        echo -e "Automatic detection of required codec installation script failed\nYou must manually select and install the required codec according to this output:";
+        cat /proc/cpuinfo
+        uname -a
+        echo "you can find codecs installation scripts in http://asterisk.hosting.lv";
+    fi;
+
+asterisk -rx 'module load codec_g729.so'
+asterisk -rx 'module load codec_g723.so'
+sleep 4
+asterisk -rx 'core show translation'
 
 
 whiptail --title "MagnusBilling Instalation Result" --msgbox "Congratulations! You have installed MagnusBilling in your Server.\n\nAccess your MagnusBilling in http://your_ip/ \n  Username = root \n  Password = magnus \n\nYour mysql root password is $password\n\n\nPRESS ANY KEY TO REBOOT YOUR SERVER" --fb 20 70

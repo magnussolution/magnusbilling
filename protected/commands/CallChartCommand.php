@@ -54,6 +54,9 @@ class CallChartCommand extends ConsoleCommand
 
     public function user_cdr_show($calls)
     {
+
+        $uniqueid = NULL;
+
         $modelUserCallShop = User::model()->count('callshop = 1');
         if ($modelUserCallShop > 0) {
             $callShopIds       = [];
@@ -94,9 +97,9 @@ class CallChartCommand extends ConsoleCommand
             foreach ($calls as $key => $call) {
                 $modelDid = $modelSip = [];
                 $type     = '';
-                $channel  = $call[0];
+                $channel  = trim($call[0]);
 
-                $status = $call[4];
+                $status = trim($call[3]);
                 if ((preg_match("/Congestion/", $status) || preg_match("/Busy/", $status)) ||
                     (preg_match('/Ring/', $status) && $call[11] > 60)
                 ) {
@@ -104,19 +107,37 @@ class CallChartCommand extends ConsoleCommand
                     echo "return after hangup channel\n";
                     continue;
                 }
+
+
+                print_r($call);
+
                 $uniqueid    = null;
                 $trunk       = null;
-                $sip_account = $call[1];
-                $ndiscado    = $call[2];
-                $accountcode = $call[3];
-                $codec       = $call[5];
-                $des_chan    = $call[6];
-                $last_app    = $call[7];
-                $cdr         = $call[8];
-                $total_time  = $call[9];
+                if (preg_match('/^PJSIP\/([^-\s]+)/', $channel, $m)) {
+                    $sip_account = $m[1];
+                } else {
+                    $sip_account = '';
+                }
+                $ndiscado    = trim($call[1]);
 
-                $originate = explode("/", substr($channel, 0, strrpos($channel, "-")));
-                $originate = $originate[1];
+                $modelSip1 = Sip::model()->find('name = :key', [':key' => $sip_account]);
+                $accountcode = isset($modelSip1->idUser->username) ? $modelSip1->idUser->username : '';
+                $codec       = $call[4];
+
+                if (preg_match('/^.*\/([^-\s]+)/', $call[8], $m)) {
+
+
+                    $des_chan    = $trunk =  $m[1];
+                } else {
+                    $des_chan    = $trunk  = '';
+                }
+
+
+                $last_app    = trim($call[2]);
+                $cdr         = $call[9];
+                $originate = $sip_account;
+
+                echo '-' . $last_app . '-' . "\n";
 
                 if ($last_app == 'Dial' || $last_app == 'Mbilling') {
 
@@ -185,8 +206,13 @@ class CallChartCommand extends ConsoleCommand
                                 $modelSip = Sip::model()->find('techprefix = :key AND host != "dynamic" ', [':key' => $tech]);
                             }
 
-                            if (! isset($modelSip->name)) {
+                            if (isset($modelSip1->id)) {
+                                $modelSip = $modelSip1;
+                                $id_user = $modelSip->id_user;
+                            }
 
+                            if (! isset($modelSip->name)) {
+                                echo " $sip_account $status aqui\n";
                                 if ($status == 'Ring') {
                                     $sip_account = $originate;
                                 }
@@ -217,21 +243,9 @@ class CallChartCommand extends ConsoleCommand
                                 }
                             }
 
-                            $trunk = isset($call[6]) ? $call[6] : 0;
 
-                            if (preg_match("/\&/", $trunk)) {
-                                $trunk = preg_split("/\&/", $trunk);
-                                $trunk = explode("/", $trunk[0]);
-                            } else if (preg_match("/@/", $trunk)) {
-                                $trunk    = explode("@", $trunk);
-                                $trunk    = explode(",", $trunk[1]);
-                                $trunk[1] = $trunk[0];
-                            } else {
-                                $trunk = explode("/", substr($trunk, 0, strrpos($trunk, "-")));
-                            }
 
                             $type        = 'pstn';
-                            $trunk       = isset($trunk[1]) ? $trunk[1] : 0;
                             $id_user     = $modelSip['id_user'];
                             $sip_account = $modelSip['name'];
                         }
@@ -253,7 +267,7 @@ class CallChartCommand extends ConsoleCommand
                         $trunk   = "Campaign " . $campaingName[1];
                     } else {
                         //check if is a DID number
-                        //DID call ivr   -> PJSIP/addphone-000000|           |9999999999    |           |Up|(g729)|<none>             |AGI  |4|5
+                        //DID call ivr   -> SIP/addphone-000000|           |9999999999    |           |Up|(g729)|<none>             |AGI  |4|5
                         if (false !== $key = array_search($call[2], $this->didsNumbers)) {
                             $modelDid = $this->dids[$key];
                         }
@@ -334,7 +348,7 @@ class CallChartCommand extends ConsoleCommand
                 }
 
                 if (! is_numeric($id_user) || ! is_numeric($cdr)) {
-                    echo "continue because not foun id_user or cdr\n";
+                    echo "continue because not foun id_user = $id_user or cdr = $cdr\n";
                     continue;
                 }
 
@@ -345,6 +359,7 @@ class CallChartCommand extends ConsoleCommand
 
                 $sql[] = "(NULL,'" . $uniqueid . "', '$sip_account', $id_user, '$channel', '" . utf8_encode($trunk) . "', '$ndiscado', '" . preg_replace('/\(|\)/', '', $codec) . "', '$status', '$cdr', 'no','no', '" . $call['server'] . "')";
 
+                print_r($sql);
                 if (is_array($callShopIds)) {
                     if (in_array($id_user, $callShopIds)) {
 

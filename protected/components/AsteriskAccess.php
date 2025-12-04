@@ -340,7 +340,7 @@ class AsteriskAccess
 
                         $line .= "aors = " . $trunkName . "\n";
                         if (isset($accountcode) && strlen($accountcode)) {
-                            $line .= "set_var = ACCOUNT_CODE=" . $accountcode . "\n";
+                            $line .= "set_var = MB_ACC=" . $accountcode . "\n";
                         }
 
 
@@ -831,7 +831,7 @@ class AsteriskAccess
                     $line .= "transport=transport-udp\n";
 
                     // accountcode -> set_var
-                    $line .= "set_var=ACCOUNT_CODE=" . $sip->idUser->username . "\n";
+                    $line .= "set_var=MB_ACC=" . $sip->idUser->username . "\n";
 
                     // context
                     if (strlen($sip->context) > 0) {
