@@ -1,6 +1,6 @@
-###############
-MagnusBilling 8 
-###############
+#####################
+MagnusBilling 8 BETA
+#####################
 
 Do you like this software? Star the project and become a [stargazer](https://github.com/magnussolution/magnusbilling8/stargazers).
 
