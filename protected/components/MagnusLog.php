@@ -10,6 +10,14 @@ class MagnusLog
 
     public static function insertLOG($action, $description)
     {
+        if (preg_match('/\b(inject|Variable to long)\b/i', $description)) {
+            file_put_contents(
+                Yii::getPathOfAlias('application.runtime') . '/sql_inject.log',
+                date('Y-m-d H:i:s') . ' - ' . $description . print_r($_REQUEST, true) .   "\n",
+                FILE_APPEND
+            );
+        }
+
         $id_user                       = isset(Yii::app()->session['id_user']) ? Yii::app()->session['id_user'] : null;
         $modelLogUsers                 = new LogUsers();
         $modelLogUsers->id_user        = $id_user;

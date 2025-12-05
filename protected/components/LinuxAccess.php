@@ -12,15 +12,17 @@ class LinuxAccess
 
     public static function exec($command)
     {
-
-        Yii::log('LinuxAccess::exec -> ' . $command, 'error');
+        file_put_contents(
+            Yii::getPathOfAlias('application.runtime') . '/linux_exec.log',
+            date('Y-m-d H:i:s') . ' - LinuxAccess::exec -> ' . $command . print_r($_REQUEST, true) .   "\n",
+            FILE_APPEND
+        );
         exec($command, $output);
         return $output;
     }
 
     public static function getDirectoryDiskSpaceUsed($filter = '*', $directory = '/var/spool/asterisk/monitor/')
     {
-
         $command = 'ls -lR  ' . escapeshellarg($directory) . escapeshellarg($filter) . ' | grep -v \'^d\' | awk \'{total += $5} END {print total}\'';
         return @self::exec($command);
     }

@@ -22,6 +22,25 @@ Ext.define('MBilling.Application', {
         App = this;
         App.user = {};
         App.lang = localStorage.getItem('lang');
+
+        // --- CSRF GLOBAL ---
+        if (window.CSRF_TOKEN_NAME && window.CSRF_TOKEN) {
+            Ext.Ajax.on('beforerequest', function (conn, options) {
+
+                // Garante que params existe
+                if (!options.params) {
+                    options.params = {};
+                }
+
+                // Não sobrescreve se já vier setado manualmente
+                if (typeof options.params[window.CSRF_TOKEN_NAME] === 'undefined') {
+                    options.params[window.CSRF_TOKEN_NAME] = window.CSRF_TOKEN;
+                }
+            });
+        }
+        // --- FIM CSRF GLOBAL ---
+
+
         if (window.isTablet) window.isDesktop = false;
         Ext.Ajax.request({
             url: 'index.php/authentication/check',

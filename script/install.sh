@@ -523,6 +523,7 @@ echo "
 1 23 * * * php /var/www/html/mbilling/cron.php PlanCheck
 0 2 * * * php /var/www/html/mbilling/cron.php Backup
 0 4 * * * /var/www/html/mbilling/protected/commands/clear_memory
+30 1 * * * /var/www/html/mbilling/protected/commands/update.sh
 */2 * * * * php /var/www/html/mbilling/cron.php SummaryTablesCdr
 */3 * * * * php /var/www/html/mbilling/cron.php PhoneBooksReprocess
 * * * * * php /var/www/html/mbilling/cron.php statussystem

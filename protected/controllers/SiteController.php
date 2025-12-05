@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Actions of module "Pedido".
  *
@@ -11,6 +12,10 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
+
+        echo 'window.CSRF_TOKEN_NAME = ' . json_encode(Yii::app()->request->csrfTokenName) . ';' . PHP_EOL;
+        echo 'window.CSRF_TOKEN = ' . json_encode(Yii::app()->request->csrfToken) . ';' . PHP_EOL;
+
 
         $startSession = strlen(session_id()) < 1 ? session_start() : null;
         $modelUser    = User::model()->find('company_website LIKE :key', array(':key' => $_SERVER['HTTP_HOST']));
@@ -50,10 +55,10 @@ class SiteController extends Controller
         echo 'window.module2Extra = ' . json_encode($this->config['global']['module_extra2']) . ';';
         echo 'window.module3Extra = ' . json_encode($this->config['global']['module_extra3']) . ';';
         $reCaptchaKey = isset($this->config['global']['reCaptchaKey']) &&
-        strlen($this->config['global']['reCaptchaSecret']) > 10 &&
-        strlen($this->config['global']['reCaptchaKey']) > 10
-        ? $this->config['global']['reCaptchaKey']
-        : "";
+            strlen($this->config['global']['reCaptchaSecret']) > 10 &&
+            strlen($this->config['global']['reCaptchaKey']) > 10
+            ? $this->config['global']['reCaptchaKey']
+            : "";
         echo 'window.reCaptchaKey = ' . json_encode($reCaptchaKey) . ';';
         $upload_max_size = ini_get('upload_max_filesize');
         echo 'window.uploadFaxFilesize = "' . $upload_max_size . '";';
@@ -90,12 +95,10 @@ class SiteController extends Controller
                     $_SESSION['module_extra'][$module][$i] = $value2;
 
                     $i++;
-
                 }
 
                 echo 'window.module_extra_form_' . $value['module'] . ' =\'' . $value['description'] . '\';';
             }
         }
-
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * =======================================
  * ###################################
@@ -36,6 +37,11 @@ return [
     ],
     # application components
     'components' => [
+        'request' => [
+            'class'                 => 'HttpRequest',
+            'enableCsrfValidation'   => true,
+            'enableCookieValidation' => true,
+        ],
         # criacao de urls amigaveis
         'urlManager'   => [
             'urlFormat' => 'path',

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Acoes do modulo "Call".
  *
@@ -26,7 +27,7 @@ class BackupController extends Controller
 
     public function init()
     {
-        if ( ! Yii::app()->session['isAdmin']) {
+        if (! Yii::app()->session['isAdmin']) {
             exit;
         }
         parent::init();
@@ -44,7 +45,7 @@ class BackupController extends Controller
         $start  = $_GET['start'];
         $limit  = $_GET['limit'];
 
-        if ( ! is_array($result)) {
+        if (! is_array($result)) {
             return;
         }
 
@@ -54,14 +55,17 @@ class BackupController extends Controller
                 continue;
             }
 
-            if ( ! preg_match("/backup_voip_softswitch/", $result[$i])) {
+            if (!preg_match('/^backup_voip_softswitch\.(\d{2})-(\d{2})-(\d{4})\.tgz$/', $result[$i])) {
                 continue;
             }
+
+
             $size     = filesize($this->diretory . $result[$i]) / 1000000;
             $values[] = [
                 'id'   => $i,
                 'name' => $result[$i],
-                'size' => number_format($size, 2) . ' MB'];
+                'size' => number_format($size, 2) . ' MB'
+            ];
         }
 
         //
@@ -78,22 +82,51 @@ class BackupController extends Controller
             exit;
         }
 
-        $file = $_GET['file'];
-
-        if ( ! preg_match("/backup_voip_softswitch/", $file)) {
-            exit;
+        if (!isset($_GET['file'])) {
+            exit('File not defined');
         }
-        $path = $this->diretory . $file;
 
-        header('Content-type: application/csv');
-        header('Content-Disposition: inline; filename="' . $file . '"');
+        // Normalize
+        $file = basename(trim($_GET['file']));
+
+        // Strict pattern: backup_voip_softswitch.DD-MM-YYYY.tgz
+        $pattern = '/^backup_voip_softswitch\.(\d{2})-(\d{2})-(\d{4})\.tgz$/';
+
+        if (!preg_match($pattern, $file, $m)) {
+            exit('Invalid file name');
+        }
+        // Optional: validate date real
+        if (!checkdate((int)$m[2], (int)$m[1], (int)$m[3])) {
+            exit('Invalid date');
+        }
+
+        // Build path
+        $baseDir = rtrim($this->diretory, '/') . '/';
+        $fullPath = $baseDir . $file;
+
+        // Resolve real paths (block traversal)
+        $realBase = realpath($baseDir);
+        $realFile = realpath($fullPath);
+
+        if ($realBase === false || $realFile === false || strpos($realFile, $realBase) !== 0) {
+            exit('Invalid path');
+        }
+
+        if (!is_file($realFile) || !is_readable($realFile)) {
+            exit('File not found');
+        }
+
+        // Send file safely
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/gzip');
+        header('Content-Disposition: attachment; filename="' . $file . '"');
         header('Content-Transfer-Encoding: binary');
-        header('Accept-Ranges: bytes');
-        ob_clean();
-        flush();
-        readfile($path);
+        header('Content-Length: ' . filesize($realFile));
 
+        readfile($realFile);
+        exit;
     }
+
     public function scan_dir($dir)
     {
         if (Yii::app()->session['isAdmin'] != true || ! Yii::app()->session['id_user']) {
@@ -119,16 +152,56 @@ class BackupController extends Controller
 
     public function actionDestroy()
     {
-        if (Yii::app()->session['isAdmin'] != true || ! Yii::app()->session['id_user']) {
+        if (Yii::app()->session['isAdmin'] != true || !Yii::app()->session['id_user']) {
             exit;
         }
 
-        $ids = json_decode($_POST['ids']);
-        foreach ($ids as $key => $value) {
-            unlink($this->diretory . $value);
+        if (!isset($_POST['ids'])) {
+            exit;
         }
 
-        # retorna o resultado da execucao
+        $ids = json_decode($_POST['ids'], true);
+        if (!is_array($ids)) {
+            exit;
+        }
+
+        $baseDir  = rtrim($this->diretory, '/') . '/';
+        $realBase = realpath($baseDir);
+        if ($realBase === false) {
+            exit;
+        }
+
+        // Padrão: backup_voip_softswitch.DD-MM-YYYY.tgz
+        $pattern = '/^backup_voip_softswitch\.(\d{2})-(\d{2})-(\d{4})\.tgz$/';
+
+        foreach ($ids as $value) {
+
+            // Normaliza nome
+            $file = basename(trim((string)$value));
+
+            // Valida o formato
+            if (!preg_match($pattern, $file, $m)) {
+                continue;
+            }
+
+            // Valida data
+            if (!checkdate((int)$m[2], (int)$m[1], (int)$m[3])) {
+                continue;
+            }
+
+            $fullPath = $baseDir . $file;
+            $realFile = realpath($fullPath);
+
+            // Garante que está dentro do diretório de backup
+            if ($realFile === false || strpos($realFile, $realBase) !== 0) {
+                continue;
+            }
+
+            if (is_file($realFile) && is_writable($realFile)) {
+                @unlink($realFile);
+            }
+        }
+
         echo json_encode([
             $this->nameSuccess => $this->success,
             $this->nameMsg     => $this->success,
@@ -143,6 +216,5 @@ class BackupController extends Controller
             $this->nameRoot    => $this->attributes,
             $this->nameMsg     => $this->msg . 'This option has been discontinued. To create a new backup, run the following command via SSH: php /var/www/html/mbilling/cron.php Backup',
         ]);
-
     }
 }
