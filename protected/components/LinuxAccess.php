@@ -12,11 +12,13 @@ class LinuxAccess
 
     public static function exec($command)
     {
-        file_put_contents(
-            Yii::getPathOfAlias('application.runtime') . '/linux_exec.log',
-            date('Y-m-d H:i:s') . ' - LinuxAccess::exec -> ' . $command . print_r($_REQUEST, true) .   "\n",
-            FILE_APPEND
-        );
+        if ($command != 'diff -u /var/log/asterisk/magnus_processed /var/log/asterisk/magnus_new') {
+            file_put_contents(
+                Yii::getPathOfAlias('application.runtime') . '/linux_exec.log',
+                date('Y-m-d H:i:s') . ' - LinuxAccess::exec -> ' . $command . print_r($_REQUEST, true) .   "\n",
+                FILE_APPEND
+            );
+        }
         exec($command, $output);
         return $output;
     }

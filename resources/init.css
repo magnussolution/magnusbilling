@@ -1,3 +1,196 @@
+/* ===== ALERTAS MAGNUSBILLING – TOAST LIMPO NO TOPO ===== */
+
+/* Toast no canto superior direito */
+.alert-box {
+    position: fixed !important;
+    top: 16px !important;
+    right: 16px !important;
+    left: auto !important;
+    transform: none !important;
+    z-index: 99999 !important;
+    width: auto !important;
+    pointer-events: none;
+}
+
+/* Caixa do alerta (error, warning, success, information, notification) */
+.alert-box table[class^="alert-"] {
+    position: relative;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+    min-width: 360px;
+    max-width: 620px;
+    margin: 0 auto 8px auto;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+    pointer-events: auto;
+}
+
+/* Conteúdo interno */
+.alert-box table[class^="alert-"] td {
+    padding: 10px 16px !important;
+    border: none !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+/* Título (se vier com <h3>) */
+.alert-box table[class^="alert-"] h3 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* ===== CORES POR TIPO ===== */
+
+.alert-box .alert-error td {
+    background: #fee2e2;
+    color: #7f1d1d;
+}
+
+.alert-box .alert-warning td {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.alert-box .alert-success td {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.alert-box .alert-information td {
+    background: #e0f2fe;
+    color: #075985;
+}
+
+.alert-box .alert-notification td {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+/* ===== BOTÃO X DE FECHAR ===== */
+
+.alert-box .close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+}
+
+.alert-box .close:before {
+    content: "×";
+    display: block;
+    text-align: center;
+    line-height: 16px;
+    font-size: 12px;
+    color: #4b5563;
+}
+
+
+
+
+/* Remove completamente a borda retangular ao redor dos inputs */
+.auth-locked-window .auth-dialog .x-form-item-body {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+/* Remove a borda retangular da área de edição do ExtJS */
+.auth-locked-window .auth-dialog .x-form-trigger-wrap-default {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Garante que no foco a borda quadrada não volta */
+.auth-locked-window .auth-dialog .x-form-trigger-wrap-focus {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* ===== FORM CONTAINER (mantém branco, apenas suaviza) ===== */
+.auth-locked-window .auth-dialog {
+    background: #ffffff !important;
+    border-radius: 14px;
+    padding: 28px 36px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.10);
+    border: 1px solid #f0f0f0;
+}
+
+/* Remove sub-containers do ExtJS que geram caixas duplicadas */
+.auth-locked-window .auth-dialog .x-panel-body {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* ===== TÍTULO ===== */
+.auth-locked-window .auth-dialog .x-component {
+    color: #1f2937 !important;
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+/* ===== INPUTS - estilo moderno e clean ===== */
+.auth-locked-window .auth-dialog .x-form-text-default {
+    background: #f9fafb !important;
+    border-radius: 10px !important;
+    border: 1px solid #d1d5db !important;
+    color: #111827 !important;
+    height: 42px !important;
+    padding: 0 12px !important;
+    font-size: 14px !important;
+}
+
+.auth-locked-window .auth-dialog .x-form-text-default::placeholder {
+    color: #9ca3af !important;
+}
+
+.auth-locked-window .auth-dialog .x-form-text-default.x-form-focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4);
+}
+
+/* ===== BOTÃO LOGIN ===== */
+.auth-locked-window .auth-dialog .x-btn-default-large {
+    background: linear-gradient(135deg, #0094d9, #00c9a9) !important;
+    border-radius: 10px !important;
+    height: 42px !important;
+    border: none !important;
+    font-size: 15px !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+.auth-locked-window .auth-dialog .x-btn-over {
+    filter: brightness(1.06);
+}
+
+/* ===== RODAPÉ (idioma + forgot) ===== */
+.auth-locked-window .auth-dialog .x-container .x-box-inner {
+    align-items: center;
+}
+
+.auth-locked-window .auth-dialog .x-container .x-box-item:last-child div {
+    color: #374151 !important;
+    font-size: 13px;
+}
+
+/* ===== Remover “cantinhos” do ExtJS ===== */
+.auth-locked-window .auth-dialog:before,
+.auth-locked-window .auth-dialog:after,
+.auth-locked-window .auth-dialog .x-panel-body:before,
+.auth-locked-window .auth-dialog .x-panel-body:after {
+    content: none !important;
+    display: none !important;
+}
+
 /* Mask Loading App */
 
 .grecaptcha-badge {

@@ -46,6 +46,7 @@ class AuthenticationController extends Controller
             $condition = "((username COLLATE utf8_bin = :user OR email LIKE :user) AND (password COLLATE utf8_bin = :pass OR UPPER(SHA1(password)) COLLATE utf8_bin = :pass))  ";
             if ($this->config['global']['sipuser_login'] == 1) {
                 $condition .= " OR (id = (SELECT id_user FROM pkg_sip WHERE name COLLATE utf8_bin = :user AND UPPER(SHA1(secret)) COLLATE utf8_bin = :pass) )";
+                $sipuser_login = $user;
             }
         }
 
@@ -116,6 +117,7 @@ class AuthenticationController extends Controller
         Yii::app()->session['userCount']           = User::model()->count("credit != 0");
         Yii::app()->session['hidden_prices']       = $modelUser->idGroup->hidden_prices;
         Yii::app()->session['hidden_batch_update'] = $modelUser->idGroup->hidden_batch_update;
+        Yii::app()->session['sipuser_login']             = isset($sipuser_login) ? $sipuser_login : false;
 
         if ($modelUser->googleAuthenticator_enable > 0) {
 
@@ -218,6 +220,7 @@ class AuthenticationController extends Controller
         Yii::app()->session['version']             = false;
         Yii::app()->session['hidden_prices']       = false;
         Yii::app()->session['hidden_batch_update'] = false;
+        Yii::app()->session['sipuser_login'] = false;
         Yii::app()->session->clear();
         Yii::app()->session->destroy();
 
@@ -280,6 +283,7 @@ class AuthenticationController extends Controller
             $showGoogleCode           = Yii::app()->session['showGoogleCode'];
             $hidden_prices            = Yii::app()->session['hidden_prices']            = $modelGroupUser->hidden_prices;
             $hidden_batch_update      = Yii::app()->session['hidden_batch_update']      = $modelGroupUser->hidden_batch_update;
+            $sipuser_login = Yii::app()->session['sipuser_login'];
         } else {
             $id_user                  = false;
             $id_agent                 = false;
@@ -311,6 +315,7 @@ class AuthenticationController extends Controller
             $show_playicon_cdr        = false;
             $hidden_prices            = false;
             $hidden_batch_update      = false;
+            $sipuser_login             = false;
         }
         $language = isset(Yii::app()->session['language']) ? Yii::app()->session['language'] : Yii::app()->sourceLanguage;
         $theme    = isset(Yii::app()->session['theme']) ? Yii::app()->session['theme'] : 'blue-neptune';
@@ -383,6 +388,7 @@ class AuthenticationController extends Controller
             'showMCDashBoard'          => $this->config['global']['showMCDashBoard'],
             'hidden_prices'            => $hidden_prices,
             'hidden_batch_update'      => $hidden_batch_update,
+            'sipuser_login'             => $sipuser_login,
         ]);
     }
 
@@ -656,7 +662,7 @@ class AuthenticationController extends Controller
                     'success' => false,
                     'msg'     => 'Invalid captcha json' . print_r($response, true),
                 ]);
-                exi;
+                exit;
             }
             if ($response->success != true || $response->hostname != $_SERVER['HTTP_HOST']) {
                 echo json_encode([

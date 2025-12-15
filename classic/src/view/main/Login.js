@@ -21,7 +21,7 @@ Ext.define('MBilling.view.main.Login', {
         align: 'center',
         pack: 'center'
     },
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         me.title = window.loginheader ? window.loginheader : t("Log in");
         me.items = [{
@@ -50,7 +50,7 @@ Ext.define('MBilling.view.main.Login', {
                 height: 55,
                 hideLabel: true,
                 allowBlank: false,
-                emptyText: t('Username or email')
+                emptyText: t('Username')
             }, {
                 xtype: 'textfield',
                 cls: 'auth-textbox',
@@ -94,9 +94,9 @@ Ext.define('MBilling.view.main.Login', {
                     margin: '5 0 0 80',
                     html: '<div style="text-align: right;">' + t('Forgot your password?') + '</div>',
                     listeners: {
-                        render: function(c) {
+                        render: function (c) {
                             c.getEl().on({
-                                click: function() {
+                                click: function () {
                                     Ext.widget('forgetPassword');
                                 }
                             });
@@ -109,12 +109,12 @@ Ext.define('MBilling.view.main.Login', {
                 name: 'captcha',
                 reference: 'captcha',
                 listeners: {
-                    'afterrender': function() {
+                    'afterrender': function () {
                         if (typeof grecaptcha != "undefined") {
-                            grecaptcha.ready(function() {
+                            grecaptcha.ready(function () {
                                 grecaptcha.execute(window.reCaptchaKey, {
                                     action: 'homepage'
-                                }).then(function(token) {
+                                }).then(function (token) {
                                     window.captcha = token;
                                 });
                             });
