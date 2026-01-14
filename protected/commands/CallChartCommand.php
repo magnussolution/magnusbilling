@@ -99,7 +99,7 @@ class CallChartCommand extends ConsoleCommand
                 $type     = '';
                 $channel  = trim($call[0]);
 
-                $status = trim($call[3]);
+                $status = trim($call[4]);
                 if ((preg_match("/Congestion/", $status) || preg_match("/Busy/", $status)) ||
                     (preg_match('/Ring/', $status) && $call[11] > 60)
                 ) {
@@ -118,23 +118,26 @@ class CallChartCommand extends ConsoleCommand
                 } else {
                     $sip_account = '';
                 }
-                $ndiscado    = trim($call[1]);
+                $ndiscado    = trim($call[2]);
 
                 $modelSip1 = Sip::model()->find('name = :key', [':key' => $sip_account]);
                 $accountcode = isset($modelSip1->idUser->username) ? $modelSip1->idUser->username : '';
-                $codec       = $call[4];
+                $codec       = substr($call[5], 1, 5);
 
-                if (preg_match('/^.*\/([^-\s]+)/', $call[8], $m)) {
 
+
+                $chan = trim($call[9] ?? '');
+                if (preg_match('#^[^/]+/([^-]+)-#', $chan, $m)) {
 
                     $des_chan    = $trunk =  $m[1];
                 } else {
+
                     $des_chan    = $trunk  = '';
                 }
 
 
-                $last_app    = trim($call[2]);
-                $cdr         = $call[9];
+                $last_app    = trim($call[3]);
+                $cdr         = trim($call[11]);
                 $originate = $sip_account;
 
                 echo '-' . $last_app . '-' . "\n";
@@ -148,7 +151,7 @@ class CallChartCommand extends ConsoleCommand
 
                     if (preg_match('/^MC\!/', $sip_account)) {
                         echo "torpedo\n";
-                        $campaingName  = preg_split('/\!/', $call[1]);
+                        $campaingName  = preg_split('/\!/', $call[2]);
                         $modelCampaing = Campaign::model()->find('name = :key', [':key' => $campaingName[1]]);
                         $id_user       = isset($modelCampaing->id_user) ? $modelCampaing->id_user : 'NULL';
                         $trunk         = "Campaign " . $campaingName[1];
@@ -192,18 +195,18 @@ class CallChartCommand extends ConsoleCommand
                             //se é autenticado por techprefix
 
                             //try get user
-                            if (preg_match('/^SIP\/sipproxy\-/', $channel)) {
-                                if (! strlen($sip_account)) {
-                                    $sip_account = $call[1] = $call[3];
-                                }
+                            if (preg_match('/^PJSIP\/sipproxy\-/', $channel)) {
+
+                                $sip_account = trim($call[1]);
+
                                 if (false !== $key = array_search($sip_account, $this->sipNames)) {
-                                    $modelSip = Sip::model()->find('name = :key', [':key' => $this->sips[$key]['name']]);
+                                    $modelSip1 = Sip::model()->find('name = :key', [':key' => $this->sips[$key]['name']]);
                                 } else {
                                     continue;
                                 }
                             } else if (strlen($ndiscado) > 15) {
                                 $tech     = substr($ndiscado, 0, $ip_tech_length);
-                                $modelSip = Sip::model()->find('techprefix = :key AND host != "dynamic" ', [':key' => $tech]);
+                                $modelSip1 = Sip::model()->find('techprefix = :key AND host != "dynamic" ', [':key' => $tech]);
                             }
 
                             if (isset($modelSip1->id)) {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * =======================================
  * ###################################
@@ -104,7 +105,7 @@ class MassiveCallCommand extends ConsoleCommand
                 echo 'Found ' . count($modelPhoneNumber) . ' Numbers in Campaign ' . "\n";
             }
 
-            if ( ! isset($modelPhoneNumber[0])) {
+            if (! isset($modelPhoneNumber[0])) {
                 if ($this->debug >= 1) {
                     echo "NO PHONE FOR CALL" . "\n\n\n";
                 }
@@ -115,7 +116,6 @@ class MassiveCallCommand extends ConsoleCommand
             if ($campaign->frequency <= 60) {
                 //se for menos de 60 por minutos divido 60 pela frequncia e depois somo o resultado para mandar 1 chamada a cada segundos resultante da divisao.
                 $sleep = 60 / $campaign->frequency;
-
             } else {
                 //divido a frequencia por 60 e depois mando o resultado em cada segundo.
                 $sleep = $campaign->frequency / 60;
@@ -157,7 +157,6 @@ class MassiveCallCommand extends ConsoleCommand
 
                         continue;
                     }
-
                 }
 
                 if ($phone->try > 1) {
@@ -170,7 +169,7 @@ class MassiveCallCommand extends ConsoleCommand
                     continue;
                 }
 
-                if ( ! strlen($destination)) {
+                if (! strlen($destination)) {
                     $phone->status = 0;
                     $phone->save();
                     if ($this->debug >= 1) {
@@ -183,7 +182,7 @@ class MassiveCallCommand extends ConsoleCommand
 
                 $searchTariff = Plan::model()->searchTariff($id_plan, $destination);
 
-                if ( ! isset($searchTariff[1][0])) {
+                if (! isset($searchTariff[1][0])) {
                     $phone->status = 0;
                     $phone->save();
                     if ($this->debug >= 1) {
@@ -199,7 +198,6 @@ class MassiveCallCommand extends ConsoleCommand
                     $sql = "SELECT * FROM pkg_trunk_group_trunk WHERE id_trunk_group = " . $searchTariff[0]['id_trunk_group'] . " ORDER BY id ASC";
                 } else if ($searchTariff[0]['trunk_group_type'] == 2) {
                     $sql = "SELECT * FROM pkg_trunk_group_trunk WHERE id_trunk_group = " . $searchTariff[0]['id_trunk_group'] . " ORDER BY RAND() ";
-
                 } else if ($searchTariff[0]['trunk_group_type'] == 3) {
                     $sql = "SELECT *, (SELECT buyrate FROM pkg_rate_provider WHERE id_provider = tr.id_provider AND id_prefix = " . $searchTariff[0]['id_prefix'] . " LIMIT 1) AS buyrate  FROM pkg_trunk_group_trunk t  JOIN pkg_trunk tr ON t.id_trunk = tr.id WHERE id_trunk_group = " . $searchTariff[0]['id_trunk_group'] . " ORDER BY buyrate IS NULL , buyrate ";
                 }
@@ -218,7 +216,7 @@ class MassiveCallCommand extends ConsoleCommand
                     break;
                 }
 
-                if ( ! isset($idTrunk) || $idTrunk < 1) {
+                if (! isset($idTrunk) || $idTrunk < 1) {
                     continue;
                 }
 
@@ -239,7 +237,7 @@ class MassiveCallCommand extends ConsoleCommand
                     include dirname(__FILE__) . '/MassiveCallBeforeDial.php';
                 }
 
-                $dialstr = "$providertech/$trunkcode/$destination";
+                $dialstr = "$providertech/$destination@$trunkcode";
 
                 // gerar os arquivos .call
                 $call = "Action: Originate\n";
@@ -278,10 +276,8 @@ class MassiveCallCommand extends ConsoleCommand
                     if (($i % $sleep) == 0) {
                         $sleepNext += 1;
                     }
-
                 }
                 $ids[] = $phone->id;
-
             }
             if (strlen($reportValues)) {
                 CampaignReport::insertReport(substr($reportValues, 0, -1));

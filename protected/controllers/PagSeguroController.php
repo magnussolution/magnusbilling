@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Url for moip ruturn http://ip/billing/index.php/pagSeguro .
+ * Url for PAgSeguro ruturn http://ip/billing/index.php/pagSeguro .
  * https://pagseguro.uol.com.br/preferences/automaticReturn.jhtml
  */
 class PagSeguroController extends Controller
@@ -88,13 +88,11 @@ class PagSeguroController extends Controller
                 } else {
                     Yii::log(print_r('Existe uma pagamento com a referencia ' . $transacaoID, true), 'error');
                 }
-
             } else {
                 echo 'error';
             }
         } else {
             echo 'Obrigado por sua compra.';
         }
-
     }
 }

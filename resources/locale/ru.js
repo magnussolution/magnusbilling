@@ -1081,7 +1081,6 @@ Locale.load({
     'Variables': 'Переменные',
     'Verify code': 'Подтвердить код',
     'Version': 'Версия',
-    'Videosupport': 'Видеопорт',
     'Voice': 'Голос',
     'Voice Broadcasting': 'Голосовое вещание',
     'VoiceMail': 'Голосовая почта',

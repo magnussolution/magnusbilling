@@ -1062,7 +1062,6 @@ return array(
         'Variables' => 'Variables',
         'Verify code' => 'verificar código',
         'Version' => 'Versión',
-        'Videosupport' => 'video soporte',
         'Voice' => 'Voz',
         'Voice Broadcasting' => 'Llamadas masivas',
         'VoiceMail' => 'Mensaje de Voz',

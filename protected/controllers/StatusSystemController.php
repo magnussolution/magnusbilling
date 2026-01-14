@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Acoes do modulo "CallOnLine".
  *
@@ -54,8 +55,8 @@ class StatusSystemController extends Controller
             'params'    => [':key' => date('Y-m-d 00:00:00')],
             'order'     => 'cps DESC',
         ]);
-
-        $attributes[0]['maximumcc'] = isset($modelCallOnlineChart->total) ? 'CC ' . $modelCallOnlineChart->total . ' | CPS ' . $totalCPS->cps : 'CC 0 | CPS ' . $totalCPS->cps;
+        $cpsValue = (isset($totalCPS->cps)) ? $totalCPS->cps : 0;
+        $attributes[0]['maximumcc'] = isset($modelCallOnlineChart->total) ? 'CC ' . $modelCallOnlineChart->total . ' | CPS ' . $cpsValue : 'CC 0 | CPS ' . $cpsValue;
 
         $modelRefill = Refill::model()->find([
             'select'    => 'sum(credit) as credit',

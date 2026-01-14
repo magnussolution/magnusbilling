@@ -928,6 +928,8 @@ class CalcAgi
                 include 'CallCache.php';
             } else {
                 $keys        = $agi->get_variable("HANGUPCAUSE_KEYS()", true);
+
+                $agi->verbose('HANGUPCAUSE_KEYS ' . print_r($keys, true), 5);
                 $tech_string = explode(",", $keys);
                 foreach ($tech_string as $key => $value) {
                     if (preg_match('/' . $this->trunkcode . '/', $value)) {
@@ -935,13 +937,13 @@ class CalcAgi
                         break;
                     }
                 }
-                $code   = substr($agi->get_variable('HANGUPCAUSE(' . $TECHSTRING . ',tech)', true), 4, 3);
+                $code   = strlen($TECHSTRING) ? substr($agi->get_variable('HANGUPCAUSE(' . $TECHSTRING . ',tech)', true), 4, 3) : 0;
                 $fields = "uniqueid,id_user,calledstation,id_plan,id_trunk,callerid,src,
                         starttime, terminatecauseid,sipiax,id_prefix,hangupcause";
 
                 $values = "'$MAGNUS->uniqueid', '$MAGNUS->id_user','$MAGNUS->destination','$MAGNUS->id_plan',
                         '$MAGNUS->id_trunk','$MAGNUS->CallerID', '$MAGNUS->sip_account',
-                        '$this->starttime', '$this->terminatecauseid','$this->sipiax',$this->id_prefix,'$code'";
+                        '$this->starttime', '$this->terminatecauseid','$this->sipiax',$this->id_prefix,$code";
 
                 if (isset($modelServers->id)) {
                     $fields .= ', id_server';

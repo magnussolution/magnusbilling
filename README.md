@@ -18,7 +18,7 @@ Video:
 
 ### Prerequisites
 
-Linux Debian. Recomended DEBIAN
+Linux Debian.
 
 
 ### Installing

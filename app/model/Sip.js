@@ -231,6 +231,9 @@ Ext.define('MBilling.model.Sip', {
     }, {
         name: 'id_trunk_group',
         type: 'int'
+    }, {
+        name: 'max_contacts',
+        type: 'int'
     }],
     proxy: {
         type: 'uxproxy',

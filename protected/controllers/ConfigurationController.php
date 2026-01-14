@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Acoes do modulo "Configuration".
  *
@@ -35,7 +36,12 @@ class ConfigurationController extends Controller
 
     public function actionLayout()
     {
-        if ( ! isset($_POST['status'])) {
+        if (!Yii::app()->session['isAdmin']) {
+            echo json_encode(['success' => false, 'msg' => 'Access denied']);
+            return;
+        }
+
+        if (! isset($_POST['status'])) {
             exit;
         }
 
@@ -54,7 +60,12 @@ class ConfigurationController extends Controller
 
     public function actionTheme()
     {
-        if ( ! isset($_POST['field']) || ! isset($_POST['value'])) {
+        if (!Yii::app()->session['isAdmin']) {
+            echo json_encode(['success' => false, 'msg' => 'Access denied']);
+            return;
+        }
+
+        if (! isset($_POST['field']) || ! isset($_POST['value'])) {
             exit;
         }
         $info = 'User change the theme ' . $_POST['value'];
@@ -71,7 +82,12 @@ class ConfigurationController extends Controller
 
     public function actionSetData()
     {
-        if ( ! isset($_POST)) {
+        if (!Yii::app()->session['isAdmin']) {
+            echo json_encode(['success' => false, 'msg' => 'Access denied']);
+            return;
+        }
+
+        if (! isset($_POST)) {
             exit;
         }
 
@@ -106,13 +122,17 @@ class ConfigurationController extends Controller
             } else if ($attributes[$i]['config_key'] == 'reCaptchaSecret' && strlen($attributes[$i]['config_value'])) {
                 $attributes[$i]['config_value'] = '***************************************';
             }
-
         }
         return $attributes;
     }
 
     public function afterSave($model, $values)
     {
+        if (!Yii::app()->session['isAdmin']) {
+            echo json_encode(['success' => false, 'msg' => 'Access denied']);
+            return;
+        }
+
         $this->config = LoadConfig::getConfig();
         $cpstotal     = isset($this->config['global']['cpstotal']) ? $this->config['global']['cpstotal'] : 0;
         $lines        = '

@@ -18,7 +18,7 @@
 
 class CallOnLineController extends Controller
 {
-    public $attributeOrder = 't.duration DESC, status ASC';
+    public $attributeOrder = 'status DESC, t.duration DESC';
     public $extraValues    = ['idUser' => 'username,credit'];
 
     public $fieldsInvisibleClient = [

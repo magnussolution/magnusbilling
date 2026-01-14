@@ -590,7 +590,6 @@
 	Wenn Sie den Benutzer über IP authentifizieren möchten, geben Sie den Client-IP hier ein, lassen Sie das Kennwortfeld leer, und legen Sie sie auf "Unsichere", um auf die Registerkarte Atelierinformationen eingeladen zu werden.`,
 	'sip.sip_group' : `Beim Senden eines Anrufs aus dem Taten oder Kampagnen an eine Gruppe werden alle SIP-Benutzer aufgerufen, die sich in der Gruppe befinden.
 	Sie können die Gruppen mit einem beliebigen Namen erstellen. || wird auch verwendet, um Anrufe mit * 8 aufzunehmen, die Option "pickupupen = * 8" in der Datei "Feature.comf" konfigurieren muss.`,
-	'sip.videosupport' : `Videoanrufe aktivieren.`,
 	'sip.block_call_reg' : `Blockieren Sie Anrufe mit Regex.
 	Um Anrufe von Mobiltelefonen zu blockieren, legen Sie einfach ein, ^ 55 \\ d \\ d9.
 	Klicken Sie hier, um den Link zu besuchen, der Regex testet. | https://regex101.com.`,

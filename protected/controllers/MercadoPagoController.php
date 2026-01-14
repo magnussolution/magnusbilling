@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Url for moip ruturn http://ip/billing/index.php/mercadoPago .
+ * Url for MP ruturn http://ip/billing/index.php/mercadoPago .
  * https://www.mercadopago.com.br/ipn-notifications
  */
 class MercadoPagoController extends CController
@@ -18,7 +18,7 @@ class MercadoPagoController extends CController
 
         $mp = new MP($modelMethodpay->username, $modelMethodpay->pagseguro_TOKEN);
 
-        if ( ! isset($_GET["id"], $_GET["topic"]) || ! ctype_digit($_GET["id"])) {
+        if (! isset($_GET["id"], $_GET["topic"]) || ! ctype_digit($_GET["id"])) {
             http_response_code(400);
             return;
         }
@@ -36,7 +36,7 @@ class MercadoPagoController extends CController
 
                     $identification = Util::getDataFromMethodPay($payment_info["response"]['description']);
 
-                    if ( ! is_array($identification)) {
+                    if (! is_array($identification)) {
                         exit;
                     }
                     $username = $identification['username'];
@@ -51,7 +51,6 @@ class MercadoPagoController extends CController
                         UserCreditManager::releaseUserCredit($modelUser->id, $amount, $description, 1, $code);
                         header("HTTP/1.1 200 OK");
                     }
-
                 }
             }
         }

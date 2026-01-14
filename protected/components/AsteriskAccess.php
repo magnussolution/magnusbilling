@@ -253,7 +253,10 @@ class AsteriskAccess
                 } else {
                     $line .= "qualify_frequency = " . $data['qualify'] . "\n";
                 }
-                $line .= "max_contacts = 1\n";
+
+                if (isset($data->max_contacts)) {
+                    $line .= "max_contacts=" . trim($data->max_contacts) . "\n";
+                }
 
                 $line .= "\n[" . $data[$head_field] . "]\n";
                 $line .= "type = identify\n";
@@ -316,7 +319,7 @@ class AsteriskAccess
                         $line .=  "\n\n[" . $trunkName . "]\n";
                         $line .= "type = aor\n";
 
-                        $line .= "contact = sip:" . $data['host'] . "\n";
+                        $line .= "contact = sip:" . $data['name'] . "@" . $data['host'] . "\n";
                         $line .= "qualify_frequency = 60\n";
                         $line .= "max_contacts = 1\n";
 
@@ -808,11 +811,11 @@ class AsteriskAccess
                     // -------- AOR --------
                     $line .= "\n[" . $aorName . "]\n";
                     $line .= "type=aor\n";
+                    if (isset($sip->max_contacts) && strlen($sip->max_contacts) > 0) {
+                        $line .= "max_contacts=" . trim($sip->max_contacts) . "\n";
+                    }
+                    if ($host != 'dynamic') {
 
-                    if ($host == 'dynamic') {
-                        // endpoint registrando no Asterisk
-                        $line .= "max_contacts=1\n";
-                    } else {
                         // peer por IP
                         $line .= "contact=sip:" . $host;
                         if ($port != 5060) {
@@ -894,10 +897,8 @@ class AsteriskAccess
                         $line .= "allow_transfer=yes\n";
                     }
 
-                    // vídeos
-                    if ($sip->videosupport != 'no') {
-                        $line .= "allow_video=yes\n";
-                    }
+                    // callerid
+                    $line .= "callerid=" . $sip->callerid  . "\n";
 
                     // amarra auth/aor
                     $line .= "auth=" . $authName . "\n";
@@ -1071,9 +1072,6 @@ class AsteriskAccess
                         $line .= 'mohsuggest=' . $sip->mohsuggest . "\n";
                     }
 
-                    if ($sip->videosupport != 'no') {
-                        $line .= 'videosupport=' . $sip->videosupport . "\n";
-                    }
 
                     $line .= 'allowtransfer=' . $sip->allowtransfer . "\n";
 

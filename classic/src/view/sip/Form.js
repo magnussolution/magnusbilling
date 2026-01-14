@@ -82,6 +82,13 @@ Ext.define('MBilling.view.sip.Form', {
                     hidden: !App.user.isAdmin,
                     allowBlank: App.user.isClient
                 }, {
+                    xtype: 'numberfield',
+                    name: 'max_contacts',
+                    fieldLabel: t('Max Contacts'),
+                    value: '1',
+                    hidden: !App.user.isAdmin,
+                    allowBlank: App.user.isClient
+                }, {
                     xtype: 'checkboxgroup',
                     name: 'allow',
                     fieldLabel: t('Codec'),
@@ -169,12 +176,6 @@ Ext.define('MBilling.view.sip.Form', {
                     name: 'sip_group',
                     fieldLabel: t('Group'),
                     allowBlank: true
-                }, {
-                    xtype: 'yesnostringcombo',
-                    name: 'videosupport',
-                    fieldLabel: t('Videosupport'),
-                    value: 'no',
-                    allowBlank: !App.user.isAdmin
                 }, {
                     name: 'block_call_reg',
                     fieldLabel: t('Block call regex'),

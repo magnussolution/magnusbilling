@@ -179,6 +179,12 @@ Ext.define('MBilling.view.sip.List', {
             hideable: App.user.isAdmin && App.user.language == 'pt_BR',
             flex: 2
         }, {
+            header: t('Tech prefix'),
+            dataIndex: 'techprefix',
+            hidden: true,
+            hideable: App.user.isAdmin,
+            flex: 2
+        }, {
             header: t('AMD'),
             dataIndex: 'amd',
             hidden: true,

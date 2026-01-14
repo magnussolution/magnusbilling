@@ -65,7 +65,7 @@ class Sip extends Model
         $rules = [
             ['id_user', 'required'],
             ['id_user, calllimit, ringfalse, record_call, voicemail,dial_timeout,trace,amd, voicemail_password,
-                id_trunk_group', 'numerical', 'integerOnly' => true],
+                id_trunk_group,max_contacts', 'numerical', 'integerOnly' => true],
             ['name, callerid, context, fromuser, fromdomain, md5secret, secret, fullcontact', 'length', 'max' => 80],
             ['regexten, insecure, regserver, vmexten, callingpres, mohsuggest, allowtransfer', 'length', 'max' => 20],
             ['amaflags, dtmfmode, qualify', 'length', 'max' => 7],
@@ -75,7 +75,7 @@ class Sip extends Model
             ['language', 'length', 'max' => 2],
             ['mailbox,addparameter', 'length', 'max' => 50],
             ['sip_group', 'length', 'max' => 20],
-            ['rtptimeout, rtpholdtimeout,videosupport', 'length', 'max' => 3],
+            ['rtptimeout, rtpholdtimeout', 'length', 'max' => 3],
             ['deny, permit', 'length', 'max' => 95],
             ['type', 'length', 'max' => 6],
             ['url_events, description', 'length', 'max' => 150],

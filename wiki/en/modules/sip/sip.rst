@@ -93,16 +93,6 @@ Group
 
 
 
-.. _sip-videosupport:
-
-Videosupport
-------------
-
-| Activate video calls.
-
-
-
-
 .. _sip-block-call-reg:
 
 Block call regex

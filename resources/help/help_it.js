@@ -594,7 +594,6 @@
 	Se si desidera autenticare l'utente tramite IP, inserire il PI del client qui, consentono il campo della password vuota e impostalo su "Insicure" a por / invitare nella scheda Informazioni Adizionali.`,
 	'sip.sip_group' : `Quando si invia una chiamata da DED, o campagna a un gruppo, verrà chiamato tutti gli utenti SIP che sono nel Gruppo.
 	È possibile creare i gruppi con qualsiasi nome. || Viene utilizzato anche per acquisire le chiamate con * 8, è necessario configurare l'opzione "PickUPEXTEN = * 8" nel file "features.comf".`,
-	'sip.videosupport' : `Attiva le videochiamate.`,
 	'sip.block_call_reg' : `Bloccare le chiamate utilizzando Regex.
 	Per bloccare le chiamate dai cellulari, basta inserirlo ^ 55 \\ d \\ d9.
 	Clicca qui per visitare il link che prova Regex. | https://regex101.com.`,

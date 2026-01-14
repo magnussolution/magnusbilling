@@ -588,7 +588,6 @@
 	'sip.host' : ``,
 	'sip.sip_group' : `Lors de l'envoi d'un appel de Dad, ou de la campagne à un groupe, s'appellera tous les utilisateurs de SIP dans le groupe.
 	Vous pouvez créer les groupes avec n'importe quel nom. || est également utilisé pour capturer les appels avec * 8, besoin de configurer l'option "pickupexten = * 8" dans le fichier "fonctionnalité".`,
-	'sip.videosupport' : `Activer les appels vidéo.`,
 	'sip.block_call_reg' : `Bloquer les appels à l'aide de Regex.
 	Pour bloquer les appels des téléphones portables, mettez-le simplement ^ 55 \\ d \\ d9.
 	Cliquez ici pour visiter le lien qui teste regex. | https://regex101.com.`,

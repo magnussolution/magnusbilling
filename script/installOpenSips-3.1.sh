@@ -48,7 +48,7 @@ apt -y install git gcc bison flex make openssl perl libdbi-perl libdbd-mysql-per
 apt -y install autoconf automake devscripts gawk ntpdate ntp g++ git-core curl sudo xmlstarlet unixodbc-bin apache2 libjansson-dev git  odbcinst1debian2 libodbc1 odbcinst unixodbc unixodbc-dev
 apt -y install php-fpm php  php-dev php-common php-cli php-gd php-pear php-cli php-sqlite3 php-curl php-mbstring unzip libapache2-mod-php uuid-dev libxml2 libxml2-dev openssl libcurl4-openssl-dev gettext gcc g++ libncurses5-dev sqlite3 libsqlite3-dev subversion mpg123
 apt -y install mariadb-server php-mysql
-apt -y install unzip git libcurl4-openssl-dev htop rsyslog
+apt -y install unzip git libcurl4-openssl-dev htop rsyslog cron
 
 
 systemctl enable apache2 && systemctl enable mariadb

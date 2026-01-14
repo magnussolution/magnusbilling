@@ -600,7 +600,6 @@ Let's say there's 1 MagnusBilling server and 3 slave servers, and you want to se
 
 Is used as well to capture calls with *8, need to configurate the option "pickupexten = *8" in the file "feature.comf".
 `,
-    'sip.videosupport': `Activate video calls.`,
     'sip.block_call_reg': `Block calls using REGEX. To block calls from cellphones, just put it ^55\\d\\d9. Click here to visit the link that tests REGEX.|https://regex101.com.`,
     'sip.record_call': `Record calls of this SIP account.`,
     'sip.techprefix': `Useful option for when it's necessary to authenticate more than one client via IP that uses the same IP. Common in BBX multi tenant.`,

@@ -38,10 +38,11 @@ class PlayAudioController extends Controller
          *  - idIvrDidWork_123.wav | .gsm
          *  - queue-periodic.wav | .gsm
          */
-        $pattern = '/^(idCampaign_|idIvrDidNoWork_|idIvrDidWork_)(\d+)\.(wav|gsm)$/i';
+        $pattern = '/^(idCampaign_|idIvrDidNoWork_|idIvrDidWork_|idPoll_)(\d+)\.(wav|gsm)$/i';
+
 
         if (!preg_match($pattern, $audio, $matches)) {
-            exit('Invalid audio file');
+            exit('Invalid audio file 1' . $audio);
         }
 
         // Normaliza nome (remove qualquer path, por segurança extra)
@@ -54,7 +55,7 @@ class PlayAudioController extends Controller
         if ($id > 0 && $prefix === 'idCampaign_') {
             $modelCampaign = Campaign::model()->findByPk($id);
             if (!isset($modelCampaign->id)) {
-                exit('Invalid audio file');
+                exit('Invalid audio file 2 ');
             }
         }
 
@@ -62,7 +63,7 @@ class PlayAudioController extends Controller
         if ($id > 0 && strpos($prefix, 'idIvr') === 0) {
             $modelIvr = Ivr::model()->findByPk($id);
             if (!isset($modelIvr->id)) {
-                exit('Invalid audio file');
+                exit('Invalid audio file 3');
             }
         }
 

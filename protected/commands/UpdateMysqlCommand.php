@@ -45,7 +45,17 @@ class UpdateMysqlCommand extends CConsoleCommand
             $sql = "UPDATE pkg_trunk SET providertech = 'pjsip' WHERE providertech = 'sip' ";
             $this->executeDB($sql);
 
-            $version = '8.0.0';
+            $version = '8.0.0.0';
+            $sql     = "UPDATE pkg_configuration SET config_value = '" . $version . "'WHERE config_key = 'version'";
+            $this->executeDB($sql);
+        }
+
+        if ($version == '8.0.0.0') {
+
+            $sql = "ALTER TABLE `pkg_sip` ADD `max_contacts` INT(11) NOT NULL DEFAULT '1' AFTER `cnl`; ";
+            $this->executeDB($sql);
+
+            $version = '8.0.0.1';
             $sql     = "UPDATE pkg_configuration SET config_value = '" . $version . "'WHERE config_key = 'version'";
             $this->executeDB($sql);
         }

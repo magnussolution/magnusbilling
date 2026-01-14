@@ -351,6 +351,12 @@ class BuyCreditController extends Controller
 
             $session = \Stripe\Checkout\Session::retrieve($sessionId);
 
+            if (($session->payment_status ?? null) !== 'paid') {
+                Yii::log("Stripe: session not paid. session_id=$sessionId status={$session->status} payment_status={$session->payment_status}", 'error');
+                throw new CHttpException(402, 'Payment not completed');
+            }
+
+
             $userId = $session->metadata->user_id ?? null;
             $amount = $session->amount_total / 100.0;
 

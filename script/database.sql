@@ -2769,7 +2769,6 @@ CREATE TABLE `pkg_sip` (
   `busylevel` int DEFAULT NULL,
   `allowoverlap` enum('yes','no') DEFAULT NULL,
   `allowsubscribe` enum('yes','no') DEFAULT NULL,
-  `videosupport` enum('yes','no') DEFAULT 'no',
   `callgroup` char(10) DEFAULT NULL,
   `callerid` varchar(80) DEFAULT NULL,
   `context` varchar(80) DEFAULT NULL,

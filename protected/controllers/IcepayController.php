@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Url for moip ruturn http://ip/billing/index.php/icepay .
+ * Url for IcePay ruturn http://ip/billing/index.php/icepay .
  */
 class IcepayController extends Controller
 {
@@ -57,16 +57,13 @@ class IcepayController extends Controller
 
                     $description = 'Ycepay No.' . $data->paymentID;
                     UserCreditManager::releaseUserCredit($modelRefillIcepay->id_user, $modelRefillIcepay->credit, $description, 1, $data->paymentID);
-
                 } else {
                     echo "paymente id= $data->orderID not found";
                 }
-
             } else {
                 echo '<h1>Oops, some error occured</h1>';
                 echo '<p>Error description: ' . $data->statusCode . '</p>';
             }
-
         } else {
             echo 'not allow';
         }
