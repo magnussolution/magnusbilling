@@ -875,7 +875,7 @@ echo
 echo ===============================================================
 echo 
 
-
+chmod +x /var/www/html/mbilling/protected/commands/*.sh
 /var/www/html/mbilling/protected/commands/update.sh
 
 

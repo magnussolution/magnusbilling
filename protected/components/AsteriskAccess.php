@@ -904,6 +904,10 @@ class AsteriskAccess
                     $line .= "auth=" . $authName . "\n";
                     $line .= "aors=" . $aorName . "\n";
 
+                    if (isset($sip->sip_config) && $sip->sip_config != '') {
+                        $line .= $sip->sip_config . "\n";
+                    }
+
                     // -------- IDENTIFY (quando não é dynamic) --------
                     if ($host != 'dynamic') {
                         $line .= "\n[" . $identifyName . "]\n";
