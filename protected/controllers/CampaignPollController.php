@@ -62,12 +62,16 @@ class CampaignPollController extends Controller
     public function afterSave($model, $values)
     {
 
+
+
         if (strlen($_FILES["arq_audio"]["name"]) > 1) {
 
             if (file_exists($this->uploaddir . 'idPoll_' . $model->id . '.wav')) {
                 unlink($this->uploaddir . 'idPoll_' . $model->id . '.wav');
             }
-            $typefile = Util::validExtension($_FILES['audio_path']['tmp_name'], $_FILES["arq_audio"]["name"], ['gsm', 'wav']);
+
+
+            $typefile = Util::validExtension($_FILES['arq_audio']['tmp_name'], $_FILES["arq_audio"]["name"], ['gsm', 'wav']);
             $uploadfile = $this->uploaddir . 'idPoll_' . $model->id . '.' . $typefile;
             move_uploaded_file($_FILES["arq_audio"]["tmp_name"], $uploadfile);
         }

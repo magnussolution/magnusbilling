@@ -306,6 +306,20 @@ class Util
      */
     public static function validExtension($tmpPath, $originalName, array $allowed = [])
     {
+
+        if (!is_uploaded_file($tmpPath)) {
+            self::jsonError('File is not a valid uploaded file');
+        }
+
+        if (!file_exists($tmpPath)) {
+            self::jsonError('Temp file does not exist');
+        }
+
+        if (filesize($tmpPath) === 0) {
+            self::jsonError('Temp file is empty');
+        }
+
+
         // Extension -> MIME map (only safe/common formats)
         $mimeMap = [
             'jpg'  => ['image/jpeg', 'image/pjpeg', 'image/webp'],
@@ -341,9 +355,16 @@ class Util
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $mime  = $finfo->file($tmpPath) ?: '';
 
+
         // Block empty or generic MIME
-        if ($mime === '' || ($mime === 'application/octet-stream' && $ext != 'gsm')) {
-            self::jsonError('Block empty or generic MIME ' . $mime);
+        if ($mime === '') {
+            self::jsonError('Block empty  MIME ' . $mime);
+        }
+
+
+        // Block empty or generic MIME
+        if (($mime === 'application/octet-stream' && $ext != 'gsm')) {
+            self::jsonError('Block generic MIME ' . $mime);
         }
 
         // Check if real MIME matches the allowed ones for this extension

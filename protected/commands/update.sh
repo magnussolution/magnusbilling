@@ -81,7 +81,7 @@ find /etc/asterisk -name "*mbilling*" -exec chmod 660 {} \;
 
 chmod 600 /root/passwordMysql.log
 chown root:asterisk /var/spool/asterisk/outgoing
-chmod 730 /var/spool/asterisk/outgoing
+chmod 775 /var/spool/asterisk/outgoing
 chown -R root:asterisk /usr/local/src/magnus
 chmod -R 775 /usr/local/src/magnus
 chown -R root:asterisk /var/lib/asterisk/moh
@@ -198,7 +198,7 @@ systemctl reload ${SERVICE}
 
 sed -i.bak -E "s/^[[:space:]]*secure[-_]file[-_]priv[[:space:]]*=[[:space:]]*.*$/secure_file_priv = \/var\/lib\/mysql-files/" "$MYSQL_CONFIG"
 
-mkdir /var/lib/mysql-files
+mkdir -p /var/lib/mysql-files
 chown root:root /var/lib/mysql-files
 chmod 755 /var/lib/mysql-files
 
