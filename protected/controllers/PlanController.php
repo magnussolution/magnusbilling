@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Acoes do modulo "Plan".
  *
@@ -58,6 +59,16 @@ class PlanController extends Controller
     {
 
         if ($this->isNewRecord && Yii::app()->session['isAgent']) {
+
+            $modelError = $model->getErrors();
+            if (count($modelError)) {
+                echo json_encode([
+                    'success' => false,
+                    'errors'  => $model->getErrors(),
+                ]);
+                exit;
+            }
+
             //Create rates of Reseller
             RateAgent::model()->createAgentRates($model, Yii::app()->session['id_plan']);
         }
@@ -89,9 +100,9 @@ class PlanController extends Controller
 
         $modelRate = Rate::model()->findAll($filter);
 
-        if ( ! isset($modelRate[0]->id)) {
+        if (! isset($modelRate[0]->id)) {
             $url = "https://www.magnusbilling.com/download/cod_operadora.csv";
-            if ( ! $file = @file_get_contents($url, false)) {
+            if (! $file = @file_get_contents($url, false)) {
                 return;
             }
 
@@ -118,7 +129,7 @@ class PlanController extends Controller
                 $prefix      = '1111' . substr($collum[0], 2);
                 $destination = trim($collum[1]);
 
-                if ( ! strlen($destination)) {
+                if (! strlen($destination)) {
                     continue;
                 }
                 if (preg_match("/$filter_name/", $destination)) {
@@ -133,7 +144,6 @@ class PlanController extends Controller
                     } else {
                         $prefixs[] = "($prefix, '$destination')";
                     }
-
                 }
             }
             Prefix::model()->insertPrefixs($prefixs);
@@ -180,11 +190,9 @@ class PlanController extends Controller
                 if (isset($_POST['id_services_array']) && strlen($value) > 0) {
                     $arrPost['id_services'] = explode(",", $_POST['id_services_array']);
                 }
-
             }
         }
 
         return $arrPost;
     }
-
 }

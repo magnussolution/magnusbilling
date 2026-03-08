@@ -105,6 +105,11 @@ sleep 1
 cd /usr/src
 rm -rf asterisk*
 clear
+if [ -d "/etc/asterisk" ]; then
+  mkdir -p /etc/asterisk2
+  cp -a /etc/asterisk/. /etc/asterisk2/
+fi
+
 mv /var/www/html/mbilling/script/asterisk-20.9.2.tar.gz /usr/src/
 tar xzvf asterisk-20.9.2.tar.gz
 rm -rf asterisk-20.9.2.tar.gz
@@ -424,26 +429,32 @@ echo "
 " > /etc/logrotate.d/asterisk
 
 
-MBillingMysqlPass=$(genpasswd)
 
 echo
 echo "----------- Installing the new Database ----------"
 echo
 sleep 2
 
-mysql -uroot -p${password} -e "CREATE DATABASE IF NOT EXISTS mbilling;"
-mysql -uroot -p${password} -e "CREATE USER 'mbillingUser'@'localhost' IDENTIFIED BY '${MBillingMysqlPass}';"
-mysql -uroot -p${password} -e "GRANT ALL PRIVILEGES ON \`mbilling\` . * TO 'mbillingUser'@'localhost' WITH GRANT OPTION;FLUSH PRIVILEGES;"    
-mysql -uroot -p${password} -e "GRANT FILE ON * . * TO  'mbillingUser'@'localhost' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
-mysql mbilling -u root -p${password}  < /var/www/html/mbilling/script/database.sql
-rm -rf /var/www/html/mbilling/script
+if [ -e "/etc/asterisk/res_config_mysql.conf" ] && [ ! -z "/etc/asterisk/res_config_mysql.conf" ]
+then
+  MBillingMysqlPass=$(awk '/dbpass/ {print $NF}' /etc/asterisk/res_config_mysql.conf | cut -d= -f2)
+else
+  MBillingMysqlPass=$(genpasswd)
 
-echo "[general]
-dbhost = 127.0.0.1
-dbname = mbilling
-dbuser = mbillingUser
-dbpass = $MBillingMysqlPass
-" > /etc/asterisk/res_config_mysql.conf
+  mysql -uroot -p${password} -e "CREATE DATABASE IF NOT EXISTS mbilling;"
+  mysql -uroot -p${password} -e "CREATE USER 'mbillingUser'@'localhost' IDENTIFIED BY '${MBillingMysqlPass}';"
+  mysql -uroot -p${password} -e "GRANT ALL PRIVILEGES ON \`mbilling\` . * TO 'mbillingUser'@'localhost' WITH GRANT OPTION;FLUSH PRIVILEGES;"    
+  mysql -uroot -p${password} -e "GRANT FILE ON * . * TO  'mbillingUser'@'localhost' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
+  mysql mbilling -u root -p${password}  < /var/www/html/mbilling/script/database.sql
+  rm -rf /var/www/html/mbilling/script
+
+  echo "[general]
+  dbhost = 127.0.0.1
+  dbname = mbilling
+  dbuser = mbillingUser
+  dbpass = $MBillingMysqlPass
+  " > /etc/asterisk/res_config_mysql.conf
+fi
 
 echo '[directories](!)
 astetcdir => /etc/asterisk

@@ -424,33 +424,107 @@ class AuthenticationController extends Controller
 
     public function actionChangePassword()
     {
-        $passwordChanged = false;
-        $id_user         = Yii::app()->session['id_user'];
-        $currentPassword = $_POST['current_password'];
-        $newPassword     = $_POST['password'];
-        $isClient        = Yii::app()->session['isClient'];
-        $errors          = '';
 
-        $modelUser = User::model()->find(
-            "id LIKE :id_user AND password LIKE :currentPassword",
-            [
-                ":id_user"         => $id_user,
-                ":currentPassword" => $currentPassword,
-            ]
-        );
-
-        if (isset($modelUser->id)) {
-            try {
-                $modelUser->password = $newPassword;
-                $passwordChanged     = $modelUser->save();
-            } catch (Exception $e) {
-                $errors = $this->getErrorMySql($e);
-            }
-
-            $msg = $passwordChanged ? yii::t('yii', 'Password change success!') : $errors;
-        } else {
-            $msg = yii::t('yii', 'Current Password incorrect.');
+        if (Yii::app()->session['isAdmin'] != true) {
+            echo json_encode([
+                'success' => false,
+                'msg'     => 'Permission denied',
+            ]);
+            return;
         }
+
+
+        $passwordChanged = false;
+        $errors = '';
+        $msg = '';
+
+        $request = Yii::app()->request;
+
+        $id_user = Yii::app()->session['id_user'];
+
+        $currentPassword = $request->getPost('current_password', '');
+        $newPassword     = $request->getPost('password', '');
+
+
+        if (
+            strlen($currentPassword) !== 40 ||
+            strlen($newPassword) !== 40 ||
+            !ctype_xdigit($currentPassword) ||
+            !ctype_xdigit($newPassword)
+        ) {
+            $msg = 'Invalid password format';
+
+            echo json_encode([
+                'success' => false,
+                'msg'     => $msg,
+            ]);
+            return;
+        }
+
+
+        $modelUser = User::model()->findByPk($id_user);
+
+        if (!$modelUser) {
+            $msg = 'User not found';
+
+            echo json_encode([
+                'success' => false,
+                'msg'     => $msg,
+            ]);
+            return;
+        }
+
+
+        if (!hash_equals($modelUser->password, $currentPassword)) {
+
+            MagnusLog::insertLOG(
+                2,
+                'Failed password change | user=' . $modelUser->username . ' | ip=' . $request->userHostAddress
+            );
+
+
+            usleep(300000);
+
+            $msg = yii::t('yii', 'Current Password incorrect.');
+
+            echo json_encode([
+                'success' => false,
+                'msg'     => $msg,
+            ]);
+            return;
+        }
+
+        // =========================
+        // Impede mesma senha
+        // =========================
+        if (hash_equals($modelUser->password, $newPassword)) {
+            $msg = 'New password must be different';
+
+            echo json_encode([
+                'success' => false,
+                'msg'     => $msg,
+            ]);
+            return;
+        }
+
+        // =========================
+        // Salva nova senha (SHA1 legado)
+        // =========================
+        try {
+            $modelUser->password = $newPassword;
+            $passwordChanged = $modelUser->save(false);
+        } catch (Exception $e) {
+            $errors = $this->getErrorMySql($e);
+        }
+
+        $msg = $passwordChanged
+            ? yii::t('yii', 'Password change success!')
+            : $errors;
+
+        MagnusLog::insertLOG(
+            1,
+            'Password changed | user=' . $modelUser->username . ' | ip=' . $request->userHostAddress
+        );
 
         echo json_encode([
             'success' => $passwordChanged,

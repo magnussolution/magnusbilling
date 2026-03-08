@@ -293,67 +293,67 @@ class AsteriskAccess
                     echo "Impossible to write to the file";
                     break;
                 }
+            }
+
+            if ($head_field == 'trunkcode') {
+                $sql          = "SELECT * FROM pkg_servers WHERE type != 'mbilling' AND status IN (1,4) AND host != 'localhost'";
+                $modelServers = Yii::app()->db->createCommand($sql)->queryAll();
+
+                $line = "";
+
+                foreach ($modelServers as $key => $data) {
 
 
-                if ($head_field == 'trunkcode') {
-                    $sql          = "SELECT * FROM pkg_servers WHERE type != 'mbilling' AND status IN (1,4) AND host != 'localhost'";
-                    $modelServers = Yii::app()->db->createCommand($sql)->queryAll();
+                    if ($data['type'] == 'asterisk') {
+                        $trunkName =  preg_replace('/ /', '', strtolower($data['name'])) . "-" . $data['id'];
+                        $context .= 'slave';
+                    } else if ($data['type'] == 'sipproxy') {
+                        $trunkName = "sipproxy-" . preg_replace('/ /', '', strtolower($data['name'])) . "-" . $data['id'];
+                        $accountcode = 'sipproxy';
+                        $context .= 'proxy' . "\n";
+                    } else if ($data['type'] == 'mbilling') {
+                        $trunkName = "\n\n[mbilling]\n";
+                        $context = 'slave';
+                    }
 
-                    $line = "";
+                    $line .=  "\n\n[" . $trunkName . "]\n";
+                    $line .= "type = aor\n";
 
-                    foreach ($modelServers as $key => $data) {
+                    $line .= "contact = sip:" . $data['name'] . "@" . $data['host'] . "\n";
+                    $line .= "qualify_frequency = 60\n";
+                    $line .= "max_contacts = 1\n";
 
+                    $line .= "\n\n[" . $trunkName . "]\n";
+                    $line .= "type = identify\n";
+                    $line .= "endpoint = " . $trunkName . "\n";
+                    $line .= "match = " . strtok($data['host'], ':') . "\n";
 
-                        if ($data['type'] == 'asterisk') {
-                            $trunkName =  preg_replace('/ /', '', strtolower($data['name'])) . "-" . $data['id'];
-                            $context .= 'slave';
-                        } else if ($data['type'] == 'sipproxy') {
-                            $trunkName = "\n\n[sipproxy-" . preg_replace('/ /', '', strtolower($data['name'])) . "-" . $data['id'] . "]\n";
-                            $accountcode = 'sipproxy';
-                            $context .= 'proxy' . "\n";
-                        } else if ($data['type'] == 'mbilling') {
-                            $trunkName = "\n\n[mbilling]\n";
-                            $context = 'slave';
-                        }
+                    $line .= "\n\n[" . $trunkName . "]\n";
+                    $line .= "type = endpoint\n";
+                    $line .= "context = " . $context . "\n";
+                    $line .= "dtmf_mode = rfc4733\n";
+                    $line .= "disallow = all\n";
+                    $line .= "allow = g729,alaw,ulaw\n";
+                    $line .= "rtp_symmetric = yes\n";
+                    $line .= "force_rport = yes\n";
+                    $line .= "rewrite_contact = yes\n";
 
-                        $line .=  "\n\n[" . $trunkName . "]\n";
-                        $line .= "type = aor\n";
+                    $line .= "language = " . strlen($data['language']) ? $data['language'] : 'en' . "\n";
+                    $line .= "allow_subscribe = yes\n";
 
-                        $line .= "contact = sip:" . $data['name'] . "@" . $data['host'] . "\n";
-                        $line .= "qualify_frequency = 60\n";
-                        $line .= "max_contacts = 1\n";
-
-                        $line .= "\n\n[" . $trunkName . "]\n";
-                        $line .= "type = identify\n";
-                        $line .= "endpoint = " . $trunkName . "\n";
-                        $line .= "match = " . strtok($data['host'], ':') . "\n";
-
-                        $line .= "\n\n[" . $trunkName . "]\n";
-                        $line .= "type = endpoint\n";
-                        $line .= "context = " . $context . "\n";
-                        $line .= "dtmf_mode = rfc4733\n";
-                        $line .= "disallow = all\n";
-                        $line .= "allow = g729,alaw,ulaw\n";
-                        $line .= "rtp_symmetric = yes\n";
-                        $line .= "force_rport = yes\n";
-                        $line .= "rewrite_contact = yes\n";
-
-                        $line .= "language = " . strlen($data['language']) ? $data['language'] : 'en' . "\n";
-                        $line .= "allow_subscribe = yes\n";
-
-                        $line .= "aors = " . $trunkName . "\n";
-                        if (isset($accountcode) && strlen($accountcode)) {
-                            $line .= "set_var = MB_ACC=" . $accountcode . "\n";
-                        }
+                    $line .= "aors = " . $trunkName . "\n";
+                    if (isset($accountcode) && strlen($accountcode)) {
+                        $line .= "set_var = MB_ACC=" . $accountcode . "\n";
+                    }
 
 
-                        if (fwrite($fd, $line) === false) {
-                            echo "Impossible to write to the file (" . $file . ")";
-                            break;
-                        }
+                    if (fwrite($fd, $line) === false) {
+                        echo "Impossible to write to the file (" . $file . ")";
+                        break;
                     }
                 }
             }
+
 
 
             fclose($fd);
@@ -903,10 +903,6 @@ class AsteriskAccess
                     // amarra auth/aor
                     $line .= "auth=" . $authName . "\n";
                     $line .= "aors=" . $aorName . "\n";
-
-                    if (isset($sip->sip_config) && $sip->sip_config != '') {
-                        $line .= $sip->sip_config . "\n";
-                    }
 
                     // -------- IDENTIFY (quando não é dynamic) --------
                     if ($host != 'dynamic') {

@@ -23,7 +23,7 @@ Ext.define('MBilling.view.ivr.Form', {
     alias: 'widget.ivrform',
     bodyPadding: 0,
     fileUpload: true,
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         me.items = [{
             xtype: 'tabpanel',
@@ -63,7 +63,7 @@ Ext.define('MBilling.view.ivr.Form', {
                 }, {
                     name: 'sunStart',
                     fieldLabel: t('Sunday intervals'),
-                    value: '00:00'
+                    value: '00:00-00:00'
                 }, {
                     xtype: 'yesnocombo',
                     name: 'use_holidays',
