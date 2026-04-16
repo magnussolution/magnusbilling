@@ -1,4 +1,5 @@
 <?php
+
 /**
  * =======================================
  * ###################################
@@ -18,8 +19,22 @@
  *
  */
 
+// MassiveCall handles calls initiated by outbound campaigns or click-to-
+// call actions.  It reads AGI variables set by the dialer application
+// (TRUNK_ID, PHONENUMBER_ID, CAMPAIGN_ID, etc.), plays campaign audio or
+// TTS, collects DTMF responses for authorization or polls, updates campaign
+// reports, and ultimately forwards the call to a destination.  Billing is
+// performed based on the result of the dial.
 class MassiveCall
 {
+    // send: main entry point for massive calls.  This method:
+    // 1. Answers the channel and updates campaign/phonenumber status.
+    // 2. Determines which audio to play (pre-recorded or TTS).
+    // 3. Optionally prompts for authorization DTMF or conducts a poll.
+    // 4. Handles automatic machine detection and updates reports.
+    // 5. After interacting with the caller, may route the call to a SIP
+    //    account or other destination via SipCallAgi or DidAgi.
+    // 6. Performs billing similarly to a standard call using CalcAgi.
     public static function send($agi, &$MAGNUS, &$CalcAgi)
     {
 
@@ -58,14 +73,14 @@ class MassiveCall
         $agi->verbose($sql, 25);
         $modelCampaign = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
 
-        if ( ! isset($modelCampaign->id)) {
+        if (! isset($modelCampaign->id)) {
             $agi->verbose($idCampaign . ' campaing not exist');
             return;
         }
         $sql = "SELECT * FROM pkg_phonenumber WHERE id = $idPhonenumber LIMIT 1";
         $agi->verbose($sql, 25);
         $modelPhoneNumber = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
-        if ( ! isset($modelPhoneNumber->id)) {
+        if (! isset($modelPhoneNumber->id)) {
             $agi->verbose($idPhonenumber . ' number not exist');
             exit;
         }
@@ -81,7 +96,6 @@ class MassiveCall
             $sql = "UPDATE pkg_phonenumber SET status = 5, info = '" . $agi->get_variable("AMDCAUSE", true) . "' WHERE id = $idPhonenumber LIMIT 1";
             $agi->verbose($sql, 25);
             $agi->exec($sql);
-
         } else {
 
             $sql = "UPDATE pkg_phonenumber SET status = 3 WHERE id = $idPhonenumber LIMIT 1";
@@ -108,7 +122,6 @@ class MassiveCall
                 $agi->verbose($sql, 25);
                 $modelCampaignPoll = $agi->query($sql)->fetchAll(PDO::FETCH_OBJ);
                 $forward_number    = "";
-
             } else {
 
                 /*VERIFICA SE CAMPAÃ‘A TEM ENCUESTA*/
@@ -122,7 +135,6 @@ class MassiveCall
                     $file = $idPhonenumber . date("His");
 
                     $audio_name = Tts::create($MAGNUS, $agi, $modelPhoneNumber->name);
-
                 }
 
                 /*AUDIO FOR CAMPAIN*/
@@ -136,7 +148,6 @@ class MassiveCall
                         $agi->verbose('Get audio from TTS');
                         $audio = Tts::create($MAGNUS, $agi, $modelCampaign->tts_audio);
                     }
-
                 } else {
                     $audio = $uploaddir . "idCampaign_" . $modelCampaign->id;
                 }
@@ -144,7 +155,6 @@ class MassiveCall
                 //If exist audio2 execute audio1
                 if (isset($tts)) {
                     $agi->stream_file($audio, '#');
-
                 } else {
                     // CHECK IF NEED AUTORIZATION FOR EXECUTE POLL OR IS EXISTE FORWARD NUMBER
                     if (strlen($forward_number) > 2 || (isset($modelCampaignPoll[0]->id) && $modelCampaignPoll[0]->request_authorize == 1)) {
@@ -166,7 +176,6 @@ class MassiveCall
                     if (strlen($modelCampaign->tts_audio2) > 2) {
 
                         $audio = Tts::create($MAGNUS, $agi, $modelCampaign->tts_audio2);
-
                     } else {
                         $audio = $uploaddir . "idCampaign_" . $idCampaign . "_2";
                     }
@@ -177,7 +186,6 @@ class MassiveCall
                     } else {
                         $agi->stream_file($audio, ' #');
                     }
-
                 }
 
                 if (strlen($modelCampaign->asr_options)) {
@@ -191,7 +199,6 @@ class MassiveCall
                             $audio = Tts::create($MAGNUS, $agi, $text);
 
                             $agi->stream_file($audio, ' #');
-
                         } elseif (preg_match('/' . $modelCampaign->asr_options . '/', $textASR)) {
 
                             $text  = "Você disse. " . $textASR . ". Por favor aguarde.";
@@ -215,7 +222,6 @@ class MassiveCall
 
                 //CHECK IF IS FORWARD EXTERNAL CALLL
                 $agi->verbose("forward_number $forward_number , res_dtmf: " . $res_dtmf['result'] . ", digit_authorize: " . $modelCampaignPoll[0]->digit_authorize, 10);
-
             }
 
             //if have a forward                         if res_dtmf is equal the digit_authorize                OR press any digit and digit_authorize equal -2 (any digit)    OR  digit_authorize equal -3 (every)
@@ -295,7 +301,6 @@ class MassiveCall
                         if (isset($modelSip[0]) == 0) {
                             $agi->verbose('GROUP NOT FOUND');
                             $agi->stream_file('prepaid-invalid-digits', '#');
-
                         } else {
                             $group = '';
                             foreach ($modelSip as $key => $value) {
@@ -306,7 +311,6 @@ class MassiveCall
                             $agi->verbose("DIAL $dialstr", 25);
                             $MAGNUS->run_dial($agi, $dialstr, $MAGNUS->agiconfig['dialcommand_param_sipiax_friend']);
                         }
-
                     } elseif ($forwardOptionType == 'custom') {
                         $agi->set_variable("CALLERID(num)", $destination);
                         $agi->set_variable("CALLERID(name)", $modelPhoneNumber->name);
@@ -323,7 +327,6 @@ class MassiveCall
                             } else {
                                 file_get_contents($url);
                             }
-
                         } else if (preg_match('/AGI/', $forwardOption[1])) {
                             $agi = explode("|", $forwardOption[1]);
                             $agi->exec_agi($agi[1] . ",$destination,$idCampaign,$idPhonenumber");
@@ -350,7 +353,6 @@ class MassiveCall
                                 $sql = "SELECT * FROM pkg_trunk_group_trunk WHERE id_trunk_group = " . $modelRate->id_trunk_group . " ORDER BY id ASC";
                             } else if ($modelRate->trunk_group_type == 2) {
                                 $sql = "SELECT * FROM pkg_trunk_group_trunk WHERE id_trunk_group = " . $modelRate->id_trunk_group . " ORDER BY RAND() ";
-
                             } else if ($modelRate[0]['trunk_group_type'] == 3) {
                                 $sql = "SELECT *, (SELECT buyrate FROM pkg_rate_provider WHERE id_provider = tr.id_provider AND id_prefix = " . $modelRate->id_prefix . " LIMIT 1) AS buyrate  FROM pkg_trunk_group_trunk t  JOIN pkg_trunk tr ON t.id_trunk = tr.id WHERE id_trunk_group = " . $modelRate->id_trunk_group . " ORDER BY buyrate IS NULL , buyrate ";
                             }
@@ -379,7 +381,6 @@ class MassiveCall
                                 }
 
                                 break;
-
                             }
 
                             //retiro e adiciono os prefixos do tronco
@@ -394,10 +395,9 @@ class MassiveCall
 
                             $agi->verbose($url);
 
-                            if ( ! $res = @file_get_contents($url, false)) {
+                            if (! $res = @file_get_contents($url, false)) {
                                 $agi->verbose("ERRO SMS -> " . $url);
                             }
-
                         } else {
                             $MAGNUS->run_dial($agi, $forwardOption[1]);
                         }
@@ -411,7 +411,6 @@ class MassiveCall
                         $myres = $agi->execute("StopMixMonitor");
                     }
                 }
-
             } else if (is_numeric($res_dtmf['result'])) {
                 $sql = "UPDATE pkg_campaign_report SET status = 4 WHERE id_phonenumber = $idPhonenumber AND id_campaign = $idCampaign ORDER BY id DESC LIMIT 1";
                 $agi->verbose($sql, 25);
@@ -462,7 +461,6 @@ class MassiveCall
                                 $agi->verbose('NOT authorized', 5);
                                 break;
                             }
-
                         } else {
 
                             $agi->verbose("poll->option10: $poll->option10", 5);
@@ -474,7 +472,6 @@ class MassiveCall
 
                                     $agi->verbose(print_r($digit_timeout, true), 5);
                                     $digit_timeout = end($digit_timeout);
-
                                 } else {
                                     $digit_timeout = strlen($poll->option10);
                                 }
@@ -483,7 +480,6 @@ class MassiveCall
                             } else {
                                 $res_dtmf = $agi->get_data($audio, 5000, 1);
                             }
-
                         }
 
                         //GET RESULT OF POLL
@@ -505,7 +501,6 @@ class MassiveCall
 
                             $execute_poll_name = $poll2[0];
                             continue;
-
                         }
 
                         //Hungaup call if the fisrt poll dtmf is not numeric
@@ -547,7 +542,6 @@ class MassiveCall
                                         break;
                                     } else if ($modelCampaignPoll->resposta_option == '') {
                                         $agi->verbose("Client press invalid option $dtmf_result on poll " . $poll->id, 8);
-
                                     } else {
                                         $agi->verbose("Client press number: $dtmf_result", 8);
                                         break;
@@ -559,7 +553,6 @@ class MassiveCall
                         if ($modelCampaignPoll->resposta_option != 'repeat') {
                             break;
                         }
-
                     }
 
                     if (is_numeric($dtmf_result) && $dtmf_result >= 0) {
@@ -598,7 +591,6 @@ class MassiveCall
                             $agi->exec($sql);
 
                             break;
-
                         }
                         //si esta hangup en la opcion, corlgar.
                         else if ($poll->{'option' . $dtmf_result} == 'hangup') {
@@ -619,7 +611,6 @@ class MassiveCall
                             $agi->exec($sql);
 
                             break;
-
                         } elseif (preg_match('/create/', $poll->{'option' . $dtmf_result})) {
 
                             $sql = "SELECT * FROM pkg_plan WHERE signup = 1 LIMIT 1";
@@ -637,8 +628,8 @@ class MassiveCall
                                 $password        = Util::generatePassword(8, true, true, true, false);
                                 $callingcard_pin = Util::getNewLock_pin($agi);
                                 $prefix_local    = $MAGNUS->config['global']['base_language'] == 'pt_BR'
-                                ? '0/55,*/5511/8,*/5511/9'
-                                : '';
+                                    ? '0/55,*/5511/8,*/5511/9'
+                                    : '';
                                 $fields = "username,password,id_user,id_plan,credit,id_group,active,prefix_local,callingcard_pin,loginkey,typepaid";
                                 $values = "'$destination', '$password', '1', '$id_plan', '$credit', '$id_group',
                                     '1', '$prefix_local', '$callingcard_pin', '', 0";
@@ -654,11 +645,9 @@ class MassiveCall
                                     $agi->verbose($sql, 25);
                                     $agi->exec($sql);
                                 }
-
                             } else {
                                 $agi->verbose('NOT HAVE PLAN ENABLE ON SIGNUP', 25);
                             }
-
                         } else {
 
                             $fields = "id_campaign_poll,resposta,number,city,resposta_text";
@@ -687,12 +676,10 @@ class MassiveCall
                         if (preg_match('/hangup/', $poll->{'option' . $dtmf_result})) {
                             break;
                         }
-
                     } else {
                         $agi->verbose('Cliente no marco nada', 8);
                         break;
                     }
-
                 }
 
                 $agi->stream_file('prepaid-final', ' #');
@@ -702,7 +689,7 @@ class MassiveCall
         $agi->verbose($sql, 25);
         $modelRate = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
 
-        if ( ! isset($modelRate->id)) {
+        if (! isset($modelRate->id)) {
             return;
         }
 
@@ -753,7 +740,6 @@ class MassiveCall
                     $calculaminutos++;
                 }
                 $duration = $calculaminutos * $billingblock;
-
             } elseif ($duration < '1') {
                 $duration = 0;
             } else {
@@ -786,10 +772,9 @@ class MassiveCall
                         WHERE id = $modelCampaign->id LIMIT 1";
                 $agi->verbose($sql, 25);
                 $agi->exec($sql);
-
             }
 
-            if ( ! is_null($MAGNUS->id_agent) && $MAGNUS->id_agent > 1) {
+            if (! is_null($MAGNUS->id_agent) && $MAGNUS->id_agent > 1) {
                 $sql = "SELECT rateinitial, initblock, billingblock, minimal_time_charge, package_offer " .
                     "FROM pkg_plan " .
                     "LEFT JOIN pkg_rate_agent ON pkg_rate_agent.id_plan=pkg_plan.id " .
@@ -817,10 +802,8 @@ class MassiveCall
             $MAGNUS->CallerID          = intval($destination);
 
             $id_call = $CalcAgi->saveCDR($agi, $MAGNUS, true);
-
         }
 
         $MAGNUS->hangup($agi);
     }
-
 }

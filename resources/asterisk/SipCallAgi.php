@@ -118,6 +118,12 @@ class SipCallAgi
         }
     }
 
+    // callForward: invoked when a SIP account has a forward configured.
+    // The forward rule may point to another SIP user, a custom string, an
+    // IVR, queue, telephone number or SMS.  Depending on the type the method
+    // either recursively calls processCall, uses IvrAgi/QueueAgi, or sends an
+    // SMS.  Called after a dial attempt fails or immediately when a SIP
+    // contact indicates forwarding.
     public static function callForward($MAGNUS, $agi, $CalcAgi, $modelSipForward)
     {
 
@@ -200,6 +206,9 @@ class SipCallAgi
         }
     }
 
+    // smsForward: helper that constructs and sends an SMS via a configured
+    // trunk.  Option value comes from a forward rule like "SMS/text@number".
+    // After sending the message the method writes a CDR and hangs up the call.
     public static function smsForward($MAGNUS, $agi, $CalcAgi, $optionValue)
     {
         $agi->verbose("try send SMS", 5);

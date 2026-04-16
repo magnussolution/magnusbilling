@@ -1,4 +1,5 @@
 <?php
+
 /**
  * =======================================
  * ###################################
@@ -23,6 +24,9 @@ yum -y install mpg123 perl perl-libwww-perl sox cpan
 yum -y install perl-LWP-Protocol-https
 yum -y install perl-JSON flac
  */
+// Tts: simple text-to-speech helper used by MassiveCall and other
+// modules.  Supports multiple providers (Vocalware, Google, VoiceRSS, etc.)
+// and caches generated audio in /tmp to avoid repeated requests.
 class Tts
 {
     public static function create(&$MAGNUS, $agi, $string)
@@ -39,7 +43,7 @@ class Tts
 
         $file = 'tts_audio_' . MD5($string);
 
-        if ( ! file_exists('/tmp/' . $file . '.wav')) {
+        if (! file_exists('/tmp/' . $file . '.wav')) {
 
             $tts_url = preg_replace('/\$name/', $name, $MAGNUS->config['global']['tts_url']);
 
@@ -98,7 +102,6 @@ class Tts
                 $tts_url = 'https://www.vocalware.com/tts/gen.php?' . $get . '&CS=' . $CS;
                 $agi->verbose($tts_url, 25);
                 exec("curl --insecure \"$tts_url\" --output \"/tmp/$file.mp3\" ");
-
             } else if (preg_match("/ttsgo/", $tts_url)) {
 
                 $ch = curl_init();
@@ -115,7 +118,6 @@ class Tts
                 fwrite($fp, file_get_contents($objJson->url));
                 fclose($fp);
                 exec('sox /tmp/' . $file . '.wav -c 1 -r 8000 /tmp/' . $file . '.sln && rm -rf /tmp/' . $file . '.wav');
-
             } else {
                 if (preg_match("/google/", $tts_url)) {
                     $token = Tts::make_token($name);
@@ -132,7 +134,6 @@ class Tts
                     system("sox /tmp/$file2.wav -c 1 -r 8000 /tmp/$file.wav && rm -rf /tmp/$file2.wav ");
                 }
             }
-
         }
         return '/tmp/' . $file;
     }
@@ -155,7 +156,6 @@ class Tts
         }
         $stamp %= pow(10, 6);
         return ($stamp . '.' . ($stamp ^ $time));
-
     }
 
     public static function make_rl($num, $str)

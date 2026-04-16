@@ -1,4 +1,5 @@
 <?php
+
 /**
  * =======================================
  * ###################################
@@ -18,9 +19,18 @@
  *
  */
 
+// PortabilidadeAgi handles Brazilian number portability lookup.  Given a
+// telephone number it may prepend an operator code (1111XYZ) based on
+// external API access or local database tables.  Called from mbilling.php
+// when portability settings are enabled.
 class PortabilidadeAgi
 {
 
+    // getDestination: perform the portability lookup for a given number.
+    // Applies rules for mobile/fixed, external HTTP service or local tables,
+    // and returns a modified dial string.  Alters $MAGNUS->portabilidade
+    // flag when a lookup occurs.  Used by mbilling.php prior to routing
+    // outbound calls.
     public static function getDestination($agi, $MAGNUS, $number)
     {
         $agi->verbose("consulta portabilidade numero " . $number, 25);
@@ -38,7 +48,8 @@ class PortabilidadeAgi
             }
 
             if (($mobile == true && $MAGNUS->portabilidadeMobile == 1) ||
-                ($fixed == true && $MAGNUS->portabilidadeFixed == 1)) {
+                ($fixed == true && $MAGNUS->portabilidadeFixed == 1)
+            ) {
 
                 $MAGNUS->portabilidade = true;
                 if (strlen($MAGNUS->config['global']['portabilidadeUsername']) > 3 && strlen($MAGNUS->config['global']['portabilidadePassword']) > 3) {
@@ -47,7 +58,7 @@ class PortabilidadeAgi
                     $url  = "http://consultas.portabilidadecelular.com/painel/consulta_numero.php?user=" . $user . "&pass=" . $pass . "&seache_number=" . $number . "";
                     $agi->verbose($url, 25);
 
-                    if ( ! $operadora = @file_get_contents($url, false)) {
+                    if (! $operadora = @file_get_contents($url, false)) {
                         $operadora = '55999';
                     }
                     $company = str_replace("55", "", $operadora);
@@ -59,9 +70,11 @@ class PortabilidadeAgi
                         $sql = "SELECT company FROM pkg_portabilidade_prefix  WHERE number = '" . substr($ddd, 0, 6) . "' ORDER BY id DESC LIMIT 1";
                         $agi->verbose($sql, 25);
                         $resultNextel = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
-                        if (isset($resultNextel->company)
+                        if (
+                            isset($resultNextel->company)
                             && ($resultNextel->company == '55377' || $resultNextel->company == '55390'
-                                || $resultNextel->company == '55391')) {
+                                || $resultNextel->company == '55391')
+                        ) {
                             $agi->verbose("é Nextel", 15);
                             $company = str_replace("55", "", $resultNextel->company);
                             $number  = "1111" . $company . $number;
@@ -72,7 +85,6 @@ class PortabilidadeAgi
                             $agi->verbose("Numero sem o nono digito, MBilling adicionou", 8);
                             $ddd    = substr($ddd, 0, 2) . 9 . substr($ddd, 2);
                             $number = "55" . $ddd;
-
                         }
                     }
                     $sql = "SELECT company FROM pkg_portabilidade WHERE number = '$ddd' ORDER BY id DESC LIMIT 1";

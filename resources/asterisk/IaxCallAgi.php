@@ -3,9 +3,17 @@
 /**
  *
  */
+// IAX2 call handler.  Similar to SipCallAgi but dials using IAX2
+// protocol.  Used when the global setting `use_sip_to_iax` is enabled and a
+// matching pkg_iax record is found.  Provides a single static processCall()
+// method invoked by mbilling.php when routing a call to an IAX peer.
 class IaxCallAgi
 {
 
+    // processCall: executes a Dial command to an IAX2 extension.
+    // Populates $MAGNUS->modelUser based on the provided $modeIax object,
+    // starts recording if enabled, then performs the call and saves a CDR on
+    // completion.  Called by mbilling.php when the DNID matches an IAX entry.
     public static function processCall(&$MAGNUS, &$agi, &$CalcAgi, $modeIax)
     {
         $agi->verbose('IaxCallAgi ');

@@ -80,17 +80,25 @@ class Magnus
     public $sip_id_trunk_group = 0;
     public $modelRateAgent;
 
+    // Constructor initializes lookup tables and other global lists.
+    // Called when a new Magnus object is created in mbilling.php.
     public function __construct()
     {
         $this->dialstatus_rev_list = Magnus::getDialStatus_Revert_List();
     }
 
+    // init: reset per-call fields. Called after constructing the object to
+    // prepare for processing a new call.
     public function init()
     {
         $this->destination = '';
     }
 
     /*  load_conf */
+    // load_conf: fetch configuration from the database (pkg_configuration)
+    // and populate $this->config and $this->agiconfig arrays.  This is invoked
+    // at startup by mbilling.php to read global settings used across AGI
+    // modules.
     public function load_conf(&$agi, $config = null, $webui = 0, $idconfig = 1, $optconfig = [])
     {
         $this->idconfig = 1;
@@ -110,6 +118,11 @@ class Magnus
         return true;
     }
 
+    // get_agi_request_parameter: copy AGI variables (accountcode, dnid,
+    // callerid, channel, uniqueid) from the incoming request into the
+    // object's properties.  Also normalizes caller ID format and extracts SIP
+    // account from channel string.  Called immediately after load_conf in
+    // mbilling.php.
     public function get_agi_request_parameter($agi)
     {
         $this->accountcode = $agi->request['agi_accountcode'];
@@ -138,6 +151,9 @@ class Magnus
         }
     }
 
+    // calculation_price: helper to compute cost based on buy rate,
+    // duration, initial/billing/increment blocks.  Used by billing routines
+    // when converting seconds to monetary cost.
     public function calculation_price($buyrate, $duration, $initblock, $increment)
     {
 
@@ -158,6 +174,8 @@ class Magnus
         return $ratecost;
     }
     //hangup($agi);
+    // hangup: terminate the call with an optional SIP cause code.  Writes
+    // a verbose log message and issues the HANGUP application to Asterisk.
     public function hangup(&$agi, $code = '')
     {
         /*
@@ -187,6 +205,8 @@ class Magnus
         exit;
     }
 
+    // getDialStatus_Revert_List: static helper returning a mapping from
+    // Asterisk DIALSTATUS strings to internal numeric terminatecauseid values.
     public static function getDialStatus_Revert_List()
     {
         $dialstatus_rev_list                = [];
@@ -202,6 +222,10 @@ class Magnus
         return $dialstatus_rev_list;
     }
 
+    // checkNumber: before dialing an outbound number, verify it against
+    // user restrictions (blacklist, prefix rules, account status) and
+    // calculate timeout using CalcAgi.  Called by StandardCallAgi on each
+    // attempt (for number_try loops) to confirm the call may proceed.
     public function checkNumber($agi, &$CalcAgi, $try_num, $call2did = false)
     {
         $res               = 0;
@@ -318,6 +342,9 @@ class Magnus
         return true;
     }
 
+    // say_time_call: play a voice prompt telling the caller how many
+    // minutes/seconds they have remaining before credit expires.  Uses
+    // prompt files configured in agiconfig.
     public function say_time_call($agi, $timeout, $rate = 0)
     {
         $minutes = intval($timeout / 60);
@@ -352,6 +379,8 @@ class Magnus
         }
     }
 
+    // sayBalance: announce the user's current credit balance via audio
+    // prompts, optionally triggered after a voucher recharge or on-demand.
     public function sayBalance($agi, $credit, $fromvoucher = 0)
     {
 
@@ -410,6 +439,9 @@ class Magnus
         }
     }
 
+    // sayLastCall: use prompts to inform the user of the cost and duration
+    // of their last call.  Called when hangup occurs and the system supports
+    // last-call announcements.
     public function sayLastCall($agi, $rate, $time = 0)
     {
         $rate  = preg_replace("/\./", "z", $rate);
@@ -433,6 +465,7 @@ class Magnus
         }
     }
 
+    // sayRate: audibly announce the per-minute rate for current destination.
     public function sayRate($agi, $rate)
     {
         $rate = 0.008;
@@ -508,6 +541,10 @@ class Magnus
         }
     }
 
+    // checkDaysPackage: determine billing eligibility based on package
+    // start day and billing type (daily/weekly/etc.). Returns true if
+    // current date falls within allowed period. Used by CalcAgi when
+    // evaluating offers.
     public function checkDaysPackage($agi, $startday, $billingtype)
     {
         if ($billingtype == 0) {
@@ -551,6 +588,8 @@ class Magnus
         return $CLAUSE_DATE;
     }
 
+    // freeCallUsed: count how many free calls the user has consumed for a
+    // given offer, used when package type is "number of free calls".
     public function freeCallUsed($agi, $id_user, $id_offer, $billingtype, $startday)
     {
 
@@ -562,6 +601,8 @@ class Magnus
         return isset($modelOfferCdr->status) ? $modelOfferCdr->status : 0;
     }
 
+    // packageUsedSeconds: returns the number of seconds already used by a
+    // user on a time-based package offer.
     public function packageUsedSeconds($agi, $id_user, $id_offer, $billingtype, $startday)
     {
         $CLAUSE_DATE = $this->checkDaysPackage($agi, $startday, $billingtype);
@@ -572,6 +613,9 @@ class Magnus
         return isset($modelOfferCdr->used_secondes) ? $modelOfferCdr->used_secondes : 0;
     }
 
+    // check_expirationdate_customer: validate the customer's account
+    // expiration date and optionally announce warnings or disconnect the
+    // call.  Returns the name of a prompt to play, if needed.
     public function check_expirationdate_customer($agi)
     {
         $prompt = '';
@@ -589,6 +633,9 @@ class Magnus
         return $prompt;
     }
 
+    // run_dial: wrapper around the AGI Dial command.  Builds options
+    // string, handles audio recording start/stop, and inserts timeout
+    // values.  Used by SIP/IAX/DID handlers when placing outbound legs.
     public function run_dial($agi, $dialstr, $dialparams = "", $trunk_directmedia = 'no', $timeout = 3600, $max_long = 2147483647)
     {
 
@@ -621,6 +668,9 @@ class Magnus
         return $agi->execute("DIAL $dialstr" . $dialparams);
     }
 
+    // number_translation: apply prefix_local or other translation rules to
+    // a destination number based on user settings.  Called before billing or
+    // dialing to ensure correct number formatting.
     public function number_translation($agi, $destination)
     {
         #match / replace / if match length
@@ -657,12 +707,17 @@ class Magnus
         $this->destination = PortabilidadeAgi::getDestination($agi, $this, $destination);
     }
 
+    // round_precision: helper to round numbers to configured decimal
+    // precision (used for credit calculations).
     public function round_precision($number)
     {
         $PRECISION = 6;
         return round($number, $PRECISION);
     }
 
+    // executePlayAudio: play a named audio prompt (such as balance or
+    // error messages) ensuring the file is available and handling the
+    // agi->stream_file call.
     public function executePlayAudio($prompt, $agi)
     {
         if (strlen($prompt) > 0) {
@@ -674,6 +729,9 @@ class Magnus
         }
     }
 
+    // checkRestrictPhoneNumber: enforce dialplan restrictions (blacklist,
+    // allowed prefixes) based on user or plan rules.  Type may be 'outbound'
+    // or 'did'.  Called before sending any call to CalcAgi.
     public function checkRestrictPhoneNumber($agi, $type = 'outbound')
     {
 
@@ -762,6 +820,9 @@ class Magnus
         }
     }
 
+    // startRecordCall: begin call recording if the user or DID has the
+    // record_call flag set.  Chooses file path based on uniqueid and calls
+    // MixMonitor.  Called by SipCallAgi, DidAgi, QueueAgi, etc.
     public function startRecordCall(&$agi, $addicional = '', $isDid = false)
     {
         if ($this->record_call == 1 || $this->config['global']['global_record_calls'] == 1) {

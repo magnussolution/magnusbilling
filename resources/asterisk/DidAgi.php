@@ -19,6 +19,11 @@
  *
  */
 
+// DID (Direct Inward Dialing) handling class.
+// Responsible for recognizing incoming DID numbers, enforcing inbound call
+// limits, routing to destinations (IVR, queue, SIP, voicemail, PSTN), and
+// calculating associated costs.  Called from mbilling.php early in the call
+// flow to determine whether the call should be treated as a DID.
 class DidAgi
 {
     public $voip_call;
@@ -33,6 +38,13 @@ class DidAgi
     public $did_voip_model;
     public $did_voip_model_sip_account;
 
+    // checkIfIsDidCall: entry point used by mbilling.php after basic
+    // initialization.  Checks whether the dialed number matches a DID entry
+    // in the database.  If so, loads DID destinations, applies user and
+    // prefix settings, enforces concurrency limits, and ultimately dispatches
+    // to the appropriate handler via checkDidDestinationType().  Exits the
+    // script after routing unless the DID is set up as a VoIP call (voip_call
+    // == 3).
     public function checkIfIsDidCall(&$agi, &$MAGNUS, &$CalcAgi)
     {
 
@@ -173,6 +185,9 @@ class DidAgi
         }
     }
 
+    // getCallsPerDid: helper that counts active channels matching a given
+    // DID string by scanning the output of 'core show channels concise'.
+    // Used to enforce inbound call limits per DID or per user.
     public function getCallsPerDid($did, $agi = null, $channelsData)
     {
         $calls = 0;
@@ -184,6 +199,12 @@ class DidAgi
         return $calls;
     }
 
+    // checkDidDestinationType: invoked after a DID has been recognized and
+    // call limits validated.  Determines the type of the first destination
+    // (ivr, queue, sip, number, holiday, etc.) and routes accordingly.
+    // This may result in additional AGI classes being instantiated (IvrAgi,
+    // QueueAgi, SipCallAgi, etc.) and/or a recursive call to call_did().
+    // Called from checkIfIsDidCall().
     public function checkDidDestinationType(&$agi, &$MAGNUS, &$CalcAgi)
     {
 
@@ -340,6 +361,11 @@ class DidAgi
         }
     }
 
+    // call_did: execute a specific DID destination.  Used recursively when
+    // multiple destinations exist or when forwarding from SIP/queue/ivr
+    // destinations.  Supports destinations of types sip, queue, ivr,
+    // number, voicemail and others.  Parameters:
+    //   $destinationIvr - override DNID with supplied IVR number.
     public function call_did(&$agi, &$MAGNUS, &$CalcAgi, $destinationIvr = false)
     {
 
@@ -649,6 +675,9 @@ class DidAgi
             return 1;
         }
     }
+    // For DIDs configured to charge only if CallerID matches a list, this
+    // method verifies the incoming CallerID against pkg_did_callers.  If
+    // blocked, the call is hung up.
     public function checkBlockCallerID(&$agi, &$MAGNUS)
     {
         $agi->verbose("try blocked", 5);
@@ -702,6 +731,9 @@ class DidAgi
         }
     }
 
+    // parseDialStatus: convert the Asterisk DIALSTATUS string into an
+    // internal terminatecauseid and optionally update answered time.  Used by
+    // billing routines after a call leg completes.
     public function parseDialStatus(&$agi, $dialstatus, $answeredtime)
     {
         $agi->verbose('parseDialStatus', 25);
@@ -732,6 +764,9 @@ class DidAgi
         }
     }
 
+    // didCallCost: compute the cost for an inbound DID call based on the
+    // rate assigned to the DID and user plan.  Called during billing for DID
+    // legs.
     public function didCallCost(&$agi, &$MAGNUS)
     {
         $agi->verbose('didCallCost', 10);
@@ -787,6 +822,10 @@ class DidAgi
         }
     }
 
+    // billDidCall: wrapper invoked when a DID call finishes with a known
+    // answeredtime.  Performs cost calculation and then delegates to
+    // call_did_billing to write CDR and update credit.  Called by QueueAgi
+    // and other modules when billing complex flows.
     public function billDidCall(&$agi, &$MAGNUS, $answeredtime, &$CalcAgi)
     {
         $agi->verbose('billDidCall, sell_price=' . $this->sell_price, 10);
@@ -813,6 +852,9 @@ class DidAgi
         }
     }
 
+    // call_did_billing: internal helper that performs the actual database
+    // updates for a DID call leg (save CDR, update user credit, track
+    // DID destination usage).  Invoked by billDidCall()
     public function call_did_billing(&$agi, &$MAGNUS, &$CalcAgi, $answeredtime, $dialstatus)
     {
         if ($answeredtime > 0) {

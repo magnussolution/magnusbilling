@@ -1,4 +1,5 @@
 <?php
+
 /**
  * =======================================
  * ###################################
@@ -17,9 +18,17 @@
  * Magnusbilling.com <info@magnusbilling.com>
  *
  */
+// PortalDeVozAgi provides a simple voice portal where callers can dial a
+// destination by entering a SIP username.  Typically triggered by a DID that
+// routes to a voice portal.  It prompts the caller for digits and then
+// forwards the call to the entered SIP account.
 class PortalDeVozAgi
 {
 
+    // send: main routine invoked by DidAgi when the destination type is
+    // portal_de_voz.  Plays a prompt asking for a SIP user ID, looks up the
+    // account, and then delegates to SipCallAgi to place the call.  Retries up
+    // to three times on invalid input.
     public static function send(&$agi, &$MAGNUS, &$CalcAgi, &$DidAgi)
     {
         $agi->answer();
@@ -32,7 +41,7 @@ class PortalDeVozAgi
             $agi->verbose($sql, 25);
             $MAGNUS->modelSip = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
 
-            if ( ! isset($MAGNUS->modelSip->id)) {
+            if (! isset($MAGNUS->modelSip->id)) {
                 $agi->verbose('User no found', 15);
                 $agi->stream_file('prepaid-invalid-digits', '#');
                 continue;
@@ -43,6 +52,5 @@ class PortalDeVozAgi
                 break;
             }
         }
-
     }
 }

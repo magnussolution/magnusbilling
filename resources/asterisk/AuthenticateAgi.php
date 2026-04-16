@@ -1,4 +1,5 @@
 <?php
+
 /**
  * =======================================
  * ###################################
@@ -18,8 +19,23 @@
  *
  */
 
+// Class containing static authentication routines used by AGI scripts.
+// Each method attempts a particular credential check and, on success,
+// populates the $MAGNUS object with user information.  Called directly from
+// mbilling.php and from StandardCallAgi and other modules when a new call
+// arrives.
 class AuthenticateAgi
 {
+    // Main entry point.  Executes a chain of authentication methods in order:
+    // 1. CallerID
+    // 2. Tech prefix (IP-based)
+    // 3. Accountcode
+    // 4. SIP proxy headers
+    // 5. PIN/calling card
+    // 6. Callshop checks
+    // If any method returns true the user is considered authenticated.  Also
+    // performs post-auth validation (expiration date, call limits, plan
+    // restrictions) and plays a failure prompt if necessary.  Returns boolean.
     public static function authenticateUser($agi, $MAGNUS)
     {
         $agi->verbose('AuthenticateUser ' . $MAGNUS->accountcode, 15);
@@ -72,6 +88,10 @@ class AuthenticateAgi
         return $authentication;
     }
 
+    // Attempt authentication based on incoming CallerID value.  This will
+    // look up the CID in the pkg_callerid table and, if found, load the
+    // associated user and SIP account into $MAGNUS.  Called early in the
+    // authenticateUser chain; only executed if no previous method succeeded.
     public static function callerIdAuthenticate(&$MAGNUS, &$agi, $authentication)
     {
         if ($authentication == false && $MAGNUS->agiconfig['cid_enable'] == 1 && is_numeric($MAGNUS->CallerID) && $MAGNUS->CallerID > 0) {
@@ -99,6 +119,11 @@ class AuthenticateAgi
         return $authentication;
     }
 
+    // Authenticate by technical prefix.  Certain customers connect via
+    // fixed IP addresses; the dialed number's leading digits (techprefix)
+    // identify them.  This method checks the source SIP header for the
+    // IP, strips the prefix from DNID, and sets the account information.
+    // Called when previous authentication methods have not yet succeeded.
     public static function techPrefixAuthenticate(&$MAGNUS, &$agi, $authentication)
     {
 
@@ -135,6 +160,8 @@ class AuthenticateAgi
         return $authentication;
     }
 
+    // Look up user record by accountcode (the number dialed by the
+    // customer).  Common method for prepaid users entering a PIN first.
     public static function accountcodeAuthenticate(&$MAGNUS, &$agi, $authentication)
     {
         if (strlen($MAGNUS->accountcode) >= 1 && $authentication != true) {
@@ -152,6 +179,10 @@ class AuthenticateAgi
         return $authentication;
     }
 
+    // Validate authentication based on SIP proxy headers (X-AUTH-IP or
+    // P-Accountcode).  Used when calls come through a trusted proxy server
+    // that inserts these headers.  If the proxy hostname is authorized, the
+    // method loads the corresponding user account.
     public static function sipProxyAuthenticate(&$MAGNUS, &$agi, $authentication)
     {
         if ($authentication != true && ! filter_var($agi->get_variable("SIP_HEADER(X-AUTH-IP)", true), FILTER_VALIDATE_IP) === false) {
@@ -189,7 +220,6 @@ class AuthenticateAgi
                         AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser);
                         $authentication = true;
                         $agi->verbose("AUTHENTICATION BY P-Accountcode header " . $MAGNUS->accountcode);
-
                     }
                 }
             } else {
@@ -199,6 +229,10 @@ class AuthenticateAgi
         return $authentication;
     }
 
+    // Verify a user-supplied PIN (calling card authentication).  This
+    // method is invoked when a PIN code has already been collected by the
+    // AGI or IVR and passed here.  If valid, user account properties are
+    // merged into $MAGNUS.
     public static function pinAuthenticate(&$MAGNUS, &$agi, $authentication, $pin)
     {
 
@@ -216,6 +250,8 @@ class AuthenticateAgi
         return $authentication;
     }
 
+    // Similar to pinAuthenticate but specific to voucher codes.  Checks
+    // the pkg_voucher table and credits the user if the voucher is valid.
     public static function voucherAuthenticate(&$MAGNUS, &$agi, $authentication, $pin)
     {
         $agi->verbose("Check voucher Number $pin");
@@ -261,6 +297,9 @@ class AuthenticateAgi
         return $authentication;
     }
 
+    // Interactive authentication for calling cards.  Prompts the caller to
+    // enter a PIN and uses pinAuthenticate/voucherAuthenticate depending on
+    // configuration.  Called during authenticateUser when other methods fail.
     public static function callingCardAuthenticate(&$MAGNUS, &$agi, $authentication)
     {
         if ($authentication != true) {
@@ -287,7 +326,7 @@ class AuthenticateAgi
 
                     $pin = $res_dtmf["result"];
 
-                    if ( ! isset($pin) || strlen($pin) == 0) {
+                    if (! isset($pin) || strlen($pin) == 0) {
                         $prompt = "prepaid-no-card-entered";
                         $agi->verbose('No user entered', 6);
                         continue;
@@ -322,6 +361,9 @@ class AuthenticateAgi
         return $authentication;
     }
 
+    // Apply plan restrictions related to intra/inter state calls.  Some
+    // plans disallow calls within the same local area or between states.
+    // This validation is executed after authentication to enforce plan rules.
     public static function checkPlanIntraInter(&$MAGNUS, $agi)
     {
         if ($MAGNUS->config['global']['intra-inter'] == '1') {
@@ -345,10 +387,12 @@ class AuthenticateAgi
         }
     }
 
+    // Determine whether the authenticated user is flagged as a call center
+    // agent.  Agents have different billing and BVH rules.
     public static function checkIfIsAgent(&$MAGNUS, $agi)
     {
         /*check if user is a agent user*/
-        if ( ! is_null($MAGNUS->id_agent) && $MAGNUS->id_agent > 1) {
+        if (! is_null($MAGNUS->id_agent) && $MAGNUS->id_agent > 1) {
             $MAGNUS->id_plan_agent = $MAGNUS->id_plan;
             $sql                   = "SELECT * FROM pkg_user WHERE id =" . $MAGNUS->id_agent . " LIMIT 1";
             $agi->verbose($sql, 25);
@@ -361,6 +405,9 @@ class AuthenticateAgi
         }
     }
 
+    // Ensures that a plan's techprefix (if configured) matches caller's
+    // IP/host.  Used to prevent unauthorized users from using the same plan
+    // via a different prefix.
     public static function checkPlanTechPrefix(&$MAGNUS, &$agi)
     {
         if (strlen($MAGNUS->dnid) > 13) {
@@ -379,6 +426,8 @@ class AuthenticateAgi
         }
     }
 
+    // Enforce per-user simultaneous call limits.  Looks at active channels
+    // via AMI and hangs up the call if the limit is exceeded.
     public static function checkUserCallLimit(&$MAGNUS, &$agi)
     {
         if ($MAGNUS->user_calllimit == 0) {
@@ -391,7 +440,6 @@ class AuthenticateAgi
             }
 
             $MAGNUS->hangup($agi);
-
         } elseif ($MAGNUS->mode == 'standard' && $MAGNUS->user_calllimit >= 0) {
             //check user call limit
             $agi->verbose('check user call limit', 5);
@@ -428,10 +476,12 @@ class AuthenticateAgi
 
                 $MAGNUS->hangup($agi);
             }
-
         }
     }
 
+    // Special handling for callshop accounts: open prepaid booths where
+    // callers pay via coin.  This method toggles authentication state and
+    // credit based on coin insert actions.
     public static function checkIfCallShopCall(&$MAGNUS, &$agi, $authentication)
     {
         //verfica se é cliente de callshop, e se a cabina esta ativa
@@ -449,10 +499,13 @@ class AuthenticateAgi
         return $authentication;
     }
 
+    // Helper to copy database record fields into the $MAGNUS object.  Used
+    // by most authentication routines after fetching the user and optionally
+    // the SIP account.
     public static function setMagnusAttrubutes(&$MAGNUS, &$agi, $model, $modelSip = null)
     {
 
-        if ( ! isset($model->removeinterprefix)) {
+        if (! isset($model->removeinterprefix)) {
             $sql = "SELECT removeinterprefix, play_audio, portabilidadeMobile, portabilidadeFixed, tariff_limit  FROM pkg_plan WHERE id = " . $model->id_plan . " LIMIT 1";
             $agi->verbose($sql, 25);
             $modelPlan                  = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
@@ -493,10 +546,10 @@ class AuthenticateAgi
         $MAGNUS->user_calllimit      = $model->calllimit;
         $MAGNUS->mix_monitor_format  = $model->mix_monitor_format;
         $MAGNUS->credit              = $MAGNUS->typepaid == 1
-        ? $MAGNUS->credit + $MAGNUS->creditlimit
-        : $MAGNUS->credit;
+            ? $MAGNUS->credit + $MAGNUS->creditlimit
+            : $MAGNUS->credit;
 
-        if ( ! isset($modelSip->id)) {
+        if (! isset($modelSip->id)) {
             $sql = "SELECT * FROM pkg_sip WHERE name = '$MAGNUS->sip_account' LIMIT 1";
             $agi->verbose($sql, 25);
             $MAGNUS->modelSip = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
@@ -513,5 +566,4 @@ class AuthenticateAgi
             $MAGNUS->record_call = (isset($MAGNUS->modelSip->id) && $MAGNUS->modelSip->record_call) || $MAGNUS->agiconfig['record_call'] ? true : false;
         }
     }
-
 }

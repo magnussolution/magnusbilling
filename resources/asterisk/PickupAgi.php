@@ -1,4 +1,5 @@
 <?php
+
 /**
  * =======================================
  * ###################################
@@ -18,8 +19,17 @@
  *
  */
 
+// PickupAgi handles the "call pickup" feature triggered by dialling
+// *7XX.  It searches for a SIP peer belonging to the caller's accountcode
+// and uses AMI to find a ringing channel for that peer, then issues a
+// PickupChan command to answer the call.  Called from mbilling.php when the
+// DNID starts with *7.
 class PickupAgi
 {
+    // execute: perform the pickup operation.
+    // Looks up the SIP account from the DNID, then connects to AMI to scan
+    // active channels for a ringing instance of that account.  If found,
+    // invokes the PickupChan application to answer the call, then hangs up.
     public static function execute(&$agi, &$MAGNUS)
     {
         $sql = "SELECT * FROM pkg_sip WHERE ( name = '" . substr($MAGNUS->dnid, 2) . "' OR alias = '" . substr($MAGNUS->dnid, 2) . "' )  AND accountcode = '$MAGNUS->accountcode' LIMIT 1";
@@ -49,12 +59,10 @@ class PickupAgi
                 $agi->verbose("pickup channel $channel");
                 $agi->execute('PickupChan', $channel);
             }
-
         } else {
             $agi->verbose('Pickup module - SipAccount ' . $MAGNUS->accountcode . ' try pickup from another user extension ' . $modelSip->name, 1);
         }
 
         $MAGNUS->hangup($agi);
-
     }
 }

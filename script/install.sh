@@ -283,6 +283,7 @@ touch /etc/asterisk/iax_magnus_user.conf
 touch /etc/asterisk/musiconhold_magnus.conf
 touch /etc/asterisk/queues_magnus.conf
 touch /etc/asterisk/voicemail_magnus.conf
+touch /etc/asterisk/mbilling.conf
 
 
 selectLanguage() {
@@ -634,6 +635,8 @@ ssh_port=$(
     ' /etc/ssh/sshd_config
 )
 
+
+
 apt install -y firewalld
 
 install_fail2ban
@@ -642,6 +645,22 @@ systemctl disable iptables
 systemctl start firewalld
 systemctl enable firewalld
 systemctl enable fail2ban
+
+
+systemctl stop firewalld
+
+
+nft flush ruleset 2>/dev/null
+iptables -F
+iptables -t nat -F
+iptables -t mangle -F
+
+
+rm -rf /etc/firewalld/zones/*
+rm -rf /etc/firewalld/services/*
+
+systemctl start firewalld
+
 
 firewall-cmd --zone=public --add-port=$ssh_port/tcp --permanent
 firewall-cmd --zone=public --add-port=22/tcp --permanent

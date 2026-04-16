@@ -1,5 +1,12 @@
 <?php
 
+// Core AGI class extending PDO.  Provided by the phpagi library, this
+// class encapsulates the AGI protocol for communicating with Asterisk.
+// It exposes methods such as answer(), stream_file(), get_data(),
+// execute(), query(), and others used throughout the MagnusBilling AGI
+// modules.  While not specific to MagnusBilling business logic, it is
+// included here for completeness.
+
 define('AST_CONFIG_DIR', '/etc/asterisk/');
 define('AST_SPOOL_DIR', '/var/spool/asterisk/');
 define('AST_TMP_DIR', AST_SPOOL_DIR . '/tmp/');
@@ -93,7 +100,7 @@ class AGI extends PDO
         $dns            = $this->engine . ':dbname=' . $this->database . ";host=" . $this->host;
 
         // load config
-        if ( ! is_null($config) && file_exists($config)) {
+        if (! is_null($config) && file_exists($config)) {
             $this->config = parse_ini_file($config, true);
         } elseif (file_exists(DEFAULT_PHPAGI_CONFIG)) {
             foreach ($optconfig as $var => $val) {
@@ -102,29 +109,29 @@ class AGI extends PDO
         }
 
         // add default values to config for uninitialized values
-        if ( ! isset($this->config['phpagi']['error_handler'])) {
+        if (! isset($this->config['phpagi']['error_handler'])) {
             $this->config['phpagi']['error_handler'] = true;
         }
 
-        if ( ! isset($this->config['phpagi']['debug'])) {
+        if (! isset($this->config['phpagi']['debug'])) {
             $this->config['phpagi']['debug'] = false;
         }
 
-        if ( ! isset($this->config['phpagi']['admin'])) {
+        if (! isset($this->config['phpagi']['admin'])) {
             $this->config['phpagi']['admin'] = null;
         }
 
-        if ( ! isset($this->config['phpagi']['tempdir'])) {
+        if (! isset($this->config['phpagi']['tempdir'])) {
             $this->config['phpagi']['tempdir'] = AST_TMP_DIR;
         }
 
         // festival TTS config
-        if ( ! isset($this->config['festival']['text2wave'])) {
+        if (! isset($this->config['festival']['text2wave'])) {
             $this->config['festival']['text2wave'] = $this->which('text2wave');
         }
 
         // swift TTS config
-        if ( ! isset($this->config['cepstral']['swift'])) {
+        if (! isset($this->config['cepstral']['swift'])) {
             $this->config['cepstral']['swift'] = $this->which('swift');
         }
 
@@ -158,7 +165,6 @@ class AGI extends PDO
             if ($this->audio) {
                 stream_set_blocking($this->audio, 0);
             }
-
         }
 
         parent::__construct($dns, $this->user, $this->pass);
@@ -173,29 +179,41 @@ class AGI extends PDO
     {
         $ret = $this->evaluate("CHANNEL STATUS $channel");
         switch ($ret['result']) {
-            case -1:$ret['data'] = trim("There is no channel that matches $channel");
+            case -1:
+                $ret['data'] = trim("There is no channel that matches $channel");
                 break;
-            case AST_STATE_DOWN: $ret['data'] = 'Channel is down and available';
+            case AST_STATE_DOWN:
+                $ret['data'] = 'Channel is down and available';
                 break;
-            case AST_STATE_RESERVED: $ret['data'] = 'Channel is down, but reserved';
+            case AST_STATE_RESERVED:
+                $ret['data'] = 'Channel is down, but reserved';
                 break;
-            case AST_STATE_OFFHOOK: $ret['data'] = 'Channel is off hook';
+            case AST_STATE_OFFHOOK:
+                $ret['data'] = 'Channel is off hook';
                 break;
-            case AST_STATE_DIALING: $ret['data'] = 'Digits (or equivalent) have been dialed';
+            case AST_STATE_DIALING:
+                $ret['data'] = 'Digits (or equivalent) have been dialed';
                 break;
-            case AST_STATE_RING: $ret['data'] = 'Line is ringing';
+            case AST_STATE_RING:
+                $ret['data'] = 'Line is ringing';
                 break;
-            case AST_STATE_RINGING: $ret['data'] = 'Remote end is ringing';
+            case AST_STATE_RINGING:
+                $ret['data'] = 'Remote end is ringing';
                 break;
-            case AST_STATE_UP: $ret['data'] = 'Line is up';
+            case AST_STATE_UP:
+                $ret['data'] = 'Line is up';
                 break;
-            case AST_STATE_BUSY: $ret['data'] = 'Line is busy';
+            case AST_STATE_BUSY:
+                $ret['data'] = 'Line is busy';
                 break;
-            case AST_STATE_DIALING_OFFHOOK: $ret['data'] = 'Digits (or equivalent) have been dialed while offhook';
+            case AST_STATE_DIALING_OFFHOOK:
+                $ret['data'] = 'Digits (or equivalent) have been dialed while offhook';
                 break;
-            case AST_STATE_PRERING: $ret['data'] = 'Channel has detected an incoming call and is waiting for ring';
+            case AST_STATE_PRERING:
+                $ret['data'] = 'Channel has detected an incoming call and is waiting for ring';
                 break;
-            default:$ret['data'] = "Unknown ({$ret['result']})";
+            default:
+                $ret['data'] = "Unknown ({$ret['result']})";
                 break;
         }
         return $ret;
@@ -271,7 +289,6 @@ class AGI extends PDO
         $this->evaluate('ANSWER');
 
         return $this->evaluate("STREAM FILE $filename \"$escape_digits\" $offset");
-
     }
 
     public function wait_for_digit($timeout = -1)
@@ -307,7 +324,7 @@ class AGI extends PDO
         static $busy = false;
 
         if ($this->config['phpagi']['debug'] != false) {
-            if ( ! $busy) // no conlogs inside conlog!!!
+            if (! $busy) // no conlogs inside conlog!!!
             {
                 $busy = true;
                 $this->verbose($str, $vbl);
@@ -366,7 +383,7 @@ class AGI extends PDO
         $broken = ['code' => 500, 'result' => -1, 'data' => ''];
 
         // write command
-        if ( ! fwrite($this->out, trim($command) . "\n")) {
+        if (! fwrite($this->out, trim($command) . "\n")) {
             error_log("write command not able to write\n\n", 3, "/var/log/my-errors.log");
             return $broken;
         }
@@ -422,7 +439,6 @@ class AGI extends PDO
                     if ($token[strlen($token) - 1] == ')') {
                         $in_token = false;
                     }
-
                 } elseif ($token[0] == '(') {
                     if ($token[strlen($token) - 1] != ')') {
                         $in_token = true;
@@ -435,7 +451,6 @@ class AGI extends PDO
                 } elseif ($token != '') {
                     $ret['data'] .= ' ' . $token;
                 }
-
             }
             $ret['data'] = trim($ret['data']);
         }
@@ -446,5 +461,4 @@ class AGI extends PDO
         }
         return $ret;
     }
-
 }

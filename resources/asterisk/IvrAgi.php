@@ -1,4 +1,5 @@
 <?php
+
 /**
  * =======================================
  * ###################################
@@ -18,8 +19,16 @@
  *
  */
 
+// IVR (Interactive Voice Response) handler.  Plays IVR menus defined in
+// pkg_ivr and routes callers based on DTMF input.  Can also initiate direct
+// extension dialing and track user choices.  Called from DidAgi or QueueAgi.
 class IvrAgi
 {
+    // callIvr: play an IVR menu for the DID or queue destination.  Accepts
+    // a $DidAgi object so it can update DID-specific variables and billing
+    // info.  Iterates through menu options, handles direct extension dialing,
+    // and dispatches actions (sip, queue, ivr, number, sms).  The $type
+    // parameter indicates context (e.g. 'ivr' or 'queue').
     public static function callIvr(&$agi, &$MAGNUS, &$CalcAgi, &$DidAgi = null, $type = 'ivr')
     {
 
@@ -154,7 +163,6 @@ class IvrAgi
                     $agi->stream_file('prepaid-invalid-digits', '#');
                     continue;
                 }
-
             }
             //se marca uma opÃ§ao que esta em branco
             else if ($modelIvr->{$optionName . $option} == '') {
@@ -217,7 +225,6 @@ class IvrAgi
                     }
 
                     break;
-
                 } else if ($optionType == 'repeat') // CUSTOM
                 {
                     $agi->verbose("repetir IVR");
@@ -235,7 +242,7 @@ class IvrAgi
                     $agi->verbose($sql, 25);
                     $modelSip = $agi->query($sql)->fetchAll(PDO::FETCH_OBJ);
 
-                    if ( ! isset($modelSip[0]->id)) {
+                    if (! isset($modelSip[0]->id)) {
                         $agi->verbose('GROUP NOT FOUND');
                         $agi->stream_file('prepaid-invalid-digits', '#');
                         continue;
@@ -290,7 +297,6 @@ class IvrAgi
 
             $continue  = false;
             $insertCDR = true;
-
         }
 
         $stopTime = time();
@@ -314,6 +320,5 @@ class IvrAgi
         }
 
         return;
-
     }
 }

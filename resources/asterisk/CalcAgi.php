@@ -18,6 +18,12 @@
  * Magnusbilling.com <info@magnusbilling.com>
  *
  */
+// Billing calculation class.  Responsible for determining call cost,
+// allowed duration, trunk selection, and writing CDRs.  Every call that
+// originates or terminates through MagnusBilling will create an instance of
+// this class (although it is mostly used via a single shared object in AGI
+// scripts).  Methods are called from StandardCallAgi, SipCallAgi, DidAgi, and
+// other modules as the call progresses.
 class CalcAgi
 {
     public $lastcost                  = 0;
@@ -50,11 +56,16 @@ class CalcAgi
     public $id_prefix;
     public $id_provider;
 
+    // Constructor initializes lookup lists such as the dial status reverse
+    // array (mapping Asterisk DIALSTATUS codes to internal terminate codes).
     public function __construct()
     {
         $this->dialstatus_rev_list = Magnus::getDialStatus_Revert_List();
     }
 
+    // Reset per-call counters and temporary attributes.  Called by AGI
+    // scripts when starting a new call to ensure state from previous calls
+    // does not leak.
     public function init()
     {
         $this->number_trunk      = 0;
@@ -66,6 +77,10 @@ class CalcAgi
         $this->lastbuycost       = '';
     }
 
+    // calculateAllTimeout: wrapper invoked before dialing a PSTN destination.
+    // Expects $this->tariffObj to be set by SearchTariff->find().  Calls
+    // calculateTimeout and returns true if a positive timeout (max call
+    // duration) was computed.  Used by StandardCallAgi and SipTransferAgi.
     public function calculateAllTimeout(&$MAGNUS, $agi)
     {
         if (! is_array($this->tariffObj) || count($this->tariffObj) == 0) {
@@ -83,6 +98,11 @@ class CalcAgi
         return true;
     }
 
+    // calculateTimeout: compute the maximum amount of seconds the call may
+    // last based on current user credit, rate card, connect charge, any
+    // active offer/free minutes, and global settings.  Modifies
+    // $this->tariffObj[0]['timeout'] and related fields.  Returns the
+    // timeout or a string starting with "ERROR" when insufficient credit.
     public function calculateTimeout(&$MAGNUS, $agi)
     {
         $rateinitial                  = $MAGNUS->round_precision(abs($this->tariffObj[0]['rateinitial']));
@@ -231,6 +251,9 @@ class CalcAgi
         return $TIMEOUT;
     }
 
+    // calculateCost: given an answered call duration in seconds, compute the
+    // total cost based on the previously selected tariff object.  Used when
+    // updating the system after a completed call.
     public function calculateCost(&$MAGNUS, $callduration, $agi)
     {
         $rateinitial           = $MAGNUS->round_precision(abs($this->tariffObj[0]['rateinitial']));
@@ -272,6 +295,8 @@ class CalcAgi
         $agi->verbose("CALCULCOST:  -  SELLING COST:$this->lastcost", 10);
     }
 
+    // Utility function that sorts a multi-dimensional array by one or more
+    // columns.  Used internally by rate/trunk selection routines.
     public function array_csort()
     {
         $args      = func_get_args();
@@ -294,6 +319,11 @@ class CalcAgi
         return $marray;
     }
 
+    // updateSystem: after a call attempt completes (successful or not),
+    // insert or update call records, decrement credit, apply commissions,
+    // and record CDRs.  $doibill controls whether billing should occur (e.g.
+    // callback leg may skip).  This is one of the core end-of-call routines
+    // used by StandardCallAgi, SipCallAgi, QueueAgi, etc.
     public function updateSystem(&$MAGNUS, &$agi, $doibill = 1, $didcall = 0, $callback = 0)
     {
         $agi->verbose('Update System', 6);
@@ -535,6 +565,9 @@ class CalcAgi
         $this->saveCDR($agi, $MAGNUS);
     }
 
+    // updateSystemAgent: special billing update used when a call is handled
+    // by a call center agent.  Records agent-specific fields such as
+    // calledstation and applies agent commission rates.
     public function updateSystemAgent($agi, $MAGNUS, $calledstation, $cost, $sessiontime)
     {
 
@@ -566,6 +599,10 @@ class CalcAgi
         return $cost_customer;
     }
 
+    // sendCall: perform the actual Dial command toward a destination number.
+    // This method is called by StandardCallAgi when iterating through trunk
+    // options.  It handles channel variables, recording, timeout, and returns
+    // dialstatus to the caller.
     public function sendCall($agi, $destination, &$MAGNUS, $typecall = 0)
     {
         if (substr("$destination", 0, 4) == 1111) /*Retira o techprefix de numeros portados*/ {
@@ -742,6 +779,9 @@ class CalcAgi
         return true;
     }
 
+    // sendCalltoTrunk: lower-level helper of sendCall.  Given a selected
+    // trunk object, build the Dial string and execute it.  Handles provider
+    // credit checks, number formatting, and pre/post-dialtime logging.
     public function sendCalltoTrunk(
         $MAGNUS,
         $agi,
@@ -803,6 +843,10 @@ class CalcAgi
         $MAGNUS->stopRecordCall($agi);
     }
 
+    // callShop: applies additional billing logic for calls originating from
+    // coin-operated callshops.  Adjusts cost per minute and updates credit
+    // based on session duration and prefix.  Called from updateSystem when
+    // processing callshop accounts.
     public function callShop($agi, $MAGNUS, $sessiontime, $id_prefix, $cost)
     {
 
@@ -841,6 +885,9 @@ class CalcAgi
         return;
     }
 
+    // saveCDR: persist the Call Detail Record into pkg_cdr.  Accepts an
+    // optional flag to return the new record ID.  Invoked by various
+    // updateSystem* methods after cost calculation.
     public function saveCDR($agi, $MAGNUS, $returnID = false)
     {
 

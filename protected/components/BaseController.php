@@ -334,12 +334,18 @@ class BaseController extends CController
     public function setSort()
     {
         $this->sort = isset($_GET[$this->nameParamSort]) ? $_GET[$this->nameParamSort] : $this->attributeOrder;
+        if ($this->sort && !preg_match('/^[a-zA-Z0-9_\.]+( (ASC|DESC))?$/i', trim($this->sort))) {
+            exit;
+        }
         SqlInject::sanitize($this->sort);
     }
 
     public function setOrder()
     {
         $dir         = isset($_GET[$this->nameParamDir]) ? ' ' . $_GET[$this->nameParamDir] : null;
+        if ($dir && !in_array(strtoupper($dir), ['ASC', 'DESC'])) {
+            exit;
+        }
         $this->order =  ! $dir || (strstr($this->sort, ',') !== false)
             ? $this->sort
             : ($this->sort ? $this->sort . ' ' . $dir : null);
@@ -893,6 +899,10 @@ class BaseController extends CController
 
         $columns = json_decode($_GET['columns'], true);
 
+        if (json_last_error() !== 0) {
+            exit;
+        }
+
         $columns = $this->repaceColumns($columns);
 
         $columns = $this->removeColumns($columns);
@@ -945,11 +955,6 @@ class BaseController extends CController
     public function actionCsv()
     {
 
-        if (! AccessManager::getInstance($this->instanceModel->getModule())->canRead()) {
-            header('HTTP/1.0 401 Unauthorized');
-            die("Access denied to read in module:" . $this->instanceModel->getModule());
-        }
-
         if (! isset(Yii::app()->session['id_user'])) {
             $info = 'User try export CSV without login';
             MagnusLog::insertLOG(7, $info);
@@ -959,9 +964,40 @@ class BaseController extends CController
             MagnusLog::insertLOG(7, $info);
         }
 
+
+        if ($this->instanceModel === null || ! AccessManager::getInstance($this->instanceModel->getModule())->canRead()) {
+            header('HTTP/1.0 401 Unauthorized');
+            die("Access denied to read in module:" . $this->instanceModel->getModule());
+        }
+
+
         $columns = json_decode($_GET['columns'], true);
 
-        if (json_last_error() !== 0) {
+        if (json_last_error() !== 0 || !is_array($columns)) {
+            exit;
+        }
+
+        foreach ($columns as $key => $col) {
+
+            if (!isset($col['dataIndex'])) {
+                continue;
+            }
+
+            $dataIndex = trim($col['dataIndex']);
+
+            // coluna simples
+            if (preg_match('/^[a-zA-Z0-9_\\.]+$/', $dataIndex)) {
+                $columns[$key]['dataIndex'] = $dataIndex;
+                continue;
+            }
+
+            // funções controladas (opcional)
+            if (preg_match('/^(SUM|COUNT|AVG|MIN|MAX)\([a-zA-Z0-9_\\.]+\)$/', $dataIndex)) {
+                $columns[$key]['dataIndex'] = $dataIndex;
+                continue;
+            }
+
+            header('HTTP/1.0 400 Bad Request');
             exit;
         }
 
@@ -989,6 +1025,7 @@ class BaseController extends CController
         $header = '';
         foreach ($columns as $key => $value) {
 
+            $value['header'] = preg_replace('/[^a-zA-Z0-9 _-]/', '', $value['header']);
             SqlInject::sanitize($value['header']);
 
             $header .= '"' . ($value['header']) . '",';
@@ -1034,6 +1071,18 @@ class BaseController extends CController
             $table     = strtolower(preg_replace("/^id/", 'pkg_', $key));
             $joinField = strtolower(preg_replace("/^id/", 'id_', $key));
             $this->join .= ' JOIN ' . $table . ' ' . $key . ' ON t.' . $joinField . ' = ' . $key . '.id';
+
+
+            if (!preg_match('/^[a-zA-Z0-9_\.]+ (LIKE|=|<|>) :[a-zA-Z0-9_]+$/', $relationFilter['condition'])) {
+
+                Yii::log($this->controllerName, 'error');
+                Yii::log(print_r($relationFilter['condition'], true), 'error');
+
+                $info = 'Trying SQL inject via relationFilter: ' . $relationFilter['condition'];
+                MagnusLog::insertLOG(2, $info);
+
+                exit;
+            }
             $this->filter .= ' AND ' . $relationFilter['condition'];
         }
     }
@@ -1550,8 +1599,10 @@ class BaseController extends CController
             } else {
                 $comparison = null;
             }
+            $comparison = strtolower($comparison);
+            $allowedComparison = ['eq', 'lt', 'gt', 'st', 'ed', 'ct', 'df'];
 
-            if (strlen($comparison) > 3) {
+            if ($comparison !== null && !in_array($comparison, $allowedComparison, true)) {
                 Yii::log($this->controllerName, 'error');
                 Yii::log(print_r($_SERVER, true), 'error');
                 Yii::log(print_r($_REQUEST, true), 'error');
@@ -1810,31 +1861,26 @@ class BaseController extends CController
                     } else {
                         $value             = $value[0];
                         $operatorSubSelect = isset($f->operatorSubSelect) ? $f->operatorSubSelect : '=';
-                        $subSelect         = "SELECT DISTINCT $f->fieldSubSelect FROM $f->tableRelated WHERE $f->fieldWhere $operatorSubSelect $value";
-                        $condition .= " AND $field IN($subSelect)";
-                    }
-                    break;
-                case 'notlist':
-                    $value = is_array($value) ? $value : [$value];
 
-                    if (! isset($f->tableRelated)) {
-                        $paramsNotIn = [];
+                        $table = $f->tableRelated;
+                        $fieldSub = $f->fieldSubSelect;
+                        $fieldWhere = $f->fieldWhere;
 
-                        if (count($value)) {
-                            foreach ($value as $keyNotIn => $v) {
-                                $this->paramsFilter["pNotIn$keyNotIn"] = $v;
-                                array_push($paramsNotIn, ":pNotIn$keyNotIn");
-                            }
+                        SqlInject::sanitize($table);
+                        SqlInject::sanitize($fieldSub);
+                        SqlInject::sanitize($fieldWhere);
 
-                            $paramsNotIn = implode(',', $paramsNotIn);
-                            $condition .= " AND $field NOT IN($paramsNotIn)";
+
+                        $allowedOps = ['=', '>', '<', '>=', '<='];
+                        if (!in_array($operatorSubSelect, $allowedOps)) {
+                            exit;
                         }
-                    } else {
-                        $value                          = $value[0];
-                        $operatorSubSelect              = isset($f->operatorSubSelect) ? $f->operatorSubSelect : '=';
+
+                        $paramName = "p$key";
                         $this->paramsFilter[$paramName] = $value;
-                        $subSelect                      = "SELECT DISTINCT $f->fieldSubSelect FROM $f->tableRelated WHERE $f->fieldWhere $operatorSubSelect :$paramName";
-                        $condition .= " AND $field NOT IN($subSelect)";
+
+                        $subSelect         = "SELECT DISTINCT $fieldSub FROM $table WHERE $fieldWhere $operatorSubSelect :$paramName";
+                        $condition .= " AND $field IN($subSelect)";
                     }
                     break;
             }
@@ -1945,6 +1991,9 @@ class BaseController extends CController
 
         foreach ($columns as $column) {
             $fieldName = $column['dataIndex'];
+            if (!preg_match('/^[a-zA-Z0-9_\\.]+$/', $fieldName)) {
+                exit;
+            }
 
             SqlInject::sanitize($fieldName);
 
@@ -2099,6 +2148,7 @@ class BaseController extends CController
     {
         for ($i = 0; $i < count($columns); $i++) {
 
+            SqlInject::sanitize($columns[$i]['dataIndex']);
             if ($columns[$i]['dataIndex'] == 'idUserusername') {
                 $columns[$i]['dataIndex'] = 'id_user';
             } else if ($columns[$i]['dataIndex'] == 'idPrefixdestination') {

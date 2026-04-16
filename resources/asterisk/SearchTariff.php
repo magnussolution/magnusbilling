@@ -18,9 +18,19 @@
  * Magnusbilling.com <info@magnusbilling.com>
  *
  */
+// SearchTariff locates the best matching tariff (rate) for a given
+// destination number.  It builds a SQL WHERE clause testing successive
+// prefixes of the dialed string and selects the longest match for the
+// caller's plan (and agent plan if applicable).  Returns an array suitable
+// for CalcAgi to calculate timeouts and costs.  Invoked by mbilling.php and
+// by SipTransferAgi during a transfer.
 class SearchTariff
 {
 
+    // find: perform the tariff lookup based on $MAGNUS->destination.
+    // Handles custom user rates, agent-specific rates, and optional hooks in
+    // beforeSearchTariff.php/AfterSearchTariff.php.  Returns 0 if no rate is
+    // found or an associative array of rate attributes.
     public function find(&$MAGNUS, &$agi)
     {
 
