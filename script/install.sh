@@ -449,11 +449,11 @@ else
   rm -rf /var/www/html/mbilling/script
 
   echo "[general]
-  dbhost = 127.0.0.1
-  dbname = mbilling
-  dbuser = mbillingUser
-  dbpass = $MBillingMysqlPass
-  " > /etc/asterisk/res_config_mysql.conf
+dbhost = 127.0.0.1
+dbname = mbilling
+dbuser = mbillingUser
+dbpass = $MBillingMysqlPass
+" > /etc/asterisk/res_config_mysql.conf
 fi
 
 echo '[directories](!)

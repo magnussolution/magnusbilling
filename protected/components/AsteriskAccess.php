@@ -258,11 +258,13 @@ class AsteriskAccess
                     $line .= "max_contacts=" . trim($data->max_contacts) . "\n";
                 }
 
-                $line .= "\n[" . $data[$head_field] . "]\n";
-                $line .= "type = identify\n";
-                $line .= "endpoint = " . $data[$head_field] . "\n";
-                $line .= "match = " . strtok($data['host'], ':') . "\n";
+                if (strtok($data['host'], ':') != 'dynamic') {
 
+                    $line .= "\n[" . $data[$head_field] . "]\n";
+                    $line .= "type = identify\n";
+                    $line .= "endpoint = " . $data[$head_field] . "\n";
+                    $line .= "match = " . strtok($data['host'], ':') . "\n";
+                }
                 $line .= "\n[" . $data[$head_field] . "]\n";
                 $line .= "type = endpoint\n";
                 $line .= "context = " . $data['context'] . "\n";
@@ -306,11 +308,11 @@ class AsteriskAccess
 
                     if ($data['type'] == 'asterisk') {
                         $trunkName =  preg_replace('/ /', '', strtolower($data['name'])) . "-" . $data['id'];
-                        $context .= 'slave';
+                        $context = 'slave';
                     } else if ($data['type'] == 'sipproxy') {
                         $trunkName = "sipproxy-" . preg_replace('/ /', '', strtolower($data['name'])) . "-" . $data['id'];
                         $accountcode = 'sipproxy';
-                        $context .= 'proxy' . "\n";
+                        $context = 'proxy' . "\n";
                     } else if ($data['type'] == 'mbilling') {
                         $trunkName = "\n\n[mbilling]\n";
                         $context = 'slave';
@@ -323,10 +325,14 @@ class AsteriskAccess
                     $line .= "qualify_frequency = 60\n";
                     $line .= "max_contacts = 1\n";
 
-                    $line .= "\n\n[" . $trunkName . "]\n";
-                    $line .= "type = identify\n";
-                    $line .= "endpoint = " . $trunkName . "\n";
-                    $line .= "match = " . strtok($data['host'], ':') . "\n";
+
+                    if (strtok($data['host'], ':') != 'dynamic') {
+
+                        $line .= "\n\n[" . $trunkName . "]\n";
+                        $line .= "type = identify\n";
+                        $line .= "endpoint = " . $trunkName . "\n";
+                        $line .= "match = " . strtok($data['host'], ':') . "\n";
+                    }
 
                     $line .= "\n\n[" . $trunkName . "]\n";
                     $line .= "type = endpoint\n";
@@ -345,12 +351,12 @@ class AsteriskAccess
                     if (isset($accountcode) && strlen($accountcode)) {
                         $line .= "set_var = MB_ACC=" . $accountcode . "\n";
                     }
+                }
 
 
-                    if (fwrite($fd, $line) === false) {
-                        echo "Impossible to write to the file (" . $file . ")";
-                        break;
-                    }
+                if (fwrite($fd, $line) === false) {
+                    echo "Impossible to write to the file (" . $file . ")";
+                    exit;
                 }
             }
 
