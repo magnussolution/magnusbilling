@@ -435,26 +435,22 @@ echo "----------- Installing the new Database ----------"
 echo
 sleep 2
 
-if [ -e "/etc/asterisk/res_config_mysql.conf" ] && [ ! -z "/etc/asterisk/res_config_mysql.conf" ]
-then
-  MBillingMysqlPass=$(awk '/dbpass/ {print $NF}' /etc/asterisk/res_config_mysql.conf | cut -d= -f2)
-else
-  MBillingMysqlPass=$(genpasswd)
 
-  mysql -uroot -p${password} -e "CREATE DATABASE IF NOT EXISTS mbilling;"
-  mysql -uroot -p${password} -e "CREATE USER 'mbillingUser'@'localhost' IDENTIFIED BY '${MBillingMysqlPass}';"
-  mysql -uroot -p${password} -e "GRANT ALL PRIVILEGES ON \`mbilling\` . * TO 'mbillingUser'@'localhost' WITH GRANT OPTION;FLUSH PRIVILEGES;"    
-  mysql -uroot -p${password} -e "GRANT FILE ON * . * TO  'mbillingUser'@'localhost' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
-  mysql mbilling -u root -p${password}  < /var/www/html/mbilling/script/database.sql
-  rm -rf /var/www/html/mbilling/script
+MBillingMysqlPass=$(genpasswd)
 
-  echo "[general]
+mysql -uroot -p${password} -e "CREATE DATABASE IF NOT EXISTS mbilling;"
+mysql -uroot -p${password} -e "CREATE USER 'mbillingUser'@'localhost' IDENTIFIED BY '${MBillingMysqlPass}';"
+mysql -uroot -p${password} -e "GRANT ALL PRIVILEGES ON \`mbilling\` . * TO 'mbillingUser'@'localhost' WITH GRANT OPTION;FLUSH PRIVILEGES;"    
+mysql -uroot -p${password} -e "GRANT FILE ON * . * TO  'mbillingUser'@'localhost' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
+mysql mbilling -u root -p${password}  < /var/www/html/mbilling/script/database.sql
+rm -rf /var/www/html/mbilling/script
+
+echo "[general]
 dbhost = 127.0.0.1
 dbname = mbilling
 dbuser = mbillingUser
 dbpass = $MBillingMysqlPass
 " > /etc/asterisk/res_config_mysql.conf
-fi
 
 echo '[directories](!)
 astetcdir => /etc/asterisk
@@ -606,7 +602,7 @@ apt install -y firewalld
 
 install_fail2ban
 
-systemctl disable iptables
+
 systemctl start firewalld
 systemctl enable firewalld
 systemctl enable fail2ban
@@ -621,6 +617,11 @@ firewall-cmd --reload
 firewall-cmd --zone=public --list-all
 
 
+nft flush ruleset 2>/dev/null
+iptables -F
+iptables -t nat -F
+iptables -t mangle -F
+systemctl disable iptables
 
 touch /var/www/html/mbilling/protected/runtime/application.log
 
