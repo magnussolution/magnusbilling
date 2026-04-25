@@ -273,7 +273,11 @@ class SipController extends Controller
 
 
                 if ($value['Aor'] == $name) {
-                    $attributes[$i]['lineStatus'] = $value['Status'] == 'Avail' ? 'OK' : $value['Status'];
+                    $status = $value['Status'] == 'Avail' ? 'OK' : $value['Status'];
+                    if ($status == 'Unavail') {
+                        $status = 'Unavailable';
+                    }
+                    $attributes[$i]['lineStatus'] = $status;
 
                     if (preg_match('/Avail/', $value['Status'])) {
                         $attributes[$i]['lineStatus'] .= ' ' . $value['server'];
@@ -330,13 +334,42 @@ class SipController extends Controller
         if ($modelSip->idUser->active == 0) {
             $sipShowPeer = 'The username is inactive';
         } else {
+            $peerName    = strlen($modelSip->techprefix) ? $modelSip->host : $modelSip->name;
+            $asterisk    = AsteriskAccess::instance();
+            $endpoint    = $asterisk->pjsipShowEndpoint($peerName);
+            $aor         = $asterisk->pjsipShowAor($peerName);
+            $contactsRaw = $asterisk->pjsipShowContacts();
 
-            $sipShowPeer = AsteriskAccess::instance()->sipShowPeer(strlen($modelSip->techprefix) ? $modelSip->host : $modelSip->name);
+            $contactLines = [];
+            if (isset($contactsRaw['data'])) {
+                foreach (explode("\n", $contactsRaw['data']) as $line) {
+                    $line = trim($line);
+                    if ($line === '' || strpos($line, 'Contact:') !== 0) {
+                        continue;
+                    }
+                    if (preg_match('/^Contact:\s+' . preg_quote($peerName, '/') . '\//', $line)) {
+                        $contactLines[] = $line;
+                    }
+                }
+            }
+
+            $sipShowPeer = "PJSIP Endpoint\n";
+            $sipShowPeer .= "====================\n";
+            $sipShowPeer .= isset($endpoint['data']) ? trim($endpoint['data']) : print_r($endpoint, true);
+            $sipShowPeer .= "\n\nPJSIP AOR\n";
+            $sipShowPeer .= "====================\n";
+            $sipShowPeer .= isset($aor['data']) ? trim($aor['data']) : print_r($aor, true);
+
+            if (count($contactLines)) {
+                $sipShowPeer .= "\n\nPJSIP Contacts\n";
+                $sipShowPeer .= "====================\n";
+                $sipShowPeer .= implode("\n", $contactLines);
+            }
         }
 
         echo json_encode([
             'success'     => true,
-            'sipshowpeer' => Yii::app()->session['isAdmin'] ? print_r($sipShowPeer, true) : '',
+            'sipshowpeer' => Yii::app()->session['isAdmin'] ? $sipShowPeer : '',
         ]);
     }
 
