@@ -44,6 +44,22 @@ Bem vindo à documentação do MagnusBilling 7 em português.
 
 .. toctree::
    :maxdepth: 1
+   :caption: Administração
+   :name: sec-Administração
+
+   admin_guide.rst
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Documentação Técnica
+   :name: sec-Técnico
+
+   database_schema.rst
+   yii_backend.rst
+   extjs_frontend.rst
+
+.. toctree::
+   :maxdepth: 1
    :caption: Segurança
    :name: sec-Segurança
 

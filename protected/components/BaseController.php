@@ -334,15 +334,15 @@ class BaseController extends CController
     public function setSort()
     {
         $this->sort = isset($_GET[$this->nameParamSort]) ? $_GET[$this->nameParamSort] : $this->attributeOrder;
-        if ($this->sort && !preg_match('/^[a-zA-Z0-9_\.]+( (ASC|DESC))?$/i', trim($this->sort))) {
-            exit;
+        if ($this->sort && !preg_match('/^[a-zA-Z0-9_\.]+( (ASC|DESC))?(,\s*[a-zA-Z0-9_\.]+( (ASC|DESC))?)*$/i', trim($this->sort))) {
+            exit('sort ' . $this->sort);
         }
         SqlInject::sanitize($this->sort);
     }
 
     public function setOrder()
     {
-        $dir         = isset($_GET[$this->nameParamDir]) ? ' ' . $_GET[$this->nameParamDir] : null;
+        $dir         = isset($_GET[$this->nameParamDir]) ? strtoupper(trim($_GET[$this->nameParamDir])) : null;
         if ($dir && !in_array(strtoupper($dir), ['ASC', 'DESC'])) {
             exit;
         }

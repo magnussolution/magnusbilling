@@ -21,7 +21,7 @@ class MolPayController extends Controller
             'params'    => $params,
         ));
 
-        if (!count($modelMethodpay)) {
+        if (!isset($modelMethodpay->id)) {
             Yii::log('Methos pay not found', 'error');
             exit;
         }

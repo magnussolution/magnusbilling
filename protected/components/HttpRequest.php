@@ -8,12 +8,10 @@ class HttpRequest extends CHttpRequest
     {
 
         $file = Yii::getPathOfAlias('application.config') . '/noCsrfValidation.php';
+        $route = $this->getPathInfo();
+        $controller = strtolower(strtok($route, '/'));
         if (is_file($file)) {
-            $route = $this->getPathInfo();
-            $controller = strtolower(strtok($route, '/'));
-
             $noCsrf = require $file;
-
             if (is_array($noCsrf)) {
                 foreach ($noCsrf as $c) {
                     if (strcasecmp($controller, $c) === 0) {
@@ -22,7 +20,13 @@ class HttpRequest extends CHttpRequest
                 }
             }
         }
-        // Só faz essa validação especial em POST
+        $allow = [
+            'molpay',
+        ];
+        if (in_array($controller, $allow)) {
+            return;
+        }
+
         if ($this->getIsPostRequest() && !empty($_SERVER['HTTP_KEY'])) {
 
             // 1) Valida se existe SIGN
