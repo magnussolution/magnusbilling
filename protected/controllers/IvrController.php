@@ -95,19 +95,20 @@ class IvrController extends Controller
 
     public function checkRelation($values)
     {
-        //ensure all sip, ivr or queue belong to the IVR ouned
+        //ensure all pjsip, ivr or queue belong to the IVR ouned
         for ($i = 0; $i <= 10; $i++) {
 
             if ($values['type_' . $i] != 'undefined' && strlen($values['type_' . $i]) > 0) {
                 $type = $values['type_' . $i];
 
                 if ($type == 'pjsip') {
-                    $id_sip = $values['id_sip_' . $i];
-                    if (! is_numeric($id_sip)) {
-                        $this->showError(0, $values, 'PJSIP ACCOUNT', 'id_sip' . $i, $i);
+
+                    $id_pjsip = $values['id_pjsip_' . $i];
+                    if (! is_numeric($id_pjsip)) {
+                        $this->showError(0, $values, 'PJSIP ACCOUNT', 'id_pjsip' . $i, $i);
                     } else {
-                        $model = Sip::model()->findByPk((int) $id_sip);
-                        $this->showError($model->id_user, $values, 'PJSIP ACCOUNT', 'id_sip' . $i, $i);
+                        $model = Sip::model()->findByPk((int) $id_pjsip);
+                        $this->showError($model->id_user, $values, 'PJSIP ACCOUNT', 'id_pjsip' . $i, $i);
                     }
                 } else if ($type == 'ivr') {
                     $id_ivr = $values['id_ivr_' . $i];
@@ -135,12 +136,12 @@ class IvrController extends Controller
                 $type = $values['type_out_' . $i];
 
                 if ($type == 'pjsip') {
-                    $id_sip = $values['id_sip_out_' . $i];
-                    if (! is_numeric($id_sip)) {
-                        $this->showError(0, $values, 'PJSIP ACCOUNT', 'id_sip_out' . $i, $i, 'out_');
+                    $id_pjsip = $values['id_pjsip_out_' . $i];
+                    if (! is_numeric($id_pjsip)) {
+                        $this->showError(0, $values, 'PJSIP ACCOUNT', 'id_pjsip_out' . $i, $i, 'out_');
                     } else {
-                        $model = Sip::model()->findByPk((int) $id_sip);
-                        $this->showError($model->id_user, $values, 'PJSIP ACCOUNT', 'id_sip_out' . $i, $i, 'out_');
+                        $model = Sip::model()->findByPk((int) $id_pjsip);
+                        $this->showError($model->id_user, $values, 'PJSIP ACCOUNT', 'id_pjsip_out' . $i, $i, 'out_');
                     }
                 } else if ($type == 'ivr') {
                     $id_ivr = $values['id_ivr_out_' . $i];
@@ -205,7 +206,7 @@ class IvrController extends Controller
                     } else if (isset($itemOption[1])) {
                         $attributes[$i]['id_' . $itemOption[0] . '_out_' . end($itemKey)] = end($itemOption);
                         if (is_numeric($itemOption[1])) {
-                            $model = ucfirst($itemOption[0]);
+                            $model = ucfirst($itemOption[0]) == 'Pjsip' ? 'Sip' : ucfirst($itemOption[0]);
                             $model = $model::model()->findByPk(end($itemOption));
 
                             $attributes[$i]['id_' . $itemOption[0] . '_out_' . end($itemKey) . '_name'] = isset($model->name) ? $model->name : '';
@@ -226,7 +227,8 @@ class IvrController extends Controller
                     } else if (isset($itemOption[1])) {
                         $attributes[$i]['id_' . $itemOption[0] . '_' . end($itemKey)] = end($itemOption);
                         if (is_numeric($itemOption[1])) {
-                            $model = ucfirst($itemOption[0]);
+                            $model = ucfirst($itemOption[0]) == 'Pjsip' ? 'Sip' : ucfirst($itemOption[0]);
+
                             $model = $model::model()->findByPk(end($itemOption));
 
                             $attributes[$i]['id_' . $itemOption[0] . '_' . end($itemKey) . '_name'] = isset($model->name) ? $model->name : '';

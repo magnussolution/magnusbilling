@@ -133,8 +133,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_0_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_0',
-                        displayField: 'id_sip_0_name'
+                        name: 'id_pjsip_0',
+                        displayField: 'id_pjsip_0_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_0'
@@ -159,8 +159,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_1_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_1',
-                        displayField: 'id_sip_1_name'
+                        name: 'id_pjsip_1',
+                        displayField: 'id_pjsip_1_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_1'
@@ -184,8 +184,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_2_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_2',
-                        displayField: 'id_sip_2_name'
+                        name: 'id_pjsip_2',
+                        displayField: 'id_pjsip_2_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_2'
@@ -209,8 +209,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_3_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_3',
-                        displayField: 'id_sip_3_name'
+                        name: 'id_pjsip_3',
+                        displayField: 'id_pjsip_3_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_3'
@@ -234,8 +234,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_4_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_4',
-                        displayField: 'id_sip_4_name'
+                        name: 'id_pjsip_4',
+                        displayField: 'id_pjsip_4_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_4'
@@ -259,8 +259,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_5_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_5',
-                        displayField: 'id_sip_5_name'
+                        name: 'id_pjsip_5',
+                        displayField: 'id_pjsip_5_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_5'
@@ -284,8 +284,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_6_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_6',
-                        displayField: 'id_sip_6_name'
+                        name: 'id_pjsip_6',
+                        displayField: 'id_pjsip_6_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_6'
@@ -309,8 +309,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_7_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_7',
-                        displayField: 'id_sip_7_name'
+                        name: 'id_pjsip_7',
+                        displayField: 'id_pjsip_7_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_7'
@@ -334,8 +334,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_8_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_8',
-                        displayField: 'id_sip_8_name'
+                        name: 'id_pjsip_8',
+                        displayField: 'id_pjsip_8_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_8'
@@ -359,8 +359,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_9_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_9',
-                        displayField: 'id_sip_9_name'
+                        name: 'id_pjsip_9',
+                        displayField: 'id_pjsip_9_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_9'
@@ -384,8 +384,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_10_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_10',
-                        displayField: 'id_sip_10_name'
+                        name: 'id_pjsip_10',
+                        displayField: 'id_pjsip_10_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_10'
@@ -445,8 +445,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_out_0_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_out_0',
-                        displayField: 'id_sip_out_0_name'
+                        name: 'id_pjsip_out_0',
+                        displayField: 'id_pjsip_out_0_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_out_0'
@@ -470,8 +470,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_out_1_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_out_1',
-                        displayField: 'id_sip_out_1_name'
+                        name: 'id_pjsip_out_1',
+                        displayField: 'id_pjsip_out_1_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_out_1'
@@ -495,8 +495,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_out_2_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_out_2',
-                        displayField: 'id_sip_out_2_name'
+                        name: 'id_pjsip_out_2',
+                        displayField: 'id_pjsip_out_2_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_out_2'
@@ -520,8 +520,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_out_3_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_out_3',
-                        displayField: 'id_sip_out_3_name'
+                        name: 'id_pjsip_out_3',
+                        displayField: 'id_pjsip_out_3_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_out_3'
@@ -545,8 +545,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_out_4_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_out_4',
-                        displayField: 'id_sip_out_4_name'
+                        name: 'id_pjsip_out_4',
+                        displayField: 'id_pjsip_out_4_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_out_4'
@@ -570,8 +570,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_out_5_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_out_5',
-                        displayField: 'id_sip_out_5_name'
+                        name: 'id_pjsip_out_5',
+                        displayField: 'id_pjsip_out_5_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_out_5'
@@ -595,8 +595,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_out_6_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_out_6',
-                        displayField: 'id_sip_out_6_name'
+                        name: 'id_pjsip_out_6',
+                        displayField: 'id_pjsip_out_6_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_out_6'
@@ -620,8 +620,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_out_7_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_out_7',
-                        displayField: 'id_sip_out_7_name'
+                        name: 'id_pjsip_out_7',
+                        displayField: 'id_pjsip_out_7_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_out_7'
@@ -645,8 +645,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_out_8_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_out_8',
-                        displayField: 'id_sip_out_8_name'
+                        name: 'id_pjsip_out_8',
+                        displayField: 'id_pjsip_out_8_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_out_8'
@@ -670,8 +670,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_out_9_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_out_9',
-                        displayField: 'id_sip_out_9_name'
+                        name: 'id_pjsip_out_9',
+                        displayField: 'id_pjsip_out_9_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_out_9'
@@ -695,8 +695,8 @@ Ext.define('MBilling.view.ivr.Form', {
                         displayField: 'id_queue_out_10_name'
                     }, {
                         xtype: 'siplookup',
-                        name: 'id_sip_out_10',
-                        displayField: 'id_sip_out_10_name'
+                        name: 'id_pjsip_out_10',
+                        displayField: 'id_pjsip_out_10_name'
                     }, {
                         xtype: 'textfield',
                         name: 'extension_out_10'

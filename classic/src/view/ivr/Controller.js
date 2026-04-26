@@ -46,22 +46,22 @@ Ext.define('MBilling.view.ivr.Controller', {
         if (activeField.value == 'undefined') activeField.setValue('undefined');
         if (activeField.name.match("^type_10")) {
             form.findField('id_queue_10').setVisible(fieldShow.match("^queue"));
-            form.findField('id_sip_10').setVisible(fieldShow.match("^sip"));
+            form.findField('id_pjsip_10').setVisible(fieldShow.match("^pjsip"));
             form.findField('id_ivr_10').setVisible(fieldShow.match("^ivr"));
             form.findField('extension_10').setVisible(fieldShow.match("^group|^number|^custom"));
         } else if (activeField.name.match("^type_[0-9]")) {
             form.findField('id_queue' + number).setVisible(fieldShow.match("^queue"));
-            form.findField('id_sip' + number).setVisible(fieldShow.match("^sip"));
+            form.findField('id_pjsip' + number).setVisible(fieldShow.match("^pjsip"));
             form.findField('id_ivr' + number).setVisible(fieldShow.match("^ivr"));
             form.findField('extension' + number).setVisible(fieldShow.match("^group|^number|^custom"));
         } else if (activeField.name.match("^type_out_10")) {
             form.findField('id_queue_out_10').setVisible(fieldShow.match("^queue"));
             form.findField('id_ivr_out_10').setVisible(fieldShow.match("^ivr"));
-            form.findField('id_sip_out_10').setVisible(fieldShow.match("^sip"));
+            form.findField('id_pjsip_out_10').setVisible(fieldShow.match("^pjsip"));
             form.findField('extension_out_10').setVisible(fieldShow.match("^group|^number|^custom"));
         } else {
             form.findField('id_queue_out' + number).setVisible(fieldShow.match("^queue"));
-            form.findField('id_sip_out' + number).setVisible(fieldShow.match("^sip"));
+            form.findField('id_pjsip_out' + number).setVisible(fieldShow.match("^pjsip"));
             form.findField('id_ivr_out' + number).setVisible(fieldShow.match("^ivr"));
             form.findField('extension_out' + number).setVisible(fieldShow.match("^group|^number|^custom"));
         }
@@ -75,53 +75,53 @@ Ext.define('MBilling.view.ivr.Controller', {
             fieldValueOut = record.getData()['type_out_' + i];
             if (fieldValue == 'ivr') {
                 form.findField('id_ivr_' + i).setVisible(true);
-                form.findField('id_sip_' + i).setVisible(false);
+                form.findField('id_pjsip_' + i).setVisible(false);
                 form.findField('id_queue_' + i).setVisible(false);
                 form.findField('extension_' + i).setVisible(false);
             } else if (fieldValue == 'pjsip') {
-                form.findField('id_sip_' + i).setVisible(true);
+                form.findField('id_pjsip_' + i).setVisible(true);
                 form.findField('id_ivr_' + i).setVisible(false);
                 form.findField('id_queue_' + i).setVisible(false);
                 form.findField('extension_' + i).setVisible(false);
             } else if (fieldValue == 'queue') {
                 form.findField('id_queue_' + i).setVisible(true);
-                form.findField('id_sip_' + i).setVisible(false);
+                form.findField('id_pjsip_' + i).setVisible(false);
                 form.findField('id_ivr_' + i).setVisible(false);
                 form.findField('extension_' + i).setVisible(false);
             } else if (fieldValue.match("custom|number|group")) {
                 form.findField('extension_' + i).setVisible(true);
                 form.findField('id_ivr_' + i).setVisible(false);
-                form.findField('id_sip_' + i).setVisible(false);
+                form.findField('id_pjsip_' + i).setVisible(false);
                 form.findField('id_queue_' + i).setVisible(false);
             } else {
                 form.findField('id_queue_' + i).setVisible(false);
-                form.findField('id_sip_' + i).setVisible(false);
+                form.findField('id_pjsip_' + i).setVisible(false);
                 form.findField('id_ivr_' + i).setVisible(false);
                 form.findField('extension_' + i).setVisible(false);
             }
             if (fieldValueOut == 'ivr') {
                 form.findField('id_ivr_out_' + i).setVisible(true);
-                form.findField('id_sip_out_' + i).setVisible(false);
+                form.findField('id_pjsip_out_' + i).setVisible(false);
                 form.findField('id_queue_out_' + i).setVisible(false);
                 form.findField('extension_out_' + i).setVisible(false);
             } else if (fieldValueOut == 'pjsip') {
-                form.findField('id_sip_out_' + i).setVisible(true);
+                form.findField('id_pjsip_out_' + i).setVisible(true);
                 form.findField('id_ivr_out_' + i).setVisible(false);
                 form.findField('id_queue_out_' + i).setVisible(false);
                 form.findField('extension_out_' + i).setVisible(false);
             } else if (fieldValueOut == 'queue') {
                 form.findField('id_queue_out_' + i).setVisible(true);
-                form.findField('id_sip_out_' + i).setVisible(false);
+                form.findField('id_pjsip_out_' + i).setVisible(false);
                 form.findField('id_ivr_out_' + i).setVisible(false);
                 form.findField('extension_out_' + i).setVisible(false);
             } else if (fieldValueOut.match("custom|number|group")) {
                 form.findField('extension_out_' + i).setVisible(true);
                 form.findField('id_ivr_out_' + i).setVisible(false);
-                form.findField('id_sip_out_' + i).setVisible(false);
+                form.findField('id_pjsip_out_' + i).setVisible(false);
                 form.findField('id_queue_out_' + i).setVisible(false);
             } else {
                 form.findField('id_queue_out_' + i).setVisible(false);
-                form.findField('id_sip_out_' + i).setVisible(false);
+                form.findField('id_pjsip_out_' + i).setVisible(false);
                 form.findField('id_ivr_out_' + i).setVisible(false);
                 form.findField('extension_out_' + i).setVisible(false);
             }
@@ -134,10 +134,10 @@ Ext.define('MBilling.view.ivr.Controller', {
             record = me.list.getSelectionModel().getSelection()[0];
         for (var i = 0; i <= 10; i++) {
             form.findField('id_ivr_' + i).setVisible(false);
-            form.findField('id_sip_' + i).setVisible(false);
+            form.findField('id_pjsip_' + i).setVisible(false);
             form.findField('id_queue_' + i).setVisible(false);
             form.findField('id_ivr_out_' + i).setVisible(false);
-            form.findField('id_sip_out_' + i).setVisible(false);
+            form.findField('id_pjsip_out_' + i).setVisible(false);
             form.findField('id_queue_out_' + i).setVisible(false);
         }
         me.callParent(arguments);
