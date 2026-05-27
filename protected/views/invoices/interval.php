@@ -21,48 +21,48 @@ $form = $this->beginWidget('CActiveForm', array(
 <div class="field">
     <?php echo $form->labelEx($model, Yii::t('zii', 'Start time')) ?>
 
-<?php
-$this->widget(
-    'ext.jui.EJuiDateTimePicker',
-    array(
-        'model'     => $model,
-        'attribute' => 'starttime',
-        'language'  => 'en', //default Yii::app()->language
-        'mode'      => 'datetime', //'datetime' or 'time' ('datetime' default)
-        'options'   => array(
-            'dateFormat' => 'yy-mm-dd',
-            'timeFormat' => 'HH:mm:ss',
-        ),
-    )
-);
+    <?php
+    $this->widget(
+        'ext.jui.EJuiDateTimePicker',
+        array(
+            'model'     => $model,
+            'attribute' => 'starttime',
+            'language'  => 'en', //default Yii::app()->language
+            'mode'      => 'datetime', //'datetime' or 'time' ('datetime' default)
+            'options'   => array(
+                'dateFormat' => 'yy-mm-dd',
+                'timeFormat' => 'HH:mm:ss',
+            ),
+        )
+    );
 
-?>
-<?php echo $form->error($model, 'starttime') ?>
+    ?>
+    <?php echo $form->error($model, 'starttime') ?>
     <p class="hint"><?php echo Yii::t('zii', 'Enter your') . ' ' . Yii::t('zii', 'Start time') ?></p>
 
 </div>
 <br>
 <div class="field">
     <?php echo $form->labelEx($model, Yii::t('zii', 'Stop time')) ?>
-<?php
-$this->widget(
-    'ext.jui.EJuiDateTimePicker',
-    array(
-        'model'     => $model,
-        'attribute' => 'stoptime',
-        'language'  => 'en', //default Yii::app()->language
-        //'mode'    => 'datetime',//'datetime' or 'time' ('datetime' default)
+    <?php
+    $this->widget(
+        'ext.jui.EJuiDateTimePicker',
+        array(
+            'model'     => $model,
+            'attribute' => 'stoptime',
+            'language'  => 'en', //default Yii::app()->language
+            //'mode'    => 'datetime',//'datetime' or 'time' ('datetime' default)
 
-        'options'   => array(
-            'dateFormat' => 'yy-mm-dd',
-            'timeFormat' => 'HH:mm:ss',
-        ),
-    )
-);
+            'options'   => array(
+                'dateFormat' => 'yy-mm-dd',
+                'timeFormat' => 'HH:mm:ss',
+            ),
+        )
+    );
 
-?>
+    ?>
 </div>
 <br>
 <?php echo $form->hiddenField($model, 'id_user', array('value' => $modelUser->id)); ?>
 <?php echo CHtml::submitButton(Yii::t('zii', 'Filter'), array('class' => 'button')); ?>
-<?php $this->endWidget();?>
+<?php $this->endWidget(); ?>
