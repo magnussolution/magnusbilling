@@ -884,7 +884,7 @@ Environment=AST_GROUP=asterisk
 Environment=HOME=/var/lib/asterisk
 WorkingDirectory=/var/lib/asterisk
 
-ExecStart=/usr/sbin/asterisk -U asterisk -G asterisk -C /etc/asterisk/asterisk.conf
+ExecStart=/usr/sbin/asterisk -f -U asterisk -G asterisk -C /etc/asterisk/asterisk.conf
 ExecStop=/usr/sbin/asterisk -rx "core stop now"
 ExecReload=/usr/sbin/asterisk -rx "core reload"
 
@@ -901,6 +901,8 @@ ProtectSystem=strict
 ProtectHome=yes
 RuntimeDirectory=asterisk
 RuntimeDirectoryMode=0750
+StandardOutput=null
+StandardError=null
 ReadWritePaths=/var/lib/asterisk /var/spool/asterisk /var/log/asterisk
 
 SyslogIdentifier=asterisk
