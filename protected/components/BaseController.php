@@ -333,10 +333,16 @@ class BaseController extends CController
 
     public function setSort()
     {
-        $this->sort = isset($_GET[$this->nameParamSort]) ? $_GET[$this->nameParamSort] : $this->attributeOrder;
-        if ($this->sort && !preg_match('/^[a-zA-Z0-9_\.]+( (ASC|DESC))?(,\s*[a-zA-Z0-9_\.]+( (ASC|DESC))?)*$/i', trim($this->sort))) {
-            exit('sort ' . $this->sort);
+
+        if (isset($_GET[$this->nameParamSort])) {
+            $this->sort = $_GET[$this->nameParamSort];
+            if ($this->sort && !preg_match('/^[a-zA-Z0-9_\.]+( (ASC|DESC))?(,\s*[a-zA-Z0-9_\.]+( (ASC|DESC))?)*$/i', trim($this->sort))) {
+                exit('sort ' . $this->sort);
+            }
+        } else {
+            $this->sort = $this->attributeOrder;
         }
+
         SqlInject::sanitize($this->sort);
     }
 
@@ -1602,7 +1608,7 @@ class BaseController extends CController
             $comparison = strtolower($comparison);
             $allowedComparison = ['eq', 'lt', 'gt', 'st', 'ed', 'ct', 'df'];
 
-            if ($comparison !== null && !in_array($comparison, $allowedComparison, true)) {
+            if ($comparison !== null && $comparison !== '' && !in_array($comparison, $allowedComparison, true)) {
                 Yii::log($this->controllerName, 'error');
                 Yii::log(print_r($_SERVER, true), 'error');
                 Yii::log(print_r($_REQUEST, true), 'error');

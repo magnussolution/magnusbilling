@@ -665,7 +665,7 @@ systemctl start firewalld
 firewall-cmd --zone=public --add-port=$ssh_port/tcp --permanent
 firewall-cmd --zone=public --add-port=22/tcp --permanent
 firewall-cmd --zone=public --add-port=80/tcp --permanent
-firewall-cmd --zone=public --add-port=443/tcp --permanent
+firewall-cmd --zone=public --add-port=44x3/tcp --permanent
 firewall-cmd --zone=public --add-port=5060/udp --permanent
 firewall-cmd --zone=public --add-port=10000-60000/udp --permanent
 firewall-cmd --reload
@@ -724,10 +724,13 @@ ignoreip = 127.0.0.1
 bantime  = 600
 findtime  = 600
 maxretry = 3
+bantime.increment = true
+bantime.factor = 2
+bantime.maxtime = 30d
 backend = auto
 usedns = warn
-banaction = firewallcmd-multiport
-banaction_allports = firewallcmd-multiport
+banaction = firewallcmd-allports
+banaction_allports = firewallcmd-allports
 
 
 [asterisk-iptables]   
@@ -736,6 +739,9 @@ filter   = asterisk
 logpath  = /var/log/asterisk/messages 
 maxretry = 5  
 bantime = 600
+port     = 5060,5061
+protocol = udp
+
 
 [ast-cli-attck]   
 enabled  = true           
@@ -878,7 +884,7 @@ Environment=AST_GROUP=asterisk
 Environment=HOME=/var/lib/asterisk
 WorkingDirectory=/var/lib/asterisk
 
-ExecStart=/usr/sbin/asterisk -f -U asterisk -G asterisk -C /etc/asterisk/asterisk.conf
+ExecStart=/usr/sbin/asterisk -U asterisk -G asterisk -C /etc/asterisk/asterisk.conf
 ExecStop=/usr/sbin/asterisk -rx "core stop now"
 ExecReload=/usr/sbin/asterisk -rx "core reload"
 
