@@ -57,6 +57,7 @@ Bem vindo à documentação do MagnusBilling 7 em português.
    database_schema.rst
    yii_backend.rst
    extjs_frontend.rst
+   ai_codebase_guide.rst
 
 .. toctree::
    :maxdepth: 1

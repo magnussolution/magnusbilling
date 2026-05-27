@@ -1,0 +1,116 @@
+{
+  "project": "MagnusBilling",
+  "schema_version": "1.0",
+  "source_priority": [
+    "code",
+    "transcript",
+    "wiki"
+  ],
+  "documents": [
+    {
+      "doc_id": "MB-RAG-PLAYBOOK-CREATE-MODULE-PKG-EXAMPLE",
+      "path": "ia-docs/playbooks/create_new_module_pkg_example.md",
+      "kind": "playbook"
+    },
+    {
+      "doc_id": "MB-RAG-PLAYBOOK-KNOWN-ISSUES-FIX-PATTERNS",
+      "path": "ia-docs/playbooks/known_issues_fix_patterns.md",
+      "kind": "playbook"
+    },
+    {
+      "doc_id": "MB-RAG-PLAYBOOK-QA-PROTOCOL",
+      "path": "ia-docs/playbooks/qa_protocol.md",
+      "kind": "playbook"
+    },
+    {
+      "doc_id": "MB-RAG-PLAYBOOK-QUESTION-ROUTING",
+      "path": "ia-docs/playbooks/question_routing.md",
+      "kind": "playbook"
+    },
+    {
+      "doc_id": "MB-RAG-PLAYBOOK-SUPPORT-TRIAGE-SYMPTOM",
+      "path": "ia-docs/playbooks/support_triage_by_symptom.md",
+      "kind": "playbook"
+    },
+    {
+      "doc_id": "MB-RAG-DOMAIN-AUTH-SESSION",
+      "path": "ia-docs/domains/auth_and_session.md",
+      "kind": "domain"
+    },
+    {
+      "doc_id": "MB-RAG-DOMAIN-CALLFLOW-BILLING",
+      "path": "ia-docs/domains/call_flow_and_billing.md",
+      "kind": "domain"
+    },
+    {
+      "doc_id": "MB-RAG-DOMAIN-CAMPAIGNS-MASSIVE-CALLS",
+      "path": "ia-docs/domains/campaigns_and_massive_calls.md",
+      "kind": "domain"
+    },
+    {
+      "doc_id": "MB-RAG-DOMAIN-DASHBOARD-CALLONLINECHART",
+      "path": "ia-docs/domains/dashboard_callonlinechart.md",
+      "kind": "domain"
+    },
+    {
+      "doc_id": "MB-RAG-DOMAIN-INBOUND-DID-QUEUE-IVR",
+      "path": "ia-docs/domains/inbound_did_queue_ivr.md",
+      "kind": "domain"
+    },
+    {
+      "doc_id": "MB-RAG-DOMAIN-INVOICES-REPORTS",
+      "path": "ia-docs/domains/invoices_and_reports.md",
+      "kind": "domain"
+    },
+    {
+      "doc_id": "MB-RAG-DOMAIN-OBS-SIPTRACE",
+      "path": "ia-docs/domains/observability_and_siptrace.md",
+      "kind": "domain"
+    },
+    {
+      "doc_id": "MB-RAG-DOMAIN-PAYMENTS-REFILL",
+      "path": "ia-docs/domains/payments_and_refill.md",
+      "kind": "domain"
+    },
+    {
+      "doc_id": "MB-RAG-DOMAIN-QUEUE-CONTACT-CENTER",
+      "path": "ia-docs/domains/queue_and_contact_center.md",
+      "kind": "domain"
+    },
+    {
+      "doc_id": "MB-RAG-DOMAIN-RATES-PROVIDER-COSTS",
+      "path": "ia-docs/domains/rates_and_provider_costs.md",
+      "kind": "domain"
+    },
+    {
+      "doc_id": "MB-RAG-DOMAIN-SIP-IAX-ACCOUNTS",
+      "path": "ia-docs/domains/sip_and_iax_accounts.md",
+      "kind": "domain"
+    },
+    {
+      "doc_id": "MB-RAG-DOMAIN-SYSTEM-ENTRYPOINTS",
+      "path": "ia-docs/domains/system_entrypoints.md",
+      "kind": "domain"
+    },
+    {
+      "doc_id": "MB-RAG-SOURCE-CODE-SOURCES",
+      "path": "ia-docs/sources/code_sources.md",
+      "kind": "source"
+    },
+    {
+      "doc_id": "MB-RAG-SOURCE-TOP30-OPERATIONAL-TABLES",
+      "path": "ia-docs/sources/top30_operational_tables.md",
+      "kind": "source"
+    },
+    {
+      "doc_id": "MB-RAG-SOURCE-VIDEO-CODE-FINDINGS",
+      "path": "ia-docs/sources/video_code_findings.md",
+      "kind": "source"
+    },
+    {
+      "doc_id": "MB-RAG-SOURCE-VIDEO-TRANSCRIPTS",
+      "path": "ia-docs/sources/video_transcripts.md",
+      "kind": "source"
+    }
+  ]
+}

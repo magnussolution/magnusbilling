@@ -1,0 +1,177 @@
+# pkg_sipura
+
+| Column | Definition |
+|---|---|
+| `id` | int(11) NOT NULL AUTO_INCREMENT |
+| `id_user` | int(11) NOT NULL |
+| `macadr` | varchar(12) NOT NULL DEFAULT '' |
+| `senha_admin` | varchar(8) NOT NULL DEFAULT '' |
+| `senha_user` | varchar(8) NOT NULL DEFAULT '' |
+| `antireset` | char(3) NOT NULL DEFAULT '' |
+| `lastmov` | varchar(20) NOT NULL DEFAULT '' |
+| `estado` | char(2) NOT NULL DEFAULT '' |
+| `obs` | varchar(50) NOT NULL DEFAULT '' |
+| `email` | varchar(60) NOT NULL DEFAULT '' |
+| `DHCP` | char(3) NOT NULL DEFAULT 'yes' |
+| `Static_IP` | varchar(15) NOT NULL DEFAULT '' |
+| `NetMask` | varchar(15) NOT NULL DEFAULT '' |
+| `Gateway` | varchar(15) NOT NULL DEFAULT '' |
+| `Primary_DNS` | varchar(15) NOT NULL DEFAULT '' |
+| `Secondary_DNS` | varchar(15) NOT NULL DEFAULT '' |
+| `Provision_Enable` | char(3) NOT NULL DEFAULT 'yes' |
+| `Profile_Rule` | varchar(60) DEFAULT 'http://billing.magnusbilling.com/x.php' |
+| `SIP_Port_1` | varchar(5) NOT NULL DEFAULT '5060' |
+| `Proxy_1` | varchar(60) NOT NULL DEFAULT '' |
+| `Use_Outbound_Proxy_1` | char(3) NOT NULL DEFAULT 'no' |
+| `Outbound_Proxy_1` | varchar(60) NOT NULL DEFAULT '' |
+| `Use_OB_Proxy_In_Dialog_1` | char(3) NOT NULL DEFAULT 'yes' |
+| `Register_1` | char(3) NOT NULL DEFAULT 'yes' |
+| `Make_Call_Without_Reg_1` | char(3) NOT NULL DEFAULT 'no' |
+| `Register_Expires_1` | varchar(4) NOT NULL DEFAULT '90' |
+| `Ans_Call_Without_Reg_1` | char(3) NOT NULL DEFAULT 'no' |
+| `Use_DNS_SRV_1` | char(3) NOT NULL DEFAULT 'yes' |
+| `DNS_SRV_Auto_Prefix_1` | char(3) NOT NULL DEFAULT 'no' |
+| `Proxy_Fallback_Intvl_1` | varchar(4) NOT NULL DEFAULT '3600' |
+| `Voice_Mail_Server_1` | varchar(30) NOT NULL DEFAULT '' |
+| `SIP_Port_2` | varchar(5) NOT NULL DEFAULT '5061' |
+| `Proxy_2` | varchar(60) NOT NULL DEFAULT '' |
+| `Use_Outbound_Proxy_2` | char(3) NOT NULL DEFAULT 'no' |
+| `Outbound_Proxy_2` | varchar(60) NOT NULL DEFAULT '' |
+| `Use_OB_Proxy_In_Dialog_2` | char(3) NOT NULL DEFAULT 'yes' |
+| `Register_2` | char(3) NOT NULL DEFAULT 'yes' |
+| `Make_Call_Without_Reg_2` | char(3) NOT NULL DEFAULT 'no' |
+| `Register_Expires_2` | varchar(4) NOT NULL DEFAULT '120' |
+| `Ans_Call_Without_Reg_2` | char(3) NOT NULL DEFAULT 'no' |
+| `Use_DNS_SRV_2` | char(3) NOT NULL DEFAULT 'yes' |
+| `DNS_SRV_Auto_Prefix_2` | char(3) NOT NULL DEFAULT 'no' |
+| `Proxy_Fallback_Intvl_2` | varchar(4) NOT NULL DEFAULT '3600' |
+| `Voice_Mail_Server_2` | varchar(30) NOT NULL DEFAULT '' |
+| `Display_Name_1` | varchar(30) NOT NULL DEFAULT '' |
+| `Display_Name_2` | varchar(30) NOT NULL DEFAULT '' |
+| `User_ID_1` | varchar(25) NOT NULL DEFAULT '' |
+| `User_ID_2` | varchar(25) NOT NULL DEFAULT '' |
+| `Password_1` | varchar(25) NOT NULL DEFAULT '' |
+| `Password_2` | varchar(25) NOT NULL DEFAULT '' |
+| `Use_Auth_ID_1` | char(3) NOT NULL DEFAULT 'no' |
+| `Use_Auth_ID_2` | char(3) NOT NULL DEFAULT '' |
+| `Auth_ID_1` | varchar(25) NOT NULL DEFAULT '' |
+| `Auth_ID_2` | varchar(25) NOT NULL DEFAULT '' |
+| `Preferred_Codec_1` | varchar(8) NOT NULL DEFAULT 'G729a' |
+| `Preferred_Codec_2` | varchar(8) NOT NULL DEFAULT 'G729a' |
+| `Use_Pref_Codec_Only_1` | char(3) NOT NULL DEFAULT 'no' |
+| `Use_Pref_Codec_Only_2` | char(3) NOT NULL DEFAULT 'no' |
+| `Dial_Plan_1` | longtext NOT NULL |
+| `Dial_Plan_2` | longtext NOT NULL |
+| `Caller_Conn_Polarity_1` | varchar(10) NOT NULL DEFAULT 'Forward' |
+| `Caller_Conn_Polarity_2` | varchar(10) NOT NULL DEFAULT 'Forward' |
+| `altera` | char(3) NOT NULL DEFAULT 'si' |
+| `fultmov` | varchar(30) NOT NULL DEFAULT '0000-00-00' |
+| `fultlig` | varchar(30) NOT NULL DEFAULT '0000-00-00' |
+| `Enable_Web_Server` | char(3) NOT NULL DEFAULT 'yes' |
+| `origem` | varchar(5) NOT NULL DEFAULT '' |
+| `username` | varchar(20) NOT NULL DEFAULT 'patel' |
+| `last_ip` | varchar(15) NOT NULL DEFAULT '' |
+| `last_port` | varchar(5) NOT NULL DEFAULT '' |
+| `Web_Server_Port` | varchar(5) NOT NULL DEFAULT '80' |
+| `conf01` | char(1) NOT NULL DEFAULT '' |
+| `conf02` | char(1) NOT NULL DEFAULT '' |
+| `conf03` | char(1) NOT NULL DEFAULT '' |
+| `borrado` | char(2) NOT NULL DEFAULT '' |
+| `marca` | char(2) NOT NULL DEFAULT 'X' |
+| `contador` | int(5) NOT NULL DEFAULT '0' |
+| `nserie` | varchar(15) NOT NULL DEFAULT '' |
+| `Callee_Conn_Polarity_1` | varchar(10) NOT NULL DEFAULT 'Forward' |
+| `Callee_Conn_Polarity_2` | varchar(10) NOT NULL DEFAULT 'Forward' |
+| `Idle_Conn_Polarity_1` | varchar(10) NOT NULL DEFAULT 'Forward' |
+| `Idle_Conn_Polarity_2` | varchar(10) NOT NULL DEFAULT 'Forward' |
+| `Jitter_1` | varchar(20) NOT NULL DEFAULT 'high' |
+| `Jitter_2` | varchar(20) NOT NULL DEFAULT 'high' |
+| `RTP_Packet_Size` | varchar(10) NOT NULL DEFAULT '0.030' |
+| `AVT_Dynamic_Payload` | varchar(10) NOT NULL DEFAULT '101' |
+| `STUN_Enable` | char(3) NOT NULL DEFAULT 'no' |
+| `STUN_Server` | varchar(80) NOT NULL DEFAULT '' |
+| `Dial_Tone` | varchar(80) NOT NULL DEFAULT '420@-16;10(*/0/1)' |
+| `Busy_Tone` | varchar(80) NOT NULL DEFAULT '480@-19,620@-19;10(.5/.5/1+2)' |
+| `Reorder_Tone` | varchar(80) NOT NULL DEFAULT '480@-19,620@-19;10(.25/.25/1+2)' |
+| `Ring_Back_Tone` | varchar(80) NOT NULL DEFAULT '440@-19,480@-19;*(2/4/1+2)' |
+| `Hook_Flash_Timer_Min` | varchar(10) NOT NULL DEFAULT '.1' |
+| `Hook_Flash_Timer_Max` | varchar(10) NOT NULL DEFAULT '.9' |
+| `Time_Zone` | varchar(20) NOT NULL DEFAULT 'GMT' |
+| `FXS_Port_Input_Gain` | varchar(10) NOT NULL DEFAULT '-3' |
+| `FXS_Port_Output_Gain` | varchar(10) NOT NULL DEFAULT '-3' |
+| `Echo_Supp_Enable_1_` | char(3) NOT NULL DEFAULT 'yes' |
+| `Echo_Supp_Enable_2_` | char(3) NOT NULL DEFAULT 'yes' |
+| `NAT_Keep_Alive_Enable_1_` | char(3) NOT NULL DEFAULT 'no' |
+| `NAT_Keep_Alive_Enable_2_` | char(3) NOT NULL DEFAULT 'no' |
+| `NAT_Mapping_Enable_1_` | char(3) NOT NULL DEFAULT 'no' |
+| `NAT_Mapping_Enable_2_` | char(3) NOT NULL DEFAULT 'no' |
+| `NAT_Keep_Alive_Dest_1_` | varchar(80) DEFAULT '$PROXY' |
+| `NAT_Keep_Alive_Dest_2_` | varchar(80) DEFAULT '$PROXY' |
+| `SIP_TOS_DiffServ_Value_1_` | varchar(20) NOT NULL DEFAULT '0x68' |
+| `SIP_TOS_DiffServ_Value_2_` | varchar(20) NOT NULL DEFAULT '0x68' |
+| `RTP_TOS_DiffServ_Value_1_` | varchar(20) NOT NULL DEFAULT '0xb8' |
+| `RTP_TOS_DiffServ_Value_2_` | varchar(20) NOT NULL DEFAULT '0xb8' |
+| `Upgrade_Enable` | char(3) NOT NULL DEFAULT 'no' |
+| `Upgrade_Rule` | varchar(80) NOT NULL DEFAULT '' |
+| `falta` | date NOT NULL DEFAULT '0000-00-00' |
+| `Silence_Supp_Enable_1_` | char(3) NOT NULL DEFAULT 'no' |
+| `Silence_Supp_Enable_2_` | char(3) NOT NULL DEFAULT 'no' |
+| `DTMF_Tx_Method_1_` | varchar(20) NOT NULL DEFAULT 'Auto' |
+| `DTMF_Tx_Method_2_` | varchar(20) NOT NULL DEFAULT 'Auto' |
+| `Enable_IP_Dialing_1_` | char(3) NOT NULL DEFAULT 'no' |
+| `Enable_IP_Dialing_2_` | char(3) NOT NULL DEFAULT 'no' |
+| `SAS_DLG_Refresh_Intvl_1_` | varchar(10) NOT NULL DEFAULT '30' |
+| `SAS_DLG_Refresh_Intvl_2_` | varchar(10) NOT NULL DEFAULT '30' |
+| `SAS_Enable_1_` | char(3) NOT NULL DEFAULT 'no' |
+| `SAS_Enable_2_` | char(3) NOT NULL DEFAULT 'no' |
+| `ruleb` | varchar(20) NOT NULL DEFAULT '' |
+| `RTP_Port_Min` | varchar(10) NOT NULL DEFAULT '16384' |
+| `RTP_Port_Max` | varchar(10) NOT NULL DEFAULT '16482' |
+| `Syslog_Server` | varchar(20) NOT NULL DEFAULT '' |
+| `Debug_Server` | varchar(20) NOT NULL DEFAULT '' |
+| `Debug_Level` | char(1) NOT NULL DEFAULT '0' |
+| `SIP_Debug_Option_1_` | varchar(25) NOT NULL DEFAULT 'none' |
+| `SIP_Debug_Option_2_` | varchar(25) NOT NULL DEFAULT 'none' |
+| `Blind_Attn_Xfer_Enable_1_` | char(3) NOT NULL DEFAULT 'no' |
+| `Blind_Attn_Xfer_Enable_2_` | char(3) NOT NULL DEFAULT 'no' |
+| `Xfer_When_Hangup_Conf_1_` | char(3) NOT NULL DEFAULT 'yes' |
+| `Xfer_When_Hangup_Conf_2_` | char(3) NOT NULL DEFAULT 'yes' |
+| `Three_Way_Call_Serv_1_` | char(3) NOT NULL DEFAULT 'yes' |
+| `Three_Way_Call_Serv_2_` | char(3) NOT NULL DEFAULT 'yes' |
+| `Attn_Transfer_Serv_1_` | char(3) NOT NULL DEFAULT 'yes' |
+| `Attn_Transfer_Serv_2_` | char(3) NOT NULL DEFAULT 'yes' |
+| `Three_Way_Conf_Serv_1_` | char(3) NOT NULL DEFAULT 'yes' |
+| `Three_Way_Conf_Serv_2_` | char(3) NOT NULL DEFAULT 'yes' |
+| `Unattn_Transfer_Serv_1_` | char(3) NOT NULL DEFAULT 'yes' |
+| `Unattn_Transfer_Serv_2_` | char(3) NOT NULL DEFAULT 'yes' |
+| `nombre` | varchar(20) NOT NULL DEFAULT 'monica' |
+| `Handle_VIA_received` | char(3) NOT NULL DEFAULT 'no' |
+| `Handle_VIA_rport` | char(3) NOT NULL DEFAULT 'no' |
+| `Insert_VIA_received` | char(3) NOT NULL DEFAULT 'no' |
+| `Insert_VIA_rport` | char(3) NOT NULL DEFAULT 'no' |
+| `Substitute_VIA_Addr` | char(3) NOT NULL DEFAULT 'no' |
+| `Send_Resp_To_Src_Port` | char(3) NOT NULL DEFAULT 'no' |
+| `STUN_Test_Enable` | char(3) NOT NULL DEFAULT 'no' |
+| `Interdigit_Long_Timer` | char(3) NOT NULL DEFAULT '10' |
+| `Speed_Dial_2_1_` | varchar(30) NOT NULL DEFAULT '' |
+| `Speed_Dial_3_1_` | varchar(30) NOT NULL DEFAULT '' |
+| `Speed_Dial_4_1_` | varchar(30) NOT NULL DEFAULT '' |
+| `Speed_Dial_5_1_` | varchar(30) NOT NULL DEFAULT '' |
+| `Speed_Dial_6_1_` | varchar(30) NOT NULL DEFAULT '' |
+| `Speed_Dial_7_1_` | varchar(30) NOT NULL DEFAULT '' |
+| `Speed_Dial_8_1_` | varchar(30) NOT NULL DEFAULT '' |
+| `Speed_Dial_9_1_` | varchar(30) NOT NULL DEFAULT '' |
+| `Speed_Dial_2_2_` | varchar(30) NOT NULL DEFAULT '' |
+| `Speed_Dial_3_2_` | varchar(30) NOT NULL DEFAULT '' |
+| `Speed_Dial_4_2_` | varchar(30) NOT NULL DEFAULT '' |
+| `Speed_Dial_5_2_` | varchar(30) NOT NULL DEFAULT '' |
+| `Speed_Dial_6_2_` | varchar(30) NOT NULL DEFAULT '' |
+| `Speed_Dial_7_2_` | varchar(30) NOT NULL DEFAULT '' |
+| `Speed_Dial_8_2_` | varchar(30) NOT NULL DEFAULT '' |
+| `Speed_Dial_9_2_` | varchar(30) NOT NULL DEFAULT '' |
+| `Caller_ID_Method` | varchar(80) NOT NULL DEFAULT '' |
+| UNIQUE | KEY `interno` (`id`) |
+| KEY | `email` (`email`,`id_user`) |
+| KEY | `username` (`username`) |
+| KEY | `fk_pkg_user_sipuras` (`id_user`) |
+| CONSTRAINT | `fk_pkg_user_sipuras` FOREIGN KEY (`id_user`) REFERENCES `pkg_user` (`id`) ON DELETE CASCADE |

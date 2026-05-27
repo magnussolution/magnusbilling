@@ -40,6 +40,12 @@ Welcome to MagnusBilling 7 wiki.
    conf.rst
 
 .. toctree::
+   :caption: AI Knowledge Base
+   :maxdepth: 1
+
+   ai/index.rst
+
+.. toctree::
    :caption: Asterisk option
    :maxdepth: 1
 
