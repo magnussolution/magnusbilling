@@ -1,0 +1,46 @@
+# MagnusBilling 7
+
+Official AI-ready documentation index for LLMs, coding agents, and RAG systems.
+
+Project: MagnusBilling 7 (VoIP billing platform for Asterisk)
+Repository: https://github.com/magnussolution/magnusbilling7
+Primary branch/docs path: https://github.com/magnussolution/magnusbilling7/tree/source
+
+## Start Here (High Priority)
+
+- https://github.com/magnussolution/magnusbilling7/blob/source/ia-docs/README.md - AI docs overview, retrieval policy, ingestion order.
+- https://github.com/magnussolution/magnusbilling7/blob/source/ia-docs/playbooks/qa_protocol.md - Answer protocol and evidence-first response format.
+- https://github.com/magnussolution/magnusbilling7/blob/source/ia-docs/playbooks/question_routing.md - Intent/domain routing guidance.
+- https://github.com/magnussolution/magnusbilling7/blob/source/ia-docs/indexes/rag_manifest.json - Canonical machine manifest of IA docs corpus.
+
+## Core Domain Docs
+
+- https://github.com/magnussolution/magnusbilling7/blob/source/ia-docs/domains/system_entrypoints.md
+- https://github.com/magnussolution/magnusbilling7/blob/source/ia-docs/domains/auth_and_session.md
+- https://github.com/magnussolution/magnusbilling7/blob/source/ia-docs/domains/call_flow_and_billing.md
+- https://github.com/magnussolution/magnusbilling7/blob/source/ia-docs/domains/inbound_did_queue_ivr.md
+- https://github.com/magnussolution/magnusbilling7/blob/source/ia-docs/domains/queue_and_contact_center.md
+- https://github.com/magnussolution/magnusbilling7/blob/source/ia-docs/domains/observability_and_siptrace.md
+
+## Machine Indexes
+
+- https://github.com/magnussolution/magnusbilling7/blob/source/ia-docs/indexes/rag_manifest.json
+- https://github.com/magnussolution/magnusbilling7/blob/source/ia-docs/indexes/rag_chunks.jsonl
+- https://github.com/magnussolution/magnusbilling7/blob/source/ia-docs/indexes/query_intents.jsonl
+- https://github.com/magnussolution/magnusbilling7/blob/source/ia-docs/indexes/retrieval_eval.jsonl
+
+## Full Catalog
+
+- https://github.com/magnussolution/magnusbilling7/blob/source/llms-full.txt
+
+## Source Priority Policy
+
+1. Current repository code is authoritative.
+2. IA domain/playbook docs provide curated operational guidance.
+3. Video transcript-derived docs are contextual support.
+4. If sources conflict, prefer current code behavior.
+
+## Discovery Keywords
+
+MagnusBilling, Asterisk, VoIP billing, Yii framework, ExtJS, AGI, DID, IVR, queue,
+SIP, CDR, rate tables, trunk, provider costs, refill, invoices, call center.

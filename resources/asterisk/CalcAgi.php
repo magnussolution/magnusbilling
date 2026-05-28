@@ -731,6 +731,13 @@ class CalcAgi
 
             $agi->set_variable("CALLERID(num)", $MAGNUS->CallerID);
 
+            if (file_exists(dirname(__FILE__) . '/BeforesendCalltoTrunk.php')) {
+                $beforeSendResult = include dirname(__FILE__) . '/BeforesendCalltoTrunk.php';
+                if ($beforeSendResult === false) {
+                    continue;
+                }
+            }
+
             $this->sendCalltoTrunk(
                 $MAGNUS,
                 $agi,

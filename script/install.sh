@@ -127,6 +127,7 @@ mkdir /var/run/asterisk
 mkdir /var/log/asterisk
 chown -R asterisk:asterisk /var/run/asterisk
 chown -R asterisk:asterisk /var/log/asterisk
+chown -R asterisk:asterisk /var/log/asterisk/
 contrib/scripts/install_prereq install
 make clean
 ./configure

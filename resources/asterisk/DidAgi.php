@@ -467,7 +467,7 @@ class DidAgi
                     $MAGNUS->startRecordCall($agi, $this->did, true);
 
                     $agi->verbose("DIAL $dialstr", 6);
-                    $myres = $MAGNUS->run_dial($agi, $dialstr, $MAGNUS->agiconfig['dialcommand_param_call_2did']);
+                    $myres = $MAGNUS->run_dial($agi, $dialstr, $MAGNUS->agiconfig['dialcommand_param_call_2did'], 'no', $MAGNUS->config['global']['max_call_duration']);
 
                     $sipaccount          = $agi->get_variable("DIALEDPEERNUMBER");
                     $MAGNUS->sip_account = $sipaccount['data'];
@@ -557,7 +557,7 @@ class DidAgi
                         }
                         $this->did_voip_model_sip_account = $MAGNUS->sip_account = "";
                         $agi->verbose("DIAL $dialstr", 6);
-                        $myres = $MAGNUS->run_dial($agi, $dialstr, $MAGNUS->agiconfig['dialcommand_param_call_2did']);
+                        $myres = $MAGNUS->run_dial($agi, $dialstr, $MAGNUS->agiconfig['dialcommand_param_call_2did'], 'no', $MAGNUS->config['global']['max_call_duration']);
                         $MAGNUS->stopRecordCall($agi);
 
                         $answeredtime = $agi->get_variable("ANSWEREDTIME");

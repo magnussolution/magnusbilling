@@ -63,3 +63,12 @@ We provide several avenues for you to get your system up and running on your own
 3. [Telegram Group(English)](https://t.me/joinchat/NXwoZRPGpG6rPqp3yssLzQ)
 4. [Telegram Grupo(Spanish)](https://t.me/joinchat/NXwoZRXQbjokWrliVGObkQ)
 5. [Telegram Grupo(Português)](https://t.me/joinchat/NXwoZQtJRKN-5e03uY6_XQ)
+
+
+## AI Documentation
+
+This repository contains AI-optimized documentation for LLMs and coding agents:
+
+- **[llms.txt](llms.txt)** - Quick start index for LLMs (high-priority docs, retrieval policy, discovery keywords)
+- **[llms-full.txt](llms-full.txt)** - Complete catalog for RAG ingestion (all domains, playbooks, indexes, entry points)
+- **[/ia-docs/](ia-docs/)** - Machine-oriented knowledge base (domains, playbooks, sources, indexes)
