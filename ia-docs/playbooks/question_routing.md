@@ -75,3 +75,11 @@ tags: [routing, triage, investigation]
 - Start frontend: app/store/CallOnlineChart.js and app/model/CallOnlineChart.js
 - Then backend: protected/controllers/CallOnlineChartController.php
 - Then model/command feed: protected/models/CallOnlineChart.php and protected/commands/CallChartCommand.php
+
+## Wiki / Field Help / Documentation Generation
+
+- Start source: resources/help/help_en.js and resources/help/help_pt_BR.js
+- Field inventory: classic/src/view/*/Form.js
+- Generator: wiki/generate.php
+- Generated output: wiki/en/modules/*/*.rst and wiki/pt_BR/modules/*/*.rst
+- Domain doc: MB-RAG-DOMAIN-DOCS-WIKI-FIELD-HELP

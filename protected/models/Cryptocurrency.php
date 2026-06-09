@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Modelo para a tabela "Balance".
  * =======================================
@@ -45,6 +46,7 @@ class Cryptocurrency extends Model
             ['id_user,status', 'numerical', 'integerOnly' => true],
             ['amountCrypto,amount', 'numerical', 'integerOnly' => false],
             ['amountCrypto,amount', 'length', 'max' => 10],
+            ['network', 'length', 'max' => 100],
             ['date, expirationdate', 'safe'],
 
         ];

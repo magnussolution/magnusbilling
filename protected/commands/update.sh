@@ -112,6 +112,10 @@ chown -R asterisk:asterisk /var/run/asterisk
 
 chmod +x /var/www/html/mbilling/protected/commands/*.sh
 
+grep -qi '^pedantic=' /etc/asterisk/sip.conf || \
+sed -i '/^\[general\]/a pedantic=no' /etc/asterisk/sip.conf
+
+
 # end permissions
 
 SERVICE_FILE="/etc/systemd/system/asterisk.service"

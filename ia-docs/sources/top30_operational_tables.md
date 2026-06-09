@@ -7,6 +7,14 @@ tags: [source, database, tables, data-dictionary]
 
 # Top 30 Operational Tables (Machine Dictionary)
 
+Current schema note:
+
+- `script/database.sql` currently defines 92 `pkg_*` tables.
+- This page intentionally documents the top 30 operational tables used most
+  often in support, billing, routing, diagnostics, and report questions.
+- For full schema validation, inspect `script/database.sql` and the matching
+  ActiveRecord model in `protected/models/`.
+
 Selection basis:
 
 - Frequently referenced in support and billing/call troubleshooting.

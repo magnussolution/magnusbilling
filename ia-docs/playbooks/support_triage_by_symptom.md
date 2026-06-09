@@ -43,6 +43,11 @@ Route MagnusBilling support questions to the right domain and evidence path quic
 - Primary docs: MB-RAG-DOMAIN-PAYMENTS-REFILL, MB-RAG-DOMAIN-INVOICES-REPORTS
 - Verify: transaction status, balance side effect, report aggregation source.
 
+### Field help icon or Wiki field description is missing
+
+- Primary docs: MB-RAG-DOMAIN-DOCS-WIKI-FIELD-HELP, MB-RAG-PLAYBOOK-KNOWN-ISSUES-FIX-PATTERNS
+- Verify: `resources/help/help_{LANG}.js`, matching ExtJS Form.js field, `wiki/generate.php`, generated `.rst` anchor.
+
 ## Response Template
 
 1. Restate symptom in one line.

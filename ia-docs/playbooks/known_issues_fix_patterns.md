@@ -211,6 +211,37 @@ Campaign does not start or stalls with partial logs.
 2. Validate candidate target pool.
 3. Correlate each failed attempt with outbound route diagnostics.
 
+## Wiki and Field Help
+
+### Symptom
+
+A field has no help icon text, the Wiki page shows an empty description, or a
+new ExtJS field is missing from generated documentation.
+
+### Typical Root Causes
+
+- The field exists in `classic/src/view/*/Form.js` but is missing from
+  `resources/help/help_en.js` or `resources/help/help_pt_BR.js`.
+- The description was edited only in generated `.rst` instead of the help file.
+- The generator did not detect a non-standard `fieldLabel` expression.
+- The description is technically correct but too vague for an in-panel tooltip.
+
+### Verification
+
+- resources/help/help_en.js
+- resources/help/help_pt_BR.js
+- classic/src/view/<Module>/Form.js
+- wiki/generate.php
+- wiki/<lang>/modules/<Module>/<Module>.rst
+
+### Fix Pattern
+
+1. Confirm the ExtJS field name and label in the Form.js object.
+2. Update both help files with concise user-facing explanations.
+3. Run `php wiki/generate.php`.
+4. Confirm the generated `.rst` anchor and description exist.
+5. If the field is still missing, inspect the parser logic in `wiki/generate.php`.
+
 ## Response Contract for AI Answers
 
 1. State the likely domain and symptom class.

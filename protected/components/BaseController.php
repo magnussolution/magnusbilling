@@ -334,7 +334,7 @@ class BaseController extends CController
     public function setSort()
     {
 
-        if (isset($_GET[$this->nameParamSort])) {
+        if (isset($_GET[$this->nameParamSort]) && $_GET[$this->nameParamSort] != '[]') {
             $this->sort = $_GET[$this->nameParamSort];
             if ($this->sort && !preg_match('/^[a-zA-Z0-9_\.]+( (ASC|DESC))?(,\s*[a-zA-Z0-9_\.]+( (ASC|DESC))?)*$/i', trim($this->sort))) {
                 exit('sort ' . $this->sort);

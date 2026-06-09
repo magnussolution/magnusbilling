@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[2]
 IA_DOCS = ROOT / "ia-docs"
 INDEXES = IA_DOCS / "indexes"
 TRANSCRIPTS = ROOT / "doc" / "videos" / "transcripts"
+USER_WIKI = ROOT / "wiki" / "en"
 ENGLISH_ONLY = True
 
 DOC_ID_RE = re.compile(r"^doc_id:\s*(.+?)\s*$")
@@ -216,7 +217,7 @@ def build_manifest() -> dict:
     return {
         "project": "MagnusBilling",
         "schema_version": "1.0",
-        "source_priority": ["code", "transcript", "wiki"],
+        "source_priority": ["code", "ia-docs", "wiki", "transcript"],
         "documents": documents,
     }
 
@@ -278,6 +279,48 @@ def base_chunks() -> list[dict]:
             "title": "Transcript Source Priority",
             "text": "Use transcripts as context, but confirm claims in current code when transcript and code differ.",
             "tags": ["source", "transcript", "priority"],
+        },
+        {
+            "chunk_id": "MB-CHUNK-009",
+            "doc_id": "MB-RAG-DOMAIN-DOCS-WIKI-FIELD-HELP",
+            "title": "Field Help Source Rule",
+            "text": "Field descriptions for both the public Wiki and in-panel help icons come from resources/help/help_{LANG}.js; update help files first, then run wiki/generate.php.",
+            "tags": ["documentation", "wiki", "field-help"],
+        },
+        {
+            "chunk_id": "MB-CHUNK-010",
+            "doc_id": "MB-RAG-PLAYBOOK-USER-QUESTION-MODULE-MAP",
+            "title": "User Question Routing",
+            "text": "Translate user symptoms into panel modules first: calls use Calls, Rejected Calls, SIP Trace, SIP Users, Trunks, Rates, Provider Rates, Prefixes, and Users; DID issues use DIDs, DID Destination, SIP Users, Queues, IVR, Rejected Calls, and SIP Trace.",
+            "tags": ["support", "module-map", "routing"],
+        },
+        {
+            "chunk_id": "MB-CHUNK-011",
+            "doc_id": "MB-RAG-PLAYBOOK-TROUBLESHOOTING-FLOWS",
+            "title": "Troubleshooting Order",
+            "text": "For operational support, answer in checks-first order: panel state, account or route configuration, runtime path, then evidence from CDR, Rejected Calls, SIP Trace, logs, or database tables.",
+            "tags": ["support", "troubleshooting", "workflow"],
+        },
+        {
+            "chunk_id": "MB-CHUNK-012",
+            "doc_id": "MB-RAG-SOURCE-GLOSSARY",
+            "title": "Canonical Terms",
+            "text": "Use MagnusBilling terms consistently: DID is an inbound phone number; SIP user is an endpoint account; trunk is provider interconnection; prefix maps dialed numbers to rates; CDR is call evidence.",
+            "tags": ["glossary", "terminology"],
+        },
+        {
+            "chunk_id": "MB-CHUNK-013",
+            "doc_id": "MB-RAG-SOURCE-MODULE-CATALOG",
+            "title": "Module Catalog Rule",
+            "text": "Use the generated module catalog to map a panel module to its ExtJS Form, Yii controller, ActiveRecord model, database table, and field-help signal.",
+            "tags": ["module", "catalog", "code-map"],
+        },
+        {
+            "chunk_id": "MB-CHUNK-014",
+            "doc_id": "MB-RAG-PLAYBOOK-AUDIENCE-RESPONSE-POLICY",
+            "title": "Audience Layer Rule",
+            "text": "Choose the answer layer before responding: user-support gets panel steps, operator gets logs and services, developer gets entrypoint-to-side-effect code tracing, AI-agent gets doc IDs and retrieval path.",
+            "tags": ["audience", "response-style"],
         },
     ]
 
@@ -383,6 +426,7 @@ def score_chunk_priority(chunk: dict) -> tuple[float, str]:
     is_faq = "video-logic" in tags or "faq" in tags
     is_seed = str(chunk.get("chunk_id", "")).startswith("MB-CHUNK-00")
     is_transcript = str(chunk.get("chunk_id", "")).startswith("MB-CHUNK-T")
+    is_wiki = str(chunk.get("chunk_id", "")).startswith("MB-CHUNK-W")
 
     if is_faq:
         score = 1.0
@@ -393,6 +437,9 @@ def score_chunk_priority(chunk: dict) -> tuple[float, str]:
     elif is_transcript:
         score = 0.62
         tier = "transcript"
+    elif is_wiki:
+        score = 0.58
+        tier = "wiki"
     else:
         score = 0.7
         tier = "context"
@@ -420,6 +467,8 @@ def enrich_chunks_for_ranking(chunks: list[dict]) -> list[dict]:
             "has_resolution_steps": bool(row.get("resolution_steps")),
             "source_type": "transcript" if str(row.get("chunk_id", "")).startswith("MB-CHUNK-T") else "curated",
         }
+        if str(row.get("chunk_id", "")).startswith("MB-CHUNK-W"):
+            row["rank_features"]["source_type"] = "wiki"
         enriched.append(row)
     return enriched
 
@@ -501,6 +550,53 @@ def build_transcript_chunks(start_index: int) -> list[dict]:
                     "text": part,
                     "tags": tags,
                     "source_file": txt_file.relative_to(ROOT).as_posix(),
+                }
+            )
+    return deduplicate_chunks(chunks)
+
+
+def clean_rst_for_retrieval(text: str) -> str:
+    text = re.sub(r"^\s*\.\. _[^:]+:\s*$", "", text, flags=re.M)
+    text = re.sub(r"^\s*\.\. (image|toctree)::.*$", "", text, flags=re.M)
+    text = re.sub(r"^\s*:[a-zA-Z_-]+:.*$", "", text, flags=re.M)
+    text = re.sub(r"`([^`<]+?)\s*<[^`]+>`_", r"\1", text)
+    text = re.sub(r"^\s*[=+\-~#]{3,}\s*$", "", text, flags=re.M)
+    text = text.replace("| ", "")
+    return clean_text(text)
+
+
+def wiki_files() -> list[Path]:
+    if not USER_WIKI.exists():
+        return []
+    files: list[Path] = []
+    for pattern in ["*.rst", "get_started/*.rst", "modules/*/*.rst", "asterisk_options/*.rst", "security/*.rst"]:
+        files.extend(USER_WIKI.glob(pattern))
+    return sorted({p for p in files if "_build" not in p.parts and p.name != "conf.py"})
+
+
+def build_user_wiki_chunks(start_index: int) -> list[dict]:
+    chunks: list[dict] = []
+    counter = start_index
+    for rst_file in wiki_files():
+        raw = rst_file.read_text(encoding="utf-8", errors="ignore")
+        text = clean_rst_for_retrieval(raw)
+        if is_low_quality_chunk(text):
+            continue
+        title = rst_file.stem
+        parts = split_text(text, target=900, min_size=220)
+        for idx, part in enumerate(parts, start=1):
+            if is_low_quality_chunk(part):
+                continue
+            chunk_id = f"MB-CHUNK-W{counter:04d}"
+            counter += 1
+            chunks.append(
+                {
+                    "chunk_id": chunk_id,
+                    "doc_id": "MB-RAG-SOURCE-USER-WIKI",
+                    "title": f"{title} / wiki segment {idx}",
+                    "text": part,
+                    "tags": ["wiki", "user-docs", "support"],
+                    "source_file": rst_file.relative_to(ROOT).as_posix(),
                 }
             )
     return deduplicate_chunks(chunks)
@@ -736,6 +832,54 @@ def build_query_intents() -> list[dict]:
             ],
             "start_docs": ["MB-RAG-PLAYBOOK-CREATE-MODULE-PKG-EXAMPLE", "MB-RAG-PLAYBOOK-QA-PROTOCOL"],
         },
+        {
+            "intent_id": "MB-INTENT-020",
+            "intent": "wiki_field_help_generation",
+            "examples": [
+                "field help icon has no description",
+                "how to update magnusbilling wiki field descriptions",
+                "new form field is missing from wiki",
+                "where are tooltip descriptions stored",
+                "how does wiki/generate.php build module rst files",
+            ],
+            "start_docs": ["MB-RAG-DOMAIN-DOCS-WIKI-FIELD-HELP", "MB-RAG-PLAYBOOK-KNOWN-ISSUES-FIX-PATTERNS"],
+        },
+        {
+            "intent_id": "MB-INTENT-021",
+            "intent": "user_question_to_panel_module",
+            "examples": [
+                "which menu should I check for DID not ringing",
+                "where do I see why a call failed",
+                "which module controls SIP registration",
+                "where should user check payment credit",
+                "what panel modules help troubleshoot campaign calls",
+            ],
+            "start_docs": ["MB-RAG-PLAYBOOK-USER-QUESTION-MODULE-MAP", "MB-RAG-PLAYBOOK-TROUBLESHOOTING-FLOWS"],
+        },
+        {
+            "intent_id": "MB-INTENT-022",
+            "intent": "magnusbilling_term_definition",
+            "examples": [
+                "what is a DID in magnusbilling",
+                "what is a trunk",
+                "what does prefix mean in rates",
+                "explain lcr in magnusbilling",
+                "what is a cdr",
+            ],
+            "start_docs": ["MB-RAG-SOURCE-GLOSSARY", "MB-RAG-SOURCE-MODULE-CATALOG"],
+        },
+        {
+            "intent_id": "MB-INTENT-023",
+            "intent": "module_code_mapping",
+            "examples": [
+                "which controller handles sip users",
+                "which model maps to pkg_trunk",
+                "where is the form for rates",
+                "map module to controller model table",
+                "which table stores did destinations",
+            ],
+            "start_docs": ["MB-RAG-SOURCE-MODULE-CATALOG", "MB-RAG-SOURCE-DATABASE-TABLE-INDEX"],
+        },
     ]
 
 
@@ -766,6 +910,10 @@ def intent_priority(intent_name: str) -> float:
         "payment_refill_balance_divergence",
         "campaign_massivecall_runtime_issue",
         "create_new_module_guidance",
+        "wiki_field_help_generation",
+        "user_question_to_panel_module",
+        "magnusbilling_term_definition",
+        "module_code_mapping",
     }
     if intent_name in high:
         return 1.0
@@ -782,8 +930,8 @@ def enrich_intents_with_weights(intents: list[dict]) -> list[dict]:
         row["doc_weights"] = default_doc_weights(docs)
         row["intent_priority"] = intent_priority(row.get("intent", ""))
         row["retrieval_hints"] = {
-            "prefer_tiers": ["faq", "core", "transcript"],
-            "require_source_priority": ["code", "transcript", "wiki"],
+            "prefer_tiers": ["faq", "core", "wiki", "transcript"],
+            "require_source_priority": ["code", "ia-docs", "wiki", "transcript"],
             "fallback_to_transcript": True,
         }
         enriched.append(row)
@@ -853,7 +1001,8 @@ def main() -> None:
     seed = base_chunks()
     transcript = build_transcript_chunks(start_index=1)
     video_logic = build_video_logic_chunks(start_index=1)
-    all_chunks = deduplicate_chunks(seed + transcript + video_logic)
+    user_wiki = build_user_wiki_chunks(start_index=1)
+    all_chunks = deduplicate_chunks(seed + transcript + video_logic + user_wiki)
     all_chunks = enrich_chunks_for_ranking(all_chunks)
     write_jsonl(INDEXES / "rag_chunks.jsonl", all_chunks)
 
@@ -868,6 +1017,7 @@ def main() -> None:
     print(f"Seed chunks: {len(seed)}")
     print(f"Transcript chunks: {len(transcript)}")
     print(f"Video logic QA chunks: {len(video_logic)}")
+    print(f"User wiki chunks: {len(user_wiki)}")
     print(f"Total chunks: {len(all_chunks)}")
     print(f"Intents: {len(intents)}")
     print(f"Retrieval eval cases: {len(eval_cases)}")

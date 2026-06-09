@@ -3,10 +3,21 @@
   "schema_version": "1.0",
   "source_priority": [
     "code",
-    "transcript",
-    "wiki"
+    "ia-docs",
+    "wiki",
+    "transcript"
   ],
   "documents": [
+    {
+      "doc_id": "MB-RAG-PLAYBOOK-ANSWER-EXAMPLES",
+      "path": "ia-docs/playbooks/answer_examples.md",
+      "kind": "playbook"
+    },
+    {
+      "doc_id": "MB-RAG-PLAYBOOK-AUDIENCE-RESPONSE-POLICY",
+      "path": "ia-docs/playbooks/audience_response_policy.md",
+      "kind": "playbook"
+    },
     {
       "doc_id": "MB-RAG-PLAYBOOK-CREATE-MODULE-PKG-EXAMPLE",
       "path": "ia-docs/playbooks/create_new_module_pkg_example.md",
@@ -33,6 +44,16 @@
       "kind": "playbook"
     },
     {
+      "doc_id": "MB-RAG-PLAYBOOK-TROUBLESHOOTING-FLOWS",
+      "path": "ia-docs/playbooks/troubleshooting_flows.md",
+      "kind": "playbook"
+    },
+    {
+      "doc_id": "MB-RAG-PLAYBOOK-USER-QUESTION-MODULE-MAP",
+      "path": "ia-docs/playbooks/user_question_to_module_map.md",
+      "kind": "playbook"
+    },
+    {
       "doc_id": "MB-RAG-DOMAIN-AUTH-SESSION",
       "path": "ia-docs/domains/auth_and_session.md",
       "kind": "domain"
@@ -50,6 +71,11 @@
     {
       "doc_id": "MB-RAG-DOMAIN-DASHBOARD-CALLONLINECHART",
       "path": "ia-docs/domains/dashboard_callonlinechart.md",
+      "kind": "domain"
+    },
+    {
+      "doc_id": "MB-RAG-DOMAIN-DOCS-WIKI-FIELD-HELP",
+      "path": "ia-docs/domains/documentation_wiki_field_help.md",
       "kind": "domain"
     },
     {
@@ -98,8 +124,28 @@
       "kind": "source"
     },
     {
+      "doc_id": "MB-RAG-SOURCE-DATABASE-TABLE-INDEX",
+      "path": "ia-docs/sources/database_table_index.md",
+      "kind": "source"
+    },
+    {
+      "doc_id": "MB-RAG-SOURCE-GLOSSARY",
+      "path": "ia-docs/sources/glossary.md",
+      "kind": "source"
+    },
+    {
+      "doc_id": "MB-RAG-SOURCE-MODULE-CATALOG",
+      "path": "ia-docs/sources/module_catalog.md",
+      "kind": "source"
+    },
+    {
       "doc_id": "MB-RAG-SOURCE-TOP30-OPERATIONAL-TABLES",
       "path": "ia-docs/sources/top30_operational_tables.md",
+      "kind": "source"
+    },
+    {
+      "doc_id": "MB-RAG-SOURCE-USER-WIKI",
+      "path": "ia-docs/sources/user_wiki_sources.md",
       "kind": "source"
     },
     {

@@ -67,10 +67,18 @@ Bem vindo à documentação do MagnusBilling 7 em português.
    security/iptables.rst
 
 .. toctree::
+   :caption: Administração Avançada
+   :glob:
+   :maxdepth: 2
+
+   admin_guide/*
+
+.. toctree::
    :maxdepth: 3
    :caption: Menu
 
    modules/index.rst
+
 
 
 Indices and tables
@@ -78,4 +86,3 @@ Indices and tables
 
 * :ref:`genindex`
 * :ref:`search`
-* :ref:`glossary`

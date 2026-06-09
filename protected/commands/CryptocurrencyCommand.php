@@ -23,6 +23,14 @@ class CryptocurrencyCommand extends CConsoleCommand
     public function run($args)
     {
 
+        $sql = "ALTER TABLE `pkg_cryptocurrency` ADD `network` VARCHAR(100) NULL DEFAULT NULL AFTER `date`;";
+        try {
+            Yii::app()->db->createCommand($sql)->execute();
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
+
         $modelMethodPay = Methodpay::model()->find('payment_method = :key', [':key' => 'cryptocurrency']);
         if (! isset($modelMethodPay->id)) {
             echo 'No method found';

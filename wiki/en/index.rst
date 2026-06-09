@@ -40,12 +40,6 @@ Welcome to MagnusBilling 7 wiki.
    config.rst
 
 .. toctree::
-   :caption: AI Knowledge Base
-   :maxdepth: 1
-
-   ai/index.rst
-
-.. toctree::
    :caption: Asterisk option
    :maxdepth: 1
 
@@ -57,6 +51,14 @@ Welcome to MagnusBilling 7 wiki.
    :name: sec-Security
 
    security/iptables.rst
+
+
+.. toctree::
+   :caption: Administration
+   :glob:
+   :maxdepth: 2
+
+   admin_guide/*
 
 .. toctree::
    :maxdepth: 3
