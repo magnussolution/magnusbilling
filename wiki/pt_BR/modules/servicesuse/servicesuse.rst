@@ -59,22 +59,22 @@ Data de reserva
 
 
 
-.. _servicesUse-contract-period:
-
-Final do contrato mínimo
--------------------------
-
-| Tempo de contrato
-
-
-
-
 .. _servicesUse-termination-date:
 
 Data para cancelar
 ------------------
 
 | Termino do contrato
+
+
+
+
+.. _servicesUse-contract-period:
+
+Final do contrato mínimo
+-------------------------
+
+| Tempo de contrato
 
 
 

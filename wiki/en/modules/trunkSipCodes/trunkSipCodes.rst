@@ -4,7 +4,7 @@
 IP
 --
 
-| We did not write the description to this field.
+| IP address that returned this SIP response code.
 
 
 
@@ -14,7 +14,7 @@ IP
 Code
 ----
 
-| We did not write the description to this field.
+| SIP response code returned by the trunk, such as 403, 404, 486, or 503.
 
 
 
@@ -24,7 +24,7 @@ Code
 Total
 -----
 
-| We did not write the description to this field.
+| Total number of times this SIP response code was received.
 
 
 

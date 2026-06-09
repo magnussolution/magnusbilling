@@ -87,7 +87,7 @@ Group
 | When sending an call from DID, or campaign to a group, will be called all SIP users that are in the group. You can create the groups with any name.
 | 
 | 
-| Is used as well to capture calls with *8, need to configurate the option "pickupexten = *8" in the file "feature.comf".
+| Is used as well to capture calls with \*8, need to configurate the option "pickupexten = \*8" in the file "feature.comf".
 | 
 
 
@@ -108,7 +108,7 @@ Videosupport
 Block call regex
 ----------------
 
-| Block calls using REGEX. To block calls from cellphones, just put it ^55\\d\\d9. You can see more details at the link `https://regex101.com.  <https://regex101.com.>`_.
+| Block calls using REGEX. To block calls from phones, just put it ^55\\d\\d9. You can see more details at the link `https://regex101.com.  <https://regex101.com.>`_.
 
 
 
@@ -133,12 +133,22 @@ Tech prefix
 
 
 
+.. _sip-cnl:
+
+CNL zone
+--------
+
+| CNL zone used for Brazilian numbering and routing rules for this SIP user.
+
+
+
+
 .. _sip-description:
 
 Description
 -----------
 
-| We did not write the description to this field.
+| Optional description to identify this SIP user in reports and administration screens.
 
 
 
@@ -168,17 +178,17 @@ Directmedia
 Qualify
 -------
 
-| Sent the "OPTION" package to verify if the user is online.
-| Sintax:
+| Sends SIP OPTIONS packets to verify whether the user is online.
+| Syntax:
 |     
-| qualify = xxx | no | yes
+| qualify = xxx \| no \| yes
 |         
-| Where the XXX is the number of milliseconds used. If "yes", the time configurated in sip.conf is used, 2 seconds is the standard.
+| XXX is the number of milliseconds used as the timeout. If the value is "yes", Asterisk uses the time configured in sip.conf. The common default is 2 seconds.
 |     
-| If you activate "qualify", the Asterisk will sent the command "OPTION" to SIP peer regulary to verify if the device is still online.
-| If the device don't answer the "OPTION" in the set period of time, Asterisk will consider the device offline for future calls.
+| When qualify is enabled, Asterisk sends OPTIONS packets regularly to verify whether the device is still online.
+| If the device does not answer within the configured time, Asterisk considers the device offline for future calls.
 |     
-| This status can be verified with the funcion "sip show peer XXXX", this funcion will only provide informations of status for the SIP peer that possess "qualify = yes.
+| This status can be verified with the "sip show peer XXXX" command. Asterisk only shows qualify status when the peer has qualify enabled.
 
 
 
@@ -208,7 +218,7 @@ Context
 Dtmfmode
 --------
 
-| DTMF type. You can see more details at the link `https://www.voip-info.org/asterisk-sip-dtmfmode/.  <https://www.voip-info.org/asterisk-sip-dtmfmode/.>`_.
+| DTMF mode used by this SIP user. You can see more details at the link `https://www.voip-info.org/asterisk-sip-dtmfmode/.  <https://www.voip-info.org/asterisk-sip-dtmfmode/.>`_.
 
 
 
@@ -218,7 +228,7 @@ Dtmfmode
 Insecure
 --------
 
-| This option need to be "NO" if the host is dynamic, so the IP authentication changes to port,invite.
+| This option must be "NO" when the host is dynamic. For IP authentication, change it to port,invite.
 
 
 
@@ -248,7 +258,7 @@ Permit
 Type
 ----
 
-| Standard type is "friend", in other words, can make and receive calls. You can see more details at the link `https://www.voip-info.org/asterisk-sip-type/.  <https://www.voip-info.org/asterisk-sip-type/.>`_.
+| Default type is "friend", which allows the SIP user to make and receive calls. You can see more details at the link `https://www.voip-info.org/asterisk-sip-type/.  <https://www.voip-info.org/asterisk-sip-type/.>`_.
 
 
 
@@ -258,15 +268,15 @@ Type
 Allowtransfer
 -------------
 
-| Enable this VOIP account to do tranference. The code to transfer is *2 + ramal. It's necessary to activa the option atxfer => *2 in the file "features.conf" of Asterisk.
+| Allows this VoIP account to transfer calls. The transfer code is \*2 plus the extension. Asterisk must have atxfer => \*2 configured in features.conf.
 
 
 
 
 .. _sip-ringfalse:
 
-Ring false
-----------
+Fake Ring
+---------
 
 | Activate false ring. Add rR of the "Dial" command.
 
@@ -338,7 +348,7 @@ Forward type
 IVR
 ---
 
-| Select the IVR that you want to to send to calls if the SIP user don't answer.
+| IVR that will receive the call if this SIP user does not answer.
 
 
 
@@ -348,7 +358,7 @@ IVR
 Queue
 -----
 
-| Select the queue that you want to to send to calls if the SIP user don't answer.
+| Queue that will receive the call if this SIP user does not answer.
 
 
 
@@ -358,7 +368,7 @@ Queue
 Sip user
 --------
 
-| Select the SIP users that you want to to send to calls if the SIP user don't answer.
+| SIP user that will receive the call if this SIP user does not answer.
 
 
 
@@ -371,9 +381,9 @@ Destination
 | Click for more details
 | We have 3 options, conform the selected type, group, number or custom.
 | 
-| * Group, the group name set here, needs to be exatcly the same group of SIP users that wants to receive the calls, is going to call all SIP users in the group.
-| * Custom, it's possible to execute any valid option of the DIAL command of Asterisk, example: SIP/contaSIP,45,tTr
-| * Number, can be a landline number or mobile number, needs to be in the 55 DDD format
+| \* Group, the group name set here, needs to be exactly the same group of SIP users that wants to receive the calls, is going to call all SIP users in the group.
+| \* Custom, it's possible to execute any valid option of the DIAL command of Asterisk, example: SIP/contaSIP,45,tTr
+| \* Number, can be a landline number or mobile number, needs to be in the 55 DDD format
 
 
 
@@ -383,7 +393,7 @@ Destination
 Dial timeout
 ------------
 
-| Timeout in seconds to wait for the call to be picked-up. After the timeout will be execute the channeling if it's configurated.
+| Timeout in seconds to wait for the call to be picked-up. After the timeout will be execute the channeling if it's configured.
 
 
 
@@ -413,7 +423,7 @@ Email
 Password
 --------
 
-| Voicemail password. It's possible to enter in the Voicemail typing *111
+| Voicemail password. It's possible to enter in the Voicemail typing \*111
 
 
 
@@ -423,7 +433,7 @@ Password
 Parameters
 ----------
 
-| We did not write the description to this field.
+| Additional SIP parameters written for this account. Use only valid Asterisk SIP options.
 
 
 
@@ -438,12 +448,12 @@ Peer
 
 
 
-.. _sip-cnl:
+.. _sip-forwardtype:
 
-CNL zone
---------
+Forward type
+------------
 
-| We did not write the description to this field.
+| Type of forwarding applied when this SIP user does not answer or is unavailable.
 
 
 

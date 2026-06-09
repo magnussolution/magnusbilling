@@ -38,3 +38,13 @@ Billing block
 
 
 
+
+.. _userRate-id-user:
+
+Username
+--------
+
+| User that owns this custom rate.
+
+
+

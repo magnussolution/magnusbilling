@@ -4,7 +4,7 @@
 Type
 ----
 
-| We did not write the description to this field.
+| Type of event that MagnusBilling will monitor before sending this alarm.
 
 
 
@@ -14,7 +14,7 @@ Type
 Period
 ------
 
-| We did not write the description to this field.
+| Time interval used to check the alarm condition.
 
 
 
@@ -24,7 +24,7 @@ Period
 Condition
 ---------
 
-| We did not write the description to this field.
+| Comparison rule used by the alarm, for example greater than, less than, or equal to the configured amount.
 
 
 
@@ -34,17 +34,7 @@ Condition
 Amount
 ------
 
-| We did not write the description to this field.
-
-
-
-
-.. _alarm-email:
-
-Email
------
-
-| We did not write the description to this field.
+| Reference value used together with the condition to decide when the alarm must be sent.
 
 
 
@@ -54,7 +44,17 @@ Email
 Status
 ------
 
-| We did not write the description to this field.
+| Enable or disable this alarm without deleting its configuration.
+
+
+
+
+.. _alarm-email:
+
+Email
+-----
+
+| Email address that will receive the alarm notification.
 
 
 
@@ -64,7 +64,7 @@ Status
 Subject
 -------
 
-| We did not write the description to this field.
+| Subject used in the alarm notification email.
 
 
 
@@ -74,7 +74,7 @@ Subject
 Message
 -------
 
-| We did not write the description to this field.
+| Message body sent when the alarm condition is reached.
 
 
 

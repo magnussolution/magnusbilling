@@ -3,18 +3,19 @@
 
 
 .. _user-menu-list:
-Menu Clientes
-=============
+
+Menu Clientes Module
+====================
 
 
-Esta é a lista dos campos com sua respectiva descrição do menu Clientes
+Esta é a lista dos campos com sua respectiva descrição do menu Clientes Module
 
 Usuários
 +++++++++
 
 Este menu tem os seguintes campos
 
-.. include:: user/user.rst
+:doc:`Usuários <user/user>`
 
 
 Contas SIP
@@ -22,7 +23,7 @@ Contas SIP
 
 Este menu tem os seguintes campos
 
-.. include:: sip/sip.rst
+:doc:`Contas SIP <sip/sip>`
 
 
 Chamadas Online
@@ -30,7 +31,7 @@ Chamadas Online
 
 Este menu tem os seguintes campos
 
-.. include:: callonline/callonline.rst
+:doc:`Chamadas Online <callonline/callonline>`
 
 
 CallerID
@@ -38,7 +39,7 @@ CallerID
 
 Este menu tem os seguintes campos
 
-.. include:: callerid/callerid.rst
+:doc:`CallerID <callerid/callerid>`
 
 
 ATA Linksys
@@ -46,7 +47,7 @@ ATA Linksys
 
 Este menu tem os seguintes campos
 
-.. include:: sipuras/sipuras.rst
+:doc:`ATA Linksys <sipuras/sipuras>`
 
 
 Números Bloqueados
@@ -54,7 +55,7 @@ Números Bloqueados
 
 Este menu tem os seguintes campos
 
-.. include:: restrictedphonenumber/restrictedphonenumber.rst
+:doc:`Números Bloqueados <restrictedPhonenumber/restrictedPhonenumber>`
 
 
 Callback
@@ -62,15 +63,7 @@ Callback
 
 Este menu tem os seguintes campos
 
-.. include:: callback/callback.rst
-
-
-Comprar Crédito
-++++++++++++++++
-
-Este menu tem os seguintes campos
-
-.. include:: buycredit/buycredit.rst
+:doc:`Callback <callback/callback>`
 
 
 IAX
@@ -78,15 +71,7 @@ IAX
 
 Este menu tem os seguintes campos
 
-.. include:: iax/iax.rst
-
-
-Enviar crédito
-+++++++++++++++
-
-Este menu tem os seguintes campos
-
-.. include:: transfertomobile/transfertomobile.rst
+:doc:`IAX <iax/iax>`
 
 
 Histórico clientes
@@ -94,7 +79,7 @@ Histórico clientes
 
 Este menu tem os seguintes campos
 
-.. include:: userhistory/userhistory.rst
+:doc:`Histórico clientes <userHistory/userHistory>`
 
 
 
@@ -102,6 +87,7 @@ Este menu tem os seguintes campos
 
 
 .. _refill-menu-list:
+
 Menu Financeiro
 ===============
 
@@ -113,7 +99,7 @@ Recargas
 
 Este menu tem os seguintes campos
 
-.. include:: refill/refill.rst
+:doc:`Recargas <refill/refill>`
 
 
 Métodos de Pagamento
@@ -121,7 +107,7 @@ Métodos de Pagamento
 
 Este menu tem os seguintes campos
 
-.. include:: methodpay/methodpay.rst
+:doc:`Métodos de Pagamento <methodpay/methodpay>`
 
 
 Voucher
@@ -129,7 +115,7 @@ Voucher
 
 Este menu tem os seguintes campos
 
-.. include:: voucher/voucher.rst
+:doc:`Voucher <voucher/voucher>`
 
 
 Recarga de Provedores
@@ -137,7 +123,7 @@ Recarga de Provedores
 
 Este menu tem os seguintes campos
 
-.. include:: refillprovider/refillprovider.rst
+:doc:`Recarga de Provedores <refillprovider/refillprovider>`
 
 
 
@@ -145,6 +131,7 @@ Este menu tem os seguintes campos
 
 
 .. _did-menu-list:
+
 Menu DIDs
 =========
 
@@ -156,7 +143,7 @@ DIDs
 
 Este menu tem os seguintes campos
 
-.. include:: did/did.rst
+:doc:`DIDs <did/did>`
 
 
 Destino de DIDs
@@ -164,7 +151,7 @@ Destino de DIDs
 
 Este menu tem os seguintes campos
 
-.. include:: diddestination/diddestination.rst
+:doc:`Destino de DIDs <diddestination/diddestination>`
 
 
 Uso de DIDs
@@ -172,7 +159,7 @@ Uso de DIDs
 
 Este menu tem os seguintes campos
 
-.. include:: diduse/diduse.rst
+:doc:`Uso de DIDs <diduse/diduse>`
 
 
 URAs
@@ -180,7 +167,7 @@ URAs
 
 Este menu tem os seguintes campos
 
-.. include:: ivr/ivr.rst
+:doc:`URAs <ivr/ivr>`
 
 
 Filas de Espera
@@ -188,7 +175,7 @@ Filas de Espera
 
 Este menu tem os seguintes campos
 
-.. include:: queue/queue.rst
+:doc:`Filas de Espera <queue/queue>`
 
 
 Agentes da Fila
@@ -196,31 +183,7 @@ Agentes da Fila
 
 Este menu tem os seguintes campos
 
-.. include:: queuemember/queuemember.rst
-
-
-Comprar DID
-+++++++++++
-
-Este menu tem os seguintes campos
-
-.. include:: didbuy/didbuy.rst
-
-
-Monitor de Filas
-++++++++++++++++
-
-Este menu tem os seguintes campos
-
-.. include:: dashboardqueue/dashboardqueue.rst
-
-
-DIDww
-+++++
-
-Este menu tem os seguintes campos
-
-.. include:: didww/didww.rst
+:doc:`Agentes da Fila <queuemember/queuemember>`
 
 
 Feriados
@@ -228,7 +191,7 @@ Feriados
 
 Este menu tem os seguintes campos
 
-.. include:: holidays/holidays.rst
+:doc:`Feriados <holidays/holidays>`
 
 
 Histórico dos DID
@@ -236,7 +199,7 @@ Histórico dos DID
 
 Este menu tem os seguintes campos
 
-.. include:: didhistory/didhistory.rst
+:doc:`Histórico dos DID <didHistory/didHistory>`
 
 
 
@@ -244,6 +207,7 @@ Este menu tem os seguintes campos
 
 
 .. _plan-menu-list:
+
 Menu Tarifas
 ============
 
@@ -255,7 +219,7 @@ Planos
 
 Este menu tem os seguintes campos
 
-.. include:: plan/plan.rst
+:doc:`Planos <plan/plan>`
 
 
 Tarifas
@@ -263,7 +227,7 @@ Tarifas
 
 Este menu tem os seguintes campos
 
-.. include:: rate/rate.rst
+:doc:`Tarifas <rate/rate>`
 
 
 Prefixos
@@ -271,7 +235,7 @@ Prefixos
 
 Este menu tem os seguintes campos
 
-.. include:: prefix/prefix.rst
+:doc:`Prefixos <prefix/prefix>`
 
 
 Tarifas para Clientes
@@ -279,7 +243,7 @@ Tarifas para Clientes
 
 Este menu tem os seguintes campos
 
-.. include:: userrate/userrate.rst
+:doc:`Tarifas para Clientes <userrate/userrate>`
 
 
 Pacotes Grátis
@@ -287,7 +251,7 @@ Pacotes Grátis
 
 Este menu tem os seguintes campos
 
-.. include:: offer/offer.rst
+:doc:`Pacotes Grátis <offer/offer>`
 
 
 Relatório de Pacotes
@@ -295,7 +259,7 @@ Relatório de Pacotes
 
 Este menu tem os seguintes campos
 
-.. include:: offercdr/offercdr.rst
+:doc:`Relatório de Pacotes <offercdr/offercdr>`
 
 
 Uso de Pacotes
@@ -303,7 +267,7 @@ Uso de Pacotes
 
 Este menu tem os seguintes campos
 
-.. include:: offeruse/offeruse.rst
+:doc:`Uso de Pacotes <offeruse/offeruse>`
 
 
 
@@ -311,6 +275,7 @@ Este menu tem os seguintes campos
 
 
 .. _call-menu-list:
+
 Menu Relatórios
 ================
 
@@ -322,15 +287,7 @@ Extrato de Chamadas
 
 Este menu tem os seguintes campos
 
-.. include:: call/call.rst
-
-
-Chamadas Rejeitadas
-+++++++++++++++++++
-
-Este menu tem os seguintes campos
-
-.. include:: callfailed/callfailed.rst
+:doc:`Extrato de Chamadas <call/call>`
 
 
 Resumo por Dia
@@ -338,7 +295,7 @@ Resumo por Dia
 
 Este menu tem os seguintes campos
 
-.. include:: callsummaryperday/callsummaryperday.rst
+:doc:`Resumo por Dia <callSummaryPerDay/callSummaryPerDay>`
 
 
 Resumo por Dia/Usuário
@@ -346,7 +303,7 @@ Resumo por Dia/Usuário
 
 Este menu tem os seguintes campos
 
-.. include:: callsummarydayuser/callsummarydayuser.rst
+:doc:`Resumo por Dia/Usuário <callSummaryDayUser/callSummaryDayUser>`
 
 
 Resumo por Dia/Tronco
@@ -354,7 +311,7 @@ Resumo por Dia/Tronco
 
 Este menu tem os seguintes campos
 
-.. include:: callsummarydaytrunk/callsummarydaytrunk.rst
+:doc:`Resumo por Dia/Tronco <callSummaryDayTrunk/callSummaryDayTrunk>`
 
 
 Resumo por Revendedor
@@ -362,7 +319,7 @@ Resumo por Revendedor
 
 Este menu tem os seguintes campos
 
-.. include:: callsummarydayagent/callsummarydayagent.rst
+:doc:`Resumo por Revendedor <callSummaryDayAgent/callSummaryDayAgent>`
 
 
 Resumo por Mês
@@ -370,7 +327,7 @@ Resumo por Mês
 
 Este menu tem os seguintes campos
 
-.. include:: callsummarypermonth/callsummarypermonth.rst
+:doc:`Resumo por Mês <callSummaryPerMonth/callSummaryPerMonth>`
 
 
 Resumo por Mês/Usuário
@@ -378,7 +335,7 @@ Resumo por Mês/Usuário
 
 Este menu tem os seguintes campos
 
-.. include:: callsummarymonthuser/callsummarymonthuser.rst
+:doc:`Resumo por Mês/Usuário <callSummaryMonthUser/callSummaryMonthUser>`
 
 
 Resumo por Mês/Tronco
@@ -386,7 +343,7 @@ Resumo por Mês/Tronco
 
 Este menu tem os seguintes campos
 
-.. include:: callsummarymonthtrunk/callsummarymonthtrunk.rst
+:doc:`Resumo por Mês/Tronco <callSummaryMonthTrunk/callSummaryMonthTrunk>`
 
 
 Resumo por Usuário
@@ -394,7 +351,7 @@ Resumo por Usuário
 
 Este menu tem os seguintes campos
 
-.. include:: callsummaryperuser/callsummaryperuser.rst
+:doc:`Resumo por Usuário <callSummaryPerUser/callSummaryPerUser>`
 
 
 Resumo por Tronco
@@ -402,7 +359,7 @@ Resumo por Tronco
 
 Este menu tem os seguintes campos
 
-.. include:: callsummarypertrunk/callsummarypertrunk.rst
+:doc:`Resumo por Tronco <callSummaryPerTrunk/callSummaryPerTrunk>`
 
 
 Chamadas Arquivadas
@@ -410,7 +367,7 @@ Chamadas Arquivadas
 
 Este menu tem os seguintes campos
 
-.. include:: callarchive/callarchive.rst
+:doc:`Chamadas Arquivadas <callArchive/callArchive>`
 
 
 Send Credit Summary
@@ -418,7 +375,7 @@ Send Credit Summary
 
 Este menu tem os seguintes campos
 
-.. include:: sendcreditsummary/sendcreditsummary.rst
+:doc:`Send Credit Summary <sendCreditSummary/sendCreditSummary>`
 
 
 Resumo por Mês/DID
@@ -426,7 +383,7 @@ Resumo por Mês/DID
 
 Este menu tem os seguintes campos
 
-.. include:: callsummarymonthdid/callsummarymonthdid.rst
+:doc:`Resumo por Mês/DID <callSummaryMonthDid/callSummaryMonthDid>`
 
 
 
@@ -434,6 +391,7 @@ Este menu tem os seguintes campos
 
 
 .. _trunk-menu-list:
+
 Menu Rotas
 ==========
 
@@ -445,7 +403,7 @@ Provedores
 
 Este menu tem os seguintes campos
 
-.. include:: provider/provider.rst
+:doc:`Provedores <provider/provider>`
 
 
 Troncos
@@ -453,7 +411,7 @@ Troncos
 
 Este menu tem os seguintes campos
 
-.. include:: trunk/trunk.rst
+:doc:`Troncos <trunk/trunk>`
 
 
 Grupo de Troncos
@@ -461,7 +419,7 @@ Grupo de Troncos
 
 Este menu tem os seguintes campos
 
-.. include:: trunkgroup/trunkgroup.rst
+:doc:`Grupo de Troncos <trunkgroup/trunkgroup>`
 
 
 Tarifas Provedores
@@ -469,7 +427,7 @@ Tarifas Provedores
 
 Este menu tem os seguintes campos
 
-.. include:: rateprovider/rateprovider.rst
+:doc:`Tarifas Provedores <rateprovider/rateprovider>`
 
 
 Servidores
@@ -477,7 +435,7 @@ Servidores
 
 Este menu tem os seguintes campos
 
-.. include:: servers/servers.rst
+:doc:`Servidores <servers/servers>`
 
 
 Erros tronco
@@ -485,7 +443,7 @@ Erros tronco
 
 Este menu tem os seguintes campos
 
-.. include:: trunksipcodes/trunksipcodes.rst
+:doc:`Erros tronco <trunkSipCodes/trunkSipCodes>`
 
 
 Provedor CNL
@@ -493,7 +451,15 @@ Provedor CNL
 
 Este menu tem os seguintes campos
 
-.. include:: providercnl/providercnl.rst
+:doc:`Provedor CNL <providerCNL/providerCNL>`
+
+
+Sip Trace
++++++++++
+
+Este menu tem os seguintes campos
+
+:doc:`Sip Trace <siptrace/siptrace>`
 
 
 
@@ -501,6 +467,7 @@ Este menu tem os seguintes campos
 
 
 .. _configuration-menu-list:
+
 Menu Configurações
 ====================
 
@@ -512,7 +479,7 @@ Menus
 
 Este menu tem os seguintes campos
 
-.. include:: module/module.rst
+:doc:`Menus <module/module>`
 
 
 Grupos para Cliente
@@ -520,7 +487,7 @@ Grupos para Cliente
 
 Este menu tem os seguintes campos
 
-.. include:: groupuser/groupuser.rst
+:doc:`Grupos para Cliente <groupuser/groupuser>`
 
 
 Ajustes
@@ -528,7 +495,7 @@ Ajustes
 
 Este menu tem os seguintes campos
 
-.. include:: configuration/configuration.rst
+:doc:`Ajustes <configuration/configuration>`
 
 
 Modelos de Email
@@ -536,7 +503,7 @@ Modelos de Email
 
 Este menu tem os seguintes campos
 
-.. include:: templatemail/templatemail.rst
+:doc:`Modelos de Email <templatemail/templatemail>`
 
 
 Log de Acessos
@@ -544,7 +511,7 @@ Log de Acessos
 
 Este menu tem os seguintes campos
 
-.. include:: logusers/logusers.rst
+:doc:`Log de Acessos <logUsers/logUsers>`
 
 
 SMTP
@@ -552,15 +519,7 @@ SMTP
 
 Este menu tem os seguintes campos
 
-.. include:: smtps/smtps.rst
-
-
-Fail2ban
-++++++++
-
-Este menu tem os seguintes campos
-
-.. include:: firewall/firewall.rst
+:doc:`SMTP <smtps/smtps>`
 
 
 API
@@ -568,15 +527,7 @@ API
 
 Este menu tem os seguintes campos
 
-.. include:: api/api.rst
-
-
-Monitoramento
-+++++++++++++
-
-Este menu tem os seguintes campos
-
-.. include:: dashboard/dashboard.rst
+:doc:`API <api/api>`
 
 
 Chamadas por minuto
@@ -584,15 +535,7 @@ Chamadas por minuto
 
 Este menu tem os seguintes campos
 
-.. include:: campaignlog/campaignlog.rst
-
-
-Extra2
-++++++
-
-Este menu tem os seguintes campos
-
-.. include:: extra2/extra2.rst
+:doc:`Chamadas por minuto <campaignlog/campaignlog>`
 
 
 Grupos Administradores
@@ -600,23 +543,7 @@ Grupos Administradores
 
 Este menu tem os seguintes campos
 
-.. include:: groupusergroup/groupusergroup.rst
-
-
-Extra3
-++++++
-
-Este menu tem os seguintes campos
-
-.. include:: extra3/extra3.rst
-
-
-Backup
-++++++
-
-Este menu tem os seguintes campos
-
-.. include:: backup/backup.rst
+:doc:`Grupos Administradores <groupusergroup/groupusergroup>`
 
 
 Alarmes
@@ -624,15 +551,15 @@ Alarmes
 
 Este menu tem os seguintes campos
 
-.. include:: alarm/alarm.rst
+:doc:`Alarmes <alarm/alarm>`
 
 
-Extra
-+++++
+Fail2ban
+++++++++
 
 Este menu tem os seguintes campos
 
-.. include:: extra/extra.rst
+:doc:`Fail2ban <firewall/firewall>`
 
 
 
@@ -640,26 +567,27 @@ Este menu tem os seguintes campos
 
 
 .. _campaign-menu-list:
+
 Menu Torpedo de voz & SMS
 =========================
 
 
 Esta é a lista dos campos com sua respectiva descrição do menu Torpedo de voz & SMS
 
-Campanhas
+Campaigns
 +++++++++
 
 Este menu tem os seguintes campos
 
-.. include:: campaign/campaign.rst
+:doc:`Campaigns <campaign/campaign>`
 
 
-Agendas
-+++++++
+Phonebooks
+++++++++++
 
 Este menu tem os seguintes campos
 
-.. include:: phonebook/phonebook.rst
+:doc:`Phonebooks <phonebook/phonebook>`
 
 
 Números
@@ -667,23 +595,23 @@ Números
 
 Este menu tem os seguintes campos
 
-.. include:: phonenumber/phonenumber.rst
+:doc:`Números <phonenumber/phonenumber>`
 
 
-Enquetes
-++++++++
-
-Este menu tem os seguintes campos
-
-.. include:: campaignpoll/campaignpoll.rst
-
-
-Enquete Relatórios
-+++++++++++++++++++
+Polls
++++++
 
 Este menu tem os seguintes campos
 
-.. include:: campaignpollinfo/campaignpollinfo.rst
+:doc:`Polls <campaignpoll/campaignpoll>`
+
+
+Polls Reports
++++++++++++++
+
+Este menu tem os seguintes campos
+
+:doc:`Polls Reports <campaignpollinfo/campaignpollinfo>`
 
 
 Números Restritos
@@ -691,7 +619,7 @@ Números Restritos
 
 Este menu tem os seguintes campos
 
-.. include:: campaignrestrictphone/campaignrestrictphone.rst
+:doc:`Números Restritos <campaignrestrictphone/campaignrestrictphone>`
 
 
 SMS
@@ -699,23 +627,15 @@ SMS
 
 Este menu tem os seguintes campos
 
-.. include:: sms/sms.rst
+:doc:`SMS <sms/sms>`
 
 
-Campanha Rápida
-++++++++++++++++
-
-Este menu tem os seguintes campos
-
-.. include:: campaignsend/campaignsend.rst
-
-
-Monitor de campanhas
-++++++++++++++++++++
+Campaigns DashBoard
++++++++++++++++++++
 
 Este menu tem os seguintes campos
 
-.. include:: campaigndashboard/campaigndashboard.rst
+:doc:`Campaigns DashBoard <campaignDashboard/campaignDashboard>`
 
 
 Relatório de Campanhas
@@ -723,7 +643,7 @@ Relatório de Campanhas
 
 Este menu tem os seguintes campos
 
-.. include:: campaignreport/campaignreport.rst
+:doc:`Relatório de Campanhas <campaignReport/campaignReport>`
 
 
 
@@ -731,26 +651,19 @@ Este menu tem os seguintes campos
 
 
 .. _callshop-menu-list:
+
 Menu CallShop
 =============
 
 
 Esta é a lista dos campos com sua respectiva descrição do menu CallShop
 
-Cabines
-+++++++
-
-Este menu tem os seguintes campos
-
-.. include:: callshop/callshop.rst
-
-
 Relatório
 ++++++++++
 
 Este menu tem os seguintes campos
 
-.. include:: callshopcdr/callshopcdr.rst
+:doc:`Relatório <callShopCdr/callShopCdr>`
 
 
 Tarifas
@@ -758,7 +671,7 @@ Tarifas
 
 Este menu tem os seguintes campos
 
-.. include:: ratecallshop/ratecallshop.rst
+:doc:`Tarifas <ratecallshop/ratecallshop>`
 
 
 Resumo por Dia
@@ -766,7 +679,7 @@ Resumo por Dia
 
 Este menu tem os seguintes campos
 
-.. include:: callsummarycallshop/callsummarycallshop.rst
+:doc:`Resumo por Dia <callSummaryCallShop/callSummaryCallShop>`
 
 
 
@@ -774,9 +687,110 @@ Este menu tem os seguintes campos
 
 
 .. _services-menu-list:
-Menu Resumo por Mês/Tronco
-===========================
+
+Menu Serviços
+==============
 
 
-Esta é a lista dos campos com sua respectiva descrição do menu Resumo por Mês/Tronco
+Esta é a lista dos campos com sua respectiva descrição do menu Serviços
 
+Serviços
++++++++++
+
+Este menu tem os seguintes campos
+
+:doc:`Serviços <services/services>`
+
+
+Uso de Serviços
+++++++++++++++++
+
+Este menu tem os seguintes campos
+
+:doc:`Uso de Serviços <servicesuse/servicesuse>`
+
+
+
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+   user/user
+   sip/sip
+   callonline/callonline
+   callerid/callerid
+   sipuras/sipuras
+   restrictedPhonenumber/restrictedPhonenumber
+   callback/callback
+   iax/iax
+   userHistory/userHistory
+   refill/refill
+   methodpay/methodpay
+   voucher/voucher
+   refillprovider/refillprovider
+   did/did
+   diddestination/diddestination
+   diduse/diduse
+   ivr/ivr
+   queue/queue
+   queuemember/queuemember
+   holidays/holidays
+   didHistory/didHistory
+   plan/plan
+   rate/rate
+   prefix/prefix
+   userrate/userrate
+   offer/offer
+   offercdr/offercdr
+   offeruse/offeruse
+   call/call
+   callSummaryPerDay/callSummaryPerDay
+   callSummaryDayUser/callSummaryDayUser
+   callSummaryDayTrunk/callSummaryDayTrunk
+   callSummaryDayAgent/callSummaryDayAgent
+   callSummaryPerMonth/callSummaryPerMonth
+   callSummaryMonthUser/callSummaryMonthUser
+   callSummaryMonthTrunk/callSummaryMonthTrunk
+   callSummaryPerUser/callSummaryPerUser
+   callSummaryPerTrunk/callSummaryPerTrunk
+   callArchive/callArchive
+   sendCreditSummary/sendCreditSummary
+   callSummaryMonthDid/callSummaryMonthDid
+   provider/provider
+   trunk/trunk
+   trunkgroup/trunkgroup
+   rateprovider/rateprovider
+   servers/servers
+   trunkSipCodes/trunkSipCodes
+   providerCNL/providerCNL
+   siptrace/siptrace
+   module/module
+   groupuser/groupuser
+   configuration/configuration
+   templatemail/templatemail
+   logUsers/logUsers
+   smtps/smtps
+   api/api
+   campaignlog/campaignlog
+   groupusergroup/groupusergroup
+   alarm/alarm
+   firewall/firewall
+   campaign/campaign
+   phonebook/phonebook
+   phonenumber/phonenumber
+   campaignpoll/campaignpoll
+   campaignpollinfo/campaignpollinfo
+   campaignrestrictphone/campaignrestrictphone
+   sms/sms
+   campaignDashboard/campaignDashboard
+   campaignReport/campaignReport
+   callShopCdr/callShopCdr
+   ratecallshop/ratecallshop
+   callSummaryCallShop/callSummaryCallShop
+   services/services
+   servicesuse/servicesuse
+   gAuthenticator/gAuthenticator
+   groupModule/groupModule
+   sendcreditproducts/sendcreditproducts
+   sendcreditrates/sendcreditrates

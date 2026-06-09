@@ -9,6 +9,16 @@ DID
 
 
 
+.. _did-country:
+
+País
+-----
+
+| País
+
+
+
+
 .. _did-record-call:
 
 Gravar chamadas
@@ -150,6 +160,16 @@ Limite de canais
 
 
 
+.. _did-id-server:
+
+Servidor
+--------
+
+| Servidor. Somente usado quando você usa SIP PROXY.
+
+
+
+
 .. _did-description:
 
 Descrição
@@ -173,16 +193,16 @@ Expressão regular
 | Neste exemplo vamos criar regras para identificar o CallerID nos formatos 0 DDD número, DDD número ou 55 DDD número.
 | 
 | Veja na imagem abaixo como ficaria.
-| 
-.. image:: ../img/did_regex.png
+
+.. image:: ../../img/did_regex.png
    :scale: 100% 
-| 
+
 | 
 | Expressão regular para celular
-| ^[1-9][0-9]9\\d{8}$|^0[1-9][0-9]9\\d{8}$|^55[1-9][0-9]9\\d{8}$
+| ^[1-9][0-9]9\\d{8}$\|^0[1-9][0-9]9\\d{8}$\|^55[1-9][0-9]9\\d{8}$
 | 
 | Expressão regular para fixo
-| ^[1-9][0-9]\\d{8}$|^0[1-9][0-9]\\d{8}$|^55[1-9][0-9]\\d{8}$
+| ^[1-9][0-9]\\d{8}$\|^0[1-9][0-9]\\d{8}$\|^55[1-9][0-9]\\d{8}$
 | 
 | 
 | 
@@ -238,7 +258,7 @@ Enviar a chamada para callback
 Expressão regular
 ------------------
 
-| Igual a opção 1. Você pode ver mais detalhes no link `https://wiki.magnusbilling.org/pt_BR/source/modules/did/did.html#did-expression-1.  <https://wiki.magnusbilling.org/pt_BR/source/modules/did/did.html#did-expression-1.>`_.
+| Igual à opção 1. Você pode ver mais detalhes no link `https://wiki.magnusbilling.org/pt_BR/source/modules/did/did.html#did-expression-1.  <https://wiki.magnusbilling.org/pt_BR/source/modules/did/did.html#did-expression-1.>`_.
 
 
 
@@ -290,7 +310,7 @@ Enviar a chamada para callback
 Expressão regular
 ------------------
 
-| Igual a opção 1. Você pode ver mais detalhes no link `https://wiki.magnusbilling.org/pt_BR/source/modules/did/did.html#did-expression-1.  <https://wiki.magnusbilling.org/pt_BR/source/modules/did/did.html#did-expression-1.>`_.
+| Igual à opção 1. Você pode ver mais detalhes no link `https://wiki.magnusbilling.org/pt_BR/source/modules/did/did.html#did-expression-1.  <https://wiki.magnusbilling.org/pt_BR/source/modules/did/did.html#did-expression-1.>`_.
 
 
 
@@ -392,7 +412,7 @@ Early media
 Seg-Sex
 -------
 
-| Ex: sua trabalha de 09 as 12 e de 14h às 18h, e dentro deste horário você quer executar o callback e retornar a chamada para a pessoa que ligou, então coloque 09:00-12:00|14:00-18:00, os intervalos são separados por |.
+| Ex: sua trabalha de 09 as 12 e de 14h às 18h, e dentro deste horário você quer executar o callback e retornar a chamada para a pessoa que ligou, então coloque 09:00-12:00\|14:00-18:00, os intervalos são separados por \|.
 
 
 
@@ -437,22 +457,32 @@ Não trabalhando
 
 
 
-.. _did-country:
+.. _did-agent-client-rate-2:
 
-País
------
+Preço de venda por min
+-----------------------
 
-| País
-
-
+| Preço de venda por minuto cobrado do cliente do revendedor no segundo intervalo de cobrança deste DID.
 
 
-.. _did-id-server:
 
-Servidor
---------
 
-| Servidor. Somente usado quando você usa SIP PROXY.
+.. _did-agent-client-rate-3:
+
+Preço de venda por min
+-----------------------
+
+| Preço de venda por minuto cobrado do cliente do revendedor no terceiro intervalo de cobrança deste DID.
+
+
+
+
+.. _did-agent-client-rate-1:
+
+Preço de venda por min
+-----------------------
+
+| Preço de venda por minuto cobrado do cliente do revendedor no primeiro intervalo de cobrança deste DID.
 
 
 

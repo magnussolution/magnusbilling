@@ -74,7 +74,7 @@ Trunk
 Reinvite
 --------
 
-| Reinvite is the parameter that informs if the audio is passing through Asterisk or if its going through the client and trunk. You can see more details at the link `https://wiki.magnusbilling.org/en/source/asterisk_options/directmedia.html.  <https://wiki.magnusbilling.org/en/source/asterisk_options/directmedia.html.>`_.
+| Reinvite indicates whether the audio is passing through Asterisk or directly between the client and the trunk. You can see more details at the link `https://wiki.magnusbilling.org/en/source/asterisk_options/directmedia.html.  <https://wiki.magnusbilling.org/en/source/asterisk_options/directmedia.html.>`_.
 
 
 

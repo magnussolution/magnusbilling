@@ -9,6 +9,16 @@ DID
 
 
 
+.. _did-country:
+
+Country
+-------
+
+| Country associated with the DID, used to identify and organize the number.
+
+
+
+
 .. _did-record-call:
 
 Record call
@@ -74,7 +84,7 @@ Connection charge
 Minimum time to charge
 ----------------------
 
-| We did not write the description to this field.
+| Minimum call duration charged by the provider for this DID.
 
 
 
@@ -84,7 +94,7 @@ Minimum time to charge
 Buy price initblock
 -------------------
 
-| We did not write the description to this field.
+| Initial billing block used to calculate the provider cost for inbound calls on this DID.
 
 
 
@@ -94,7 +104,7 @@ Buy price initblock
 Buy price increment
 -------------------
 
-| We did not write the description to this field.
+| Billing increment used after the initial block to calculate the provider cost for this DID.
 
 
 
@@ -149,6 +159,16 @@ Channel limit
 
 
 
+.. _did-id-server:
+
+Server
+------
+
+| Server that will receive and process calls for this DID.
+
+
+
+
 .. _did-description:
 
 Description
@@ -166,20 +186,20 @@ Regular expression
 
 | This is a regular expression to tariff the DID depending on who is calling it.
 | Lets analyze a real example:
-|     Suppose we want to charge 0.10 when we receive a call from a landline and 0.20 if its a mobile phone and block any other format.
+|     Suppose we want to charge 0.10 when we receive a call from a landline, charge 0.20 when it is a mobile phone, and block any other format.
 |     In this example we will create rules to identify the CallerID in the format 0 + area code + number, area code + number, or 55 + area code + number.
 | 
 |     Take a look at the following image on what the result would look like:
 |     
-|     .. image:: ../img/did_regex.png
+|     .. image:: ../../img/did_regex.png
    :scale: 100% 
-| 
+
 | 
 |     Regular expression for mobile
-|     ^[1-9][0-9]9\\d{8}$|^0[1-9][0-9]9\\d{8}$|^55[1-9][0-9]9\\d{8}$
+|     ^[1-9][0-9]9\\d{8}$\|^0[1-9][0-9]9\\d{8}$\|^55[1-9][0-9]9\\d{8}$
 | 
 |     Regular expression for landline
-|     ^[1-9][0-9]\\d{8}$|^0[1-9][0-9]\\d{8}$|^55[1-9][0-9]\\d{8}$
+|     ^[1-9][0-9]\\d{8}$\|^0[1-9][0-9]\\d{8}$\|^55[1-9][0-9]\\d{8}$
 | 
 | 
 |     
@@ -192,7 +212,7 @@ Regular expression
 Buy price per min
 -----------------
 
-| We did not write the description to this field.
+| Provider buy price per minute for the first inbound billing interval of this DID.
 
 
 
@@ -242,7 +262,7 @@ Regular expression
 Buy price per min
 -----------------
 
-| We did not write the description to this field.
+| Provider buy price per minute for the second inbound billing interval of this DID.
 
 
 
@@ -292,7 +312,7 @@ Regular expression
 Buy price per min
 -----------------
 
-| We did not write the description to this field.
+| Provider buy price per minute for the third inbound billing interval of this DID.
 
 
 
@@ -382,7 +402,7 @@ Early media
 Mon-Fri
 -------
 
-| Example: if your company only callbacks to the callee if the call was placed in between 09:00-12:00 and 14:00-18:00 MON-FRY, between this time interval the workaudio is going to be played and then callback to the callee. You can use multiple time intervals separated by |.
+| Example: if your company only callbacks to the callee if the call was placed in between 09:00-12:00 and 14:00-18:00 MON-FRY, between this time interval the workaudio is going to be played and then callback to the callee. You can use multiple time intervals separated by \|.
 
 
 
@@ -427,22 +447,32 @@ Out work audio
 
 
 
-.. _did-country:
+.. _did-agent-client-rate-2:
 
-Country
--------
+Sell price per min
+------------------
 
-| We did not write the description to this field.
-
-
+| Sell price per minute charged to the reseller client for the second inbound billing interval of this DID.
 
 
-.. _did-id-server:
 
-Server
-------
 
-| We did not write the description to this field.
+.. _did-agent-client-rate-3:
+
+Sell price per min
+------------------
+
+| Sell price per minute charged to the reseller client for the third inbound billing interval of this DID.
+
+
+
+
+.. _did-agent-client-rate-1:
+
+Sell price per min
+------------------
+
+| Sell price per minute charged to the reseller client for the first inbound billing interval of this DID.
 
 
 

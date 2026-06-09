@@ -35,9 +35,9 @@ Agora os clientes em posse de algum Voucher que não tiver sido usado, e que per
 Crie um DID e o deixe sem destino, ou com destino Calling Card. Ao ligar para o DID, será solicitado número PIN, então digite o número do voucher. Será criado um usuário novo, com as configurações do Voucher, e adicionado o crédito para a conta.
 
 
-3 - Ligar de uma conta SIP para o código *120
+3 - Ligar de uma conta SIP para o código ``*120``
 
-Ao ligar para o código *120 e ingresar o número do Voucher ao ser solicitado o PIN, o valor do Voucher será adicionado ao usuário.
+Ao ligar para o código ``*120`` e ingresar o número do Voucher ao ser solicitado o PIN, o valor do Voucher será adicionado ao usuário.
 
 
 
@@ -45,5 +45,4 @@ Ao ligar para o código *120 e ingresar o número do Voucher ao ser solicitado o
 Será criado uma recarga para o cliente com o valor do crédito do Voucher nas 3 opções anteriores.
 
 No menu Voucher do administrador, vai aparecer o usuário que usou o voucher, e a data de uso.
-
 

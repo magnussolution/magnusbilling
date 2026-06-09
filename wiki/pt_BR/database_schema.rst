@@ -6,7 +6,7 @@ Banco de Dados - Schema MySQL
 O MagnusBilling utiliza **MySQL/MariaDB** para armazenar toda configuração, usuários, tarifas, chamadas (CDR) e dados operacionais.
 
 Diagrama Entidade-Relacionamento (ER)
-======================================
+--------------------------------------
 
 Estrutura simplificada::
 
@@ -192,7 +192,7 @@ Estrutura simplificada::
 
 
 Descrição Detalhada das Tabelas Principais
-==========================================
+------------------------------------------
 
 pkg_user - Usuários do Sistema
 ------------------------------
@@ -298,7 +298,7 @@ Provedores VoIP por onde passam as chamadas::
 
 
 Queries Úteis
-=============
+-------------
 
 Consultar Saldo de Usuário
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -311,7 +311,7 @@ Consultar Saldo de Usuário
 
 
 Total de Chamadas por Usuário (últimos 30 dias)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -357,7 +357,7 @@ Chamadas Falhadas
 
 
 Índices para Performance
-========================
+------------------------
 
 Índices críticos recomendados::
 
@@ -379,7 +379,7 @@ Chamadas Falhadas
 
 
 Backup
-======
+------
 
 Backup manual::
 
@@ -402,7 +402,7 @@ Restaurar de Backup
 
 
 Manutenção
-==========
+----------
 
 Otimizar Tabelas
 ~~~~~~~~~~~~~~~~

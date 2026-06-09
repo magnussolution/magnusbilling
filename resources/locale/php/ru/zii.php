@@ -21,7 +21,8 @@
  * Edit /resources/locale/ru.js
           */
 return array(
-            'Out work audio' => 'OUT WOOK AUDIO',
+            'ALOC all calls' => 'ACD',
+    'Out work audio' => 'OUT WOOK AUDIO',
     'P2P CustomerSiteID' => 'P2P CombersentityID',
     'P2P KeyID' => 'P2P CeyID',
     'P2P Passphrase' => 'P2P пароль фраза',

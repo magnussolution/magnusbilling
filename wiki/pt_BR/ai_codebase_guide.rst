@@ -97,41 +97,45 @@ Roteador de Perguntas (Playbook para IA)
 
 Use esta tabela para encontrar o ponto de investigacao inicial.
 
-Pergunta: login, sessao, permissao, menu
-  Comece em: protected/controllers/AuthenticationController.php
-  Apoio: protected/components/BaseController.php, protected/components/Controller.php
+* Login, sessao, permissao, menu:
+  comece em ``protected/controllers/AuthenticationController.php``.
+  Arquivos de apoio: ``protected/components/BaseController.php`` e
+  ``protected/components/Controller.php``.
 
-Pergunta: CRUD de entidades do painel (user, sip, trunk, rate, did, queue)
-  Comece em: protected/controllers/<Entidade>Controller.php
-  Apoio: protected/models/<Entidade>.php, app/store/<Entidade>.js
+* CRUD de entidades do painel (user, sip, trunk, rate, did, queue):
+  comece em ``protected/controllers/<Entidade>Controller.php``.
+  Arquivos de apoio: ``protected/models/<Entidade>.php`` e
+  ``app/store/<Entidade>.js``.
 
-Pergunta: chamada de saida (outbound), cobranca, timeout, tronco
-  Comece em: resources/asterisk/StandardCallAgi.php
-  Apoio: resources/asterisk/CalcAgi.php, resources/asterisk/SearchTariff.php,
-         resources/asterisk/AuthenticateAgi.php
+* Chamada de saida (outbound), cobranca, timeout, tronco:
+  comece em ``resources/asterisk/StandardCallAgi.php``.
+  Arquivos de apoio: ``resources/asterisk/CalcAgi.php``,
+  ``resources/asterisk/SearchTariff.php`` e
+  ``resources/asterisk/AuthenticateAgi.php``.
 
-Pergunta: DID/entrada, fila, IVR, destino de chamada
-  Comece em: resources/asterisk/DidAgi.php
-  Apoio: resources/asterisk/IvrAgi.php, resources/asterisk/QueueAgi.php,
-         models Did/Diddestination e tabelas pkg_did/pkg_did_destination
+* DID/entrada, fila, IVR, destino de chamada:
+  comece em ``resources/asterisk/DidAgi.php``.
+  Arquivos de apoio: ``resources/asterisk/IvrAgi.php``,
+  ``resources/asterisk/QueueAgi.php``, models Did/Diddestination e tabelas
+  ``pkg_did`` / ``pkg_did_destination``.
 
-Pergunta: comandos especiais (*120 voucher, *7 pickup, pausa de fila)
-  Comece em: resources/asterisk/mbilling.php
+* Comandos especiais (``*120`` voucher, ``*7`` pickup, pausa de fila):
+  comece em ``resources/asterisk/mbilling.php``.
 
-Pergunta: configuracoes globais (idioma, versao, timeout, moeda)
-  Comece em: tabela pkg_configuration via model Configuration
-  Apoio: protected/components/LoadConfig.php
+* Configuracoes globais (idioma, versao, timeout, moeda):
+  comece em ``pkg_configuration`` via model Configuration.
+  Arquivo de apoio: ``protected/components/LoadConfig.php``.
 
-Pergunta: problema de UI apos login/check de sessao
-  Comece em: classic/src/Application.js
-  Apoio: endpoint index.php/authentication/check
+* Problema de UI apos login/check de sessao:
+  comece em ``classic/src/Application.js``.
+  Endpoint de apoio: ``index.php/authentication/check``.
 
 Modelo Mental de Relacao Frontend x Backend
 ===========================================
 
 Padrao recorrente:
 
-1. Store ExtJS faz request em endpoint index.php/<controller>/<action>
+1. Store ExtJS faz request em endpoint ``index.php/<controller>/<action>``
 2. Controller Yii processa filtros/permissoes
 3. Model ActiveRecord executa persistencia
 4. Controller devolve JSON para grid/form
@@ -142,7 +146,7 @@ Exemplo de rastreio:
 - Abrir controller correspondente em protected/controllers/
 - Identificar o model utilizado
 - Confirmar campos e regras no model
-- Validar tabela envolvida (prefixo pkg_)
+- Validar tabela envolvida (prefixo ``pkg_``)
 
 Fluxo de Chamada (Resumo Operacional)
 =====================================

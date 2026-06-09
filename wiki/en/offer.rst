@@ -9,7 +9,7 @@ What is free packages?
 Free packages are for giving customers a number of calls at no charge, for a monthly fee or with no cost whatsoever.
 
 How to configure?
-++++++++++++++++
+++++++++++++++++++
 
 The configuration of the free packages needs several steps.
 
@@ -60,7 +60,7 @@ Continuing with our example, if the customer dials any other number that does no
 
 
 How is the monthly fee charged?
-+++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++
 
 Using the same example as before, and that the plan was activated on the 15th, the system will automatically charge the customer for the value of the package, in this example USD 5.00 from the customer's credit every 15th.
 
@@ -79,7 +79,7 @@ The emails can be found, and edited, in the settings menu submenu email template
 
 
 Where to see the consumption of each customer?
-+++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++
 
 All calls made using a package will be added to the tariff menu submenu package report.
 

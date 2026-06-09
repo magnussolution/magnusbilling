@@ -4,7 +4,7 @@
 DID
 ---
 
-| We did not write the description to this field.
+| DID related to this history record.
 
 
 
@@ -14,7 +14,7 @@ DID
 Username
 --------
 
-| We did not write the description to this field.
+| User that owned or reserved the DID in this history record.
 
 
 
@@ -24,7 +24,7 @@ Username
 Month payed
 -----------
 
-| We did not write the description to this field.
+| Number of months paid for this DID reservation or renewal.
 
 
 
@@ -34,7 +34,7 @@ Month payed
 Reservation date
 ----------------
 
-| We did not write the description to this field.
+| Date when the DID was reserved or renewed.
 
 
 
@@ -44,7 +44,7 @@ Reservation date
 Description
 -----------
 
-| We did not write the description to this field.
+| Additional information recorded for this DID history entry.
 
 
 

@@ -4,7 +4,7 @@
 Sell price
 ----------
 
-| We did not write the description to this field.
+| Total sell price for calls received on this DID during the selected month.
 
 
 
@@ -14,7 +14,7 @@ Sell price
 Duration
 --------
 
-| We did not write the description to this field.
+| Total call duration for this DID during the selected month.
 
 
 
@@ -24,7 +24,7 @@ Duration
 Total calls
 -----------
 
-| We did not write the description to this field.
+| Total number of calls received on this DID during the selected month.
 
 
 

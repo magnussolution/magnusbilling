@@ -42,9 +42,9 @@ Main files
 ----------
 
 - protected/components/BaseController.php
-- protected/controllers/*.php
-- protected/models/*.php
-- app/store/*.js
+- ``protected/controllers/*.php``
+- ``protected/models/*.php``
+- ``app/store/*.js``
 
 Path 3: Outbound Call Billing
 =============================

@@ -44,7 +44,7 @@ Status
 Description
 -----------
 
-| Message. It's possible to variables, look at the variables tab to see the list of avaible variables.
+| Message. It's possible to variables, look at the variables tab to see the list of available variables.
 
 
 

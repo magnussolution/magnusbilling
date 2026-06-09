@@ -482,7 +482,7 @@ Exemplo - Tronco Vivo::
 
 
 Atribuir Tronco a Usuário
-------------------------
+-------------------------
 
 1. Menu: **Admin** → **Clientes** → [Selecione usuário]
 2. Aba: **Troncos**
@@ -633,7 +633,7 @@ Exemplo::
 
 
 Adicionar Opções do IVR
----------------------
+-----------------------
 
 1. Clique no IVR criado
 2. Aba: **Opções**
@@ -641,7 +641,7 @@ Adicionar Opções do IVR
 4. Configure:
 
    **Option Key**
-       Número que usuário pressiona (0-9, #, *)
+      Número que usuário pressiona (0-9, #, ``*``)
    
    **Destination Type**
        Aonde encaminhar:
@@ -821,7 +821,7 @@ Ou via MySQL direto::
 
 
 Limpeza de Cache
----------------
+----------------
 
 Se sistema lento ou dados desatualizados::
 
@@ -868,7 +868,7 @@ Solução::
 
 
 Problema: DIDs não recebem chamadas
-----------------------------------
+-----------------------------------
 
 Solução::
 
@@ -908,7 +908,7 @@ Solução::
 
 
 Problema: Relatório lento
-------------------------
+-------------------------
 
 Solução::
 

@@ -102,7 +102,7 @@ Observed in videos
 Code anchor points
 ------------------
 
-- protected/models/*.php
+- ``protected/models/*.php``
 - protected/components/Model.php
 - protected/components/BaseController.php
 

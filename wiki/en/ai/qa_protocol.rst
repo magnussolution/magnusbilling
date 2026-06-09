@@ -31,7 +31,7 @@ Question about login/session/permissions
 Question about UI module behavior
 ---------------------------------
 
-- Identify endpoint called in app/store/*.js or classic/src/*
+- Identify endpoint called in ``app/store/*.js`` or classic/src/*
 - Follow to protected/controllers/<Module>Controller.php
 - Follow model/table mapping in protected/models/<Module>.php
 
@@ -45,7 +45,7 @@ Question about call flow or billing
 Question about reports or archives
 ----------------------------------
 
-- Start at cron.php and protected/commands/*.php
+- Start at cron.php and ``protected/commands/*.php``
 - Confirm summary/archive target tables
 
 Evidence Template

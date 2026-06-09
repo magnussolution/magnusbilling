@@ -24,7 +24,7 @@ Número
 Direção
 ---------
 
-| Será analisado em ligaçōes conforme selecionado.
+| Será analisado em ligações conforme selecionado.
 
 
 

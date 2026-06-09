@@ -4,11 +4,11 @@
 Usuário
 --------
 
-| Usuário que poderá usar está API.
-| Para usar a API é necessário o uso do projeto MagnusBilling API PHP publicado no GITHUB.
+| Usuário que poderá usar esta API.
+| Para usar a API é necessário o projeto MagnusBilling API PHP publicado no GitHub.
 |     
 | O projeto está publicado no link https://github.com/magnussolution/magnusbilling-api-php. 
-| A API tem documentação, atualmente somente em Ingles, e está publicado no link https://github.com/magnussolution/magnusbilling-api-php/wiki. .
+| A API tem documentação, atualmente somente em inglês, publicada no link https://github.com/magnussolution/magnusbilling-api-php/wiki.
 
 
 
@@ -48,7 +48,7 @@ Status
 Permissões
 -----------
 
-| Quais as açōes será permitidas na conexão.
+| Quais ações serão permitidas na conexão.
 
 
 

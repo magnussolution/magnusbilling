@@ -584,6 +584,7 @@ rtpholdtimeout=300
 rtsavesysname=yes
 rtupdate=yes
 ignoreregexpire=yes
+pedantic=no
 
 #include sip_magnus_register.conf
 #include sip_magnus_user.conf

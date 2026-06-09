@@ -74,7 +74,7 @@ Codec
 Host
 ----
 
-| Dynamic é a opção para deixar o usuário registrar sua conta em qualquer IP. Se você deseja autenticar o usuário por IP, coloque aqui o IP do cliente, deixe a senha em branco e coloque insecure para port/invite na TAB Informaçōes Adicionais.
+| Dynamic é a opção para deixar o usuário registrar sua conta em qualquer IP. Se você deseja autenticar o usuário por IP, coloque aqui o IP do cliente, deixe a senha em branco e coloque insecure para port,invite na TAB Informações Adicionais.
 
 
 
@@ -87,7 +87,7 @@ Grupo
 | Quando enviar um chamada de um DID, ou campanha para um grupo, será chamado todas as contas SIP que estiverem no grupo. Você pode criar os grupos com qualquer nome.
 | 
 | 
-| Também usado para capturar chamada com *8, deve ser configurada a opção pickupexten = *8  no arquivo feature.conf.
+| Também usado para capturar chamada com \*8, deve ser configurada a opção pickupexten = \*8  no arquivo feature.conf.
 | .
 
 
@@ -133,6 +133,16 @@ Tech prefix
 
 
 
+.. _sip-cnl:
+
+Zona CNL
+--------
+
+| Zona CNL usada nas regras de numeração e roteamento brasileiro desta conta SIP.
+
+
+
+
 .. _sip-description:
 
 Descrição
@@ -171,7 +181,7 @@ Qualify
 | Enviar pacote OPTION para verificar se o usuário está online.
 | Sintaxe:
 | 
-| qualify = xxx | no | yes
+| qualify = xxx \| no \| yes
 | 
 | onde XXX é o número de milissegundos usados. Se sim, o tempo configurado no sip.conf é usado, padrão é usado 2 segundos.
 | 
@@ -218,7 +228,7 @@ Dtmfmode
 Insecure
 --------
 
-| Se o host estiver dynamic está opção precisa estar como NO, para o IP authentication alterar para port,invite.
+| Se o host estiver dynamic esta opção precisa estar como NO, para o IP authentication alterar para port,invite.
 
 
 
@@ -258,7 +268,7 @@ Tipo
 Permitir transferência
 -----------------------
 
-| Permite esta conta VOIP fazer transferência. O código para transferência é *2 + ramal. É necessário ativar a opção atxfer => *2 no arquivo features.conf do Asterisk.
+| Permite esta conta VOIP fazer transferência. O código para transferência é \*2 + ramal. É necessário ativar a opção atxfer => \*2 no arquivo features.conf do Asterisk.
 
 
 
@@ -371,9 +381,9 @@ Destino
 | Clique para mais detalhes
 | Temos três opcōes, conforme o tipo selecionado, grupo, número ou personalizado.
 | 
-| * Grupo, o nome do grupo colocado aqui, deve ser exatamente o mesmo do grupo das contas SIP que deseja receber as chamadas, vai chamar todas as contas SIP do grupo. 
-| * Personalizado, é possível a execução de qualquer opção válida do comando DIAL do Asterisk, exemplo: SIP/contaSIP,45,tTr
-| * Número, pode ser um número fixo ou celular, deve estar no formato 55 DDD número.
+| \* Grupo, o nome do grupo colocado aqui, deve ser exatamente o mesmo do grupo das contas SIP que deseja receber as chamadas, vai chamar todas as contas SIP do grupo. 
+| \* Personalizado, é possível a execução de qualquer opção válida do comando DIAL do Asterisk, exemplo: SIP/contaSIP,45,tTr
+| \* Número, pode ser um número fixo ou celular, deve estar no formato 55 DDD número.
 | .
 
 
@@ -414,7 +424,7 @@ Email
 Senha
 -----
 
-| Senha do VOICEMAIL. É possível entrar no VOICEMAIL digitando *111.
+| Senha do VOICEMAIL. É possível entrar no VOICEMAIL digitando \*111.
 
 
 
@@ -424,7 +434,7 @@ Senha
 Parâmetros
 -----------
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Parâmetros SIP adicionais gravados para esta conta. Use somente opções SIP válidas do Asterisk.
 
 
 
@@ -439,12 +449,12 @@ Peer
 
 
 
-.. _sip-cnl:
+.. _sip-forwardtype:
 
-Zona CNL
---------
+Tipo de encaminhamento
+----------------------
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Tipo de encaminhamento aplicado quando esta conta SIP não atende ou está indisponível.
 
 
 

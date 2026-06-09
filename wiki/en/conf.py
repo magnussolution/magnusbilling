@@ -43,7 +43,10 @@ release = 'source'
 
 language = 'en'
 
-exclude_patterns = ['_build']
+exclude_patterns = ['_build','Thumbs.db',
+    '.DS_Store',
+    '.venv',
+    '.venv/**',]
 
 from gdscript import GDScriptLexer
 from sphinx.highlighting import lexers

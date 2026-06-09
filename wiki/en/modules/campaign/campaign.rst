@@ -34,7 +34,7 @@ Name
 CallerID
 --------
 
-| We did not write the description to this field.
+| CallerID that will be sent when the campaign places calls. The trunk must allow CallerID delivery for this value to be used.
 
 
 
@@ -84,7 +84,7 @@ Type
 Audio
 -----
 
-| Available to massive calling. The audio needs to be compatible with Asterisk. The recomended format is GSM or WAV(8k hz mono).
+| Audio used by the massive calling campaign. The file must be compatible with Asterisk. The recommended format is GSM or WAV, 8 kHz mono.
 
 
 
@@ -121,10 +121,10 @@ Auto reprocess
 
 .. _campaign-id-phonebook:
 
+id_phonebook
+------------
 
-
-
-| Select one or more phonebooks to to be used.
+| Select one or more phonebooks to be used.
 
 
 
@@ -186,8 +186,8 @@ Destination
 
 | Click for more details
 | There are two options available.
-|     *Group, the group name should be put here exactly as it is in the SIP users that should receive the calls.
-|     *Personalized, you may execute any valid option via Asterisk's DIAL command. Example: SIP/sipaccount,45,tTr.
+|     \*Group, the group name should be put here exactly as it is in the SIP users that should receive the calls.
+|     \*Personalized, you may execute any valid option via Asterisk's DIAL command. Example: SIP/sipaccount,45,tTr.
 
 
 
@@ -350,8 +350,8 @@ Description or SMS Text
 
 | This field has different uses if the campaign is sending Voice or SMS.
 | Uses:
-|     * Voice: This field is simply a description of the campaign.
-|     * SMS: The text in here is going to be sent to the numbers. You may use the var %name% where you want to use the name of the customer. Example:
+|     \* Voice: This field is simply a description of the campaign.
+|     \* SMS: The text in here is going to be sent to the numbers. You may use the var %name% where you want to use the name of the customer. Example:
 |     Hello %name%
 
 

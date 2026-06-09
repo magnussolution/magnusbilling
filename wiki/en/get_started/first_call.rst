@@ -44,7 +44,7 @@ After successfully  creating an user, MagnusBilling will automatically create a 
 Now we are going to use Zoiper software (you can use your preferred software).
 
 In Zoiper configure the SIP credentials accordingly to the user we just created. In the domain field put your server IP address.
-*Note: After the server ip (:5061) is the Asterisk Port that in this example is set up for 5061. The default MagnusBilling port is 5060. Also, since 5060 is the default SIP port, you can just use your IP address.
+**Note:** After the server ip (:5061) is the Asterisk Port that in this example is set up for 5061. The default MagnusBilling port is 5060. Also, since 5060 is the default SIP port, you can just use your IP address.
 
 .. image:: ../img/zoiper_config.png
         :scale: 80%

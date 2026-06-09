@@ -4,8 +4,8 @@ Help.load({
     'alarm.period': ``,
     'alarm.condition': ``,
     'alarm.amount': ``,
-    'alarm.email': ``,
     'alarm.status': ``,
+    'alarm.email': ``,
     'alarm.subject': ``,
     'alarm.message': ``,
     //API
@@ -37,6 +37,7 @@ Para funcionar é necessário deixar o campo Fromuser no tronco em branco.`,
     'call.sessionbill': `Preço de venda, este foi o valor descontado do cliente. Clique para entender como é calculado o preço|https://wiki.magnusbilling.org/pt_BR/source/price_calculation.html.`,
     'call.agent_bill': `Preço de venda, este foi o valor descontado do cliente. Clique para entender como é calculado o preço|https://wiki.magnusbilling.org/pt_BR/source/price_calculation.html.`,
     'call.uniqueid': `ID único gerado pelo Asterisk, este campo é também a hora de início da chamada em Epoch Unix.`,
+    'call.terminatecauseid': ``,
     //CHAMADAS ARQUIVADAS
     'callarchive.calledstation': `Número discado pelo cliente.`,
     'callarchive.sessiontime': `Duração da chamada em segundos.`,
@@ -140,7 +141,7 @@ Para funcionar é necessário deixar o campo Fromuser no tronco em branco.`,
     'callsummaryperuser.sumlucro': `Somatório do lucro.`,
     'callsummaryperuser.sumnbcall': `Total de chamadas.`,
     'callsummaryperuser.sumnbcallfail': `Total de chamadas rejeitadas.`,
-    //CAMPANHAS
+    //CAMPAIGNS
     'campaign.id_user': `Usuário dono da campanha.`,
     'campaign.id_plan': `Que plano será usado para tarifar as chamadas desta campanha, pode ser um plano diferente do plano cadastrado na conta do cliente.`,
     'campaign.name': `Nome para a campanha.`,
@@ -206,11 +207,11 @@ Ola João Matos temos uma promoção para você.....
 Clique neste link para saber mais cobre como configurar TTS no Magnusbilling https://wiki.magnusbilling.org/pt_BR/source/tts.html
 .`,
     'campaign.tts_audio2': `Mesma função do campo campo anterior, mas para o áudio 2. Lembra que entre o áudio 1 e 2, o TTS executa o nome importado nos números.`,
-    //MONITOR DE CAMPANHAS
+    //CAMPAIGNS DASHBOARD
     'campaigndashboard.name': `Nome da campanha.`,
     //CHAMADAS POR MINUTO
     'campaignlog.total': `Total de chamadas.`,
-    //ENQUETES
+    //POLLS
     'campaignpoll.id_campaign': `Selecione a campanha que esta enquete será executa.`,
     'campaignpoll.name': `Nome para a enquete, este nome é somente para seu contro.`,
     'campaignpoll.repeat': `Quantas vezes o MagnusBilling deve repetir o áudio da enquete caso o cliente não digite nenhuma opção ou digite uma opção inválida.||O que é opção inválida?
@@ -270,9 +271,12 @@ Estas opções será útil para ver os relatórios no menu Relatório de Enquete
     'campaignpoll.option7': `Descreva a opção, veja a descrição da opção 0.`,
     'campaignpoll.option8': `Descreva a opção, veja a descrição da opção 0.`,
     'campaignpoll.option9': `Descreva a opção, veja a descrição da opção 0.`,
-    //ENQUETE RELATóRIOS
+    'campaignpoll.option10': ``,
+    //POLLS REPORTS
     'campaignpollinfo.number': `Número da pessoa que votou.`,
     'campaignpollinfo.resposta': `Opção votada.`,
+    //RELATóRIO DE CAMPANHAS
+    'campaignreport.idCampaignname': ``,
     //NúMEROS RESTRITOS
     'campaignrestrictphone.number': `Número a ser bloqueado. É necessário ativar a opção números bloqueados na campanha.`,
     'campaignrestrictphone.description': `Descrição`,
@@ -281,6 +285,7 @@ Estas opções será útil para ver os relatórios no menu Relatório de Enquete
     'configuration.config_description': `Descrição. Clique para ler sobre as opções deste menu.|https://wiki.magnusbilling.org/pt_BR/source/config.html.`,
     //DIDS
     'did.did': `O número exatamente como chega no Asterisk. Você também pode usar intervalos. Examplo: 551140040001-551140040009. Neste exemplo criar os DIDS 551140040001 ao 551140040009.`,
+    'did.country': `País`,
     'did.record_call': `Gravar chamadas deste DID. Será gravado independente do destino da chamada.`,
     'did.activated': `Somente os números ativos podem receber chamadas.`,
     'did.callerid': `Coloque aqui CallerID name, deixe em branco para usar o que vem do provedor do DID.`,
@@ -295,6 +300,7 @@ Estas opções será útil para ver os relatórios no menu Relatório de Enquete
     'did.increment': `Bloco de quantos em quantos segundos irá cobrar após o tempo mínimo. Ex: se colocar 6, quer dizer que sempre vai arredondar de 6 em 6 segundos, ou seja, uma chamada durou 32s, vai cobrar 36s.`,
     'did.charge_of': `Esta opção é para quando o DID tiver custo, neste caso poderá cobrar do usuário dono do DID, ou somente permitir chamadas de números cadastrado no menu CallerID.||Neste caso, o custo será cobrado do usuário ao qual o número foi atrelado.`,
     'did.calllimit': `Limite de chamadas simultâneas para este DID.`,
+    'did.id_server': `Servidor. Somente usado quando você usa SIP PROXY.`,
     'did.description': `Usado para seu controle interno.`,
     'did.expression_1': `Esta é uma Expressão regular para tarifar o DID conforme o número de quem liga para o DID||Vamos analisar um exemplo real:
 
@@ -344,8 +350,9 @@ E se todas as configurações estiverem corretas, o CallBack este executado e o 
     'did.TimeOfDay_sun': `Mesma regra só que para domingos.`,
     'did.workaudio': `Áudio que será executado quando alguém ligar dentro do horário de atendimento.`,
     'did.noworkaudio': `Áudio que será executado quando ligar fora do horário de atendimento.`,
-    'did.country': `País`,
-    'did.id_server': `Servidor. Somente usado quando você usa SIP PROXY.`,
+    'did.agent_client_rate_2': ``,
+    'did.agent_client_rate_3': ``,
+    'did.agent_client_rate_1': ``,
     //DESTINO DE DIDS
     'diddestination.id_did': `Selecione o DID para criar o novo destino.`,
     'diddestination.id_user': `Usuário que será o dono deste DID.`,
@@ -499,6 +506,7 @@ Digamos que o não existe horário de atendimento no domingo. Neste caso a regra
     'ivr.option_out_8': `Selecione o destino caso for digitado a opção 8. Deixe em branco se não desejar nenhuma ação.`,
     'ivr.option_out_9': `Selecione o destino caso for digitado a opção 9. Deixe em branco se não desejar nenhuma ação.`,
     'ivr.option_out_10': `Selecione o destino caso não for digitado nada.`,
+    'ivr.type_1': ``,
     //LOG DE ACESSOS
     'logusers.id_user': `Usuário que executou a ação.`,
     'logusers.id_log_actions': `Tipo de ação.`,
@@ -522,6 +530,7 @@ Digamos que o não existe horário de atendimento no domingo. Neste caso a regra
     'methodpay.P2P_tax_amount': `Este campo é exclusivo para alguns métodos de pagamento.`,
     'methodpay.client_id': `Este campo é exclusivo para alguns métodos de pagamento.`,
     'methodpay.client_secret': `Este campo é exclusivo para alguns métodos de pagamento.`,
+    'methodpay.payment_method': ``,
     //MENUS
     'module.text': `Nome do menu.`,
     'module.icon_cls': `Icone, padrão font awesome V4.`,
@@ -570,7 +579,7 @@ Para saber como funciona os pacotes gratís veja o link https://wiki.magnusbilli
     'offeruse.id_offer': `Nome do pacote de gratís.`,
     'offeruse.month_payed': `Meses que foram pagos.`,
     'offeruse.reservationdate': `Data e hora que foi cancelado o pacote gratís.`,
-    //AGENDAS
+    //PHONEBOOKS
     'phonebook.name': `Nome da agenda.`,
     'phonebook.status': `Status da agenda.`,
     'phonebook.description': `Descrição para a agenda, somente para controle próprio.`,
@@ -708,6 +717,7 @@ Digamos que tenha 1 servidor MagnusBilling 3 servidores slaves, e você deseja e
 
 .`,
     'servers.status': `O proxy somente envia chamadas para servidores ativos e com peso maior que 0.`,
+    'servers.id_server': ``,
     'servers.description': `Usado para seu controle interno.`,
     //SERVIçOS
     'services.type': `Tipo de serviço.`,
@@ -725,8 +735,8 @@ Digamos que tenha 1 servidor MagnusBilling 3 servidores slaves, e você deseja e
     'servicesuse.method': `Forma de pagamento.`,
     'servicesuse.month_payed': `Meses pagos`,
     'servicesuse.reservationdate': `Dia que o serviço foi ativado.`,
-    'servicesuse.contract_period': `Tempo de contrato`,
     'servicesuse.termination_date': `Termino do contrato`,
+    'servicesuse.contract_period': `Tempo de contrato`,
     //CONTAS SIP
     'sip.id_user': `Usuário ao qual esta conta SIP está vinculada.`,
     'sip.defaultuser': `Usuário que será usado para logar nos softphones ou qualquer dispositivo SIP.`,
@@ -744,6 +754,7 @@ Também usado para capturar chamada com *8, deve ser configurada a opção picku
     'sip.block_call_reg': `Bloquear chamadas usando REGEX. Para bloquear chamadas para celular é so colocar ^55\\d\\d9. Click para ir ao site que testa REGEX.|https://regex101.com.`,
     'sip.record_call': `Grava as chamadas saintes desta conta SIP.`,
     'sip.techprefix': `Opção útil para quando for necessário autenticar mais de um cliente via IP que usa o mesmo IP. Comum em BBX multi tenant.`,
+    'sip.cnl': ``,
     'sip.description': `Descrição`,
     'sip.nat': `O cliente está atrás de NAT? Clique para mais informaçōes|https://www.voip-info.org/asterisk-sip-nat/.`,
     'sip.directmedia': `Se ativado, Asterisk vai tentar enviar a mídia RTP direto entre seu cliente e seu provedor. Precisa ativar no tronco também. Clique para mais informaçōes|https://www.voip-info.org/asterisk-sip-canreinvite/.`,
@@ -787,8 +798,8 @@ Este status pode ser verificado pela função sip show peer XXXX, esta função 
     'sip.voicemail_password': `Senha do VOICEMAIL. É possível entrar no VOICEMAIL digitando *111.`,
     'sip.sip_config': ``,
     'sip.sipshowpeer': `sip show peer.`,
-    'sip.cnl': ``,
-    //SIPTRACE
+    'sip.forwardtype': ``,
+    //SIP TRACE
     'siptrace.head': `Corpo da mensagem SIP.`,
     //ATA LINKSYS
     'sipuras.nserie': `Linksys serial number.`,
@@ -858,9 +869,10 @@ port envia a solicitação de registro para esta porta no host. Padrões para 50
 contact é a extensão de contato do Asterisk. Exemplo 1234 é colocado no cabeçalho do contato na mensagem de registro SIP. O ramal de contato é usado pelo servidor SIP remoto quando ele precisa enviar uma chamada para o Asterisk.
 
 .`,
+    'trunk.cnl': ``,
     'trunk.fromuser': `Muitos provedores exigem esta opção para autenticar, principalmente quando é autenticado via USER/SENHA. Deixe em branco para enviar o CallerID da conta SIP no From.`,
     'trunk.fromdomain': `Define o domínio no FROM: nas mensagens SIP ao atuar como um SIP UAC (cliente).`,
-    'trunk.language': `Idioma padrão usado para qualquer Playback()/Background().`,
+    'trunk.block_cid': ``,
     'trunk.context': `Somente altere se você souber o que está fazendo.`,
     'trunk.dtmfmode': `Tipo de DTMF. Clique para mais informaçōes|https://www.voip-info.org/asterisk-dtmf/.`,
     'trunk.insecure': `Insecure. Clique para mais informaçōes|https://www.voip-info.org/asterisk-sip-insecure/.`,
@@ -896,7 +908,8 @@ Digamos que queira adicionar um MACRO no tronco, estão neste campo, adicionar p
 useragent=meu agente
 
 .`,
-    'trunk.cnl': ``,
+    'trunk.cid_add': ``,
+    'trunk.cid_remove': ``,
     //GRUPO DE TRONCOS
     'trunkgroup.name': `Nome para o grupo de troncos, recomendável usar nomes amigáveis para facilitar a administração das tarifas.`,
     'trunkgroup.type': `Tipo.||É como o sistema vai ordenar os troncos que pertence ao grupo.
@@ -911,10 +924,10 @@ O MagnusBilling tentará enviar a chamada para o próximo tronco do grupo desde 
 
 
 .`,
-    'trunkgroup.id_trunk': `Selecionar os troncos que pertenceram a este grupo. Se for selecionado o tipo, em ordem, então selecione os troncos na ordem desejada.`,
     'trunkgroup.weight': `Esta opção é para balancear as chamadas por peso.||Exemplo. 
 
 Digamos que tenha selecionado 3 troncos, e você deseja enviar 1 chamada para primeiro tronco, 2 para o segundo e 1 para o terceiro, então, neste exemplo, coloque neste campo 1,2,1.`,
+    'trunkgroup.id_trunk': `Selecionar os troncos que pertenceram a este grupo. Se for selecionado o tipo, em ordem, então selecione os troncos na ordem desejada.`,
     //ERROS TRONCO
     'trunksipcodes.ip': ``,
     'trunksipcodes.code': ``,
@@ -969,6 +982,7 @@ Regra 5 -> números que iniciam com qualquer valor e tem 11 dígitos, será adic
     'user.phone': `Telefone fixo.`,
     'user.mobile': `Telefone celular.`,
     'user.email': `Email, é necessário para o envio de notificaçōes do sistema.`,
+    'user.email2': `Email 2`,
     'user.doc': `Documento do cliente.`,
     'user.vat': `Usado em alguns métodos de pagamento.`,
     'user.contract_value': `Valor do contrato`,
@@ -977,10 +991,12 @@ Regra 5 -> números que iniciam com qualquer valor e tem 11 dígitos, será adic
     'user.credit_notification_daily': `Se ativar esta opção o MagnusBilling vai enviar um email diariamente com o saldo do cliente. Você pode editar o email que será enviado no menu Configurações submenu Modelo de Emails.`,
     'user.creditlimit': `Somente usado para Pos-Pago. O cliente poderá ligar até chegar a este limite negativo.`,
     'user.credit_notification': `Se o crédito do cliente ficar menor que está campo, MagnusBilling vai enviar um email para o cliente informando que está com pouco crédito. NECESSÁRIO TER CADASTRADO UM SERVIDOR SMTP NO MENU CONFIGURAÇŌES.`,
+    'user.email_services': `Ativa ou não as notificaçōes por email dos serviços`,
+    'user.email_did': `Ativa ou não as notificaçōes por email dos DIDs`,
     'user.enableexpire': `Ativar expiração. Necessário informar a data da expiração no campo Data de expiração.`,
     'user.expirationdate': `Data que este cliente não poderá mais efetuar chamadas.`,
     'user.calllimit': `Chamadas simultâneas permitidas para este usuário.`,
-    'user.calllimit_error': `Sinalização a ser enviada caso o limite de chamadas for superador.`,
+    'user.inbound_call_limit': ``,
     'user.mix_monitor_format': `Formato que será usado para gravar as chamadas.`,
     'user.callshop': `Ativa o módulo CallShop. Somente ative se realmente for usar. É necessário dar permissōes ao grupo selecionado.`,
     'user.disk_space': `Espaço em GB que o usuário poderá usar com as gravaçōes. Coloque -1 para deixar sem limite.É necessário adicionar no cron o seguinte comando php /var/www/html/mbilling/cron.php UserDiskSpace .`,
@@ -994,9 +1010,6 @@ Regra 5 -> números que iniciam com qualquer valor e tem 11 dígitos, será adic
     'user.transfer_dbbl_rocket': `Esta função não está disponível no Brasil. Somente usado para recarga de celulares em alguns países.`,
     'user.transfer_dbbl_rocket_profit': `Esta função não está disponível no Brasil. Somente usado para recarga de celulares em alguns países.`,
     'user.transfer_show_selling_price': `Esta função não está disponível no Brasil. Somente usado para recarga de celulares em alguns países.`,
-    'user.email2': `Email 2`,
-    'user.email_services': `Ativa ou não as notificaçōes por email dos serviços`,
-    'user.email_did': `Ativa ou não as notificaçōes por email dos DIDs`,
     //HISTóRICO CLIENTES
     'userhistory.id_user': ``,
     'userhistory.date': ``,
@@ -1006,6 +1019,7 @@ Regra 5 -> números que iniciam com qualquer valor e tem 11 dígitos, será adic
     'userrate.rateinitial': `Novo preço de venda para este prefixo.`,
     'userrate.initblock': `Mínimo de venda.`,
     'userrate.billingblock': `Bloco de venda.`,
+    'userrate.id_user': ``,
     //VOUCHER
     'voucher.credit': `Valor do VOUCHER. Clique para saber como usar os VOUCHERs.|https://wiki.magnusbilling.org/pt_BR/source/how_to_use_voucher.html.`,
     'voucher.id_plan': `Plano que será vinculado ao cliente que usar este VOUCHER.`,

@@ -21,7 +21,7 @@ Functions
 * Complete WEB panel for the administrator, reseller and customers.
 
 Supported functions
-==================
+===================
 
 +-------------------------+-----------------------+-----------------------+----------------------+
 | SoftSwitch 4 & 4        | CallBack              | Packages offer        | Paypal               |
@@ -30,12 +30,11 @@ Supported functions
 +-------------------------+-----------------------+-----------------------+----------------------+
 | CallingCard             | CidCallBack           | Services              |    Ivr               |
 +-------------------------+-----------------------+-----------------------+----------------------+
-|  DID numbers            | SIP & IAX             |            and more...  
+|  DID numbers            | SIP & IAX             | and more...           |                      |
 +-------------------------+-----------------------+-----------------------+----------------------+
 
 
 .. _Asterisk: http://www.asterisk.org
 .. _Canal youtube: https://www.youtube.com/channel/UCish_6Lxfkh29n4CLVEd90Q
 .. _MagnusBilling: https://www.magnusbilling.org
-
 

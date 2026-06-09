@@ -168,3 +168,13 @@ Secret do cliente
 
 
 
+
+.. _methodPay-payment-method:
+
+Métodos de Pagamento
+---------------------
+
+| Método de pagamento disponibilizado aos usuários para adicionar crédito ou pagar faturas.
+
+
+

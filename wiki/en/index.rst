@@ -37,7 +37,7 @@ Welcome to MagnusBilling 7 wiki.
    tts.rst
    offer.rst
    how_to_use_voucher.rst
-   conf.rst
+   config.rst
 
 .. toctree::
    :caption: AI Knowledge Base
@@ -70,5 +70,3 @@ Indices and tables
 
 * :ref:`genindex`
 * :ref:`search`
-* :ref:`glossary`
-

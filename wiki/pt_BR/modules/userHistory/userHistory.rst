@@ -4,7 +4,7 @@
 Usuário
 --------
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Usuário relacionado a este registro de histórico.
 
 
 
@@ -14,17 +14,17 @@ Usuário
 Data
 ----
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Data e hora em que este registro de histórico foi criado.
 
 
 
 
 .. _userHistory-description:
 
+description
+-----------
 
-
-
-| Nós ainda não escrevemos a descrição deste campo.
+| Descrição da ação ou alteração registrada no histórico do usuário.
 
 
 

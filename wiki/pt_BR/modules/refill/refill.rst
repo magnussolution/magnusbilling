@@ -44,7 +44,7 @@ Adicionar pagamento
 Data
 ----
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Data em que a recarga, pagamento ou ajuste de crédito foi registrado.
 
 
 
@@ -64,7 +64,7 @@ Fatura número
 Comprovante
 -----------
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Imagem do comprovante de pagamento anexada a esta recarga.
 
 
 

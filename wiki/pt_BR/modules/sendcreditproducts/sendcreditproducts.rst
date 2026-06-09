@@ -11,8 +11,8 @@ País
 
 .. _sendCreditProducts-operator-name:
 
-Nome do operador
-----------------
+Operator name
+-------------
 
 | Nome da operadora.
 
@@ -21,7 +21,7 @@ Nome do operador
 
 .. _sendCreditProducts-operator-id:
 
-Operador ID
+Operator ID
 -----------
 
 | Id da operadora.
@@ -41,7 +41,7 @@ SkuCode
 
 .. _sendCreditProducts-product:
 
-Produto
+Product
 -------
 
 | Produto.
@@ -51,8 +51,8 @@ Produto
 
 .. _sendCreditProducts-send-value:
 
-Enviar valor
-------------
+Send value
+----------
 
 | Valor a ser enviado.
 
@@ -61,8 +61,8 @@ Enviar valor
 
 .. _sendCreditProducts-wholesale-price:
 
-Preço atacado
---------------
+Wholesale price
+---------------
 
 | Preço de venda.
 
@@ -101,10 +101,10 @@ Descrição
 
 .. _sendCreditProducts-retail-price:
 
-Preço de venda
----------------
+Retail price
+------------
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Preço de varejo cobrado do cliente por este produto de envio de crédito.
 
 
 
@@ -114,7 +114,7 @@ Preço de venda
 Tipo
 ----
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Método ou provedor usado para enviar o crédito ao destino.
 
 
 

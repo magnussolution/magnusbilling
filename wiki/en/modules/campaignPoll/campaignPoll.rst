@@ -82,9 +82,9 @@ Option 0
 |     Press 2 for option two
 |     Press 3 for option three
 |     
-|     .. image:: ../img/poll_options.png
+|     .. image:: ../../img/poll_options.png
    :scale: 100% 
-|     
+
 |     These settings will be useful when reading the poll summary.
 | 
 |     
@@ -178,6 +178,16 @@ Option 9
 --------
 
 | Describe the option. Read the description of option 0.
+
+
+
+
+.. _campaignPoll-option10:
+
+Option 10
+---------
+
+| Audio option played when the callee presses digit 10 in the poll.
 
 
 

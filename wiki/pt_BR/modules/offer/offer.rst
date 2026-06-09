@@ -27,9 +27,9 @@ Quantidade gratuita
 | Neste campo é onde deve ser configurado a quantidade disponível no pacote.
 | Exemplo:
 | 
-| * Chamadas ilimitadas: Nesta opção este campo fica sem uso, pois se está permitindo ligar de forma ilimitada, sem nenhum controle.
-| * Chamadas gratuitas: Colocar a quantidade de chamadas que deseja dar gratís.
-| * Segundos gratís: Colocar quantos segundos deseja permitir o cliente chamar.
+| \* Chamadas ilimitadas: Nesta opção este campo fica sem uso, pois se está permitindo ligar de forma ilimitada, sem nenhum controle.
+| \* Chamadas gratuitas: Colocar a quantidade de chamadas que deseja dar gratís.
+| \* Segundos gratís: Colocar quantos segundos deseja permitir o cliente chamar.
 | 
 | .
 
@@ -44,8 +44,8 @@ Tipo de tarifação
 | Este é o período que será calculado o pacote.
 | Veja a descrição:
 | 
-| * Mensal: O sistema vai verificar se do dia de ativação do plano + 30 dias o cliente chegou ao limite do pacote.
-| * Semanal: O sistema vai verificar se do dia de ativação do plano + 7 dias o cliente chegou ao limite do pacote.
+| \* Mensal: O sistema vai verificar se do dia de ativação do plano + 30 dias o cliente chegou ao limite do pacote.
+| \* Semanal: O sistema vai verificar se do dia de ativação do plano + 7 dias o cliente chegou ao limite do pacote.
 | 
 | Quando o cliente chegar no limite do pacote, o MagnusBilling vai verificar se o usuário tem crédito para completar a chamada, caso o usuário não tenha crédito a chamada será finalizada.
 | 

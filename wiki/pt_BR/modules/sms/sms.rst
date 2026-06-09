@@ -44,7 +44,7 @@ De
 Resposta do provedor
 --------------------
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Resposta retornada pelo provedor de SMS depois que o MagnusBilling enviou a mensagem.
 
 
 

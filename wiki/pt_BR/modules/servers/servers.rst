@@ -104,6 +104,16 @@ Status
 
 
 
+.. _servers-id-server:
+
+id_server
+---------
+
+| Identificador do servidor MagnusBilling usado por este registro.
+
+
+
+
 .. _servers-description:
 
 Descrição

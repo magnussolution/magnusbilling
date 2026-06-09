@@ -34,7 +34,7 @@ Bem vindo à documentação do MagnusBilling 7 em português.
    tts.rst
    offer.rst
    how_to_use_voucher.rst
-   conf.rst
+   config.rst
 
 .. toctree::
    :caption: Configaçōes do Asterisk
@@ -79,4 +79,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`search`
 * :ref:`glossary`
-

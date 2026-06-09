@@ -91,46 +91,66 @@ Critical Directory Map
       StandardCallAgi.php
       SearchTariff.php
 
+    script/
+      install.sh     # server installation script
+      database.sql   # base database schema
+
 Question Router (AI Playbook)
 ==============================
 
 Use this routing table to choose the first file to inspect.
 
-Question: login, session, permission, menu
-  Start at: protected/controllers/AuthenticationController.php
-  Support: protected/components/BaseController.php, protected/components/Controller.php
+* Login, session, permission, menu:
+  start at ``protected/controllers/AuthenticationController.php``.
+  Support files are ``protected/components/BaseController.php`` and
+  ``protected/components/Controller.php``.
 
-Question: panel CRUD (user, sip, trunk, rate, did, queue)
-  Start at: protected/controllers/<Entity>Controller.php
-  Support: protected/models/<Entity>.php, app/store/<Entity>.js
+* Panel CRUD (user, sip, trunk, rate, did, queue):
+  start at ``protected/controllers/<Entity>Controller.php``.
+  Support files are ``protected/models/<Entity>.php`` and
+  ``app/store/<Entity>.js``.
 
-Question: outbound call, billing, timeout, trunk selection
-  Start at: resources/asterisk/StandardCallAgi.php
-  Support: resources/asterisk/CalcAgi.php, resources/asterisk/SearchTariff.php,
-           resources/asterisk/AuthenticateAgi.php
+* Outbound call, billing, timeout, trunk selection:
+  start at ``resources/asterisk/StandardCallAgi.php``.
+  Support files are ``resources/asterisk/CalcAgi.php``,
+  ``resources/asterisk/SearchTariff.php``, and
+  ``resources/asterisk/AuthenticateAgi.php``.
 
-Question: DID inbound, queue, IVR, destination routing
-  Start at: resources/asterisk/DidAgi.php
-  Support: resources/asterisk/IvrAgi.php, resources/asterisk/QueueAgi.php,
-           Did/Diddestination models and pkg_did/pkg_did_destination tables
+* DID inbound, queue, IVR, destination routing:
+  start at ``resources/asterisk/DidAgi.php``.
+  Support files are ``resources/asterisk/IvrAgi.php``,
+  ``resources/asterisk/QueueAgi.php``, Did/Diddestination models, and
+  ``pkg_did`` / ``pkg_did_destination`` tables.
 
-Question: special commands (*120 voucher, *7 pickup, queue pause)
-  Start at: resources/asterisk/mbilling.php
+* Special commands (``*120`` voucher, ``*7`` pickup, queue pause):
+  start at ``resources/asterisk/mbilling.php``.
 
-Question: global runtime settings (language, version, timeout, currency)
-  Start at: pkg_configuration via Configuration model
-  Support: protected/components/LoadConfig.php
+* Global runtime settings (language, version, timeout, currency):
+  start at ``pkg_configuration`` through the Configuration model.
+  Support file is ``protected/components/LoadConfig.php``.
 
-Question: UI issue after login/session check
-  Start at: classic/src/Application.js
-  Support: endpoint index.php/authentication/check
+* UI issue after login/session check:
+  start at ``classic/src/Application.js``.
+  Support endpoint is ``index.php/authentication/check``.
+
+* Payment, buy credit, gateway callback, refill side effect:
+  start at ``protected/controllers/BuyCreditController.php`` or
+  ``protected/controllers/<Gateway>Controller.php``.
+  Support files are ``protected/models/Refill.php``,
+  ``protected/models/BuyCredit.php``, and ``protected/models/Methodpay.php``.
+
+* Install, update, migration, cron operation:
+  start at ``script/install.sh``, ``cron.php``,
+  ``protected/config/cron.php``, and
+  ``protected/commands/UpdateMysqlCommand.php``.
+  Support files are ``protected/commands/*.php`` and ``script/database.sql``.
 
 Frontend-to-Backend Mental Model
 ================================
 
 Repeated pattern:
 
-1. ExtJS Store calls endpoint index.php/<controller>/<action>
+1. ExtJS Store calls endpoint ``index.php/<controller>/<action>``
 2. Yii Controller applies filters/permissions
 3. ActiveRecord Model handles persistence
 4. Controller returns JSON to grid/form
@@ -142,6 +162,10 @@ Recommended tracing sequence:
 - Identify the model being used
 - Validate fields and rules in model
 - Confirm impacted table (pkg_* naming)
+
+Public callbacks are different from authenticated ExtJS module calls. Payment,
+SMS, WHMCS, Joomla, signup, and similar integration controllers may expose
+provider-specific actions that do not follow the normal grid/form CRUD pattern.
 
 Call Flow Summary
 =================
@@ -200,6 +224,8 @@ Recommended Reference Files
 - wiki/pt_BR/yii_backend.rst
 - wiki/pt_BR/extjs_frontend.rst
 - wiki/pt_BR/database_schema.rst
+- ia-docs/indexes/documentation_audit_report.md
+- ia-docs/sources/top30_operational_tables.md
 
 Maintenance Notes
 =================

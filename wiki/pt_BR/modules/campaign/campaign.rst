@@ -121,8 +121,8 @@ Reprocessar automático
 
 .. _campaign-id-phonebook:
 
-
-
+id_phonebook
+------------
 
 | Selecione as agendas que esta campanha vai usar.
 
@@ -187,8 +187,8 @@ Destino
 | Clique para mais detalhes
 | Temos duas opcōes, conforme o tipo selecionado, personalizado ou grupo.
 | 
-| * Grupo, o nome do grupo colocado aqui, deve ser exatamente o mesmo do grupo das contas SIP que deseja receber as chamadas, vai chamar todas as contas SIP do grupo. 
-| * Personalizado, então é possível a execução de qualquer opção válida do comando DIAL do asterisk, exemplo: SIP/contaSIP,45,tTr.
+| \* Grupo, o nome do grupo colocado aqui, deve ser exatamente o mesmo do grupo das contas SIP que deseja receber as chamadas, vai chamar todas as contas SIP do grupo. 
+| \* Personalizado, então é possível a execução de qualquer opção válida do comando DIAL do asterisk, exemplo: SIP/contaSIP,45,tTr.
 
 
 
@@ -352,8 +352,8 @@ Descrição ou texto do SMS
 | Este campo tem uso diferente dependendo se a campanha é VOZ ou SMS.
 | Tipos possíveis:
 | 
-| * VOZ, neste caso este campo é simplesmente a descrição da campanha. 
-| * SMS, quando a campanha for do tipo SMS, então o texto colocado aqui será o SMS que será enviado aos números das agendas da campanha. 
+| \* VOZ, neste caso este campo é simplesmente a descrição da campanha. 
+| \* SMS, quando a campanha for do tipo SMS, então o texto colocado aqui será o SMS que será enviado aos números das agendas da campanha. 
 | 
 | No caso de SMS, você pode usar a variável %name% onde você deseja usar o nome do dono do número, exemplo:
 | 
@@ -382,8 +382,8 @@ Descrição ou texto do SMS
 Audio 1 TTS
 -----------
 
-| Com está opção de TTS, o sistema vai gerar o áudio 1 da campanha via TTS, text to speech, tradução livre, texto para áudio
-| Para que está opção funcione, será necessário a configuração da url TTS no menu Configurações, sub menu Ajustes, opção Tts URL.
+| Com esta opção de TTS, o sistema vai gerar o áudio 1 da campanha via TTS, text to speech, tradução livre, texto para áudio.
+| Para que esta opção funcione, será necessário configurar a URL TTS no menu Configurações, submenu Ajustes, opção Tts URL.
 | 
 | Clique neste link para saber mais cobre como configurar TTS no Magnusbilling https://wiki.magnusbilling.org/pt_BR/source/tts.html
 | .

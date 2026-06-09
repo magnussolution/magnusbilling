@@ -44,7 +44,7 @@ From
 Provider result
 ---------------
 
-| We did not write the description to this field.
+| Response returned by the SMS provider after MagnusBilling sent the message.
 
 
 

@@ -24,11 +24,11 @@ Package type
 Free time to call
 -----------------
 
-| In this field is where the package avaible quantity configuration will occur.
+| In this field is where the package available quantity configuration will occur.
 | Example:
-| * Unlimited calls: In this option the field is blank, because will be allowed to call without any control.
-| * Free calls: Configure the amount of free calls that you want to give.
-| * Free seconds: Configure the amount of seconds that you want to allow the client to call.
+| \* Unlimited calls: In this option the field is blank, because will be allowed to call without any control.
+| \* Free calls: Configure the amount of free calls that you want to give.
+| \* Free seconds: Configure the amount of seconds that you want to allow the client to call.
 
 
 
@@ -40,8 +40,8 @@ Billing type
 
 | This is the period that the package will be calculated.
 |  Look the description:
-| * Monthly: The system will verify the day of the plan activation + 30 days that the client reached the package limit.
-| * Weekly: The system will verify the day of the plan activation + 7 days that the client reached the package limit.
+| \* Monthly: The system will verify the day of the plan activation + 30 days that the client reached the package limit.
+| \* Weekly: The system will verify the day of the plan activation + 7 days that the client reached the package limit.
 
 
 

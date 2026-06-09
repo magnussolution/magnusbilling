@@ -28,10 +28,10 @@ Repetir se apertar opção inválida
 | O que é opção inválida?
 | 
 | É quando a opção digitada pelo cliente está vazia na TAB opções. Conforme a imagem abaixo.
-| 
-.. image:: ../img/pool_blank.png
+
+.. image:: ../../img/pool_blank.png
    :scale: 100%
-| 
+
 | .
 
 
@@ -42,7 +42,7 @@ Repetir se apertar opção inválida
 Solicitar autorização
 -----------------------
 
-| Em alguns casos, é necessário solicitar autorização para executar a enquete, nestes casos, deixe está opção para sim
+| Em alguns casos, é necessário solicitar autorização para executar a enquete. Nestes casos, deixe esta opção como sim.
 | Um exemplo de caso seria:
 | 
 | Digamos que seja necessário enviar uma campanha com o seguinte áudio.
@@ -113,10 +113,10 @@ Opção 0
 | 
 | Neste exemplo você completaria as opções da seguinte forma
 | 
-| 
-.. image:: ../img/poll_options.png
+
+.. image:: ../../img/poll_options.png
    :scale: 100% 
-| 
+
 | Estas opções será útil para ver os relatórios no menu Relatório de Enquete
 | 
 | .
@@ -210,6 +210,16 @@ Opção 9
 ---------
 
 | Descreva a opção, veja a descrição da opção 0.
+
+
+
+
+.. _campaignPoll-option10:
+
+Option 10
+---------
+
+| Áudio da opção reproduzida quando a pessoa chamada pressiona o dígito 10 na enquete.
 
 
 

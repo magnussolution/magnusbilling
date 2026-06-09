@@ -11,13 +11,13 @@ IP
 
 .. _firewall-action:
 
-Perm ban
---------
+Action
+------
 
-| With this option marked on YES, the IP will be placed on the ip-blacklist list of fail2ban and will be blocked forever. 
-| The option will NOT block the IP momentarily according the parameters of the file /etc/fail2ba/jail.local.
+| With this option set to YES, the IP will be added to the fail2ban ip-blacklist and will remain blocked permanently.
+| The NO option blocks the IP temporarily according to the parameters in /etc/fail2ban/jail.local.
 |     
-|     By default the IP is going to stay blocked for 10 minutes
+|     By default, the IP stays blocked for 10 minutes.
 
 
 
@@ -27,8 +27,8 @@ Perm ban
 Description
 -----------
 
-| These informations are captured from the log file /var/log/fail2ban.log 
-|  It's possible to track this LOG with the command 
+| This information is captured from the log file /var/log/fail2ban.log.
+| You can follow this log with the command 
 |     
 |     tail -f /var/log/fail2ban.log
 

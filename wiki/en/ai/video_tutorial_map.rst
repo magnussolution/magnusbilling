@@ -25,7 +25,7 @@ Primary files
 - protected/config/main.php
 - protected/components/BaseController.php
 - protected/components/Controller.php
-- protected/controllers/*.php
+- ``protected/controllers/*.php``
 
 Video 2 - Login
 ===============
@@ -71,7 +71,7 @@ Likely focus
 Primary files
 -------------
 
-- protected/models/*.php
+- ``protected/models/*.php``
 - protected/components/Model.php
 - protected/components/BaseController.php
 

@@ -84,7 +84,7 @@ Codec
 Provider tech
 -------------
 
-| You need install appropriate drive to use card like dgv extra Dongle.
+| You need install appropriate driver to use card like DGV extra Dongle.
 
 
 
@@ -135,12 +135,22 @@ Register string
 
 
 
+.. _trunk-cnl:
+
+Enable CNL
+----------
+
+| Enable CNL lookup on this trunk to apply Brazilian numbering and routing information.
+
+
+
+
 .. _trunk-fromuser:
 
 Fromuser
 --------
 
-| Several providers demand this option to authenticate, primarly when it's authenticated via user and paswword. Let it blank to send the CallerID of the SIP user of From.
+| Some providers require this value for authentication, especially when the trunk authenticates by username and password. Leave it blank to send the SIP user's CallerID in the From header.
 
 
 
@@ -150,17 +160,17 @@ Fromuser
 Fromdomain
 ----------
 
-| Defines the FROM domain: in the SIP messages when act like a UAC SIP (client).
+| Domain used in the From header of SIP messages when MagnusBilling acts as a SIP UAC client.
 
 
 
 
-.. _trunk-language:
+.. _trunk-block-cid:
 
-Language
---------
+Block CID REGEX
+---------------
 
-| Default launguage used in any Playback()/Background().
+| Regular expression used to block calls by CallerID before sending them through this trunk.
 
 
 
@@ -180,7 +190,7 @@ Context
 Dtmfmode
 --------
 
-| DMTF type. You can see more details at the link `https://www.voip-info.org/asterisk-dtmf/.  <https://www.voip-info.org/asterisk-dtmf/.>`_.
+| DTMF mode used by this trunk. You can see more details at the link `https://www.voip-info.org/asterisk-dtmf/.  <https://www.voip-info.org/asterisk-dtmf/.>`_.
 
 
 
@@ -190,7 +200,7 @@ Dtmfmode
 Insecure
 --------
 
-| Insecure. You can see more details at the link `https://www.voip-info.org/asterisk-sip-insecure/.  <https://www.voip-info.org/asterisk-sip-insecure/.>`_.
+| Asterisk insecure option used for this trunk. You can see more details at the link `https://www.voip-info.org/asterisk-sip-insecure/.  <https://www.voip-info.org/asterisk-sip-insecure/.>`_.
 
 
 
@@ -210,7 +220,7 @@ Max use
 NAT
 ---
 
-| Is the trunk behind NAT. You can see more details at the link `https://www.voip-info.org/asterisk-sip-nat/.  <https://www.voip-info.org/asterisk-sip-nat/.>`_.
+| NAT setting used by this trunk. You can see more details at the link `https://www.voip-info.org/asterisk-sip-nat/.  <https://www.voip-info.org/asterisk-sip-nat/.>`_.
 
 
 
@@ -220,7 +230,7 @@ NAT
 Directmedia
 -----------
 
-| If activated, Asterisk will try to send the RTP media directly between your client and provider. It's necessary to active on the trunk as well. You can see more details at the link `https://www.voip-info.org/asterisk-sip-canreinvite/.  <https://www.voip-info.org/asterisk-sip-canreinvite/.>`_.
+| If enabled, Asterisk tries to send RTP media directly between the client and the provider. Direct media must also be supported by the trunk. You can see more details at the link `https://www.voip-info.org/asterisk-sip-canreinvite/.  <https://www.voip-info.org/asterisk-sip-canreinvite/.>`_.
 
 
 
@@ -230,17 +240,17 @@ Directmedia
 Qualify
 -------
 
-| Sent the "OPTION" package to verify if the user is online.
-| Sintax:
+| Sends SIP OPTIONS packets to verify whether the trunk is online.
+| Syntax:
 |     
-| qualify = xxx | no | yes
+| qualify = xxx \| no \| yes
 |             
-| Where the XXX is the number of milliseconds used. If "yes", the time configurated in sip.conf is used, 2 seconds is the standard.
+| XXX is the number of milliseconds used as the timeout. If the value is "yes", Asterisk uses the time configured in sip.conf. The common default is 2 seconds.
 |         
-| If you activate "qualify", the Asterisk will sent the command "OPTION" to SIP peer regulary to verify if the device is still online.
-| If the device don't answer the "OPTION" in the set period of time, Asterisk will consider the device offline for future calls.
+| When qualify is enabled, Asterisk sends OPTIONS packets regularly to verify whether the trunk is still online.
+| If the trunk does not answer within the configured time, Asterisk considers it offline for future calls.
 |         
-| This status can be verified with the funcion "sip show peer XXXX", this funcion will only provide informations of status for the SIP peer that possess "qualify = yes.
+| This status can be verified with the "sip show peer XXXX" command. Asterisk only shows qualify status when the peer has qualify enabled.
 
 
 
@@ -250,7 +260,7 @@ Qualify
 Type
 ----
 
-| Default type is "friend", in other words they can make and receive calls. You can see more details at the link `https://www.voip-info.org/asterisk-sip-type/.  <https://www.voip-info.org/asterisk-sip-type/.>`_.
+| Default type is "friend", which allows the trunk to make and receive calls. You can see more details at the link `https://www.voip-info.org/asterisk-sip-type/.  <https://www.voip-info.org/asterisk-sip-type/.>`_.
 
 
 
@@ -260,7 +270,7 @@ Type
 Disallow
 --------
 
-| In this option is possible to deactivate codecs. Use "Use all" to deactive all codects and make it avaible to the user only what you selected below.
+| Codecs disabled for this trunk. Use "all" to disable all codecs, then enable only the codecs selected in the Allow field.
 
 
 
@@ -270,7 +280,7 @@ Disallow
 Sendrpid
 --------
 
-| Defines if one Remote-Party-ID SIP header task to be send.
+| Defines whether MagnusBilling sends the Remote-Party-ID SIP header.
 | The default is "no".
 |     
 | This field is frequently used by VoIP wholesalers providers to supply the callers identity, independently of the privacy settings (From SIP header).    
@@ -338,12 +348,22 @@ Parameters
 
 
 
-.. _trunk-cnl:
+.. _trunk-cid-add:
 
-Enable CNL
-----------
+CID Add prefix
+--------------
 
-| We did not write the description to this field.
+| Prefix added to the CallerID before the call is sent to this trunk.
+
+
+
+
+.. _trunk-cid-remove:
+
+CID Remove prefix
+-----------------
+
+| Prefix removed from the CallerID before the call is sent to this trunk.
 
 
 

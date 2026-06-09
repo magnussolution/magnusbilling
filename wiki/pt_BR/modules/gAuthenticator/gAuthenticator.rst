@@ -16,10 +16,10 @@ Status
 
 | Após ativar o TOKEN para o usuário, somente será possível logar usando o TOKEN gerado pelo APP do Google Aunthenticator.
 | Após ativar o TOKEN, no próximo login do usuário será solicitado que escaneie o QR CODE conforme a imagem abaixo
-| 
-.. image:: ../img/token.png
+
+.. image:: ../../img/token.png
    :scale: 100% 
-| 
+
 | Para escanear o código é necessário instalar a APP Google authenticator, este APP está disponível para download na loja de aplicativos IOS e Android.
 | 
 | É importante guardar o código manual mostrado na imagem, pois será com este código que será possível ativar o token em outro celular caso necessário.
