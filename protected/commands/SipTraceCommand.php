@@ -9,15 +9,21 @@ class SipTraceCommand extends CConsoleCommand
     {
         $device = '';
         if (isset($args[0])) {
-
-            if (substr($args[0], 0, 3) != 'log') {
-                $device = ' -d ' . $args[0];
-            } else if ($args[0] == 'log') {
+            if ($args[0] == 'log') {
                 define('DEBUG', 1);
             } elseif ($args[0] == 'logAll') {
                 define('DEBUG', 2);
+            } else {
+                $deviceName = (string) $args[0];
+                if (! preg_match('/^[A-Za-z0-9_.:-]+$/', $deviceName)) {
+                    Yii::log("Invalid SIPTrace device: " . $deviceName, 'error');
+                    die("Invalid SIPTrace device");
+                }
+                $device = ' -d ' . escapeshellarg($deviceName);
             }
-        } else {
+        }
+
+        if ( ! defined('DEBUG')) {
             define('DEBUG', 0);
         }
 
@@ -38,7 +44,18 @@ class SipTraceCommand extends CConsoleCommand
             $modelTrace = SipTrace::model()->find();
 
             if (isset($modelTrace->id)) {
-                $this->filter = $modelTrace->filter;
+                $filter  = $this->sanitizeFilter($modelTrace->filter);
+                $timeout = $this->sanitizeTimeout($modelTrace->timeout);
+                $port    = $this->sanitizePort($modelTrace->port);
+
+                if ($filter === false || $timeout === false || $port === false) {
+                    Yii::log("Invalid SIPTrace request: id " . $modelTrace->id, 'error');
+                    SipTrace::model()->deleteAll();
+                    sleep(2);
+                    continue;
+                }
+
+                $this->filter = $filter;
                 echo 'Fond filter ' . $this->filter;
             } else {
                 sleep(2);
@@ -46,14 +63,49 @@ class SipTraceCommand extends CConsoleCommand
             }
 
             LinuxAccess::exec('pkill -f ngrep');
-            echo $command = "ngrep -p  -W byline " . $modelTrace->filter . " -t port " . $modelTrace->port . $device . " >> " . $this->file_name;
+            echo $command = "ngrep -p -W byline " . escapeshellarg($filter) . " -t port " . $port . $device . " >> " . escapeshellarg($this->file_name);
 
-            $output = $this->PsExecute($command, $modelTrace->timeout, $modelTrace->filter);
+            $output = $this->PsExecute($command, $timeout, $filter);
         }
 
     }
 
-    public function PsExecute($command, $timeout = 58, $filter, $sleep = 2)
+    private function sanitizeFilter($filter)
+    {
+        $filter = trim((string) $filter);
+        if ($filter === '' || strlen($filter) > 50 || preg_match('/[\x00-\x1F\x7F]/', $filter)) {
+            return false;
+        }
+        return $filter;
+    }
+
+    private function sanitizeTimeout($timeout)
+    {
+        $timeout = trim((string) $timeout);
+        if ($timeout === '' || ! ctype_digit($timeout)) {
+            return false;
+        }
+        $timeout = (int) $timeout;
+        if ($timeout < 5 || $timeout > 300) {
+            return false;
+        }
+        return $timeout;
+    }
+
+    private function sanitizePort($port)
+    {
+        $port = trim((string) $port);
+        if ($port === '' || ! ctype_digit($port)) {
+            return false;
+        }
+        $port = (int) $port;
+        if ($port < 1 || $port > 65535) {
+            return false;
+        }
+        return $port;
+    }
+
+    public function PsExecute($command, $timeout = 58, $filter = '', $sleep = 2)
     {
         // First, execute the process, get the process ID
         $pid = $this->PsExec($command);

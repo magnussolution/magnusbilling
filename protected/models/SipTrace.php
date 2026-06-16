@@ -53,9 +53,8 @@ class SipTrace extends Model
     public function rules()
     {
         $rules = [
-            ['status,timeout,in_use', 'numerical', 'integerOnly' => true],
+            ['status,timeout,in_use,port', 'numerical', 'integerOnly' => true],
             ['filter', 'length', 'max' => 50],
-            ['port', 'length', 'max' => 7],
         ];
         return $this->getExtraField($rules);
     }

@@ -459,7 +459,7 @@ Sip Trace
 
 Este menu tem os seguintes campos
 
-:doc:`Sip Trace <siptrace/siptrace>`
+:doc:`Sip Trace <siptrace/sipTrace>`
 
 
 
@@ -764,7 +764,7 @@ Este menu tem os seguintes campos
    servers/servers
    trunkSipCodes/trunkSipCodes
    providerCNL/providerCNL
-   siptrace/siptrace
+   siptrace/sipTrace
    module/module
    groupuser/groupuser
    configuration/configuration

@@ -24,6 +24,15 @@ Bem vindo à documentação do MagnusBilling 7 em português.
    get_started/backup.rst
    get_started/update.rst
    get_started/reset_root_password.rst
+
+
+
+.. toctree::
+   :caption: Módulos pagos
+   :glob:
+   :maxdepth: 2
+
+   modulos_pagos/*
    
 .. toctree::
    :caption: Informações técnicas

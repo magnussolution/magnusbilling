@@ -591,6 +591,30 @@ class SipTraceController extends Controller
     public function actionStart()
     {
 
+        $filter     = isset($_POST['filter']) ? trim((string) $_POST['filter']) : '';
+        $timeoutRaw = isset($_POST['timeout']) ? trim((string) $_POST['timeout']) : '60';
+        $portRaw    = isset($_POST['port']) ? trim((string) $_POST['port']) : '5060';
+        $timeout    = ctype_digit($timeoutRaw) ? (int) $timeoutRaw : 0;
+        $port       = ctype_digit($portRaw) ? (int) $portRaw : 0;
+
+        $error = null;
+        if ($filter === '' || strlen($filter) > 50 || preg_match('/[\x00-\x1F\x7F]/', $filter)) {
+            $error = Yii::t('zii', 'Invalid filter');
+        } else if (! ctype_digit($timeoutRaw) || $timeout < 5 || $timeout > 300) {
+            $error = Yii::t('zii', 'Invalid timeout');
+        } else if (! ctype_digit($portRaw) || $port < 1 || $port > 65535) {
+            $error = Yii::t('zii', 'Invalid port');
+        }
+
+        if ($error !== null) {
+            echo json_encode([
+                $this->nameSuccess => false,
+                $this->nameMsg     => $error,
+                'errors'           => $error,
+            ]);
+            exit;
+        }
+
         $modelTrace = SipTrace::model()->find();
 
         if (isset($modelTrace->id)) {
@@ -601,12 +625,19 @@ class SipTraceController extends Controller
             exit;
         }
         $modelTrace          = new SipTrace();
-        $modelTrace->filter  = $_POST['filter'];
-        $modelTrace->timeout = $_POST['timeout'];
-        $modelTrace->port    = $_POST['port'];
+        $modelTrace->filter  = $filter;
+        $modelTrace->timeout = $timeout;
+        $modelTrace->port    = $port;
         $modelTrace->status  = 1;
         $modelTrace->in_use  = 0;
-        $modelTrace->save();
+        if (! $modelTrace->save()) {
+            echo json_encode([
+                $this->nameSuccess => false,
+                $this->nameMsg     => Yii::t('zii', 'Error'),
+                'errors'           => $modelTrace->getErrors(),
+            ]);
+            exit;
+        }
 
         echo json_encode([
             $this->nameSuccess => true,

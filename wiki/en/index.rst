@@ -27,7 +27,14 @@ Welcome to MagnusBilling 7 wiki.
    get_started/update.rst
    get_started/first_call.rst
    get_started/reset_root_password.rst
-   
+
+.. toctree::
+   :caption: Paid modules
+   :glob:
+   :maxdepth: 2
+
+   paid_modules/*
+
 .. toctree::
    :caption: Technical Information
    :maxdepth: 1
