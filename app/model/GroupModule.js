@@ -17,7 +17,7 @@ Ext.define('MBilling.model.GroupModule', {
         name: 'idModuletext',
         type: 'string',
         convert: function(value) {
-            return eval(value);
+            return value;
         }
     }, {
         name: 'show_menu',
