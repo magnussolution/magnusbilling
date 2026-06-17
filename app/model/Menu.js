@@ -24,7 +24,7 @@ Ext.define('MBilling.model.Menu', {
     fields: [{
         name: 'text',
         convert: function(value) {
-            return (value.indexOf('t(') !== -1) ? eval(value) : value;
+            return value;
         }
     }, 'module', 'action', 'iconCls', 'rows']
 });
