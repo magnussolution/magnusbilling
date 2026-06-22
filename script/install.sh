@@ -23,18 +23,42 @@ if [[ -f /var/www/html/mbilling/index.php ]]; then
   exit;
 fi
 get_linux_distribution ()
-{ 
-    if [ -f /etc/debian_version ]; then
-        DIST="DEBIAN"
-        HTTP_DIR="/etc/apache2/"
-        HTTP_CONFIG=${HTTP_DIR}"apache2.conf"
-        MYSQL_CONFIG="/etc/mysql/mariadb.conf.d/50-server.cnf"
-        APACHE_USER="www-data"
-    else
-        DIST="OTHER"
-        echo 'Installation does not support your distribution'
+{
+    if [ ! -r /etc/os-release ]; then
+        echo 'Unable to identify the Linux distribution (/etc/os-release not found).'
         exit 1
     fi
+
+    . /etc/os-release
+
+    if [ "$ID" != "debian" ]; then
+        echo "MagnusBilling 7 supports only Debian 11 and Debian 12."
+        echo "Detected distribution: ${PRETTY_NAME:-unknown}."
+        exit 1
+    fi
+
+    case "$VERSION_ID" in
+        11|12)
+            ;;
+        13)
+            echo "Debian 13 is not supported by MagnusBilling 7."
+            echo "Please use MagnusBilling 8 on Debian 13."
+            exit 1
+            ;;
+        *)
+            echo "Debian ${VERSION_ID:-unknown} is not supported by MagnusBilling 7."
+            echo "MagnusBilling 7 supports only Debian 11 and Debian 12."
+            exit 1
+            ;;
+    esac
+
+    DIST="DEBIAN"
+    HTTP_DIR="/etc/apache2/"
+    HTTP_CONFIG=${HTTP_DIR}"apache2.conf"
+    MYSQL_CONFIG="/etc/mysql/mariadb.conf.d/50-server.cnf"
+    APACHE_USER="www-data"
+
+    echo "Supported operating system detected: Debian $VERSION_ID."
 }
 
 
@@ -90,7 +114,17 @@ apt-get install -y unzip git libcurl4-openssl-dev htop sngrep firewalld fail2ban
 apt-get install -y rsyslog
 apt-get install -y whiptail
 
-PHP_INI=$(php -i | grep /.+/php.ini -oE)
+PHP_INI_FILES=()
+for php_ini in /etc/php/*/cli/php.ini /etc/php/*/apache2/php.ini /etc/php/*/fpm/php.ini; do
+    if [ -f "$php_ini" ]; then
+        PHP_INI_FILES+=("$php_ini")
+    fi
+done
+
+if [ "${#PHP_INI_FILES[@]}" -eq 0 ]; then
+    echo "Unable to find a PHP configuration file under /etc/php."
+    exit 1
+fi
 
 mkdir -p /var/www/html/mbilling
 cd /var/www/html/mbilling
@@ -184,19 +218,57 @@ AddType application/octet-stream .csv
 ' >> ${HTTP_CONFIG}
 
 
-rm -rf ${PHP_INI}_old
-cp -rf ${PHP_INI} ${PHP_INI}_old
+set_php_ini_value ()
+{
+    local php_ini_file="$1"
+    local php_ini_key="$2"
+    local php_ini_value="$3"
+    local escaped_key="${php_ini_key//./\\.}"
 
-sed -i "s/upload_max_filesize = 2M/upload_max_filesize = 3M /" ${PHP_INI}
-sed -i "s/post_max_size = 8M/post_max_size = 20M/" ${PHP_INI}
-sed -i "s/max_execution_time = 30/max_execution_time = 90/" ${PHP_INI}
-sed -i "s/max_input_time = 60/max_input_time = 120/" ${PHP_INI}
-sed -i '/date.timezone/s/= .*/= '$phptimezone'/' ${PHP_INI}
-sed -i "s/session.cookie_secure = 1/" ${PHP_INI}
-sed -i "s/memory_limit = 16M/memory_limit = 512M /" ${PHP_INI}
-sed -i "s/memory_limit = 128M/memory_limit = 512M /" ${PHP_INI}
-sed -i 's/^;*\s*phar.readonly\s*=.*/phar.readonly = On/' ${PHP_INI}
-sed -i 's/^;*\s*phar.require_hash\s*=.*/phar.require_hash = On/' ${PHP_INI}
+    if grep -Eq "^[;[:space:]]*${escaped_key}[[:space:]]*=" "$php_ini_file"; then
+        sed -E -i.tmp "s|^[;[:space:]]*${escaped_key}[[:space:]]*=.*$|${php_ini_key} = ${php_ini_value}|" "$php_ini_file"
+        rm -f "${php_ini_file}.tmp"
+    else
+        printf '\n%s = %s\n' "$php_ini_key" "$php_ini_value" >> "$php_ini_file"
+    fi
+}
+
+get_system_timezone ()
+{
+    local timezone=""
+    local timezone_path=""
+
+    if [ -r /etc/timezone ]; then
+        timezone=$(head -n 1 /etc/timezone | tr -d '\r')
+    fi
+
+    if [ -z "$timezone" ]; then
+        timezone_path=$(readlink -f /etc/localtime 2>/dev/null)
+        case "$timezone_path" in
+            /usr/share/zoneinfo/*)
+                timezone=${timezone_path#/usr/share/zoneinfo/}
+                ;;
+        esac
+    fi
+
+    printf '%s' "${timezone:-UTC}"
+}
+
+PHP_TIMEZONE=$(get_system_timezone)
+
+for php_ini in "${PHP_INI_FILES[@]}"; do
+    cp -f "$php_ini" "${php_ini}_old"
+    set_php_ini_value "$php_ini" upload_max_filesize 3M
+    set_php_ini_value "$php_ini" post_max_size 20M
+    set_php_ini_value "$php_ini" max_execution_time 90
+    set_php_ini_value "$php_ini" max_input_time 120
+    set_php_ini_value "$php_ini" date.timezone "$PHP_TIMEZONE"
+    set_php_ini_value "$php_ini" session.cookie_secure Off
+    set_php_ini_value "$php_ini" memory_limit 512M
+    set_php_ini_value "$php_ini" phar.readonly On
+    set_php_ini_value "$php_ini" phar.require_hash On
+    echo "Configured PHP settings in $php_ini"
+done
 
 mkdir -p /var/www/html
 sed -i 's/<Directory \/var\/www\/>/<Directory \/var\/www\/html\/>/' "${HTTP_CONFIG}"
@@ -637,41 +709,57 @@ ssh_port=$(
     ' /etc/ssh/sshd_config
 )
 
+WAN_IF=$(ip -4 route show default | awk '{for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1); exit}}')
+
+if [ -z "$WAN_IF" ] || ! ip link show "$WAN_IF" >/dev/null 2>&1; then
+    echo
+    echo "WARNING: Unable to detect the WAN interface from the IPv4 default route."
+    echo "Firewalld installation will continue using the default zone: public."
+    echo "No interface will be explicitly assigned to the public zone."
+    echo
+    echo "To fix this later, identify the public interface with:"
+    echo "  ip -br addr"
+    echo
+    echo "Then assign it manually, for example:"
+    echo "  firewall-cmd --permanent --zone=public --change-interface=eth0"
+    echo "  firewall-cmd --reload"
+    echo
+    WAN_IF=""
+else
+    echo "Public interface detected: $WAN_IF"
+fi
+
 
 
 apt install -y firewalld
 
 install_fail2ban
-
-systemctl disable iptables
-systemctl start firewalld
-systemctl enable firewalld
 systemctl enable fail2ban
 
 
-systemctl stop firewalld
+systemctl disable --now iptables 2>/dev/null || true
+systemctl disable --now netfilter-persistent 2>/dev/null || true
+systemctl enable --now firewalld
 
 
-nft flush ruleset 2>/dev/null
-iptables -F
-iptables -t nat -F
-iptables -t mangle -F
-
-
-rm -rf /etc/firewalld/zones/*
-rm -rf /etc/firewalld/services/*
-
-systemctl start firewalld
-
-
+firewall-cmd --set-default-zone=public
 firewall-cmd --zone=public --add-port=$ssh_port/tcp --permanent
 firewall-cmd --zone=public --add-port=22/tcp --permanent
 firewall-cmd --zone=public --add-port=80/tcp --permanent
-firewall-cmd --zone=public --add-port=44x3/tcp --permanent
+firewall-cmd --zone=public --add-port=443/tcp --permanent
 firewall-cmd --zone=public --add-port=5060/udp --permanent
-firewall-cmd --zone=public --add-port=10000-60000/udp --permanent
+firewall-cmd --zone=public --add-port=10000-20000/udp --permanent
+if [ -n "$WAN_IF" ]; then
+    firewall-cmd --permanent --zone=public --change-interface="$WAN_IF"
+fi
 firewall-cmd --reload
+firewall-cmd --state
+firewall-cmd --get-active-zones
+if [ -n "$WAN_IF" ]; then
+    firewall-cmd --get-zone-of-interface="$WAN_IF"
+fi
 firewall-cmd --zone=public --list-all
+
 
 
 

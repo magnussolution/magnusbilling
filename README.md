@@ -18,7 +18,12 @@ Video:
 
 ### Prerequisites
 
-Linux Debian. Recomended DEBIAN
+MagnusBilling 7 supports only:
+
+* Debian 11 (Bullseye)
+* Debian 12 (Bookworm)
+
+Debian 13 is not supported by MagnusBilling 7. Use MagnusBilling 8 on Debian 13.
 
 
 ### Installing
