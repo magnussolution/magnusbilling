@@ -500,4 +500,14 @@ return array(
     'to refill' => 'per ricaricare',
     'week' => 'settimana',
 
+    'Loaded' => 'Caricate',
+    'Duplicates' => 'Duplicati',
+    'Updated' => 'Aggiornate',
+    'Inserted' => 'Inserite',
+    'Invalid CSV delimiter.' => 'Delimitatore CSV non valido.',
+    'Provider is required.' => 'Il provider è obbligatorio.',
+    'Another tariff import is already running for this provider.' => 'È già in corso un’altra importazione di tariffe per questo provider.',
+    'MariaDB local_infile is disabled. Enable local_infile=1 in the server configuration and restart MariaDB.' => 'local_infile di MariaDB è disabilitato. Abilitare local_infile=1 nella configurazione del server e riavviare MariaDB.',
+    'The CSV file does not contain tariff rows.' => 'Il file CSV non contiene righe tariffarie.',
+    'CSV contains {count} invalid row(s). Row/prefix examples: {examples}' => 'Il CSV contiene {count} riga/righe non valida/e. Esempi riga/prefisso: {examples}',
 );

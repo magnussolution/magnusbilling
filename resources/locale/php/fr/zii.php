@@ -178,7 +178,7 @@ return array(
     'Remove prefix' => 'Supprimer le préfixe',
     'Repeat IVR' => 'Répéter IVR',
     'Repeat if press invalid option' => 'Répétez si Appuyez sur Option non valide',
-    'Replace %number% and %text% on the provider URL- Ex => http =>//website.com/sms.php?username=USER&pass=PASS&number=%number%&msg=%text%' => 'Remplacez% 20% Nombre %% 20 et% 20% Texte %% 20ON% 20Le% 20L' => 'utilisateur = utilisateur',
+    'Replace %number% and %text% on the provider URL- Ex => http =>//website.com/sms.php?username=USER&pass=PASS&number=%number%&msg=%text%' => 'Remplacez %number% et %text% dans URL du fournisseur',
     'Report' => 'Signaler',
     'Report of' => 'Rapport de',
     'Reports' => 'Rapports',
@@ -494,4 +494,14 @@ return array(
     'to refill' => 'recharger',
     'week' => 'semaine',
 
+    'Loaded' => 'Chargées',
+    'Duplicates' => 'Doublons',
+    'Updated' => 'Mises à jour',
+    'Inserted' => 'Insérées',
+    'Invalid CSV delimiter.' => 'Délimiteur CSV non valide.',
+    'Provider is required.' => 'Le fournisseur est obligatoire.',
+    'Another tariff import is already running for this provider.' => 'Une autre importation de tarifs est déjà en cours pour ce fournisseur.',
+    'MariaDB local_infile is disabled. Enable local_infile=1 in the server configuration and restart MariaDB.' => 'local_infile de MariaDB est désactivé. Activez local_infile=1 dans la configuration du serveur et redémarrez MariaDB.',
+    'The CSV file does not contain tariff rows.' => 'Le fichier CSV ne contient aucune ligne de tarif.',
+    'CSV contains {count} invalid row(s). Row/prefix examples: {examples}' => 'Le CSV contient {count} ligne(s) non valide(s). Exemples ligne/préfixe : {examples}',
 );

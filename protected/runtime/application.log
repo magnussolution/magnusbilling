@@ -1359,3 +1359,57 @@ REQUEST_URI=/MBilling_7/index.php/statusSystem/read?_dc=1737656757425&page=1&sta
 in /Users/magnus/Library/Mobile Documents/com~apple~CloudDocs/html/MBilling_7/protected/controllers/StatusSystemController.php (58)
 in /Users/magnus/Library/Mobile Documents/com~apple~CloudDocs/html/MBilling_7/protected/components/BaseController.php (1250)
 in /Users/magnus/Library/Mobile Documents/com~apple~CloudDocs/html/MBilling_7/protected/components/BaseController.php (436)
+2026/06/22 17:56:32 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42000]: Syntax error or access violation: 3948 Loading local data is disabled; this must be enabled on both the client and server sides. The SQL statement executed was: LOAD DATA LOCAL INFILE '/private/var/folders/nm/pj4yzr7d5vs_b9583wysmd1w0000gn/T/phpMzuuLT'
+                INTO TABLE tmp_rate_import
+                CHARACTER SET UTF8
+                FIELDS TERMINATED BY ';' OPTIONALLY ENCLOSED BY '"'
+                LINES TERMINATED BY '\n'
+                (@prefix,@destination,@rateinitial,@initblock,@billingblock,@minimal_time_charge,@connectcharge,@disconnectcharge,@package_offer)
+                SET prefix = REPLACE(TRIM(@prefix), '\r', ''),
+                    destination = REPLACE(TRIM(COALESCE(@destination, '')), '\r', ''),
+                    rateinitial = COALESCE(NULLIF(REPLACE(TRIM(@rateinitial), '\r', ''), ''), '0'),
+                    initblock = COALESCE(NULLIF(REPLACE(TRIM(@initblock), '\r', ''), ''), '1'),
+                    billingblock = COALESCE(NULLIF(REPLACE(TRIM(@billingblock), '\r', ''), ''), '1'),
+                    minimal_time_charge = COALESCE(NULLIF(REPLACE(TRIM(@minimal_time_charge), '\r', ''), ''), '0'),
+                    connectcharge = COALESCE(NULLIF(REPLACE(TRIM(@connectcharge), '\r', ''), ''), '0'),
+                    disconnectcharge = COALESCE(NULLIF(REPLACE(TRIM(@disconnectcharge), '\r', ''), ''), '0'),
+                    package_offer = COALESCE(NULLIF(REPLACE(TRIM(@package_offer), '\r', ''), ''), '0').
+in /Users/magnus/Library/Mobile Documents/com~apple~CloudDocs/html/MBilling_7/protected/controllers/RateController.php (339)
+in /Users/magnus/Library/Mobile Documents/com~apple~CloudDocs/html/MBilling_7/protected/controllers/RateController.php (266)
+in /Users/magnus/Library/Mobile Documents/com~apple~CloudDocs/html/MBilling_7/protected/controllers/RateController.php (169)
+2026/06/22 17:58:15 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[HY000]: General error: 1290 The MySQL server is running with the --secure-file-priv option so it cannot execute this statement. The SQL statement executed was: LOAD DATA INFILE '/private/var/folders/nm/pj4yzr7d5vs_b9583wysmd1w0000gn/T/phpb7QFnF'
+                INTO TABLE tmp_rate_import
+                CHARACTER SET UTF8
+                FIELDS TERMINATED BY ';' OPTIONALLY ENCLOSED BY '"'
+                LINES TERMINATED BY '\n'
+                (@prefix,@destination,@rateinitial,@initblock,@billingblock,@minimal_time_charge,@connectcharge,@disconnectcharge,@package_offer)
+                SET prefix = REPLACE(TRIM(@prefix), '\r', ''),
+                    destination = REPLACE(TRIM(COALESCE(@destination, '')), '\r', ''),
+                    rateinitial = COALESCE(NULLIF(REPLACE(TRIM(@rateinitial), '\r', ''), ''), '0'),
+                    initblock = COALESCE(NULLIF(REPLACE(TRIM(@initblock), '\r', ''), ''), '1'),
+                    billingblock = COALESCE(NULLIF(REPLACE(TRIM(@billingblock), '\r', ''), ''), '1'),
+                    minimal_time_charge = COALESCE(NULLIF(REPLACE(TRIM(@minimal_time_charge), '\r', ''), ''), '0'),
+                    connectcharge = COALESCE(NULLIF(REPLACE(TRIM(@connectcharge), '\r', ''), ''), '0'),
+                    disconnectcharge = COALESCE(NULLIF(REPLACE(TRIM(@disconnectcharge), '\r', ''), ''), '0'),
+                    package_offer = COALESCE(NULLIF(REPLACE(TRIM(@package_offer), '\r', ''), ''), '0').
+in /Users/magnus/Library/Mobile Documents/com~apple~CloudDocs/html/MBilling_7/protected/controllers/RateController.php (339)
+in /Users/magnus/Library/Mobile Documents/com~apple~CloudDocs/html/MBilling_7/protected/controllers/RateController.php (266)
+in /Users/magnus/Library/Mobile Documents/com~apple~CloudDocs/html/MBilling_7/protected/controllers/RateController.php (169)
+2026/06/22 17:58:40 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[HY000]: General error: 1290 The MySQL server is running with the --secure-file-priv option so it cannot execute this statement. The SQL statement executed was: LOAD DATA INFILE '/private/var/folders/nm/pj4yzr7d5vs_b9583wysmd1w0000gn/T/phpSEzBFg'
+                INTO TABLE tmp_rate_import
+                CHARACTER SET UTF8
+                FIELDS TERMINATED BY ';' OPTIONALLY ENCLOSED BY '"'
+                LINES TERMINATED BY '\n'
+                (@prefix,@destination,@rateinitial,@initblock,@billingblock,@minimal_time_charge,@connectcharge,@disconnectcharge,@package_offer)
+                SET prefix = REPLACE(TRIM(@prefix), '\r', ''),
+                    destination = REPLACE(TRIM(COALESCE(@destination, '')), '\r', ''),
+                    rateinitial = COALESCE(NULLIF(REPLACE(TRIM(@rateinitial), '\r', ''), ''), '0'),
+                    initblock = COALESCE(NULLIF(REPLACE(TRIM(@initblock), '\r', ''), ''), '1'),
+                    billingblock = COALESCE(NULLIF(REPLACE(TRIM(@billingblock), '\r', ''), ''), '1'),
+                    minimal_time_charge = COALESCE(NULLIF(REPLACE(TRIM(@minimal_time_charge), '\r', ''), ''), '0'),
+                    connectcharge = COALESCE(NULLIF(REPLACE(TRIM(@connectcharge), '\r', ''), ''), '0'),
+                    disconnectcharge = COALESCE(NULLIF(REPLACE(TRIM(@disconnectcharge), '\r', ''), ''), '0'),
+                    package_offer = COALESCE(NULLIF(REPLACE(TRIM(@package_offer), '\r', ''), ''), '0').
+in /Users/magnus/Library/Mobile Documents/com~apple~CloudDocs/html/MBilling_7/protected/controllers/RateController.php (339)
+in /Users/magnus/Library/Mobile Documents/com~apple~CloudDocs/html/MBilling_7/protected/controllers/RateController.php (266)
+in /Users/magnus/Library/Mobile Documents/com~apple~CloudDocs/html/MBilling_7/protected/controllers/RateController.php (169)

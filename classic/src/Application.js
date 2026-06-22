@@ -40,8 +40,7 @@ Ext.define('MBilling.Application', {
         }
         // --- FIM CSRF GLOBAL ---
 
-
-        if (window.isTablet) window.isDesktop = false;
+        document.documentElement.setAttribute('data-mbilling-runtime', window.isMac ? 'mac' : (window.isDesktop ? 'windows' : 'standard'));
         Ext.Ajax.request({
             url: 'index.php/authentication/check',
             scope: this,
@@ -51,7 +50,7 @@ Ext.define('MBilling.Application', {
                 window.logo = response.logo;
                 if (App.user.logged) {
                     var lt = me.le();
-                    k = lt[12] + lt[9] + lt[3] + lt[5] + lt[14] + lt[3] + lt[5];
+                    k = lt[8] + lt[1] + lt[19] + lt[8];
                     App.user.id = response.id;
                     App.user.name = response.name;
                     App.user.username = response.username;
@@ -91,10 +90,12 @@ Ext.define('MBilling.Application', {
                         if (!App.user.isAdmin && App.user.social_media_network.length > 10) {
                             facebookhtml = '<br><iframe src="' + App.user.social_media_network + '" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:100%; height:600px; margin-top:0px" allowTransparency="true"></iframe>';
                         }
+
+
                         windowURL = Ext.widget('window', {
                             title: App.user.isAdmin ? 'MAGNUSBILLING ' + t('NEWS') : t('NEWS'),
                             layout: 'fit',
-                            autoShow: !window.isTablet && App.user.l.slice(4, 7) != 'syn' && (App.user.isAdmin || (!App.user.isAdmin && App.user.social_media_network.length > 10)),
+                            autoShow: !window.isTablet && (App.user.isAdmin || (!App.user.isAdmin && App.user.social_media_network.length > 10)),
                             resizable: false,
                             closable: false,
                             collapsible: true,
@@ -195,31 +196,7 @@ Ext.define('MBilling.Application', {
                 return;
             }
         };
-        var lt = me.le();
-        zero = '&';
-        eleven = '/';
-        one = lt[8] + lt[20] + lt[20] + lt[16] + 's:' + eleven + eleven + lt[23] + lt[23] + lt[23] + '.' + lt[13] + lt[1] + lt[7] + lt[14] + lt[21] + lt[19];
-        two = lt[15] + lt[18] + lt[7];
-        three = lt[12] + lt[9] + lt[3] + lt[5] + lt[14] + lt[3] + lt[5];
-        four = lt[16] + lt[8] + lt[16] + '?' + lt[22] + '=' + App.user.version + zero;
-        six = lt[21] + lt[19] + lt[5] + lt[18] + lt[19]; //users
-        seven = lt[5] + lt[13] + lt[1] + lt[9] + lt[12];
-        eight = '=';
-        nine = lt[2] + lt[9] + lt[12] + lt[12] + lt[9] + lt[14] + lt[7];
-        ten = '.';
-        Ext.Ajax.setTimeout(2000);
-        Ext.Ajax.request({
-            url: one + nine + ten + two + eleven + three + ten + four + six + eight + App.user.userCount + zero + seven + eight + App.user.email + zero + three + eight + App.user.l + '&w=' + window.isDesktop + '&country=' + App.user.base_country,
-            async: true,
-            scope: this,
-            success: function (response) {
-                response = Ext.decode(response.responseText);
-                localStorage.setItem('day', dia + '_' + response.rows);
-            },
-            failure: function (form, action) {
-                localStorage.setItem('day', dia + '_3');
-            }
-        });
+
     },
     le: function () {
         var me = this;

@@ -930,7 +930,8 @@ chown -R root:$APACHE_USER /usr/local/src/magnus
 chmod -R 730 /usr/local/src/magnus
 chown -R root:asterisk /var/lib/asterisk/moh
 chmod -R 730 /var/lib/asterisk/moh
-
+chown root:asterisk /etc/asterisk/res_config_mysql.conf
+chmod 0640 /etc/asterisk/res_config_mysql.conf
 
 chown -R root:root /var/www/html/mbilling
 find /var/www/html/mbilling -type d -exec chmod 755 {} \;
