@@ -2014,7 +2014,6 @@ CREATE TABLE `pkg_prefix` (
   `destination` varchar(60) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `prefix_2` (`prefix`),
-  KEY `prefix` (`prefix`),
   KEY `destination` (`destination`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2299,6 +2298,7 @@ CREATE TABLE `pkg_rate` (
   `dialprefix` bigint(20) DEFAULT NULL,
   `destination` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_pkg_rate_plan_prefix` (`id_plan`,`id_prefix`),
   KEY `fk_pkg_plan_pkg_rate` (`id_plan`),
   KEY `fk_pkg_prefix_pkg_rate` (`id_prefix`),
   KEY `fk_pkg_trunk_pkg_rate` (`id_trunk_group`),

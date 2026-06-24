@@ -2180,6 +2180,439 @@ exten => s,1,Set(MASTER_CHANNEL(TRUNKANSWERTIME)=\${EPOCH})
             $version = '7.8.5.7';
             $this->update($version);
         }
+
+        //2026-06-24
+        if ($version == '7.8.5.7') {
+            if (! $this->indexExists('pkg_rate', 'uq_pkg_rate_plan_prefix')) {
+                $this->migrateRateAndPrefixIndexes();
+            } else {
+                echo "\n[7.8.5.8] Index uq_pkg_rate_plan_prefix already exists. Skipping rate and prefix migration.\n";
+            }
+
+            $version = '7.8.5.8';
+            $this->updateCritical($version);
+        }
+    }
+
+    private function migrateRateAndPrefixIndexes()
+    {
+        $db           = Yii::app()->db;
+        $lockName     = 'mbilling-update-rate-prefix-7.8.5.8';
+        $lockAcquired = false;
+
+        try {
+            $command = $db->createCommand('SELECT GET_LOCK(:lockName, 60)');
+            $command->bindValue(':lockName', $lockName, PDO::PARAM_STR);
+            $lockAcquired = (int) $command->queryScalar() === 1;
+
+            if (! $lockAcquired) {
+                throw new Exception('Could not acquire the rate and prefix migration lock.');
+            }
+
+            echo "\n[7.8.5.8] Checking duplicated prefixes...\n";
+
+            $this->criticalExecute(
+                'CREATE TABLE IF NOT EXISTS `pkg_prefix_merge_7858` (
+                    `old_id` INT NOT NULL,
+                    `keep_id` INT NOT NULL,
+                    `prefix` VARCHAR(18) NOT NULL,
+                    PRIMARY KEY (`old_id`),
+                    KEY `idx_prefix_merge_keep_id` (`keep_id`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8'
+            );
+
+            $this->criticalExecute(
+                'INSERT IGNORE INTO `pkg_prefix_merge_7858` (`old_id`, `keep_id`, `prefix`)
+                 SELECT p.id, duplicated.keep_id, p.prefix
+                 FROM `pkg_prefix` p
+                 INNER JOIN (
+                    SELECT prefix, MAX(id) AS keep_id
+                    FROM `pkg_prefix`
+                    GROUP BY prefix
+                    HAVING COUNT(*) > 1
+                 ) duplicated ON duplicated.prefix = p.prefix
+                 WHERE p.id <> duplicated.keep_id'
+            );
+
+            $prefixesToMerge = (int) $db->createCommand(
+                'SELECT COUNT(*) FROM `pkg_prefix_merge_7858` m
+                 INNER JOIN `pkg_prefix` p ON p.id = m.old_id'
+            )->queryScalar();
+
+            if ($prefixesToMerge > 0) {
+                echo '[7.8.5.8] Prefixes to merge: ' . $prefixesToMerge . "\n";
+
+                $this->createBackupTable('pkg_prefix', 'pkg_prefix_duplicate_backup_7858');
+                $this->criticalExecute(
+                    'INSERT IGNORE INTO `pkg_prefix_duplicate_backup_7858`
+                     SELECT p.* FROM `pkg_prefix` p
+                     INNER JOIN `pkg_prefix_merge_7858` m ON m.old_id = p.id'
+                );
+
+                $prefixReferenceTables = [
+                    'pkg_rate',
+                    'pkg_rate_provider',
+                    'pkg_rate_agent',
+                    'pkg_user_rate',
+                    'pkg_balance',
+                    'pkg_cdr',
+                    'pkg_cdr_archive',
+                    'pkg_cdr_failed',
+                ];
+
+                foreach ($prefixReferenceTables as $table) {
+                    $this->remapPrefixReferences($table);
+                }
+
+                // Prefix merging can create duplicated logical rows in these tables.
+                $this->backupAndDeleteDuplicates(
+                    'pkg_rate_provider',
+                    ['id_provider', 'id_prefix'],
+                    'pkg_rate_provider_duplicate_backup_7858'
+                );
+                $this->backupAndDeleteDuplicates(
+                    'pkg_rate_agent',
+                    ['id_plan', 'id_prefix'],
+                    'pkg_rate_agent_duplicate_backup_7858'
+                );
+                $this->backupAndDeleteDuplicates(
+                    'pkg_user_rate',
+                    ['id_user', 'id_prefix'],
+                    'pkg_user_rate_duplicate_backup_7858'
+                );
+
+                foreach ($prefixReferenceTables as $table) {
+                    if (! $this->tableHasColumn($table, 'id_prefix')) {
+                        continue;
+                    }
+
+                    $remainingReferences = (int) $db->createCommand(
+                        'SELECT COUNT(*) FROM `' . $table . '` t
+                         INNER JOIN `pkg_prefix_merge_7858` m ON m.old_id = t.id_prefix'
+                    )->queryScalar();
+
+                    if ($remainingReferences > 0) {
+                        throw new Exception(
+                            'Prefix migration still has references in ' . $table . ': ' . $remainingReferences
+                        );
+                    }
+                }
+
+                $this->criticalExecute(
+                    'DELETE p FROM `pkg_prefix` p
+                     INNER JOIN `pkg_prefix_merge_7858` m ON m.old_id = p.id'
+                );
+            }
+
+            echo "[7.8.5.8] Removing duplicated selling rates...\n";
+            $this->backupAndDeleteDuplicates(
+                'pkg_rate',
+                ['id_plan', 'id_prefix'],
+                'pkg_rate_duplicate_backup_7858'
+            );
+
+            if ($this->countDuplicateGroups('pkg_prefix', ['prefix']) > 0) {
+                throw new Exception('Duplicated prefixes remain after migration.');
+            }
+
+            if ($this->countDuplicateGroups('pkg_rate', ['id_plan', 'id_prefix']) > 0) {
+                throw new Exception('Duplicated selling rates remain after migration.');
+            }
+
+            echo "[7.8.5.8] Creating unique indexes...\n";
+            $this->ensureUniqueIndex('pkg_prefix', 'uq_pkg_prefix_prefix', ['prefix']);
+            $this->ensureUniqueIndex('pkg_rate', 'uq_pkg_rate_plan_prefix', ['id_plan', 'id_prefix']);
+            $this->dropRedundantPrefixIndexes();
+
+            if (! $this->hasUniqueIndex('pkg_prefix', ['prefix']) ||
+                ! $this->hasUniqueIndex('pkg_rate', ['id_plan', 'id_prefix'])) {
+                throw new Exception('The required unique indexes were not created.');
+            }
+
+            $this->criticalExecute('ANALYZE TABLE `pkg_prefix`, `pkg_rate`');
+            echo "[7.8.5.8] Rate and prefix migration completed.\n";
+        } finally {
+            if ($lockAcquired) {
+                try {
+                    $command = $db->createCommand('SELECT RELEASE_LOCK(:lockName)');
+                    $command->bindValue(':lockName', $lockName, PDO::PARAM_STR);
+                    $command->queryScalar();
+                } catch (Exception $e) {
+                }
+            }
+        }
+    }
+
+    private function remapPrefixReferences($table)
+    {
+        if (! $this->tableHasColumn($table, 'id') || ! $this->tableHasColumn($table, 'id_prefix')) {
+            return;
+        }
+
+        echo '[7.8.5.8] Remapping ' . $table . "...\n";
+
+        if (! $this->hasIndexStartingWith($table, 'id_prefix')) {
+            $this->criticalExecute(
+                'UPDATE `' . $table . '` t
+                 INNER JOIN `pkg_prefix_merge_7858` m ON m.old_id = t.id_prefix
+                 SET t.id_prefix = m.keep_id'
+            );
+            return;
+        }
+
+        $this->criticalExecute('DROP TEMPORARY TABLE IF EXISTS `tmp_prefix_remap_7858`');
+        $this->criticalExecute(
+            'CREATE TEMPORARY TABLE `tmp_prefix_remap_7858` (
+                `id` BIGINT NOT NULL,
+                `keep_id` INT NOT NULL,
+                PRIMARY KEY (`id`)
+             ) ENGINE=InnoDB'
+        );
+
+        do {
+            $this->criticalExecute('TRUNCATE TABLE `tmp_prefix_remap_7858`');
+            $batchRows = $this->criticalExecute(
+                'INSERT INTO `tmp_prefix_remap_7858` (`id`, `keep_id`)
+                 SELECT t.id, m.keep_id
+                 FROM `' . $table . '` t
+                 INNER JOIN `pkg_prefix_merge_7858` m ON m.old_id = t.id_prefix
+                 LIMIT 10000'
+            );
+
+            if ($batchRows > 0) {
+                $this->criticalExecute(
+                    'UPDATE `' . $table . '` t
+                     INNER JOIN `tmp_prefix_remap_7858` b ON b.id = t.id
+                     SET t.id_prefix = b.keep_id'
+                );
+            }
+        } while ($batchRows > 0);
+
+        $this->criticalExecute('DROP TEMPORARY TABLE IF EXISTS `tmp_prefix_remap_7858`');
+    }
+
+    private function backupAndDeleteDuplicates($table, array $groupColumns, $backupTable)
+    {
+        if (! $this->tableExists($table)) {
+            return;
+        }
+
+        foreach ($groupColumns as $column) {
+            if (! $this->tableHasColumn($table, $column)) {
+                return;
+            }
+        }
+
+        $this->createBackupTable($table, $backupTable);
+
+        for ($attempt = 0; $attempt < 3; $attempt++) {
+            if ($this->countDuplicateGroups($table, $groupColumns) === 0) {
+                return;
+            }
+
+            $quotedColumns = array_map([$this, 'quoteIdentifier'], $groupColumns);
+            $groupList      = implode(', ', $quotedColumns);
+            $joinConditions = [];
+
+            foreach ($groupColumns as $column) {
+                $quotedColumn    = $this->quoteIdentifier($column);
+                $joinConditions[] = 'duplicated.' . $quotedColumn . ' = t.' . $quotedColumn;
+            }
+
+            $this->criticalExecute(
+                'INSERT IGNORE INTO `' . $backupTable . '`
+                 SELECT t.* FROM `' . $table . '` t
+                 INNER JOIN (
+                    SELECT ' . $groupList . ', MAX(`id`) AS keep_id
+                    FROM `' . $table . '`
+                    GROUP BY ' . $groupList . '
+                    HAVING COUNT(*) > 1
+                 ) duplicated ON ' . implode(' AND ', $joinConditions) . '
+                 WHERE t.id <> duplicated.keep_id'
+            );
+
+            $this->criticalExecute(
+                'DELETE t FROM `' . $table . '` t
+                 INNER JOIN `' . $backupTable . '` backup ON backup.id = t.id'
+            );
+        }
+
+        $remaining = $this->countDuplicateGroups($table, $groupColumns);
+        if ($remaining > 0) {
+            throw new Exception('Could not remove duplicated rows from ' . $table . ': ' . $remaining);
+        }
+    }
+
+    private function createBackupTable($sourceTable, $backupTable)
+    {
+        if (! $this->tableExists($backupTable)) {
+            $this->criticalExecute(
+                'CREATE TABLE `' . $backupTable . '` ENGINE=InnoDB
+                 AS SELECT * FROM `' . $sourceTable . '` WHERE 1 = 0'
+            );
+        }
+
+        if (! $this->indexExists($backupTable, 'PRIMARY')) {
+            $this->criticalExecute(
+                'ALTER TABLE `' . $backupTable . '` ADD PRIMARY KEY (`id`)'
+            );
+        }
+    }
+
+    private function countDuplicateGroups($table, array $groupColumns)
+    {
+        $quotedColumns = array_map([$this, 'quoteIdentifier'], $groupColumns);
+        $sql = 'SELECT COUNT(*) FROM (
+                    SELECT 1 FROM `' . $table . '`
+                    GROUP BY ' . implode(', ', $quotedColumns) . '
+                    HAVING COUNT(*) > 1
+                ) duplicated_groups';
+
+        return (int) Yii::app()->db->createCommand($sql)->queryScalar();
+    }
+
+    private function ensureUniqueIndex($table, $indexName, array $columns)
+    {
+        if ($this->hasUniqueIndex($table, $columns)) {
+            return;
+        }
+
+        if ($this->indexExists($table, $indexName)) {
+            $this->criticalExecute(
+                'ALTER TABLE `' . $table . '` DROP INDEX `' . $indexName . '`'
+            );
+        }
+
+        $quotedColumns = array_map([$this, 'quoteIdentifier'], $columns);
+        $this->criticalExecute(
+            'ALTER TABLE `' . $table . '` ADD UNIQUE KEY `' . $indexName . '` (' .
+            implode(', ', $quotedColumns) . ')'
+        );
+    }
+
+    private function dropRedundantPrefixIndexes()
+    {
+        $indexes = $this->getTableIndexes('pkg_prefix');
+
+        foreach ($indexes as $indexName => $index) {
+            if ($indexName === 'PRIMARY' || (int) $index['non_unique'] !== 1 || $index['columns'] !== ['prefix']) {
+                continue;
+            }
+
+            $this->criticalExecute(
+                'ALTER TABLE `pkg_prefix` DROP INDEX `' . $indexName . '`'
+            );
+        }
+    }
+
+    private function hasUniqueIndex($table, array $columns)
+    {
+        foreach ($this->getTableIndexes($table) as $index) {
+            if ((int) $index['non_unique'] === 0 && $index['columns'] === $columns) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function hasIndexStartingWith($table, $column)
+    {
+        foreach ($this->getTableIndexes($table) as $index) {
+            if (isset($index['columns'][0]) && $index['columns'][0] === $column) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function indexExists($table, $indexName)
+    {
+        $indexes = $this->getTableIndexes($table);
+        return isset($indexes[$indexName]);
+    }
+
+    private function getTableIndexes($table)
+    {
+        if (! $this->tableExists($table)) {
+            return [];
+        }
+
+        $command = Yii::app()->db->createCommand(
+            'SELECT INDEX_NAME, NON_UNIQUE, SEQ_IN_INDEX, COLUMN_NAME
+             FROM information_schema.STATISTICS
+             WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = :tableName
+             ORDER BY INDEX_NAME, SEQ_IN_INDEX'
+        );
+        $command->bindValue(':tableName', $table, PDO::PARAM_STR);
+        $rows    = $command->queryAll();
+        $indexes = [];
+
+        foreach ($rows as $row) {
+            $name = $row['INDEX_NAME'];
+            if (! isset($indexes[$name])) {
+                $indexes[$name] = [
+                    'non_unique' => (int) $row['NON_UNIQUE'],
+                    'columns'    => [],
+                ];
+            }
+            $indexes[$name]['columns'][] = $row['COLUMN_NAME'];
+        }
+
+        return $indexes;
+    }
+
+    private function tableExists($table)
+    {
+        $command = Yii::app()->db->createCommand(
+            'SELECT COUNT(*) FROM information_schema.TABLES
+             WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = :tableName'
+        );
+        $command->bindValue(':tableName', $table, PDO::PARAM_STR);
+        return (int) $command->queryScalar() === 1;
+    }
+
+    private function tableHasColumn($table, $column)
+    {
+        $command = Yii::app()->db->createCommand(
+            'SELECT COUNT(*) FROM information_schema.COLUMNS
+             WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = :tableName AND COLUMN_NAME = :columnName'
+        );
+        $command->bindValue(':tableName', $table, PDO::PARAM_STR);
+        $command->bindValue(':columnName', $column, PDO::PARAM_STR);
+        return (int) $command->queryScalar() === 1;
+    }
+
+    private function quoteIdentifier($identifier)
+    {
+        if (! preg_match('/^[a-zA-Z0-9_]+$/', $identifier)) {
+            throw new Exception('Invalid SQL identifier: ' . $identifier);
+        }
+
+        return '`' . $identifier . '`';
+    }
+
+    private function criticalExecute($sql)
+    {
+        return Yii::app()->db->createCommand($sql)->execute();
+    }
+
+    private function updateCritical($version)
+    {
+        $command = Yii::app()->db->createCommand(
+            "UPDATE pkg_configuration SET config_value = :version WHERE config_key = 'version'"
+        );
+        $command->bindValue(':version', $version, PDO::PARAM_STR);
+        $command->execute();
+
+        $savedVersion = Yii::app()->db->createCommand(
+            "SELECT config_value FROM pkg_configuration WHERE config_key = 'version' LIMIT 1"
+        )->queryScalar();
+
+        if ((string) $savedVersion !== (string) $version) {
+            throw new Exception('Could not save database version ' . $version . '.');
+        }
     }
 
     public function executeDB($sql)
