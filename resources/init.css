@@ -1901,6 +1901,57 @@ div.ux-taskbar div.x-toolbar {
     backdrop-filter: saturate(135%) blur(18px);
 }
 
+.mb-macos .mb-mac-desktop-shortcuts {
+    align-content: flex-start;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap-reverse;
+    gap: 16px 14px;
+    bottom: 0 !important;
+    left: auto !important;
+    max-height: 100%;
+    max-width: 420px;
+    pointer-events: auto;
+    position: absolute !important;
+    right: 18px !important;
+    top: 0 !important;
+    z-index: 5;
+}
+
+.mb-macos .mb-mac-desktop-shortcut {
+    align-items: center;
+    border: 1px solid transparent;
+    border-radius: 13px;
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+    min-height: 82px;
+    padding: 7px 8px 5px;
+    text-align: center;
+    width: 78px;
+}
+
+.mb-macos .mb-mac-desktop-shortcut-over,
+.mb-macos .mb-mac-desktop-shortcut-selected,
+.mb-macos .mb-mac-desktop-shortcut:focus {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.36);
+    outline: none;
+}
+
+.mb-macos .mb-mac-desktop-shortcut-name {
+    color: #fff;
+    display: block;
+    font-size: 11px;
+    line-height: 14px;
+    margin-top: 5px;
+    max-width: 74px;
+    overflow: hidden;
+    text-shadow: 0 1px 3px rgba(12, 20, 33, 0.9);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .mb-macos .mb-mac-app-directory::after {
     border-left: 11px solid transparent;
     border-right: 11px solid transparent;

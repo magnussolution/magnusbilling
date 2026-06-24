@@ -21,6 +21,7 @@ Ext.define('Overrides.ux.desktop.App', {
     macApplications: [],
     macApplicationMenus: [],
     macSettingsMenuIndex: null,
+    macApplicationsMode: null,
     macApplicationsZIndex: 2147483000,
     iconDefault: 'file3',
     fieldsShortcut: ['id', 'name', 'glyph', 'color', 'module', 'iconCls', 'tone', 'menuIndex'],
@@ -160,6 +161,7 @@ Ext.define('Overrides.ux.desktop.App', {
         var view = this.desktop && this.desktop.shortcutsView;
         this.macApplicationsKeepOpenUntilMove = false;
         this.macApplicationsAnchorEl = null;
+        this.macApplicationsMode = null;
         if (view) {
             view.removeCls('mb-mac-applications-visible');
             view.addCls('mb-mac-applications-dismissed');
@@ -185,12 +187,22 @@ Ext.define('Overrides.ux.desktop.App', {
             this.macApplicationsHideTask.cancel();
         }
     },
-    showMacApplicationsFromClick: function(button, event) {
-        this.macApplicationsKeepOpenUntilMove = true;
-        this.macApplicationsClickX = event ? event.getX() : null;
-        this.macApplicationsClickY = event ? event.getY() : null;
+    showMacApplicationsRoot: function(button, event, keepOpenUntilMove) {
+        this.macApplicationsMode = 'applications';
+        this.macApplicationsKeepOpenUntilMove = keepOpenUntilMove === true;
+        this.macApplicationsClickX = keepOpenUntilMove && event ? event.getX() : null;
+        this.macApplicationsClickY = keepOpenUntilMove && event ? event.getY() : null;
         this.macApplicationsAnchorEl = button.getEl();
+        if (this.desktop && this.desktop.resetMacApplicationDirectory) {
+            this.desktop.resetMacApplicationDirectory();
+        }
         this.showMacApplications();
+    },
+    showMacApplicationsFromClick: function(button, event) {
+        this.showMacApplicationsRoot(button, event, true);
+    },
+    showMacApplicationsFromHover: function(button, event) {
+        this.showMacApplicationsRoot(button, event, false);
     },
     showMacSettingsFromClick: function(button, event) {
         this.showMacSettings(button, event, true);
@@ -201,6 +213,10 @@ Ext.define('Overrides.ux.desktop.App', {
     showMacSettings: function(button, event, keepOpenUntilMove) {
         var view = this.desktop && this.desktop.shortcutsView,
             record;
+        if (this.macApplicationsMode !== 'settings' && this.desktop && this.desktop.resetMacApplicationDirectory) {
+            this.desktop.resetMacApplicationDirectory();
+        }
+        this.macApplicationsMode = 'settings';
         this.macApplicationsKeepOpenUntilMove = keepOpenUntilMove === true;
         this.macApplicationsClickX = keepOpenUntilMove && event ? event.getX() : null;
         this.macApplicationsClickY = keepOpenUntilMove && event ? event.getY() : null;
@@ -316,7 +332,7 @@ Ext.define('Overrides.ux.desktop.App', {
                     handler: Ext.bind(me.createWindow, me, [objModule])
                 };
                 me.modulesMenu.push(menuConfig);
-                if (item.createShortCut) {
+                if (item.createShortCut == 1) {
                     me.iconsDesktop.push({
                         name: text,
                         glyph: icons[iconCls],
@@ -325,7 +341,7 @@ Ext.define('Overrides.ux.desktop.App', {
                         color: item.color
                     });
                 }
-                if (item.createQuickStart) {
+                if (item.createQuickStart == 1) {
                     me.quickStart.push({
                         name: text,
                         iconCls: desktopIconCls,
@@ -624,6 +640,7 @@ Ext.define('Overrides.ux.desktop.App', {
                 hidden: !App.user.isAdmin
             }],
             shortcuts: shortcutStore,
+            macDesktopShortcuts: Ext.clone(me.iconsDesktop),
             locale: me.localeDefault,
             theme: me.themeDefault,
             wallpaper: (window.wallpapers) || me.wallpaperDefault,

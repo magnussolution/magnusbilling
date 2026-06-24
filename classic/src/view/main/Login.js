@@ -21,14 +21,30 @@ Ext.define('MBilling.view.main.Login', {
         align: 'center',
         pack: 'center'
     },
-    initComponent: function() {
+    initComponent: function () {
         var me = this,
             isMac = window.isMac === true,
             isWindows = window.isDesktop === true && window.isMac !== true,
-            loginItems = [],
-            productName = window.agentTitle || 'MagnusBilling',
-            windowsProductName = window.agentTitle || t('MagnusBilling System'),
-            loginLogo = window.agentTitle ? 'resources/images/logo_custom_' + window.agentId + '.png' : 'resources/images/loading.gif';
+            loginItems = [];
+
+
+        if (window.nameCustom) {
+            var productName = window.nameCustom;
+        } else {
+            var productName = window.agentTitle || 'MagnusBilling';
+        }
+        if (window.productCustom) {
+            var windowsProductName = window.productCustom;
+        } else {
+            var windowsProductName = window.agentTitle || t('MagnusBilling System');
+        }
+
+        if (window.logoCustom) {
+            var loginLogo = window.logoCustom;
+        } else {
+            var loginLogo = window.agentTitle ? 'resources/images/logo_custom_' + window.agentId + '.png' : 'resources/images/loading.gif';
+        }
+
         me.cls = isMac ? 'auth-locked-window mb-mac-login-window' : (isWindows ? 'auth-locked-window mb-windows-login-window' : 'auth-locked-window');
         me.title = window.loginheader ? window.loginheader : t("Log in");
         if (isMac || isWindows) {
@@ -111,9 +127,9 @@ Ext.define('MBilling.view.main.Login', {
                 margin: isMac ? '5 0 0 24' : (isWindows ? '5 0 0 22' : '5 0 0 80'),
                 html: '<div style="text-align: right;">' + t('Forgot your password?') + '</div>',
                 listeners: {
-                    render: function(c) {
+                    render: function (c) {
                         c.getEl().on({
-                            click: function() {
+                            click: function () {
                                 Ext.widget('forgetPassword');
                             }
                         });
@@ -126,12 +142,12 @@ Ext.define('MBilling.view.main.Login', {
             name: 'captcha',
             reference: 'captcha',
             listeners: {
-                'afterrender': function() {
+                'afterrender': function () {
                     if (typeof grecaptcha != "undefined") {
-                        grecaptcha.ready(function() {
+                        grecaptcha.ready(function () {
                             grecaptcha.execute(window.reCaptchaKey, {
                                 action: 'homepage'
-                            }).then(function(token) {
+                            }).then(function (token) {
                                 window.captcha = token;
                             });
                         });

@@ -30,9 +30,8 @@ Ext.define('Overrides.ux.desktop.TaskBar', {
                 listeners: {
                     afterrender: function(button) {
                         button.getEl().on({
-                            mouseover: function() {
-                                me.app.macApplicationsAnchorEl = button.getEl();
-                                me.app.showMacApplications();
+                            mouseover: function(event) {
+                                me.app.showMacApplicationsFromHover(button, event);
                             },
                             mouseleave: me.app.scheduleMacApplicationsHide,
                             scope: me.app
