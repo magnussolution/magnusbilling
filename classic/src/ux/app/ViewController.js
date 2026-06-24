@@ -61,6 +61,7 @@ Ext.define('Ext.ux.app.ViewController', {
         me.store.getProxy().on('exception', me.onErrorAction, me);
         me.list.on('afterdestroy', me.onAfterDestroy, me);
         me.formPanel.on('aftersave', me.onAfterSave, me);
+        me.configureMobileFormPanel();
     },
     onDestroyModule: function() {
         var me = this;
@@ -68,6 +69,51 @@ Ext.define('Ext.ux.app.ViewController', {
         me.store.getProxy().un('exception', me.onErrorAction, me);
         me.list.un('afterdestroy', me.onAfterDestroy, me);
         me.formPanel.un('aftersave', me.onAfterSave, me);
+    },
+    isMobileLayout: function() {
+        return window.isMobileLayout || window.isTablet || window.isTablets;
+    },
+    configureMobileFormPanel: function() {
+        var me = this,
+            formPanel = me.formPanel;
+        if (!me.isMobileLayout() || !formPanel || formPanel.mbMobileFormConfigured) {
+            return;
+        }
+        formPanel.mbMobileFormConfigured = true;
+        formPanel.mbOriginalExpand = formPanel.expand;
+        formPanel.mbOriginalCollapse = formPanel.collapse;
+        formPanel.expand = function() {
+            me.showMobileForm();
+            return this;
+        };
+        formPanel.collapse = function() {
+            me.hideMobileForm();
+            return this;
+        };
+        me.hideMobileForm();
+    },
+    showMobileForm: function() {
+        var me = this,
+            view = me.getView && me.getView();
+        if (!me.isMobileLayout() || !me.list || !me.formPanel) {
+            return false;
+        }
+        me.list.hide();
+        me.formPanel.show();
+        view && !view.destroyed && view.updateLayout();
+        me.formPanel.fireEvent('expand', me.formPanel);
+        return true;
+    },
+    hideMobileForm: function() {
+        var me = this,
+            view = me.getView && me.getView();
+        if (!me.isMobileLayout() || !me.list || !me.formPanel) {
+            return false;
+        }
+        me.formPanel.hide();
+        me.list.show();
+        view && !view.destroyed && view.updateLayout();
+        return true;
     },
     onNew: function() {
         var me = this;

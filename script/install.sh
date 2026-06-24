@@ -286,7 +286,6 @@ selectLanguage() {
       1) installBr;;
       2) installEn;;
       3) installEs;;
-      *) "Invalid option." ; echo ; selectLanguage ;;
    esac
 }
 
@@ -599,30 +598,56 @@ ssh_port=$(
     ' /etc/ssh/sshd_config
 )
 
+WAN_IF=$(ip -4 route show default | awk '{for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1); exit}}')
+
+if [ -z "$WAN_IF" ] || ! ip link show "$WAN_IF" >/dev/null 2>&1; then
+    echo
+    echo "WARNING: Unable to detect the WAN interface from the IPv4 default route."
+    echo "Firewalld installation will continue using the default zone: public."
+    echo "No interface will be explicitly assigned to the public zone."
+    echo
+    echo "To fix this later, identify the public interface with:"
+    echo "  ip -br addr"
+    echo
+    echo "Then assign it manually, for example:"
+    echo "  firewall-cmd --permanent --zone=public --change-interface=eth0"
+    echo "  firewall-cmd --reload"
+    echo
+    WAN_IF=""
+else
+    echo "Public interface detected: $WAN_IF"
+fi
+
+
+
 apt install -y firewalld
 
 install_fail2ban
-
-
-systemctl start firewalld
-systemctl enable firewalld
 systemctl enable fail2ban
 
+
+systemctl disable --now iptables 2>/dev/null || true
+systemctl disable --now netfilter-persistent 2>/dev/null || true
+systemctl enable --now firewalld
+
+
+firewall-cmd --set-default-zone=public
 firewall-cmd --zone=public --add-port=$ssh_port/tcp --permanent
 firewall-cmd --zone=public --add-port=22/tcp --permanent
 firewall-cmd --zone=public --add-port=80/tcp --permanent
 firewall-cmd --zone=public --add-port=443/tcp --permanent
 firewall-cmd --zone=public --add-port=5060/udp --permanent
-firewall-cmd --zone=public --add-port=10000-60000/udp --permanent
+firewall-cmd --zone=public --add-port=10000-20000/udp --permanent
+if [ -n "$WAN_IF" ]; then
+    firewall-cmd --permanent --zone=public --change-interface="$WAN_IF"
+fi
 firewall-cmd --reload
+firewall-cmd --state
+firewall-cmd --get-active-zones
+if [ -n "$WAN_IF" ]; then
+    firewall-cmd --get-zone-of-interface="$WAN_IF"
+fi
 firewall-cmd --zone=public --list-all
-
-
-nft flush ruleset 2>/dev/null
-iptables -F
-iptables -t nat -F
-iptables -t mangle -F
-systemctl disable iptables
 
 touch /var/www/html/mbilling/protected/runtime/application.log
 

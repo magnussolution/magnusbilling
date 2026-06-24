@@ -27,7 +27,7 @@ Ext.define('MBilling.view.main.MainController', {
             modules = [],
             menuText,
             text,
-            iconCls;
+            isMobileMenu = window.isMobileLayout || window.isTablet || window.isTablets;
         menu.setLoading();
         Ext.each(App.user.menu, function(menuItem) {
             if (!Ext.isEmpty(menuItem.rows)) {
@@ -35,17 +35,16 @@ Ext.define('MBilling.view.main.MainController', {
                     text = (item.text.indexOf('t(') !== -1) ? eval(item.text) : item.text;
                     modules.push({
                         text: text,
-                        iconCls: window.isTablet || window.isTablets ? '' : item.iconCls,
+                        iconCls: isMobileMenu ? '' : item.iconCls,
                         module: item.module,
                         leaf: item.leaf,
                         id: 'children-' + item.module,
-                        children: me.formatSubModuleStandard(item.rows),
+                        children: me.formatSubModuleStandard(item.rows, isMobileMenu),
                         action: item.action
                     });
                 }, me);
             }
             menuText = (menuItem.text.indexOf('t(') !== -1) ? eval(menuItem.text) : menuItem.text;
-            iconCls = menuItem.iconCls || 'file3';
             if (window.isTablets) {
                 menu.add({
                     rootVisible: true,
@@ -55,25 +54,30 @@ Ext.define('MBilling.view.main.MainController', {
                     }
                 });
             } else {
-                menu.add({
+                var menuConfig = {
                     title: menuText,
                     root: {
                         children: modules
-                    },
-                    iconCls: menuItem.iconCls
-                });
+                    }
+                };
+                if (!isMobileMenu) {
+                    menuConfig.iconCls = menuItem.iconCls;
+                }
+                menu.add(menuConfig);
             }
             modules = [];
         }, me);
         menu.setLoading(false);
     },
-    formatSubModuleStandard: function(menu) {
+    formatSubModuleStandard: function(menu, isMobileMenu) {
         var me = this,
             text;
+        menu = menu || [];
         Ext.each(menu, function(item) {
             text = (item.text.indexOf('t(') !== -1) ? eval(item.text) : item.text;
             item.text = text;
-            item.children = me.formatSubModuleStandard(item.rows);
+            item.iconCls = isMobileMenu ? '' : item.iconCls;
+            item.children = me.formatSubModuleStandard(item.rows, isMobileMenu);
         }, me);
         return menu;
     },
@@ -84,7 +88,7 @@ Ext.define('MBilling.view.main.MainController', {
             action,
             hasAction,
             txt = record.get('text'),
-            iconCls = record.get('iconCls') || 'file3',
+            iconCls = window.isMobileLayout || window.isTablet || window.isTablets ? '' : record.get('iconCls') || 'file3',
             tabPanelCenter = me.lookupReference('tabPanelCenter');
         if (record.get('leaf')) {
             tabOpen = tabPanelCenter.items.findBy(function(tab) {
@@ -111,8 +115,29 @@ Ext.define('MBilling.view.main.MainController', {
         }
         if (window.isTablet) {
             tabPanelCenter.getTabBar().setVisible(false);
-            me.lookupReference('tabPanelMenu').collapse();
+            me.hideMobileMenu();
         }
+    },
+    hideMobileMenu: function() {
+        var me = this,
+            menu = me.lookupReference('tabPanelMenu');
+        if (!window.isMobileLayout && !window.isTablet && !window.isTablets) {
+            return;
+        }
+        menu && menu.hide();
+        me.getView().updateLayout();
+    },
+    showMobileMenu: function() {
+        var me = this,
+            menu = me.lookupReference('tabPanelMenu');
+        if (!window.isMobileLayout && !window.isTablet && !window.isTablets) {
+            return;
+        }
+        if (menu) {
+            menu.show();
+            menu.expand && menu.expand(false);
+        }
+        me.getView().updateLayout();
     },
     importLogo: function(menuItem) {
         var me = this;

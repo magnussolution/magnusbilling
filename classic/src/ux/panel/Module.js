@@ -28,6 +28,7 @@ Ext.define('Ext.ux.panel.Module', {
     titleDetails: t('Details'),
     initComponent: function() {
         var me = this,
+            isMobileLayout = window.isMobileLayout || window.isTablet || window.isTablets,
             objCenter,
             cfgEast = Ext.clone(me.cfgEast),
             cfgCenter = Ext.clone(me.cfgCenter),
@@ -40,10 +41,11 @@ Ext.define('Ext.ux.panel.Module', {
             header: false,
             flex: me.flexForm,
             maxWidth: 1900,
-            width: window.isTablet || window.isTablets ? '100%' : me.widthForm,
-            minWidth: me.widthForm,
-            collapsed: me.collapsedForm,
-            collapsible: me.collapsibleForm,
+            width: isMobileLayout ? '100%' : me.widthForm,
+            minWidth: isMobileLayout ? 0 : me.widthForm,
+            collapsed: isMobileLayout ? false : me.collapsedForm,
+            collapsible: isMobileLayout ? false : me.collapsibleForm,
+            hidden: isMobileLayout,
             allowCreate: me.allowCreate,
             allowUpdate: me.allowUpdate,
             module: me,
@@ -51,6 +53,15 @@ Ext.define('Ext.ux.panel.Module', {
                 expand: 'onExpandForm'
             }
         });
+        if (isMobileLayout) {
+            Ext.apply(cfgEast, {
+                width: '100%',
+                minWidth: 0,
+                collapsed: false,
+                collapsible: false,
+                hidden: true
+            });
+        }
         Ext.applyIf(cfgCenter, {
             xtype: me.module + 'list',
             reference: me.module + 'list',
