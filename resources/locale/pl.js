@@ -70,6 +70,7 @@ Locale.load({
     'Api key': 'Klucz API',
     'Api secret': 'Sekret API',
     'Apply': 'Zastosuj',
+    'Applications': 'Aplikacje',
     'Asterisk': 'Asterisk',
     'Asterisk extra config': 'Dodatkowa konfiguracja Asterisk',
     'Audio': 'Audio',

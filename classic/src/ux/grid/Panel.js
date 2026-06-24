@@ -129,6 +129,7 @@ Ext.define('Ext.ux.grid.Panel', {
                 text: me.textDelete,
                 width: me.buttonDeleteWidth,
                 glyph: me.glyphDelete,
+                cls: window.isMac ? 'mb-mac-destructive-button' : '',
                 disabled: true,
                 reference: 'delete',
                 handler: 'onDelete'
@@ -140,6 +141,7 @@ Ext.define('Ext.ux.grid.Panel', {
                 text: me.textDelete,
                 width: me.buttonDeleteWidth,
                 glyph: me.glyphDelete,
+                cls: window.isMac ? 'mb-mac-destructive-button' : '',
                 disabled: true,
                 reference: 'delete',
                 handler: 'onDelete',

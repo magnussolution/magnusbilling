@@ -151,12 +151,14 @@ Ext.define('Ext.ux.form.Panel', {
             xtype: 'tbtext'
         }, me.alignButtonsBottom, {
             reference: 'save',
+            cls: window.isMac ? 'mb-mac-primary-button' : '',
             text: me.textSave,
             width: 90,
             glyph: me.glyphSave,
             handler: 'onSave',
             hidden: !me.allowCreate && !me.allowUpdate
         }, {
+            cls: window.isMac ? 'mb-mac-secondary-button' : '',
             text: me.textCancel,
             width: 100,
             glyph: me.glyphCancel,

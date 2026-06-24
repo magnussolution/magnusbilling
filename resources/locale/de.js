@@ -70,6 +70,7 @@ Locale.load({
     'Api key': 'API-Schlüssel',
     'Api secret': 'API-Geheimnis',
     'Apply': 'Anwenden',
+    'Applications': 'Anwendungen',
     'Asterisk': 'Asterisk',
     'Asterisk dial plan. Example: exten => _X.,1,Dial(SIP/3333@39.5.5.5,30': 'Asterisk dial plan. Example: exten => _X.,1,Dial(SIP/3333@39.5.5.5,30',
     'Asterisk extra config': 'Zusätzliche Asterisk-Konfiguration',

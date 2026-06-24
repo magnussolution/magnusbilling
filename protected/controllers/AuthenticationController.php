@@ -212,7 +212,7 @@ class AuthenticationController extends Controller
         Yii::app()->session['id_group']            = false;
         Yii::app()->session['user_type']           = false;
         Yii::app()->session['decimal']             = false;
-        Yii::app()->session['licence']             = false;
+        Yii::app()->session['hash']             = false;
         Yii::app()->session['email']               = false;
         Yii::app()->session['userCount']           = false;
         Yii::app()->session['systemName']          = false;
@@ -242,7 +242,7 @@ class AuthenticationController extends Controller
             $modelGroupUser = GroupUser::model()->findByPk(Yii::app()->session['id_group']);
 
             Yii::app()->session['adminLimitUsers']      = $modelGroupUserGroup;
-            Yii::app()->session['licence']              = $this->config['global']['licence'];
+            Yii::app()->session['hash']              = $this->config['global']['hash'];
             Yii::app()->session['email']                = $this->config['global']['admin_email'];
             Yii::app()->session['currency']             = $this->config['global']['base_currency'];
             Yii::app()->session['language']             = $this->config['global']['base_language'];
@@ -270,7 +270,7 @@ class AuthenticationController extends Controller
             $id_group                 = Yii::app()->session['id_group'];
             $user_type                = Yii::app()->session['user_type'];
             $decimal                  = Yii::app()->session['decimal'];
-            $licence                  = Yii::app()->session['licence'];
+            $hash                  = Yii::app()->session['hash'];
             $email                    = Yii::app()->session['email'];
             $userCount                = Yii::app()->session['userCount'];
             $base_country             = Yii::app()->session['base_country'];
@@ -302,7 +302,7 @@ class AuthenticationController extends Controller
             $id_group                 = false;
             $user_type                = false;
             $decimal                  = false;
-            $licence                  = false;
+            $hash                  = false;
             $email                    = false;
             $userCount                = false;
             $base_country             = false;
@@ -370,7 +370,7 @@ class AuthenticationController extends Controller
             'id_group'                 => $id_group,
             'user_type'                => $user_type,
             'decimal'                  => $decimal,
-            'licence'                  => $licence,
+            'hash'                  => $hash,
             'email'                    => $email,
             'userCount'                => $userCount,
             'base_country'             => $base_country,

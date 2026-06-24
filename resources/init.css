@@ -82,6 +82,255 @@
     font: italic 10px arial, tahoma, sans-serif;
 }
 
+/* Apple startup screen rendered before the ExtJS runtime is available. */
+.mb-mac-loading #loading-mask {
+    background:
+        radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.96) 0 7%, transparent 28%),
+        radial-gradient(circle at 82% 17%, rgba(191, 224, 255, 0.88) 0 8%, transparent 31%),
+        radial-gradient(circle at 78% 84%, rgba(233, 207, 255, 0.72) 0 9%, transparent 34%),
+        linear-gradient(145deg, #edf7ff 0%, #dbeaff 42%, #eef1ff 70%, #f7eaff 100%) !important;
+    position: fixed;
+}
+
+.mb-mac-loading #loading {
+    height: auto;
+    left: 50%;
+    margin: 0;
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 310px;
+}
+
+.mb-mac-loading #loading .loading-indicator {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.86);
+    border-radius: 26px;
+    box-shadow: 0 24px 64px rgba(57, 76, 113, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.92);
+    color: #1f2937;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    padding: 30px 28px 27px;
+    -webkit-backdrop-filter: blur(28px) saturate(150%);
+    backdrop-filter: blur(28px) saturate(150%);
+}
+
+.mb-mac-loading #loading .loading-indicator:before {
+    align-items: center;
+    background: linear-gradient(145deg, #62c4ff, #247be8 62%, #4966dc);
+    border: 1px solid rgba(255, 255, 255, 0.88);
+    border-radius: 20px;
+    box-shadow: 0 10px 24px rgba(36, 107, 205, 0.24), inset 0 1px 1px rgba(255, 255, 255, 0.42);
+    color: #fff;
+    content: 'M';
+    display: flex;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size: 36px;
+    font-weight: 650;
+    height: 70px;
+    justify-content: center;
+    margin: 0 auto 17px;
+    text-shadow: 0 2px 4px rgba(26, 76, 154, 0.2);
+    width: 70px;
+}
+
+.mb-mac-loading #loadinggif {
+    display: none;
+}
+
+.mb-mac-loading #name-system {
+    color: #172238;
+    display: inline-block;
+    font-size: 21px;
+    font-weight: 650;
+    letter-spacing: -0.35px;
+    line-height: 27px;
+    margin-top: 2px;
+}
+
+.mb-mac-loading #text-msg {
+    color: #687386;
+    display: inline-block;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    line-height: 18px;
+    margin-top: 3px;
+}
+
+.mb-mac-loading #loading-msg {
+    color: #7a8495;
+    display: inline-block;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-size: 12px;
+    line-height: 18px;
+    margin-top: 1px;
+}
+
+.mb-mac-loading #loading .loading-indicator:after {
+    animation: mb-mac-loading-spin 850ms linear infinite;
+    border: 2px solid rgba(91, 103, 122, 0.18);
+    border-radius: 50%;
+    border-top-color: #0a84ff;
+    box-sizing: border-box;
+    content: '';
+    display: block;
+    height: 22px;
+    margin: 17px auto 0;
+    width: 22px;
+}
+
+@keyframes mb-mac-loading-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mb-mac-loading #loading .loading-indicator:after {
+        animation-duration: 1800ms;
+    }
+}
+
+@media (max-width: 420px) {
+    .mb-mac-loading #loading {
+        width: calc(100% - 34px);
+    }
+
+    .mb-mac-loading #loading .loading-indicator {
+        border-radius: 23px;
+        padding: 26px 22px 24px;
+    }
+}
+
+/* Windows startup screen. Enabled only by window.isDesktop === true. */
+.mb-windows-loading:not(.mb-mac-loading) #loading-mask {
+    background:
+        radial-gradient(ellipse at 18% 110%, rgba(28, 132, 255, 0.72) 0 12%, transparent 43%),
+        radial-gradient(ellipse at 92% 8%, rgba(75, 188, 255, 0.66) 0 10%, transparent 42%),
+        radial-gradient(ellipse at 68% 75%, rgba(20, 92, 205, 0.78) 0 9%, transparent 39%),
+        linear-gradient(138deg, #061a3c 0%, #093b7a 38%, #0877c9 67%, #133c83 100%) !important;
+    overflow: hidden;
+    position: fixed;
+}
+
+.mb-windows-loading:not(.mb-mac-loading) #loading-mask:before,
+.mb-windows-loading:not(.mb-mac-loading) #loading-mask:after {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 44% 56% 62% 38% / 56% 42% 58% 44%;
+    content: '';
+    filter: blur(4px);
+    position: absolute;
+    transform: rotate(-24deg);
+}
+
+.mb-windows-loading:not(.mb-mac-loading) #loading-mask:before {
+    background: linear-gradient(145deg, rgba(118, 217, 255, 0.3), rgba(31, 111, 218, 0.08));
+    box-shadow: 0 0 100px rgba(84, 190, 255, 0.34);
+    height: 72vh;
+    left: -10vw;
+    top: -26vh;
+    width: 72vw;
+}
+
+.mb-windows-loading:not(.mb-mac-loading) #loading-mask:after {
+    background: linear-gradient(145deg, rgba(104, 207, 255, 0.22), rgba(28, 83, 190, 0.05));
+    bottom: -28vh;
+    box-shadow: 0 0 110px rgba(20, 112, 226, 0.46);
+    height: 76vh;
+    right: -14vw;
+    width: 78vw;
+}
+
+.mb-windows-loading:not(.mb-mac-loading) #loading {
+    height: auto;
+    left: 50%;
+    margin: 0;
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(360px, calc(100% - 36px));
+}
+
+.mb-windows-loading:not(.mb-mac-loading) #loading .loading-indicator {
+    background: rgba(3, 27, 65, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 8px;
+    box-shadow: 0 24px 70px rgba(0, 17, 48, 0.32);
+    color: #fff;
+    font-family: "Segoe UI Variable", "Segoe UI", Arial, sans-serif;
+    padding: 38px 36px 32px;
+    -webkit-backdrop-filter: blur(24px) saturate(125%);
+    backdrop-filter: blur(24px) saturate(125%);
+}
+
+.mb-windows-loading:not(.mb-mac-loading) #loadinggif {
+    display: inline-block;
+    height: auto;
+    margin: 0 auto 18px;
+    max-height: 90px;
+    max-width: 210px;
+    object-fit: contain;
+    width: auto !important;
+}
+
+.mb-windows-loading:not(.mb-mac-loading) #loadinggif + br {
+    display: block;
+    line-height: 0;
+}
+
+.mb-windows-loading:not(.mb-mac-loading) #name-system {
+    color: #fff;
+    display: inline-block;
+    font-family: "Segoe UI Variable Display", "Segoe UI", Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.25px;
+    line-height: 29px;
+}
+
+.mb-windows-loading:not(.mb-mac-loading) #text-msg,
+.mb-windows-loading:not(.mb-mac-loading) #loading-msg {
+    color: rgba(255, 255, 255, 0.72);
+    display: inline-block;
+    font-family: "Segoe UI Variable Text", "Segoe UI", Arial, sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    line-height: 18px;
+}
+
+.mb-windows-loading:not(.mb-mac-loading) #text-msg {
+    margin-top: 3px;
+}
+
+.mb-windows-loading:not(.mb-mac-loading) #loading-msg {
+    margin-top: 2px;
+}
+
+.mb-windows-loading:not(.mb-mac-loading) #loading .loading-indicator:after {
+    animation: mb-windows-loading-spin 1050ms linear infinite;
+    background: conic-gradient(from 10deg, transparent 0 14%, #fff 14% 21%, transparent 21% 34%, rgba(255,255,255,.88) 34% 41%, transparent 41% 54%, rgba(255,255,255,.72) 54% 61%, transparent 61% 74%, rgba(255,255,255,.56) 74% 81%, transparent 81% 94%, rgba(255,255,255,.4) 94% 100%);
+    border-radius: 50%;
+    content: '';
+    display: block;
+    height: 28px;
+    margin: 20px auto 0;
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0);
+    mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0);
+    width: 28px;
+}
+
+@keyframes mb-windows-loading-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mb-windows-loading:not(.mb-mac-loading) #loading .loading-indicator:after {
+        animation-duration: 2100ms;
+    }
+}
+
 /*
  * Desktop
  */
@@ -1537,4 +1786,1350 @@ div.ux-taskbar div.x-toolbar {
     -o-transition: opacity .35s linear, visibility .0s linear .35s;
     -ms-transition: opacity .35s linear, visibility .0s linear .35s;
     -khtml-transition: opacity .35s linear, visibility .0s linear .35s;
+}
+
+/*
+ * MagnusBilling macOS workspace
+ *
+ * This layer intentionally styles only the Ext.ux.desktop shell. The active
+ * Neptune, Crisp or Triton package still owns all application components.
+ */
+
+.mb-macos {
+    --mb-mac-ink: #17202b;
+    --mb-mac-surface: rgba(248, 249, 251, 0.46);
+    --mb-mac-border: rgba(20, 30, 44, 0.18);
+    --mb-mac-blue: #1677b8;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+}
+
+.mb-macos .mb-mac-menubar {
+    background: var(--mb-mac-surface) !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--mb-mac-border) !important;
+    box-shadow: 0 1px 10px rgba(15, 23, 42, 0.08);
+    color: var(--mb-mac-ink);
+    min-height: 30px;
+    padding: 0 6px !important;
+    position: relative;
+    z-index: 20000;
+    -webkit-backdrop-filter: saturate(150%) blur(18px);
+    backdrop-filter: saturate(150%) blur(18px);
+}
+
+.mb-macos .mb-mac-desktop>.x-panel-bodyWrap>.x-panel-body {
+    bottom: 0 !important;
+    height: 100% !important;
+}
+
+.mb-macos .mb-mac-desktop .ux-wallpaper {
+    height: 100% !important;
+}
+
+.mb-macos .mb-mac-desktop .ux-taskbar {
+    z-index: 10;
+}
+
+.mb-macos .mb-mac-menubar .x-btn,
+.mb-macos .mb-mac-menubar .x-toolbar-text {
+    color: var(--mb-mac-ink) !important;
+}
+
+.mb-macos .mb-mac-menu-button,
+.mb-macos .mb-mac-apple-menu {
+    background: transparent !important;
+    border-color: transparent !important;
+}
+
+.mb-macos .mb-mac-apple-menu {
+    height: 28px !important;
+    min-width: 34px !important;
+    padding: 0 7px !important;
+}
+
+.mb-macos .mb-mac-apple-menu .x-btn-icon-el {
+    color: var(--mb-mac-ink) !important;
+    font-size: 16px;
+}
+
+.mb-macos .mb-mac-apple-menu .x-btn-arrow {
+    display: none !important;
+}
+
+.mb-macos .ux-wallpaper img {
+    filter: saturate(0.92) brightness(0.96);
+}
+
+.mb-macos .mb-mac-app-directory-host {
+    background: transparent !important;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 140ms ease, visibility 0s linear 140ms;
+    visibility: hidden;
+    /* Ext JS floating windows can advance beyond ordinary fixed z-index values. */
+    z-index: 2147483000 !important;
+}
+
+.mb-macos .mb-mac-app-directory-host.mb-mac-applications-visible,
+.mb-macos .mb-mac-desktop:has(.mb-mac-launcher:hover) .mb-mac-app-directory-host:not(.mb-mac-applications-dismissed) {
+    opacity: 1;
+    transition-delay: 0s;
+    visibility: visible;
+}
+
+.mb-macos .mb-mac-app-directory-host.mb-mac-applications-dismissed {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.mb-macos .mb-mac-app-directory {
+    background: rgba(242, 245, 249, 0.58);
+    border: 1px solid rgba(255, 255, 255, 0.52);
+    border-radius: 20px;
+    box-shadow: 0 14px 36px rgba(15, 23, 42, 0.18);
+    bottom: 12px;
+    left: 12px;
+    max-height: calc(100% - 124px);
+    overflow: auto;
+    padding: 14px 14px 16px;
+    position: absolute;
+    pointer-events: auto;
+    top: auto;
+    width: min(720px, calc(100% - 24px));
+    z-index: 1;
+    -webkit-backdrop-filter: saturate(135%) blur(18px);
+    backdrop-filter: saturate(135%) blur(18px);
+}
+
+.mb-macos .mb-mac-app-directory::after {
+    border-left: 11px solid transparent;
+    border-right: 11px solid transparent;
+    border-top: 11px solid rgba(242, 245, 249, 0.78);
+    bottom: -11px;
+    content: '';
+    filter: drop-shadow(0 2px 1px rgba(15, 23, 42, 0.12));
+    left: var(--mb-mac-pointer-left, 50%);
+    margin-left: -11px;
+    position: absolute;
+}
+
+.mb-macos .mb-mac-app-directory-heading {
+    align-items: center;
+    color: #182334;
+    display: flex;
+    font-size: 14px;
+    font-weight: 600;
+    gap: 8px;
+    height: 34px;
+    padding: 0 8px 7px;
+}
+
+.mb-macos .mb-mac-directory-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mb-macos .mb-mac-directory-back {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    color: #26384c;
+    cursor: pointer;
+    display: inline-flex;
+    height: 28px;
+    justify-content: center;
+    padding: 0;
+    width: 30px;
+}
+
+.mb-macos .mb-mac-directory-back:hover,
+.mb-macos .mb-mac-directory-back:focus {
+    background: rgba(255, 255, 255, 0.82);
+    outline: none;
+}
+
+.mb-macos .mb-mac-app-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px 8px;
+}
+
+.mb-macos .mb-mac-application,
+.mb-macos .mb-mac-directory-item {
+    align-items: center;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    min-height: 82px;
+    outline: none;
+    padding: 7px 5px 5px;
+    transition: background-color 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+.mb-macos .mb-mac-application-over,
+.mb-macos .mb-mac-application-selected,
+.mb-macos .mb-mac-application:focus,
+.mb-macos .mb-mac-directory-item:hover,
+.mb-macos .mb-mac-directory-item:focus {
+    background: rgba(255, 255, 255, 0.52);
+    border-color: rgba(255, 255, 255, 0.72);
+    transform: translateY(-1px);
+}
+
+.mb-macos .mb-mac-directory-folder-mark {
+    align-items: center;
+    background: rgba(15, 23, 42, 0.28);
+    border-radius: 50%;
+    bottom: 4px;
+    display: flex;
+    font-size: 8px;
+    height: 14px;
+    justify-content: center;
+    position: absolute;
+    right: 4px;
+    width: 14px;
+}
+
+.mb-macos .mb-mac-app-icon {
+    align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.56);
+    border-radius: 13px;
+    box-shadow: 0 5px 13px rgba(15, 23, 42, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.48);
+    color: #fff;
+    display: flex;
+    font-size: 27px;
+    height: 50px;
+    justify-content: center;
+    margin-bottom: 5px;
+    overflow: hidden;
+    position: relative;
+    text-shadow: 0 1px 2px rgba(15, 23, 42, 0.25);
+    width: 50px;
+    transition: box-shadow 140ms ease, transform 140ms ease;
+}
+
+.mb-macos .mb-mac-app-icon::before {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0));
+    border-radius: 12px 12px 50% 50%;
+    content: '';
+    height: 52%;
+    left: 1px;
+    pointer-events: none;
+    position: absolute;
+    right: 1px;
+    top: 1px;
+}
+
+.mb-macos .mb-mac-app-symbol {
+    align-items: center;
+    display: inline-flex;
+    filter: drop-shadow(0 1px 1px rgba(15, 23, 42, 0.28));
+    font-size: 22px;
+    height: 22px;
+    line-height: 22px;
+    justify-content: center;
+    text-align: center;
+    width: 22px;
+    position: relative;
+    z-index: 1;
+}
+
+.mb-macos .mb-mac-application:hover .mb-mac-app-icon,
+.mb-macos .mb-mac-directory-item:hover .mb-mac-app-icon,
+.mb-macos .mb-mac-application:focus .mb-mac-app-icon,
+.mb-macos .mb-mac-directory-item:focus .mb-mac-app-icon {
+    box-shadow: 0 8px 17px rgba(15, 23, 42, 0.29), inset 0 1px 1px rgba(255, 255, 255, 0.52);
+    transform: scale(1.04);
+}
+
+.mb-macos .mb-mac-app-icon-blue {
+    background: linear-gradient(145deg, #64d2ff, #0a84ff);
+}
+
+.mb-macos .mb-mac-app-icon-green {
+    background: linear-gradient(145deg, #6ee7a0, #30b95f);
+}
+
+.mb-macos .mb-mac-app-icon-cyan {
+    background: linear-gradient(145deg, #63e6e2, #0aa7bd);
+}
+
+.mb-macos .mb-mac-app-icon-orange {
+    background: linear-gradient(145deg, #ffd45a, #ff8a00);
+}
+
+.mb-macos .mb-mac-app-icon-purple {
+    background: linear-gradient(145deg, #c783ff, #8e5ad7);
+}
+
+.mb-macos .mb-mac-app-icon-indigo {
+    background: linear-gradient(145deg, #8c8cff, #5856d6);
+}
+
+.mb-macos .mb-mac-app-icon-gray {
+    background: linear-gradient(145deg, #b8bbc2, #68686d);
+}
+
+.mb-macos .mb-mac-app-icon-red {
+    background: linear-gradient(145deg, #ff746c, #e9342d);
+}
+
+.mb-macos .mb-mac-app-icon-pink {
+    background: linear-gradient(145deg, #ff85b5, #e82968);
+}
+
+.mb-macos .mb-mac-app-icon-teal {
+    background: linear-gradient(145deg, #65e4d3, #009c95);
+}
+
+.mb-macos .mb-mac-app-name {
+    color: #17202b;
+    display: block;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 14px;
+    max-width: 112px;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mb-macos .mb-mac-app-menu {
+    background: rgba(248, 249, 251, 0.84) !important;
+    border: 1px solid rgba(255, 255, 255, 0.65) !important;
+    border-radius: 13px;
+    box-shadow: 0 16px 38px rgba(15, 23, 42, 0.26);
+    overflow: hidden;
+    padding: 5px;
+    -webkit-backdrop-filter: saturate(140%) blur(18px);
+    backdrop-filter: saturate(140%) blur(18px);
+}
+
+.mb-macos .ux-taskbar {
+    background: transparent !important;
+    border: 0 !important;
+    min-height: 76px;
+    padding: 6px 10px 8px !important;
+}
+
+.mb-macos .ux-taskbar>.x-box-inner {
+    overflow: visible;
+}
+
+.mb-macos .mb-mac-dock {
+    background: var(--mb-mac-surface) !important;
+    border: 1px solid rgba(255, 255, 255, 0.54) !important;
+    border-radius: 19px;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.3), inset 0 0 0 1px rgba(20, 30, 44, 0.08);
+    min-height: 58px;
+    padding: 6px 9px !important;
+    -webkit-backdrop-filter: saturate(150%) blur(18px);
+    backdrop-filter: saturate(150%) blur(18px);
+}
+
+/* macOS login: a lightweight, iCloud-inspired sign-in surface. */
+.mb-mac-login-window.x-window-default {
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+}
+
+.mb-mac-login-window > .x-window-body,
+.mb-mac-login-window .x-window-body-default {
+    background:
+        radial-gradient(circle at 16% 18%, rgba(255, 255, 255, 0.92) 0 8%, transparent 28%),
+        radial-gradient(circle at 84% 15%, rgba(197, 224, 255, 0.9) 0 9%, transparent 31%),
+        radial-gradient(circle at 76% 82%, rgba(239, 209, 255, 0.78) 0 10%, transparent 34%),
+        radial-gradient(circle at 18% 82%, rgba(179, 231, 255, 0.72) 0 8%, transparent 31%),
+        linear-gradient(145deg, #edf7ff 0%, #d9eaff 40%, #eef2ff 68%, #f7eaff 100%) !important;
+}
+
+.mb-mac-login-card {
+    background: rgba(255, 255, 255, 0.72) !important;
+    border: 1px solid rgba(255, 255, 255, 0.86) !important;
+    border-radius: 28px !important;
+    box-shadow: 0 24px 70px rgba(67, 83, 120, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    overflow: hidden;
+    -webkit-backdrop-filter: blur(28px) saturate(145%);
+    backdrop-filter: blur(28px) saturate(145%);
+}
+
+.mb-mac-login-card > .x-panel-body,
+.mb-mac-login-card > .x-container-body {
+    background: transparent !important;
+}
+
+.mb-mac-login-brand {
+    margin-bottom: 8px !important;
+    text-align: center;
+}
+
+.mb-mac-login-app-icon {
+    align-items: center;
+    background: linear-gradient(145deg, #65c7ff, #2378e6 62%, #4465d9);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 23px;
+    box-shadow: 0 12px 24px rgba(36, 107, 205, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.48);
+    color: #fff;
+    display: inline-flex;
+    height: 78px;
+    justify-content: center;
+    width: 78px;
+}
+
+.mb-mac-login-app-icon .x-fa {
+    font-size: 39px;
+    text-shadow: 0 2px 4px rgba(26, 76, 154, 0.18);
+}
+
+.mb-mac-login-product {
+    color: #172238;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size: 26px;
+    font-weight: 650;
+    letter-spacing: -0.6px;
+    margin-top: 13px;
+}
+
+.mb-mac-login-heading {
+    color: #526077 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px !important;
+    margin-bottom: 15px !important;
+    text-align: center;
+}
+
+.mb-mac-login-field {
+    margin: 0 !important;
+}
+
+.mb-mac-login-field .x-form-text-wrap,
+.mb-mac-login-field .x-form-trigger-wrap {
+    background: rgba(255, 255, 255, 0.82) !important;
+    border-color: rgba(72, 87, 113, 0.23) !important;
+}
+
+.mb-mac-login-user .x-form-text-wrap,
+.mb-mac-login-user .x-form-trigger-wrap {
+    border-radius: 13px 13px 0 0 !important;
+}
+
+.mb-mac-login-password .x-form-text-wrap,
+.mb-mac-login-password .x-form-trigger-wrap {
+    border-radius: 0 0 13px 13px !important;
+    border-top-width: 0 !important;
+}
+
+.mb-mac-login-field input {
+    color: #1d2738 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif !important;
+    font-size: 15px !important;
+    padding: 0 16px !important;
+}
+
+.mb-mac-login-field.x-field-focus .x-form-text-wrap,
+.mb-mac-login-field.x-field-focus .x-form-trigger-wrap {
+    border-color: #147ce5 !important;
+    box-shadow: 0 0 0 3px rgba(20, 124, 229, 0.15);
+    position: relative;
+    z-index: 2;
+}
+
+.mb-mac-login-submit {
+    background: linear-gradient(#1687f8, #0875df) !important;
+    border: 0 !important;
+    border-radius: 13px !important;
+    box-shadow: 0 7px 16px rgba(12, 113, 222, 0.22);
+    height: 48px !important;
+    margin-top: 18px !important;
+}
+
+.mb-mac-login-submit:hover {
+    background: linear-gradient(#2593ff, #0875df) !important;
+}
+
+.mb-mac-login-submit .x-btn-inner,
+.mb-mac-login-submit .x-btn-icon-el {
+    color: #fff !important;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-weight: 600;
+}
+
+.mb-mac-login-submit .x-btn-icon-el:before {
+    font-size: 22px !important;
+    right: 13px !important;
+    top: 8px !important;
+}
+
+.mb-mac-login-create {
+    background: rgba(255, 255, 255, 0.66) !important;
+    border: 1px solid rgba(72, 87, 113, 0.18) !important;
+    border-radius: 13px !important;
+    height: 46px !important;
+}
+
+.mb-mac-login-create .x-btn-inner,
+.mb-mac-login-create .x-btn-icon-el {
+    color: #147ce5 !important;
+}
+
+.mb-mac-login-separator .seperator {
+    background: rgba(249, 251, 255, 0.86) !important;
+    color: #79859a !important;
+}
+
+.mb-mac-login-links {
+    background: transparent !important;
+    margin-top: 12px !important;
+}
+
+.mb-mac-login-forgot {
+    color: #147ce5;
+    cursor: pointer;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-size: 13px;
+}
+
+@media (max-width: 520px) {
+    .mb-mac-login-card {
+        border-radius: 24px !important;
+    }
+
+    .mb-mac-login-app-icon {
+        border-radius: 20px;
+        height: 68px;
+        width: 68px;
+    }
+
+    .mb-mac-login-app-icon .x-fa {
+        font-size: 34px;
+    }
+
+    .mb-mac-login-product {
+        font-size: 23px;
+    }
+}
+
+/* Windows 11 / Microsoft-inspired login. */
+.mb-windows-login-window.x-window-default {
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+}
+
+.mb-windows-login-window > .x-window-body,
+.mb-windows-login-window .x-window-body-default {
+    background:
+        radial-gradient(ellipse at 12% 96%, rgba(18, 125, 238, 0.76) 0 11%, transparent 42%),
+        radial-gradient(ellipse at 92% 12%, rgba(87, 195, 255, 0.7) 0 10%, transparent 41%),
+        radial-gradient(ellipse at 73% 78%, rgba(33, 94, 204, 0.72) 0 9%, transparent 38%),
+        linear-gradient(138deg, #071b3d 0%, #0b4385 38%, #0b81cf 67%, #173f86 100%) !important;
+    font-family: "Segoe UI Variable Text", "Segoe UI", Arial, sans-serif;
+    position: relative;
+}
+
+.mb-windows-login-card {
+    background: rgba(255, 255, 255, 0.94) !important;
+    border: 1px solid rgba(255, 255, 255, 0.76) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 24px 64px rgba(0, 24, 68, 0.34), 0 2px 8px rgba(0, 25, 72, 0.16);
+    overflow: hidden;
+    -webkit-backdrop-filter: blur(24px) saturate(120%);
+    backdrop-filter: blur(24px) saturate(120%);
+}
+
+.mb-windows-login-card > .x-panel-body,
+.mb-windows-login-card > .x-container-body {
+    background: transparent !important;
+}
+
+.mb-windows-login-brand {
+    align-items: center;
+    display: flex;
+    margin-bottom: 17px !important;
+}
+
+.mb-windows-login-logo {
+    display: block !important;
+    flex: 0 0 32px;
+    height: 32px !important;
+    margin-right: 11px;
+    max-height: 32px !important;
+    max-width: 32px !important;
+    object-fit: contain !important;
+    width: 32px !important;
+}
+
+.mb-windows-login-product {
+    color: #1b1b1b;
+    flex: 1 1 auto;
+    font-family: "Segoe UI Variable Display", "Segoe UI", Arial, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.25px;
+    line-height: 32px;
+    max-width: 330px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mb-windows-login-heading {
+    color: #1b1b1b !important;
+    font-family: "Segoe UI Variable Display", "Segoe UI", Arial, sans-serif;
+    font-size: 25px !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.45px;
+    line-height: 33px !important;
+    margin-bottom: 13px !important;
+}
+
+.mb-windows-login-field {
+    margin-bottom: 2px !important;
+}
+
+.mb-windows-login-field .x-form-text-wrap,
+.mb-windows-login-field .x-form-trigger-wrap {
+    background: rgba(255, 255, 255, 0.88) !important;
+    border: 1px solid #8a8886 !important;
+    border-bottom-color: #5d5b59 !important;
+    border-radius: 4px !important;
+    box-shadow: none !important;
+}
+
+.mb-windows-login-field input {
+    color: #242424 !important;
+    font-family: "Segoe UI Variable Text", "Segoe UI", Arial, sans-serif !important;
+    font-size: 14px !important;
+    padding: 0 13px !important;
+}
+
+.mb-windows-login-field input::placeholder {
+    color: #616161;
+    opacity: 1;
+}
+
+.mb-windows-login-field.x-field-focus .x-form-text-wrap,
+.mb-windows-login-field.x-field-focus .x-form-trigger-wrap {
+    border-color: #0f6cbd !important;
+    border-bottom-width: 2px !important;
+    box-shadow: 0 0 0 1px rgba(15, 108, 189, 0.18) !important;
+}
+
+.mb-windows-login-submit {
+    background: #0f6cbd !important;
+    border: 1px solid #0f6cbd !important;
+    border-radius: 4px !important;
+    box-shadow: 0 2px 4px rgba(0, 74, 145, 0.24);
+    height: 44px !important;
+    margin-top: 13px !important;
+    transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.mb-windows-login-submit:hover,
+.mb-windows-login-submit.x-btn-over {
+    background: #115ea3 !important;
+    border-color: #115ea3 !important;
+}
+
+.mb-windows-login-submit:active,
+.mb-windows-login-submit.x-btn-pressed {
+    background: #0c3b5e !important;
+    border-color: #0c3b5e !important;
+}
+
+.mb-windows-login-submit .x-btn-inner,
+.mb-windows-login-submit .x-btn-icon-el {
+    color: #fff !important;
+    font-family: "Segoe UI Variable Text", "Segoe UI", Arial, sans-serif;
+    font-size: 14px !important;
+    font-weight: 600;
+}
+
+.mb-windows-login-submit .x-btn-icon-el:before {
+    font-size: 18px !important;
+    right: 12px !important;
+    top: 8px !important;
+}
+
+.mb-windows-login-create {
+    background: #fff !important;
+    border: 1px solid #8a8886 !important;
+    border-radius: 4px !important;
+    height: 42px !important;
+}
+
+.mb-windows-login-create:hover,
+.mb-windows-login-create.x-btn-over {
+    background: #f5f5f5 !important;
+}
+
+.mb-windows-login-create .x-btn-inner,
+.mb-windows-login-create .x-btn-icon-el {
+    color: #0f6cbd !important;
+    font-family: "Segoe UI Variable Text", "Segoe UI", Arial, sans-serif;
+    font-weight: 600;
+}
+
+.mb-windows-login-separator .outer-div:before,
+.mb-windows-login-separator .outer-div:after {
+    border-color: #d1d1d1 !important;
+}
+
+.mb-windows-login-separator .seperator {
+    background: #fbfbfb !important;
+    color: #616161 !important;
+    font-family: "Segoe UI Variable Text", "Segoe UI", Arial, sans-serif !important;
+}
+
+.mb-windows-login-links {
+    background: transparent !important;
+    margin-top: 8px !important;
+}
+
+.mb-windows-login-forgot {
+    color: #0f6cbd;
+    cursor: pointer;
+    font-family: "Segoe UI Variable Text", "Segoe UI", Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.mb-windows-login-forgot:hover {
+    color: #115ea3;
+    text-decoration: underline;
+}
+
+@media (max-width: 520px) {
+    .mb-windows-login-card {
+        border-radius: 7px !important;
+    }
+
+    .mb-windows-login-product {
+        max-width: 240px;
+    }
+
+    .mb-windows-login-heading {
+        font-size: 23px !important;
+    }
+}
+
+.mb-macos .mb-mac-dock .x-toolbar,
+.mb-macos .mb-mac-quickstart,
+.mb-macos .mb-mac-windowbar {
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+}
+
+.mb-macos .mb-mac-dock-button,
+.mb-macos .mb-mac-launcher,
+.mb-macos .mb-mac-settings-launcher,
+.mb-macos .mb-mac-window-button {
+    background: rgba(255, 255, 255, 0.58) !important;
+    border: 1px solid rgba(20, 30, 44, 0.11) !important;
+    border-radius: 11px !important;
+    box-shadow: 0 2px 5px rgba(15, 23, 42, 0.16);
+    height: 44px !important;
+    margin: 0 4px !important;
+    min-width: 44px !important;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.mb-macos .mb-mac-dock-button:hover,
+.mb-macos .mb-mac-launcher:hover,
+.mb-macos .mb-mac-settings-launcher:hover,
+.mb-macos .mb-mac-window-button:hover {
+    box-shadow: 0 5px 10px rgba(15, 23, 42, 0.22);
+    transform: translateY(-3px);
+}
+
+.mb-macos .mb-mac-window-button.x-btn-pressed {
+    border-color: rgba(22, 119, 184, 0.7) !important;
+    box-shadow: 0 0 0 2px rgba(22, 119, 184, 0.18), 0 4px 9px rgba(15, 23, 42, 0.2);
+}
+
+.mb-macos .mb-mac-launcher,
+.mb-macos .mb-mac-settings-launcher {
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    min-width: 44px !important;
+}
+
+.mb-macos .mb-mac-dock-tone-0 {
+    background: linear-gradient(145deg, #55bdf0, #197bd1) !important;
+}
+
+.mb-macos .mb-mac-dock-tone-1 {
+    background: linear-gradient(145deg, #65d39d, #1ba85e) !important;
+}
+
+.mb-macos .mb-mac-dock-tone-2 {
+    background: linear-gradient(145deg, #f4a4cc, #ca4a8f) !important;
+}
+
+.mb-macos .mb-mac-dock-tone-3 {
+    background: linear-gradient(145deg, #ffc86d, #ed7c25) !important;
+}
+
+.mb-macos .mb-mac-dock-tone-4 {
+    background: linear-gradient(145deg, #ad8aea, #724dc7) !important;
+}
+
+.mb-macos .mb-mac-dock-tone-5 {
+    background: linear-gradient(145deg, #65d6c5, #1a9a8b) !important;
+}
+
+.mb-macos .mb-mac-window-tone-0 {
+    background: linear-gradient(145deg, #5abef0, #1b7fd1) !important;
+}
+
+.mb-macos .mb-mac-window-tone-1 {
+    background: linear-gradient(145deg, #70d89f, #22a760) !important;
+}
+
+.mb-macos .mb-mac-window-tone-2 {
+    background: linear-gradient(145deg, #b393ef, #7753c9) !important;
+}
+
+.mb-macos .mb-mac-window-tone-3 {
+    background: linear-gradient(145deg, #ffbd65, #ed7c26) !important;
+}
+
+.mb-macos .mb-mac-window-tone-4 {
+    background: linear-gradient(145deg, #f187b8, #c7488d) !important;
+}
+
+.mb-macos .mb-mac-window-tone-5 {
+    background: linear-gradient(145deg, #68d8c7, #1c9b8c) !important;
+}
+
+.mb-macos .mb-mac-quickstart .mb-mac-dock-button .x-btn-icon-el {
+    color: #fff !important;
+    font-size: 19px;
+    text-shadow: 0 1px 2px rgba(15, 23, 42, 0.25);
+}
+
+.mb-macos .mb-mac-windowbar .mb-mac-window-button .x-btn-icon-el,
+.mb-macos .mb-mac-windowbar .mb-mac-window-button .x-btn-glyph {
+    color: #fff !important;
+    font-size: 19px;
+    text-shadow: 0 1px 2px rgba(15, 23, 42, 0.25);
+}
+
+.mb-macos .mb-mac-launcher .mb-mac-applications-folder-icon {
+    background: url('images/macos/applications-folder.png') center center / 52px 52px no-repeat;
+    height: 52px;
+    width: 52px;
+}
+
+.mb-macos .mb-mac-settings-launcher .mb-mac-settings-icon {
+    background: url('images/macos/settings.png') center center / 52px 52px no-repeat;
+    height: 52px;
+    width: 52px;
+}
+
+.mb-macos .mb-mac-dock-separator {
+    background: rgba(20, 30, 44, 0.18);
+    margin: 4px 7px !important;
+}
+
+.mb-macos .x-window {
+    border-radius: 12px;
+    box-shadow: 0 18px 46px rgba(15, 23, 42, 0.32) !important;
+    overflow: hidden;
+}
+
+.mb-macos .x-window-header {
+    border-radius: 11px 11px 0 0;
+}
+
+.mb-macos .x-window-header .x-window-header-title {
+    padding-left: 70px !important;
+}
+
+.mb-macos .x-window-header .mb-mac-window-control {
+    height: 16px !important;
+    margin: 0 !important;
+    opacity: 1 !important;
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%);
+    width: 16px !important;
+    z-index: 5;
+}
+
+.mb-macos .x-window-header .mb-mac-window-close {
+    left: 3px !important;
+}
+
+.mb-macos .x-window-header .mb-mac-window-minimize {
+    left: 25px !important;
+}
+
+.mb-macos .x-window-header .mb-mac-window-zoom {
+    left: 47px !important;
+}
+
+.mb-macos .x-window-header .mb-mac-window-control .x-tool-img {
+    background-image: none !important;
+    border: 1px solid rgba(48, 38, 31, 0.22);
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.24);
+    height: 13px !important;
+    opacity: 1 !important;
+    position: relative;
+    width: 13px !important;
+}
+
+.mb-macos .x-window-header .mb-mac-window-control .x-tool-img:before {
+    background: none !important;
+    content: none !important;
+    display: none !important;
+}
+
+.mb-macos .x-window-header .mb-mac-window-close .x-tool-img {
+    background-color: #ff5f57 !important;
+}
+
+.mb-macos .x-window-header .mb-mac-window-minimize .x-tool-img {
+    background-color: #febc2e !important;
+}
+
+.mb-macos .x-window-header .mb-mac-window-zoom .x-tool-img {
+    background-color: #28c840 !important;
+}
+
+.mb-macos .x-window-header:hover .mb-mac-window-control .x-tool-img:after {
+    color: rgba(55, 38, 25, 0.72);
+    display: block;
+    font-family: Arial, sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    left: 0;
+    line-height: 10px;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 11px;
+}
+
+.mb-macos .x-window-header:hover .mb-mac-window-close .x-tool-img:after {
+    content: '\00d7';
+}
+
+.mb-macos .x-window-header:hover .mb-mac-window-minimize .x-tool-img:after {
+    content: '\2212';
+}
+
+.mb-macos .x-window-header:hover .mb-mac-window-zoom .x-tool-img:after {
+    content: '+';
+}
+
+/* Apple-style controls for ExtJS window toolbars and forms. */
+.mb-macos .x-window:not(.mb-mac-login-window) .x-btn {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(241, 243, 246, 0.96)) !important;
+    border: 1px solid rgba(60, 68, 82, 0.2) !important;
+    border-radius: 7px !important;
+    box-shadow: 0 1px 2px rgba(18, 25, 38, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
+    min-height: 30px;
+    transition: background 120ms ease, border-color 120ms ease, box-shadow 120ms ease, transform 80ms ease;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-btn .x-btn-inner {
+    color: #303642 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-btn .x-btn-icon-el,
+.mb-macos .x-window:not(.mb-mac-login-window) .x-btn .x-btn-glyph {
+    color: #596273 !important;
+    opacity: 1 !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-btn.x-btn-over {
+    background: linear-gradient(180deg, #fff, #e9edf2) !important;
+    border-color: rgba(52, 61, 76, 0.3) !important;
+    box-shadow: 0 2px 5px rgba(18, 25, 38, 0.13), inset 0 1px 0 #fff !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-btn.x-btn-pressed,
+.mb-macos .x-window:not(.mb-mac-login-window) .x-btn.x-btn-menu-active {
+    background: #dfe4ea !important;
+    box-shadow: inset 0 1px 3px rgba(18, 25, 38, 0.16) !important;
+    transform: translateY(1px);
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-btn.x-btn-focus {
+    border-color: #0a84ff !important;
+    box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-btn.x-btn-disabled {
+    background: rgba(239, 241, 244, 0.78) !important;
+    border-color: rgba(60, 68, 82, 0.1) !important;
+    box-shadow: none !important;
+    opacity: 0.48;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .mb-mac-primary-button {
+    background: linear-gradient(180deg, #2196ff, #087cf0) !important;
+    border-color: #0874dc !important;
+    box-shadow: 0 2px 5px rgba(0, 105, 217, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .mb-mac-primary-button .x-btn-inner,
+.mb-macos .x-window:not(.mb-mac-login-window) .mb-mac-primary-button .x-btn-icon-el,
+.mb-macos .x-window:not(.mb-mac-login-window) .mb-mac-primary-button .x-btn-glyph {
+    color: #fff !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .mb-mac-primary-button.x-btn-over {
+    background: linear-gradient(180deg, #38a2ff, #0a84ff) !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .mb-mac-destructive-button:not(.x-btn-disabled) .x-btn-inner,
+.mb-macos .x-window:not(.mb-mac-login-window) .mb-mac-destructive-button:not(.x-btn-disabled) .x-btn-icon-el,
+.mb-macos .x-window:not(.mb-mac-login-window) .mb-mac-destructive-button:not(.x-btn-disabled) .x-btn-glyph {
+    color: #e33b32 !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-btn-split-right:after,
+.mb-macos .x-window:not(.mb-mac-login-window) .x-btn-arrow-right:after {
+    border-left-color: rgba(60, 68, 82, 0.14) !important;
+}
+
+/* Apple-style lists, grids and forms. */
+.mb-macos .x-window:not(.mb-mac-login-window) .x-toolbar-default {
+    background: rgba(246, 247, 249, 0.94) !important;
+    border-color: rgba(66, 76, 92, 0.14) !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-grid {
+    background: #fff !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-grid-header-ct {
+    background: linear-gradient(180deg, #f7f7f9, #eceef2) !important;
+    border-color: rgba(61, 72, 89, 0.16) !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-column-header {
+    background: transparent !important;
+    border-color: rgba(61, 72, 89, 0.12) !important;
+    color: #515968 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif !important;
+    font-weight: 600 !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-column-header-over,
+.mb-macos .x-window:not(.mb-mac-login-window) .x-column-header-sort-ASC,
+.mb-macos .x-window:not(.mb-mac-login-window) .x-column-header-sort-DESC {
+    background: rgba(218, 222, 229, 0.72) !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-column-header-inner {
+    padding: 7px 9px !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-grid-item {
+    background: #fff !important;
+    color: #303642 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-grid-item-alt {
+    background: #f8f9fb !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-grid-item-over {
+    background: #edf5ff !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-grid-item-selected,
+.mb-macos .x-window:not(.mb-mac-login-window) .x-grid-item-selected .x-grid-cell {
+    background: #dceeff !important;
+    color: #182f4c !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-grid-cell {
+    background: transparent !important;
+    border-color: rgba(67, 77, 92, 0.1) !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-grid-cell-inner {
+    padding: 7px 9px !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-grid-cell-focused .x-grid-cell-inner {
+    outline: 2px solid rgba(10, 132, 255, 0.75) !important;
+    outline-offset: -2px;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-grid-body,
+.mb-macos .x-window:not(.mb-mac-login-window) .x-panel-body-default {
+    border-color: rgba(61, 72, 89, 0.14) !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-form-item-label,
+.mb-macos .x-window:not(.mb-mac-login-window) .x-form-item-label-inner {
+    color: #555d6b !important;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-form-trigger-wrap {
+    background: #fff !important;
+    border: 1px solid rgba(61, 72, 89, 0.25) !important;
+    border-radius: 7px !important;
+    box-shadow: inset 0 1px 2px rgba(18, 25, 38, 0.04);
+    overflow: hidden;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-form-trigger-wrap .x-form-text {
+    background: transparent !important;
+    border: 0 !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-form-text-wrap > .x-form-text,
+.mb-macos .x-window:not(.mb-mac-login-window) textarea.x-form-field {
+    background: #fff !important;
+    border: 1px solid rgba(61, 72, 89, 0.25) !important;
+    border-radius: 7px !important;
+    box-shadow: inset 0 1px 2px rgba(18, 25, 38, 0.04);
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-form-trigger-wrap .x-form-text {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-form-text,
+.mb-macos .x-window:not(.mb-mac-login-window) textarea.x-form-field {
+    color: #303642 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-form-trigger {
+    background-color: #f3f4f6 !important;
+    border-left: 1px solid rgba(61, 72, 89, 0.13) !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-form-trigger-over {
+    background-color: #e8ebef !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-field-focus .x-form-trigger-wrap,
+.mb-macos .x-window:not(.mb-mac-login-window) .x-field-focus textarea.x-form-field,
+.mb-macos .x-window:not(.mb-mac-login-window) .x-form-text-wrap.x-form-text-wrap-focus > .x-form-text {
+    border-color: #0a84ff !important;
+    box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2) !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-form-invalid-field {
+    border-color: #ff453a !important;
+    box-shadow: 0 0 0 3px rgba(255, 69, 58, 0.14) !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-fieldset {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border: 1px solid rgba(61, 72, 89, 0.14) !important;
+    border-radius: 9px;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-fieldset-header-text {
+    color: #343b48 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif !important;
+    font-weight: 600 !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-tab-bar-default {
+    background: rgba(231, 233, 238, 0.96) !important;
+    border-color: rgba(61, 72, 89, 0.14) !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-tab-default {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 7px 7px 0 0 !important;
+    box-shadow: none !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-tab-default .x-tab-inner {
+    color: #525b69 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif !important;
+    font-weight: 500 !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-tab-active {
+    background: #fff !important;
+    box-shadow: 0 -1px 4px rgba(18, 25, 38, 0.08) !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-tab-active .x-tab-inner {
+    color: #0a73d9 !important;
+    font-weight: 600 !important;
+}
+
+.mb-macos .x-window:not(.mb-mac-login-window) .x-mask {
+    background: rgba(246, 247, 249, 0.56) !important;
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+}
+
+/* macOS notification center treatment for Ext.ux.Alert. */
+.mb-macos .alert-box {
+    left: auto;
+    max-width: calc(100vw - 32px);
+    position: fixed;
+    right: 18px;
+    top: 42px;
+    width: 380px;
+    z-index: 40000;
+}
+
+.mb-macos .alert-box table {
+    background: rgba(250, 251, 253, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.78);
+    border-left: 4px solid #8e8e93;
+    border-radius: 14px;
+    box-shadow: 0 14px 38px rgba(15, 23, 42, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+    box-sizing: border-box;
+    margin: 0 0 10px;
+    padding: 11px 12px 12px;
+    width: 100%;
+    -webkit-backdrop-filter: saturate(160%) blur(22px);
+    backdrop-filter: saturate(160%) blur(22px);
+}
+
+.mb-macos .alert-box h3 {
+    color: #202631 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-size: 13px !important;
+    font-weight: 650;
+    line-height: 18px;
+    max-width: 300px;
+    text-shadow: none !important;
+    width: auto;
+}
+
+.mb-macos .alert-box p {
+    color: #5b6472 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-size: 13px !important;
+    line-height: 18px;
+    margin: 3px 0 0;
+    text-shadow: none !important;
+}
+
+.mb-macos .alert-box .close {
+    background: rgba(112, 119, 130, 0.12) !important;
+    border-radius: 50%;
+    cursor: pointer;
+    height: 18px !important;
+    opacity: 1;
+    position: relative;
+    width: 18px !important;
+}
+
+.mb-macos .alert-box .close:after {
+    color: #6b7280;
+    content: '\00d7';
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    left: 0;
+    line-height: 17px;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 18px;
+}
+
+.mb-macos .alert-box .close:hover {
+    background: rgba(112, 119, 130, 0.2) !important;
+}
+
+.mb-macos .alert-box .alert-success {
+    border-left-color: #30b350;
+}
+
+.mb-macos .alert-box .alert-warning {
+    border-left-color: #f5a623;
+}
+
+.mb-macos .alert-box .alert-error {
+    border-left-color: #ff453a;
+}
+
+.mb-macos .alert-box .alert-information {
+    border-left-color: #0a84ff;
+}
+
+.mb-macos .alert-box .alert-notification {
+    border-left-color: #8e8e93;
+}
+
+@media (max-width: 520px) {
+    .mb-macos .alert-box {
+        left: 12px;
+        max-width: none;
+        right: 12px;
+        top: 38px;
+        width: auto;
+    }
+}
+
+.mb-macos .ux-desktop-active-win {
+    box-shadow: 0 22px 55px rgba(15, 23, 42, 0.38) !important;
+}
+
+.mb-macos .ux-desktop-inactive-win {
+    filter: saturate(0.82);
+    opacity: 0.94;
+}
+
+.mb-macos .ux-start-menu {
+    border-radius: 12px;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.3);
+    overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .mb-macos .ux-desktop-shortcut,
+    .mb-macos .mb-mac-dock-button,
+    .mb-macos .mb-mac-launcher,
+    .mb-macos .mb-mac-settings-launcher,
+    .mb-macos .mb-mac-window-button {
+        transition: none;
+    }
+}
+
+@media (max-width: 720px) {
+    .mb-macos .mb-mac-app-directory {
+        bottom: 10px;
+        max-height: calc(100% - 112px);
+        padding: 12px 10px 14px;
+    }
+
+    .mb-macos .mb-mac-app-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .mb-macos .mb-mac-application {
+        min-height: 82px;
+    }
 }

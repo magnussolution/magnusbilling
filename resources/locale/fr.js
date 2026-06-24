@@ -69,6 +69,7 @@ Locale.load({
     'Api key': '',
     'Api secret': '',
     'Apply': '',
+    'Applications': 'Applications',
     'Asterisk': '',
     'Asterisk extra config': '',
     'Audio': '',

@@ -2170,6 +2170,16 @@ exten => s,1,Set(MASTER_CHANNEL(TRUNKANSWERTIME)=\${EPOCH})
             $version = '7.8.5.6';
             $this->update($version);
         }
+
+        //2026-06-24
+        if ($version == '7.8.5.6') {
+            $sql = "";
+            $sql = "UPDATE pkg_configuration SET `config_title` = 'hash', `config_key` = 'hash', `config_description` = 'hash' WHERE id = 4;";
+            $this->executeDB($sql);
+
+            $version = '7.8.5.7';
+            $this->update($version);
+        }
     }
 
     public function executeDB($sql)
