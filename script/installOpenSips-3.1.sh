@@ -241,6 +241,28 @@ ssh_port=$(cat /etc/ssh/sshd_config | grep Port |  awk 'NR==1{print $2}')
 
 apt install -y firewalld fail2ban
 
+WAN_IF=$(ip -4 route show default | awk '{for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1); exit}}')
+
+if [ -z "$WAN_IF" ] || ! ip link show "$WAN_IF" >/dev/null 2>&1; then
+    echo
+    echo "WARNING: Unable to detect the WAN interface from the IPv4 default route."
+    echo "Firewalld installation will continue using the default zone: public."
+    echo "No interface will be explicitly assigned to the public zone."
+    echo
+    echo "To fix this later, identify the public interface with:"
+    echo "  ip -br addr"
+    echo
+    echo "Then assign it manually, for example:"
+    echo "  firewall-cmd --permanent --zone=public --change-interface=eth0"
+    echo "  firewall-cmd --reload"
+    echo
+    WAN_IF=""
+else
+    echo "Public interface detected: $WAN_IF"
+fi
+
+
+
 systemctl disable iptables
 systemctl start firewalld
 systemctl enable firewalld
@@ -251,7 +273,7 @@ firewall-cmd --zone=public --add-port=22/tcp --permanent
 firewall-cmd --zone=public --add-port=80/tcp --permanent
 firewall-cmd --zone=public --add-port=443/tcp --permanent
 firewall-cmd --zone=public --add-port=5060/udp --permanent
-firewall-cmd --zone=public --add-port=10000-50000/udp --permanent
+firewall-cmd --zone=public --add-port=10000-20000/udp --permanent
 firewall-cmd --zone=public --add-port=80/tcp --permanent
 firewall-cmd --zone=public --add-rich-rule="
   rule family=\"ipv4\"
@@ -260,8 +282,15 @@ firewall-cmd --zone=public --add-rich-rule="
 iptables -A INPUT -p tcp -m tcp --dport 19639 -j ACCEPT
 
 
-
+if [ -n "$WAN_IF" ]; then
+    firewall-cmd --permanent --zone=public --change-interface="$WAN_IF"
+fi
 firewall-cmd --reload
+firewall-cmd --state
+firewall-cmd --get-active-zones
+if [ -n "$WAN_IF" ]; then
+    firewall-cmd --get-zone-of-interface="$WAN_IF"
+fi
 firewall-cmd --zone=public --list-all
 
 
