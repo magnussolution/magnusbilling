@@ -44,6 +44,7 @@ Ext.define('Overrides.ux.desktop.TaskBar', {
                 iconCls: 'mb-mac-settings-icon',
                 tooltip: t('Settings'),
                 ariaLabel: t('Settings'),
+                hidden: App.user.isClient,
                 handler: function(button, event) {
                     me.app.showMacSettingsFromClick(button, event);
                 },

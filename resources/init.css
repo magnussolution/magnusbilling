@@ -1835,6 +1835,22 @@ div.ux-taskbar div.x-toolbar {
     color: var(--mb-mac-ink) !important;
 }
 
+.mb-macos .mb-mac-menubar .mb-mac-credit {
+    height: 20px !important;
+    margin-top: 0 !important;
+    transform: translateY(-2px);
+}
+
+.mb-macos .mb-mac-menubar .mb-mac-credit .x-btn-icon-el,
+.mb-macos .mb-mac-menubar .mb-mac-credit .x-btn-inner {
+    line-height: 18px !important;
+}
+
+.mb-macos .mb-mac-menubar .mb-mac-credit .x-btn-wrap,
+.mb-macos .mb-mac-menubar .mb-mac-credit .x-btn-button {
+    height: 18px !important;
+}
+
 .mb-macos .mb-mac-menu-button,
 .mb-macos .mb-mac-apple-menu {
     background: transparent !important;

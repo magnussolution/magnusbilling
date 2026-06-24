@@ -457,6 +457,10 @@
         "blue-neptune": {
             "toolkit": "classic",
             "theme": "blue-neptune"
+        },
+        "crisp-touch": {
+            "toolkit": "classic",
+            "theme": "theme-crisp-touch"
         }
         /*,
                 "black-triton": {
@@ -542,10 +546,6 @@
                 "gray-crisp": {
                     "toolkit": "classic",
                     "theme": "gray-crisp"
-                },
-                "crisp-touch": {
-                    "toolkit": "classic",
-                    "theme": "theme-crisp-touch"
                 }*/
     },
     /**

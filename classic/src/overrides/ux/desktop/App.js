@@ -89,6 +89,7 @@ Ext.define('Overrides.ux.desktop.App', {
                 }]
             }, '->', {
                 xtype: 'credit',
+                cls: 'mb-mac-credit',
                 width: 120
             }, {
                 xtype: 'locale'

@@ -1,0 +1,235 @@
+html.mb-mobile,
+html.mb-mobile body {
+    background: #edf1f5;
+    -webkit-tap-highlight-color: rgba(42, 123, 190, 0.18);
+}
+
+html.mb-mobile .x-viewport,
+html.mb-mobile .x-panel-body-default,
+html.mb-mobile .x-container-default {
+    background-color: #edf1f5;
+}
+
+html.mb-mobile .x-toolbar-default {
+    background: #ffffff !important;
+    border-color: #d5dee8 !important;
+    padding: 4px 6px !important;
+}
+
+html.mb-mobile .x-toolbar .x-box-inner {
+    min-height: 40px;
+}
+
+html.mb-mobile .mb-mobile-menu-button {
+    min-height: 40px;
+}
+
+html.mb-mobile .x-btn-default-small,
+html.mb-mobile .x-btn-default-medium,
+html.mb-mobile .x-btn-default-toolbar-small,
+html.mb-mobile .x-btn-default-toolbar-medium {
+    border-radius: 7px !important;
+    min-height: 40px;
+}
+
+html.mb-mobile .x-btn-inner,
+html.mb-mobile .x-btn-glyph,
+html.mb-mobile .x-btn-icon-el {
+    line-height: 20px;
+}
+
+html.mb-mobile .x-btn-icon-el,
+html.mb-mobile .x-btn-glyph {
+    font-size: 18px;
+}
+
+html.mb-mobile .x-grid,
+html.mb-mobile .x-grid-body,
+html.mb-mobile .x-grid-view {
+    background: #ffffff;
+}
+
+html.mb-mobile .x-grid-header-ct {
+    background: #f7f9fb !important;
+    border-color: #d5dee8 !important;
+}
+
+html.mb-mobile .x-column-header {
+    background: #f7f9fb !important;
+    border-color: #d5dee8 !important;
+}
+
+html.mb-mobile .x-column-header-inner {
+    padding: 10px 8px;
+}
+
+html.mb-mobile .x-column-header-text {
+    color: #243447;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+html.mb-mobile .x-grid-item {
+    min-height: 46px;
+}
+
+html.mb-mobile .x-grid-cell {
+    border-color: #e4e9ef !important;
+}
+
+html.mb-mobile .x-grid-cell-inner {
+    color: #1e2937;
+    font-size: 13px;
+    line-height: 19px;
+    padding: 12px 8px;
+    text-overflow: ellipsis;
+}
+
+html.mb-mobile .x-grid-item-over,
+html.mb-mobile .x-grid-item-selected,
+html.mb-mobile .x-grid-item-selected .x-grid-cell {
+    background-color: #e8f2ff !important;
+}
+
+html.mb-mobile .x-grid-empty,
+html.mb-mobile .grid-empty {
+    color: #6b7787;
+    font-size: 14px;
+    padding: 24px 12px;
+}
+
+html.mb-mobile .x-tree-view .x-grid-cell-inner {
+    font-size: 14px;
+    line-height: 22px;
+    padding-bottom: 13px;
+    padding-top: 13px;
+}
+
+html.mb-mobile .x-tree-elbow-img {
+    margin-top: 3px;
+}
+
+html.mb-mobile .x-tree-icon,
+html.mb-mobile .x-title-icon,
+html.mb-mobile .x-panel-header-icon,
+html.mb-mobile .x-menu-item-icon,
+html.mb-mobile .x-menu-item-icon-default {
+    display: none !important;
+}
+
+html.mb-mobile .x-menu-item-link {
+    padding-left: 12px !important;
+}
+
+html.mb-mobile .x-tab-bar-default {
+    background: #ffffff !important;
+    border-color: #d5dee8 !important;
+}
+
+html.mb-mobile .x-tab-default {
+    border-radius: 7px 7px 0 0;
+    min-height: 40px;
+}
+
+html.mb-mobile .x-tab-inner-default {
+    font-size: 13px;
+    line-height: 18px;
+}
+
+html.mb-mobile .x-form-item {
+    margin-bottom: 10px;
+}
+
+html.mb-mobile .x-form-item-label,
+html.mb-mobile .x-form-item-label-inner {
+    color: #334155;
+    font-size: 13px;
+    line-height: 18px;
+}
+
+html.mb-mobile .x-form-trigger-wrap,
+html.mb-mobile .x-form-text-wrap,
+html.mb-mobile textarea.x-form-field {
+    border-color: #cdd7e2 !important;
+    border-radius: 7px;
+}
+
+html.mb-mobile .x-form-text,
+html.mb-mobile textarea.x-form-field {
+    color: #172033;
+    font-size: 15px;
+    min-height: 38px;
+}
+
+html.mb-mobile .x-form-trigger {
+    min-height: 38px;
+}
+
+html.mb-mobile .x-field-focus .x-form-trigger-wrap,
+html.mb-mobile .x-form-text-wrap-focus,
+html.mb-mobile .x-field-focus textarea.x-form-field {
+    border-color: #2f7ec2 !important;
+    box-shadow: 0 0 0 2px rgba(47, 126, 194, 0.16);
+}
+
+html.mb-mobile .x-panel-header-default,
+html.mb-mobile .x-window-header-default {
+    background: #ffffff !important;
+    border-color: #d5dee8 !important;
+}
+
+html.mb-mobile .x-panel-header-title-default,
+html.mb-mobile .x-window-header-title-default {
+    color: #1f2a3a;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+html.mb-mobile .x-window {
+    max-width: calc(100vw - 16px) !important;
+}
+
+html.mb-mobile .x-window-body {
+    -webkit-overflow-scrolling: touch;
+}
+
+html.mb-mobile .x-region-collapsed-left-placeholder,
+html.mb-mobile .x-region-collapsed-right-placeholder {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+}
+
+html.mb-mobile .x-menu {
+    border-radius: 7px;
+}
+
+html.mb-mobile .x-menu-item-link {
+    min-height: 40px;
+    padding-bottom: 9px;
+    padding-top: 9px;
+}
+
+html.mb-mobile .x-menu-item-text {
+    font-size: 14px;
+}
+
+html.mb-mobile .x-toolbar-footer {
+    background: #ffffff !important;
+    border-color: #d5dee8 !important;
+    padding: 8px !important;
+}
+
+html.mb-mobile .x-toolbar-footer .x-btn {
+    min-width: 88px;
+}
+
+@supports (padding: max(0px)) {
+    html.mb-mobile body {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    html.mb-mobile .x-toolbar-footer {
+        padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
+    }
+}

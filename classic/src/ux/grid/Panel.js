@@ -81,9 +81,10 @@ Ext.define('Ext.ux.grid.Panel', {
     },
     initComponent: function() {
         var me = this,
+            isMobileLayout = window.isMobileLayout || window.isTablet || window.isTablets,
             groupDelete = Ext.id(),
             groupUpdateLot = Ext.id();
-        if (window.isTablet) {
+        if (isMobileLayout) {
             me.textButtonCsv = '';
             me.textNew = '';
             me.textDelete = '';
@@ -91,6 +92,7 @@ Ext.define('Ext.ux.grid.Panel', {
             me.buttonNewWidth = 40;
             me.buttonDeleteWidth = 60;
             me.widthButtonCsv = 40;
+            me.forceFit = true;
         } else {
             me.buttonNewWidth = window.isThemeTriton ? 90 : me.buttonNewWidth;
             me.buttonDeleteWidth = window.isThemeTriton ? 120 : me.buttonDeleteWidth;
@@ -110,7 +112,7 @@ Ext.define('Ext.ux.grid.Panel', {
                 filterOnClick: me.filterFieldOnClick,
                 store: me.store,
                 comparison: me.comparisonfilter,
-                width: window.isTablet ? 80 : 130
+                width: isMobileLayout ? 80 : 130
             });
         }
         if (me.allowCreate) {
@@ -122,7 +124,7 @@ Ext.define('Ext.ux.grid.Panel', {
                 handler: 'onNew'
             });
         }
-        if (me.allowDelete && window.isTablet) {
+        if (me.allowDelete && isMobileLayout) {
             me.tbar.push({
                 xtype: 'button',
                 itemId: 'btnPrint',
@@ -136,7 +138,7 @@ Ext.define('Ext.ux.grid.Panel', {
             });
         } else if (me.allowDelete) {
             me.tbar.push({
-                xtype: window.isTablet || !App.user.isAdmin ? 'button' : 'splitbutton',
+                xtype: isMobileLayout || !App.user.isAdmin ? 'button' : 'splitbutton',
                 itemId: 'btnPrint',
                 text: me.textDelete,
                 width: me.buttonDeleteWidth,
@@ -148,26 +150,26 @@ Ext.define('Ext.ux.grid.Panel', {
                 menu: [{
                     text: me.labelAll,
                     checked: false,
-                    hidden: window.isTablet || !App.user.isAdmin || me.hiddenDeleteAll,
+                    hidden: isMobileLayout || !App.user.isAdmin || me.hiddenDeleteAll,
                     group: groupDelete,
                     value: 'all'
                 }, {
                     text: me.labelSelected,
                     checked: true,
-                    hidden: window.isTablet || !App.user.isAdmin,
+                    hidden: isMobileLayout || !App.user.isAdmin,
                     group: groupDelete,
                     value: 'selected'
                 }]
             });
         }
         if (App.user.hidden_batch_update == 0) {
-            if ((me.allowUpdate && me.buttonUpdateLot && !App.user.isClient && !window.isTablet) || me.buttonUpdateLotCallShopRate) {
+            if ((me.allowUpdate && me.buttonUpdateLot && !App.user.isClient && !isMobileLayout) || me.buttonUpdateLotCallShopRate) {
                 me.tbar.push({
                     xtype: 'splitbutton',
                     iconCls: me.iconButtonUpdateLot,
                     text: me.textButtonUpdateLot,
                     enableToggle: true,
-                    width: window.isTablet ? 85 : App.user.language == 'en' ? 140 : 170,
+                    width: isMobileLayout ? 85 : App.user.language == 'en' ? 140 : 170,
                     reference: 'updateLot',
                     listeners: {
                         toggle: 'onToggleUpdateLot'
@@ -193,7 +195,7 @@ Ext.define('Ext.ux.grid.Panel', {
                 });
             }
         }
-        if (me.buttonCsv && !window.isTablet) {
+        if (me.buttonCsv && !isMobileLayout) {
             me.tbar.push({
                 iconCls: me.iconButtonCsv,
                 text: me.textButtonCsv,
@@ -201,7 +203,7 @@ Ext.define('Ext.ux.grid.Panel', {
                 width: me.widthButtonCsv
             });
         };
-        if (me.buttonImportCsv && !window.isTablet) {
+        if (me.buttonImportCsv && !isMobileLayout) {
             me.tbar.push({
                 iconCls: me.iconButtonImportCsv,
                 text: me.textButtonImportCsv,
@@ -212,11 +214,11 @@ Ext.define('Ext.ux.grid.Panel', {
         if (me.extraButtons.length) {
             me.tbar = Ext.Array.merge(me.tbar, me.extraButtons);
         };
-        if (me.buttonPrint && !window.isTablet) {
+        if (me.buttonPrint && !isMobileLayout) {
             me.tbar.push('->', {
                 xtype: 'splitbutton',
                 glyph: me.glyphPrint,
-                text: window.isTablet ? '' : me.textPrint,
+                text: isMobileLayout ? '' : me.textPrint,
                 width: App.user.language == 'en' ? 100 : 110,
                 hidden: !me.allowPrint,
                 handler: 'onPrint',
@@ -238,10 +240,23 @@ Ext.define('Ext.ux.grid.Panel', {
         if (me.buttonCleanFilter) {
             me.tbar.push({
                 iconCls: me.iconClsCleanFilter,
-                text: window.isTablet ? '' : me.textCleanFilter,
+                text: isMobileLayout ? '' : me.textCleanFilter,
                 scope: me,
-                width: window.isTablet ? 50 : App.user.language == 'en' ? 110 : 120,
+                width: isMobileLayout ? 50 : App.user.language == 'en' ? 110 : 120,
                 handler: me.cleanFilters
+            });
+        }
+        if (isMobileLayout) {
+            me.tbar.push('->', {
+                xtype: 'button',
+                cls: 'mb-mobile-menu-button',
+                text: t('Menu'),
+                width: 64,
+                handler: function() {
+                    var main = Ext.ComponentQuery.query('main')[0],
+                        controller = main && main.getController && main.getController();
+                    controller && controller.showMobileMenu();
+                }
             });
         }
         if (me.pagination) {
