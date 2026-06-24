@@ -1062,6 +1062,7 @@ Locale.load({
     'Variables': 'Zmienne',
     'Verify code': 'Kod weryfikacji',
     'Version': 'Wersja',
+    'Videosupport': 'Wsparcie wideo',
     'Voice': 'Głos',
     'Voice Broadcasting': 'Nadawanie głosowe',
     'VoiceMail': 'Poczta głosowa',

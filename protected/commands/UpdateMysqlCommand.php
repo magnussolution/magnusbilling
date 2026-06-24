@@ -59,6 +59,16 @@ class UpdateMysqlCommand extends CConsoleCommand
             $sql     = "UPDATE pkg_configuration SET config_value = '" . $version . "'WHERE config_key = 'version'";
             $this->executeDB($sql);
         }
+
+        //2026-06-24
+        if ($version == '8.0.0.1') {
+            $sql = "";
+            $sql = "UPDATE pkg_configuration SET `config_title` = 'hash', `config_key` = 'hash', `config_description` = 'hash' WHERE id = 4;";
+            $this->executeDB($sql);
+
+            $version = '8.0.0.2';
+            $this->update($version);
+        }
     }
 
     public function executeDB($sql)

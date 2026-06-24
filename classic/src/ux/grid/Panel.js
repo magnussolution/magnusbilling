@@ -79,7 +79,7 @@ Ext.define('Ext.ux.grid.Panel', {
         },
         emptyText: '<center class="grid-empty">' + t('No record found') + '</center>'
     },
-    initComponent: function() {
+    initComponent: function () {
         var me = this,
             groupDelete = Ext.id(),
             groupUpdateLot = Ext.id();
@@ -129,6 +129,7 @@ Ext.define('Ext.ux.grid.Panel', {
                 text: me.textDelete,
                 width: me.buttonDeleteWidth,
                 glyph: me.glyphDelete,
+                cls: window.isMac ? 'mb-mac-destructive-button' : '',
                 disabled: true,
                 reference: 'delete',
                 handler: 'onDelete'
@@ -140,6 +141,7 @@ Ext.define('Ext.ux.grid.Panel', {
                 text: me.textDelete,
                 width: me.buttonDeleteWidth,
                 glyph: me.glyphDelete,
+                cls: window.isMac ? 'mb-mac-destructive-button' : '',
                 disabled: true,
                 reference: 'delete',
                 handler: 'onDelete',
@@ -269,12 +271,12 @@ Ext.define('Ext.ux.grid.Panel', {
         me.callParent(arguments);
         me.autoLoadList && !window.isDesktop && me.getStore().load({
             scope: me,
-            callback: function() {
+            callback: function () {
                 me.view.refresh();
             }
         });
     },
-    getExtraFilterClass: function(type) {
+    getExtraFilterClass: function (type) {
         switch (type) {
             case 'auto':
                 type = 'string';
@@ -289,27 +291,27 @@ Ext.define('Ext.ux.grid.Panel', {
         }
         return Ext.ClassManager.getByAlias('gridfilter.' + type);
     },
-    addExtraFilter: function(filter) {
+    addExtraFilter: function (filter) {
         var me = this,
             filterGrid = me.getView().getFeature('filters');
         filter.button.toggle(filter.active);
         filterGrid.extraFilters = me.getFilterData();
         me.deferredUpdate.delay(filter.type === 'string' ? 0 : filterGrid.updateBuffer);
     },
-    clearExtraFilters: function() {
+    clearExtraFilters: function () {
         var me = this,
             btnExtraFilters = me.cmpExtraFilters.query('splitbutton[pressed=true]');
-        Ext.each(btnExtraFilters, function(btn) {
+        Ext.each(btnExtraFilters, function (btn) {
             btn.toggle(false, true);
             btn.filter.setActive(false);
         });
     },
-    getFilterData: function() {
+    getFilterData: function () {
         var me = this,
             filters = [],
             i,
             len;
-        Ext.each(me.cmpsExtraFilters, function(f) {
+        Ext.each(me.cmpsExtraFilters, function (f) {
             if (f.active) {
                 var d = [].concat(f.serialize());
                 for (i = 0, len = d.length; i < len; i++) {
@@ -324,7 +326,7 @@ Ext.define('Ext.ux.grid.Panel', {
         });
         return filters;
     },
-    initExtraFilters: function() {
+    initExtraFilters: function () {
         var me = this,
             clsFilter,
             cmpFilter,
@@ -333,7 +335,7 @@ Ext.define('Ext.ux.grid.Panel', {
             //module = window.isDesktop ? me.module.ownerCt : me.module;
             module = me.module;
         Ext.suspendLayouts();
-        me.deferredUpdate = Ext.create('Ext.util.DelayedTask', function() {
+        me.deferredUpdate = Ext.create('Ext.util.DelayedTask', function () {
             me.store.load();
             me.deferredUpdate.cancel();
         }, me);
@@ -353,7 +355,7 @@ Ext.define('Ext.ux.grid.Panel', {
                 anchor: '100%',
                 enableToggle: true,
                 listeners: {
-                    toggle: function(btn, pressed) {
+                    toggle: function (btn, pressed) {
                         if (!btn.filter.active) {
                             btn.toggle(false, true);
                         }
@@ -362,7 +364,7 @@ Ext.define('Ext.ux.grid.Panel', {
                 }
             }
         });
-        Ext.each(me.extraFilters, function(extraFilter) {
+        Ext.each(me.extraFilters, function (extraFilter) {
             clsFilter = me.getExtraFilterClass(extraFilter.type);
             cmpFilter = new clsFilter(extraFilter);
             cmpFilter.on({
@@ -382,7 +384,7 @@ Ext.define('Ext.ux.grid.Panel', {
         });
         Ext.resumeLayouts(true);
     },
-    applyDefaultColumns: function() {
+    applyDefaultColumns: function () {
         var me = this,
             i,
             column;
@@ -404,7 +406,7 @@ Ext.define('Ext.ux.grid.Panel', {
             }
         }
     },
-    cleanFilters: function() {
+    cleanFilters: function () {
         this.filters.clearFilters();
     }
 });

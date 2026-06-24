@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Modelo para a tabela "Balance".
  * =======================================
@@ -46,6 +47,7 @@ class Cryptocurrency extends Model
             ['amountCrypto,amount', 'numerical', 'integerOnly' => false],
             ['amountCrypto,amount', 'length', 'max' => 10],
             ['date, expirationdate', 'safe'],
+            ['network', 'length', 'max' => 100],
 
         ];
         return $this->getExtraField($rules);

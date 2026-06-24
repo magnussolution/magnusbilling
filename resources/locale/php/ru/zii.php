@@ -21,7 +21,8 @@
  * Edit /resources/locale/ru.js
           */
 return array(
-            'Out work audio' => 'OUT WOOK AUDIO',
+            'ALOC all calls' => 'ACD',
+    'Out work audio' => 'OUT WOOK AUDIO',
     'P2P CustomerSiteID' => 'P2P CombersentityID',
     'P2P KeyID' => 'P2P CeyID',
     'P2P Passphrase' => 'P2P пароль фраза',
@@ -54,4 +55,14 @@ return array(
     'Voucher inexistente or already used' => 'Voucher Onlystleente или уже используется',
     'm/d/Y' => 'M / D / Y',
 
+    'Loaded' => 'Загружено',
+    'Duplicates' => 'Дубликаты',
+    'Updated' => 'Обновлено',
+    'Inserted' => 'Добавлено',
+    'Invalid CSV delimiter.' => 'Недопустимый разделитель CSV.',
+    'Provider is required.' => 'Поставщик обязателен.',
+    'Another tariff import is already running for this provider.' => 'Для этого поставщика уже выполняется другой импорт тарифов.',
+    'MariaDB local_infile is disabled. Enable local_infile=1 in the server configuration and restart MariaDB.' => 'Параметр local_infile MariaDB отключен. Включите local_infile=1 в конфигурации сервера и перезапустите MariaDB.',
+    'The CSV file does not contain tariff rows.' => 'CSV-файл не содержит строк тарифов.',
+    'CSV contains {count} invalid row(s). Row/prefix examples: {examples}' => 'CSV содержит недопустимые строки: {count}. Примеры строк/префиксов: {examples}',
 );

@@ -30,4 +30,53 @@ icons = {
 	'left-open': 99,
 	'right-open': 100,
 	'key': 101
-}
+};
+
+// Apply the workspace classes as soon as index.html selects a desktop style.
+(function() {
+	var isMacValue = false,
+		isDesktopValue = false;
+
+	function syncWorkspaceClasses() {
+		var isWindows = isDesktopValue && !isMacValue;
+
+		document.documentElement.classList.toggle('mb-mac-loading', isMacValue);
+		document.documentElement.classList.toggle('mb-macos', isMacValue);
+		document.documentElement.classList.toggle('mb-windows-loading', isWindows);
+		document.documentElement.classList.toggle('mb-windows', isWindows);
+		if (document.body) {
+			document.body.classList.toggle('mb-macos', isMacValue);
+			document.body.classList.toggle('mb-windows', isWindows);
+		}
+	}
+
+	try {
+		Object.defineProperty(window, 'isMac', {
+			configurable: true,
+			get: function() {
+				return isMacValue;
+			},
+			set: function(value) {
+				isMacValue = value === true;
+				syncWorkspaceClasses();
+			}
+		});
+	} catch (error) {
+		window.isMac = isMacValue;
+	}
+
+	try {
+		Object.defineProperty(window, 'isDesktop', {
+			configurable: true,
+			get: function() {
+				return isDesktopValue;
+			},
+			set: function(value) {
+				isDesktopValue = value === true;
+				syncWorkspaceClasses();
+			}
+		});
+	} catch (error) {
+		window.isDesktop = isDesktopValue;
+	}
+})();

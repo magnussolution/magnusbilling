@@ -33,7 +33,7 @@ Ext.define('Ext.ux.form.Panel', {
     labelAlignFields: 'right',
     header: window.isTablet || window.isTablets ? false : '',
     fieldsHideUpdateLot: [],
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         var formName = me.xtype.slice(0, -4);
         eval('var ' + "modulename" + '= ' + 'window.module_extra_form_' + formName + ';');
@@ -105,15 +105,15 @@ Ext.define('Ext.ux.form.Panel', {
         }
         if (me.items && App.user.isAdmin && App.user.show_filed_help == true) {
             if (me.items[0].xtype == 'tabpanel') {
-                me.items[0].items.forEach(function(tab) {
-                    tab.items.forEach(function(field) {
+                me.items[0].items.forEach(function (tab) {
+                    tab.items.forEach(function (field) {
                         if (field.xtype == 'fieldcontainer') {
-                            field.items.forEach(function(field) {
+                            field.items.forEach(function (field) {
                                 var helpString = h(formName + '.' + field.name);
                                 if (helpString.length > 10) field.fieldLabel = field.fieldLabel + ' ' + helpString
                             });
                         } else if (field.xtype == 'fieldset') {
-                            field.items.forEach(function(field) {
+                            field.items.forEach(function (field) {
                                 var helpString = h(formName + '.' + field.name);
                                 if (helpString.length > 10) field.fieldLabel = field.fieldLabel + ' ' + helpString
                             });
@@ -126,7 +126,7 @@ Ext.define('Ext.ux.form.Panel', {
             } else {
                 for (var i in me.items) {
                     if (me.items[i].xtype == 'fieldset') {
-                        me.items[i].items.forEach(function(field) {
+                        me.items[i].items.forEach(function (field) {
                             var helpString = h(formName + '.' + field.name);
                             if (helpString.length > 10) field.fieldLabel = field.fieldLabel + ' ' + helpString
                         });
@@ -151,12 +151,14 @@ Ext.define('Ext.ux.form.Panel', {
             xtype: 'tbtext'
         }, me.alignButtonsBottom, {
             reference: 'save',
+            cls: window.isMac ? 'mb-mac-primary-button' : '',
             text: me.textSave,
             width: 90,
             glyph: me.glyphSave,
             handler: 'onSave',
             hidden: !me.allowCreate && !me.allowUpdate
         }, {
+            cls: window.isMac ? 'mb-mac-secondary-button' : '',
             text: me.textCancel,
             width: 100,
             glyph: me.glyphCancel,

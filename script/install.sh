@@ -89,6 +89,7 @@ apt-get install -y mariadb-server php-mysql
 apt-get install -y unzip git libcurl4-openssl-dev htop sngrep firewalld fail2ban cron
 apt-get install -y rsyslog
 apt-get install -y whiptail
+apt-get install -y libblocksruntime-dev
 
 PHP_INI=$(php -i | grep /.+/php.ini -oE)
 
@@ -810,7 +811,8 @@ chown -R root:$APACHE_USER /usr/local/src/magnus
 chmod -R 730 /usr/local/src/magnus
 chown -R root:asterisk /var/lib/asterisk/moh
 chmod -R 730 /var/lib/asterisk/moh
-
+chown root:asterisk /etc/asterisk/res_config_mysql.conf
+chmod 0640 /etc/asterisk/res_config_mysql.conf
 
 chown -R root:root /var/www/html/mbilling
 find /var/www/html/mbilling -type d -exec chmod 755 {} \;
