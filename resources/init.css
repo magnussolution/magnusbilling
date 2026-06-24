@@ -1,3 +1,17 @@
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    touch-action: none;
+}
+
+input,
+select,
+textarea {
+    font-size: 16px;
+}
+
 /* Mask Loading App */
 
 .grecaptcha-badge {
@@ -137,6 +151,20 @@
     display: none;
 }
 
+.mb-custom-loading-logo.mb-mac-loading #loading .loading-indicator:before {
+    display: none;
+}
+
+.mb-custom-loading-logo.mb-mac-loading #loadinggif {
+    display: inline-block;
+    height: auto;
+    margin: 0 auto 18px;
+    max-height: 100px;
+    max-width: 100px;
+    object-fit: contain;
+    width: 100px !important;
+}
+
 .mb-mac-loading #name-system {
     color: #172238;
     display: inline-block;
@@ -267,13 +295,13 @@
     display: inline-block;
     height: auto;
     margin: 0 auto 18px;
-    max-height: 90px;
-    max-width: 210px;
+    max-height: 100px;
+    max-width: 100px;
     object-fit: contain;
-    width: auto !important;
+    width: 100px !important;
 }
 
-.mb-windows-loading:not(.mb-mac-loading) #loadinggif + br {
+.mb-windows-loading:not(.mb-mac-loading) #loadinggif+br {
     display: block;
     line-height: 0;
 }
@@ -308,7 +336,7 @@
 
 .mb-windows-loading:not(.mb-mac-loading) #loading .loading-indicator:after {
     animation: mb-windows-loading-spin 1050ms linear infinite;
-    background: conic-gradient(from 10deg, transparent 0 14%, #fff 14% 21%, transparent 21% 34%, rgba(255,255,255,.88) 34% 41%, transparent 41% 54%, rgba(255,255,255,.72) 54% 61%, transparent 61% 74%, rgba(255,255,255,.56) 74% 81%, transparent 81% 94%, rgba(255,255,255,.4) 94% 100%);
+    background: conic-gradient(from 10deg, transparent 0 14%, #fff 14% 21%, transparent 21% 34%, rgba(255, 255, 255, .88) 34% 41%, transparent 41% 54%, rgba(255, 255, 255, .72) 54% 61%, transparent 61% 74%, rgba(255, 255, 255, .56) 74% 81%, transparent 81% 94%, rgba(255, 255, 255, .4) 94% 100%);
     border-radius: 50%;
     content: '';
     display: block;
@@ -735,6 +763,56 @@ div.ux-taskbar div.x-toolbar {
 
 .x-view-over .ux-desktop-shortcut-text {
     text-decoration: underline;
+}
+
+/*
+ * Windows desktop shortcuts
+ *
+ * The macOS template can replace legacy image icons with font icons. In the
+ * Windows desktop we keep the classic shortcut layout, but force the icon glyph
+ * itself back to the expected desktop size.
+ */
+
+.mb-windows:not(.mb-macos) .ux-desktop-shortcut {
+    min-height: 80px;
+    width: 84px !important;
+}
+
+.mb-windows:not(.mb-macos) .ux-desktop-shortcut-icon {
+    align-items: center;
+    display: flex;
+    height: 50px !important;
+    justify-content: center;
+    line-height: 50px !important;
+    width: 80px !important;
+}
+
+.mb-windows:not(.mb-macos) .ux-desktop-shortcut-icon.x-fa,
+.mb-windows:not(.mb-macos) .ux-desktop-shortcut-icon[class*=" fa-"],
+.mb-windows:not(.mb-macos) .ux-desktop-shortcut-icon[class^="fa-"],
+.mb-windows:not(.mb-macos) .ux-desktop-shortcut-icon .x-fa,
+.mb-windows:not(.mb-macos) .ux-desktop-shortcut-icon .fa,
+.mb-windows:not(.mb-macos) .ux-desktop-shortcut-icon span {
+    font-size: 42px !important;
+    line-height: 50px !important;
+}
+
+.mb-windows:not(.mb-macos) .ux-desktop-shortcut-icon.x-fa:before,
+.mb-windows:not(.mb-macos) .ux-desktop-shortcut-icon[class*=" fa-"]:before,
+.mb-windows:not(.mb-macos) .ux-desktop-shortcut-icon[class^="fa-"]:before,
+.mb-windows:not(.mb-macos) .ux-desktop-shortcut-icon .x-fa:before {
+    display: block;
+    font-size: 42px !important;
+    line-height: 50px !important;
+}
+
+.mb-windows:not(.mb-macos) .ux-desktop-shortcut-text {
+    display: block;
+    font-size: 11px;
+    line-height: 14px;
+    margin-top: 2px;
+    max-width: 84px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.58);
 }
 
 /* Portal */
@@ -1934,6 +2012,309 @@ div.ux-taskbar div.x-toolbar {
     z-index: 5;
 }
 
+.mb-macos .mb-mac-dashboard-widget {
+    background: rgba(244, 248, 255, 0.28) !important;
+    border: 1px solid rgba(255, 255, 255, 0.42) !important;
+    border-radius: 28px !important;
+    box-shadow: 0 24px 70px rgba(7, 16, 33, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.44);
+    color: #102033;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    overflow: hidden !important;
+    position: absolute !important;
+    z-index: 3;
+    -webkit-backdrop-filter: saturate(155%) blur(26px);
+    backdrop-filter: saturate(155%) blur(26px);
+}
+
+.mb-macos .mb-mac-widget-shell {
+    background:
+        radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.52), transparent 34%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.44), rgba(213, 231, 255, 0.28));
+    box-sizing: border-box;
+    height: 100%;
+    padding: 18px 18px 66px;
+    position: relative;
+}
+
+.mb-macos .mb-mac-widget-shell::after {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.38), transparent 38%);
+    content: '';
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+}
+
+.mb-macos .mb-mac-widget-top,
+.mb-macos .mb-mac-widget-grid,
+.mb-macos .mb-mac-widget-card,
+.mb-macos .mb-mac-widget-bottom {
+    position: relative;
+    z-index: 1;
+}
+
+.mb-macos .mb-mac-widget-top {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.mb-macos .mb-mac-widget-kicker {
+    color: rgba(16, 32, 51, 0.58);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+}
+
+.mb-macos .mb-mac-widget-title {
+    color: #0f2034;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    font-size: 25px;
+    font-weight: 750;
+    letter-spacing: -0.9px;
+    line-height: 0;
+    min-height: 0;
+}
+
+.mb-macos .mb-mac-widget-live {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.46);
+    border-radius: 999px;
+    color: rgba(16, 32, 51, 0.72);
+    display: flex;
+    font-size: 11px;
+    font-weight: 700;
+    gap: 6px;
+    padding: 6px 9px;
+}
+
+.mb-macos .mb-mac-widget-live span {
+    animation: mb-mac-widget-pulse 1.4s ease-in-out infinite;
+    background: #31d158;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(49, 209, 88, 0.16);
+    height: 7px;
+    width: 7px;
+}
+
+.mb-macos .mb-mac-widget-grid {
+    display: grid;
+    gap: 9px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 10px;
+}
+
+.mb-macos .mb-mac-widget-metric,
+.mb-macos .mb-mac-widget-card {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.56);
+}
+
+.mb-macos .mb-mac-widget-metric {
+    box-sizing: border-box;
+    min-height: 68px;
+    padding: 11px 12px;
+}
+
+.mb-macos .mb-mac-widget-icon {
+    align-items: center;
+    border-radius: 13px;
+    color: #fff;
+    display: inline-flex;
+    font-size: 14px;
+    height: 28px;
+    justify-content: center;
+    margin-bottom: 7px;
+    width: 28px;
+}
+
+.mb-macos .mb-mac-widget-blue .mb-mac-widget-icon {
+    background: linear-gradient(145deg, #64d2ff, #0a84ff);
+}
+
+.mb-macos .mb-mac-widget-purple .mb-mac-widget-icon {
+    background: linear-gradient(145deg, #bf5af2, #5e5ce6);
+}
+
+.mb-macos .mb-mac-widget-green .mb-mac-widget-icon {
+    background: linear-gradient(145deg, #5de074, #30b85a);
+}
+
+.mb-macos .mb-mac-widget-orange .mb-mac-widget-icon {
+    background: linear-gradient(145deg, #ffd166, #ff9f0a);
+}
+
+.mb-macos .mb-mac-widget-value {
+    color: #102033;
+    display: block;
+    font-size: 18px;
+    font-weight: 760;
+    letter-spacing: -0.4px;
+    line-height: 20px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mb-macos .mb-mac-widget-label {
+    color: rgba(16, 32, 51, 0.62);
+    display: block;
+    font-size: 11px;
+    font-weight: 650;
+    line-height: 14px;
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mb-macos .mb-mac-widget-card {
+    padding: 12px;
+}
+
+.mb-macos .mb-mac-widget-card-large {
+    margin-bottom: 10px;
+    min-height: 100px;
+    overflow: hidden;
+}
+
+.mb-macos .mb-mac-widget-card-head,
+.mb-macos .mb-mac-widget-card-foot {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.mb-macos .mb-mac-widget-card-head span,
+.mb-macos .mb-mac-widget-card span,
+.mb-macos .mb-mac-widget-card-foot {
+    color: rgba(16, 32, 51, 0.62);
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.mb-macos .mb-mac-widget-card-head strong {
+    color: #0a84ff;
+    font-size: 22px;
+    font-weight: 780;
+    letter-spacing: -0.6px;
+}
+
+.mb-macos .mb-mac-widget-sparkline {
+    display: block;
+    height: 54px;
+    margin: 2px 0 0;
+    width: 100%;
+}
+
+.mb-macos .mb-mac-widget-gridline {
+    stroke: rgba(16, 32, 51, 0.09);
+    stroke-width: 1;
+}
+
+.mb-macos .mb-mac-widget-card-foot {
+    font-size: 10px;
+    gap: 10px;
+}
+
+.mb-macos .mb-mac-widget-card-foot span {
+    align-items: center;
+    display: inline-flex;
+}
+
+.mb-macos .mb-mac-widget-dot {
+    border-radius: 50%;
+    display: inline-block;
+    height: 7px;
+    margin-right: 5px;
+    width: 7px;
+}
+
+.mb-macos .mb-mac-widget-dot-total {
+    background: #7f961e;
+}
+
+.mb-macos .mb-mac-widget-dot-answer {
+    background: #0a84ff;
+}
+
+.mb-macos .mb-mac-widget-bottom {
+    display: grid;
+    gap: 9px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.mb-macos .mb-mac-widget-bottom .mb-mac-widget-card {
+    min-height: 56px;
+}
+
+.mb-macos .mb-mac-dashboard-widget .mb-mac-widget-open-dashboard {
+    align-items: center;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(232, 242, 255, 0.6));
+    border: 1px solid rgba(255, 255, 255, 0.66);
+    border-radius: 18px;
+    box-sizing: border-box;
+    box-shadow: 0 8px 18px rgba(18, 47, 92, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.64);
+    color: #075fc4;
+    cursor: default;
+    display: flex;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 750;
+    justify-content: center;
+    line-height: 18px;
+    min-height: 39px;
+    padding: 9px 12px;
+    bottom: 16px;
+    left: 18px;
+    margin-top: 0;
+    position: absolute;
+    right: 18px;
+    width: auto !important;
+    z-index: 2;
+}
+
+.mb-macos .mb-mac-dashboard-widget .mb-mac-widget-open-dashboard:hover {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(234, 244, 255, 0.76));
+}
+
+.mb-macos .mb-mac-dashboard-widget .mb-mac-widget-open-dashboard .x-fa {
+    font-size: 10px;
+    margin-left: 7px;
+}
+
+.mb-macos .mb-mac-widget-card strong {
+    color: #102033;
+    display: block;
+    font-size: 15px;
+    font-weight: 750;
+    letter-spacing: -0.25px;
+    line-height: 19px;
+    margin-top: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@keyframes mb-mac-widget-pulse {
+
+    0%,
+    100% {
+        opacity: 0.58;
+        transform: scale(0.92);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 .mb-macos .mb-mac-desktop-shortcut {
     align-items: center;
     border: 1px solid transparent;
@@ -2196,7 +2577,8 @@ div.ux-taskbar div.x-toolbar {
     border-radius: 19px;
     box-shadow: 0 10px 28px rgba(15, 23, 42, 0.3), inset 0 0 0 1px rgba(20, 30, 44, 0.08);
     min-height: 58px;
-    padding: 6px 9px !important;
+    overflow: visible !important;
+    padding: 6px 13px !important;
     -webkit-backdrop-filter: saturate(150%) blur(18px);
     backdrop-filter: saturate(150%) blur(18px);
 }
@@ -2208,7 +2590,7 @@ div.ux-taskbar div.x-toolbar {
     padding: 0 !important;
 }
 
-.mb-mac-login-window > .x-window-body,
+.mb-mac-login-window>.x-window-body,
 .mb-mac-login-window .x-window-body-default {
     background:
         radial-gradient(circle at 16% 18%, rgba(255, 255, 255, 0.92) 0 8%, transparent 28%),
@@ -2216,6 +2598,28 @@ div.ux-taskbar div.x-toolbar {
         radial-gradient(circle at 76% 82%, rgba(239, 209, 255, 0.78) 0 10%, transparent 34%),
         radial-gradient(circle at 18% 82%, rgba(179, 231, 255, 0.72) 0 8%, transparent 31%),
         linear-gradient(145deg, #edf7ff 0%, #d9eaff 40%, #eef2ff 68%, #f7eaff 100%) !important;
+}
+
+.auth-locked-window>.x-window-body,
+.auth-locked-window .x-window-body-default {
+    overflow: hidden;
+    position: relative;
+}
+
+.auth-locked-window>.x-window-body:before,
+.auth-locked-window .x-window-body-default:before {
+    background: url('images/lock-screen-background.jpg') center center / cover no-repeat;
+    content: "";
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: 0;
+}
+
+.auth-locked-window>.x-window-body>.x-box-inner,
+.auth-locked-window .x-window-body-default>.x-box-inner {
+    position: relative;
+    z-index: 1;
 }
 
 .mb-mac-login-card {
@@ -2228,8 +2632,8 @@ div.ux-taskbar div.x-toolbar {
     backdrop-filter: blur(28px) saturate(145%);
 }
 
-.mb-mac-login-card > .x-panel-body,
-.mb-mac-login-card > .x-container-body {
+.mb-mac-login-card>.x-panel-body,
+.mb-mac-login-card>.x-container-body {
     background: transparent !important;
 }
 
@@ -2254,6 +2658,15 @@ div.ux-taskbar div.x-toolbar {
 .mb-mac-login-app-icon .x-fa {
     font-size: 39px;
     text-shadow: 0 2px 4px rgba(26, 76, 154, 0.18);
+}
+
+.mb-mac-login-logo {
+    display: block;
+    height: 54px;
+    max-height: 54px;
+    max-width: 54px;
+    object-fit: contain;
+    width: 54px;
 }
 
 .mb-mac-login-product {
@@ -2391,7 +2804,7 @@ div.ux-taskbar div.x-toolbar {
     padding: 0 !important;
 }
 
-.mb-windows-login-window > .x-window-body,
+.mb-windows-login-window>.x-window-body,
 .mb-windows-login-window .x-window-body-default {
     background:
         radial-gradient(ellipse at 12% 96%, rgba(18, 125, 238, 0.76) 0 11%, transparent 42%),
@@ -2412,8 +2825,8 @@ div.ux-taskbar div.x-toolbar {
     backdrop-filter: blur(24px) saturate(120%);
 }
 
-.mb-windows-login-card > .x-panel-body,
-.mb-windows-login-card > .x-container-body {
+.mb-windows-login-card>.x-panel-body,
+.mb-windows-login-card>.x-container-body {
     background: transparent !important;
 }
 
@@ -2594,7 +3007,17 @@ div.ux-taskbar div.x-toolbar {
 .mb-macos .mb-mac-windowbar {
     background: transparent !important;
     border: 0 !important;
+    overflow: visible !important;
     padding: 0 !important;
+}
+
+.mb-macos .mb-mac-dock .x-box-inner,
+.mb-macos .mb-mac-dock .x-toolbar-body,
+.mb-macos .mb-mac-dock .x-btn,
+.mb-macos .mb-mac-dock .x-btn-wrap,
+.mb-macos .mb-mac-dock .x-btn-button,
+.mb-macos .mb-mac-dock .x-btn-icon-el {
+    overflow: visible !important;
 }
 
 .mb-macos .mb-mac-dock-button,
@@ -2718,10 +3141,11 @@ div.ux-taskbar div.x-toolbar {
 
 .mb-macos .x-window-header {
     border-radius: 11px 11px 0 0;
+    min-height: 36px !important;
 }
 
 .mb-macos .x-window-header .x-window-header-title {
-    padding-left: 70px !important;
+    padding-left: 94px !important;
 }
 
 .mb-macos .x-window-header .mb-mac-window-control {
@@ -2729,22 +3153,22 @@ div.ux-taskbar div.x-toolbar {
     margin: 0 !important;
     opacity: 1 !important;
     position: absolute !important;
-    top: 50% !important;
+    top: 56% !important;
     transform: translateY(-50%);
     width: 16px !important;
     z-index: 5;
 }
 
 .mb-macos .x-window-header .mb-mac-window-close {
-    left: 3px !important;
+    left: 16px !important;
 }
 
 .mb-macos .x-window-header .mb-mac-window-minimize {
-    left: 25px !important;
+    left: 38px !important;
 }
 
 .mb-macos .x-window-header .mb-mac-window-zoom {
-    left: 47px !important;
+    left: 60px !important;
 }
 
 .mb-macos .x-window-header .mb-mac-window-control .x-tool-img {
@@ -2970,7 +3394,7 @@ div.ux-taskbar div.x-toolbar {
     border: 0 !important;
 }
 
-.mb-macos .x-window:not(.mb-mac-login-window) .x-form-text-wrap > .x-form-text,
+.mb-macos .x-window:not(.mb-mac-login-window) .x-form-text-wrap>.x-form-text,
 .mb-macos .x-window:not(.mb-mac-login-window) textarea.x-form-field {
     background: #fff !important;
     border: 1px solid rgba(61, 72, 89, 0.25) !important;
@@ -3001,7 +3425,7 @@ div.ux-taskbar div.x-toolbar {
 
 .mb-macos .x-window:not(.mb-mac-login-window) .x-field-focus .x-form-trigger-wrap,
 .mb-macos .x-window:not(.mb-mac-login-window) .x-field-focus textarea.x-form-field,
-.mb-macos .x-window:not(.mb-mac-login-window) .x-form-text-wrap.x-form-text-wrap-focus > .x-form-text {
+.mb-macos .x-window:not(.mb-mac-login-window) .x-form-text-wrap.x-form-text-wrap-focus>.x-form-text {
     border-color: #0a84ff !important;
     box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2) !important;
 }

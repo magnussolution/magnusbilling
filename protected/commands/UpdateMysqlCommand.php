@@ -2254,10 +2254,6 @@ exten => s,1,Set(MASTER_CHANNEL(TRUNKANSWERTIME)=\${EPOCH})
                     'pkg_rate_provider',
                     'pkg_rate_agent',
                     'pkg_user_rate',
-                    'pkg_balance',
-                    'pkg_cdr',
-                    'pkg_cdr_archive',
-                    'pkg_cdr_failed',
                 ];
 
                 foreach ($prefixReferenceTables as $table) {
@@ -2324,8 +2320,10 @@ exten => s,1,Set(MASTER_CHANNEL(TRUNKANSWERTIME)=\${EPOCH})
             $this->ensureUniqueIndex('pkg_rate', 'uq_pkg_rate_plan_prefix', ['id_plan', 'id_prefix']);
             $this->dropRedundantPrefixIndexes();
 
-            if (! $this->hasUniqueIndex('pkg_prefix', ['prefix']) ||
-                ! $this->hasUniqueIndex('pkg_rate', ['id_plan', 'id_prefix'])) {
+            if (
+                ! $this->hasUniqueIndex('pkg_prefix', ['prefix']) ||
+                ! $this->hasUniqueIndex('pkg_rate', ['id_plan', 'id_prefix'])
+            ) {
                 throw new Exception('The required unique indexes were not created.');
             }
 
@@ -2486,7 +2484,7 @@ exten => s,1,Set(MASTER_CHANNEL(TRUNKANSWERTIME)=\${EPOCH})
         $quotedColumns = array_map([$this, 'quoteIdentifier'], $columns);
         $this->criticalExecute(
             'ALTER TABLE `' . $table . '` ADD UNIQUE KEY `' . $indexName . '` (' .
-            implode(', ', $quotedColumns) . ')'
+                implode(', ', $quotedColumns) . ')'
         );
     }
 

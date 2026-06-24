@@ -19,7 +19,8 @@ Ext.define('MBilling.view.provider.Lookup', {
             dataIndex: 'provider_name'
         }, {
             header: t('Description'),
-            dataIndex: 'description'
+            dataIndex: 'description',
+            hidden: window.isTablet
         }]
     }
 });

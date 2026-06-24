@@ -45,7 +45,10 @@ class FirewallController extends Controller
             $model = Firewall::model()->findByPk((int) $value);
             $model->action = 3;
             $model->save();
+
+            LogUsers::model()->deleteAll('ip = :key', [':key' => $model->ip]);
         }
+
 
         echo json_encode(array(
             $this->nameSuccess => true,

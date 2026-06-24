@@ -1,7 +1,13 @@
-(function() {
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('gesturechange', e => e.preventDefault());
+document.addEventListener('gestureend', e => e.preventDefault());
+document.addEventListener('touchmove', e => e.preventDefault(), {
+    passive: false
+});
+(function () {
     var _constants = {};
     window.Locale = {
-        load: function(constants) {
+        load: function (constants) {
             _constants = constants;
         }
     };
@@ -13,18 +19,18 @@
      *      mas em en-US vai achar a tradução e retornar 'Administration'
      * 
      */
-    window.t = function(string) {
+    window.t = function (string) {
         return _constants[string] || string;
     }
 }());
-(function() {
+(function () {
     var _constants = {};
     window.Help = {
-        load: function(constants) {
+        load: function (constants) {
             _constants = constants;
         }
     };
-    window.h = function(string) {
+    window.h = function (string) {
         if (_constants[string] && _constants[string].match(/\|\|/)) {
             partOfString = _constants[string].split('||');
             data = string.split('.');

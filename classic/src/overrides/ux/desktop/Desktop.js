@@ -53,6 +53,7 @@ Ext.define('Overrides.ux.desktop.Desktop', {
         Ext.getWin().on('resize', me.organizeShortcuts, me);
         if (window.isMac) {
             Ext.getWin().on('resize', me.scheduleMacWindowConstraints, me);
+            Ext.getWin().on('resize', me.syncMacDashboardWidgetPosition, me);
         }
     },
     afterRender: function () {
@@ -62,8 +63,302 @@ Ext.define('Overrides.ux.desktop.Desktop', {
         if (window.isMac) {
             me.shortcutsView.el.on('click', me.onMacDirectoryClick, me);
             me.renderMacDesktopShortcuts();
+            me.scheduleMacDashboardWidgetRender();
+            me.on('boxready', me.scheduleMacDashboardWidgetRender, me, {
+                single: true
+            });
+            me.on('afterlayout', me.scheduleMacDashboardWidgetRender, me, {
+                single: true
+            });
             me.on('resize', me.constrainMacWindows, me);
         }
+    },
+    scheduleMacDashboardWidgetRender: function () {
+        var me = this;
+
+        if (!me.isMacWorkspaceActive() || me.macDashboardWidget || me.macDashboardWidgetRetryCount > 20) {
+            return;
+        }
+        me.macDashboardWidgetRetryCount = (me.macDashboardWidgetRetryCount || 0) + 1;
+        Ext.defer(function () {
+            if (me.destroyed || me.macDashboardWidget) {
+                return;
+            }
+            me.renderMacDashboardWidgets();
+            if (!me.macDashboardWidget) {
+                me.scheduleMacDashboardWidgetRender();
+            }
+        }, me.macDashboardWidgetRetryCount === 1 ? 80 : 350, me);
+    },
+    isMacWorkspaceActive: function () {
+        var body = Ext.getBody && Ext.getBody(),
+            html = Ext.fly(document.documentElement);
+
+        return window.isMac || (body && body.hasCls('mb-macos')) || (html && html.hasCls('mb-macos'));
+    },
+    hasMacDashboardAccess: function () {
+        return !!(window.App && App.user && (App.user.isAdmin === true || App.user.isAdmin === 1 || App.user.isAdmin === '1'));
+    },
+    renderMacDashboardWidgets: function () {
+        var me = this;
+
+        if (!me.isMacWorkspaceActive() || !me.hasMacDashboardAccess() || !me.body || me.macDashboardWidget) {
+            return;
+        }
+
+        Ext.require([
+            'MBilling.store.StatusSystem',
+            'MBilling.store.CallOnlineChart',
+            'MBilling.store.TrunkChart'
+        ], function () {
+            if (!me.body || me.destroyed || me.macDashboardWidget) {
+                return;
+            }
+            me.macDashboardWidgetRetryCount = 0;
+            me.macDashboardData = {
+                status: {},
+                calls: [],
+                trunks: []
+            };
+            me.macStatusStore = Ext.create('MBilling.store.StatusSystem');
+            me.macCallsStore = Ext.create('MBilling.store.CallOnlineChart');
+            me.macTrunksStore = Ext.create('MBilling.store.TrunkChart');
+            me.macDashboardWidget = Ext.create('Ext.Component', {
+                renderTo: me.body,
+                cls: 'mb-mac-dashboard-widget',
+                width: 376,
+                height: 432,
+                x: 28,
+                y: 42,
+                style: {
+                    position: 'absolute',
+                    zIndex: 3
+                },
+                html: me.buildMacDashboardHtml(),
+                listeners: {
+                    afterrender: function (widget) {
+                        me.macDashboardWidget = widget;
+                        widget.el.setStyle({
+                            position: 'absolute',
+                            zIndex: 3
+                        });
+                        widget.el.on('click', function (event, target) {
+                            if (event.getTarget('.mb-mac-widget-open-dashboard', widget.el.dom)) {
+                                event.stopEvent();
+                                me.openMacDashboardModule();
+                            }
+                        });
+                        me.syncMacDashboardWidgetPosition();
+                        me.loadMacDashboardWidgets();
+                        me.macDashboardTask = Ext.create('Ext.util.DelayedTask', function () {
+                            me.loadMacDashboardWidgets();
+                            me.macDashboardTask.delay(15000);
+                        }, me);
+                        me.macDashboardTask.delay(15000);
+                    }
+                }
+            });
+        });
+    },
+    openMacDashboardModule: function () {
+        var me = this,
+            modules,
+            module,
+            win;
+
+        if (!me.hasMacDashboardAccess()) {
+            return;
+        }
+        module = me.app.getModule('dashboardwindow') || me.app.getModule('dashboard');
+        if (!module) {
+            modules = me.app.getModules ? me.app.getModules() : [];
+            module = Ext.Array.findBy(modules, function (item) {
+                return item && item.module && item.module.module === 'dashboard';
+            });
+        }
+        win = module && module.createWindow();
+        if (win) {
+            me.restoreWindow(win);
+        }
+    },
+    loadMacDashboardWidgets: function () {
+        var me = this;
+
+        if (!me.hasMacDashboardAccess() || !me.macDashboardWidget || me.macDashboardWidget.destroyed) {
+            return;
+        }
+        if (me.macStatusStore) {
+            me.macStatusStore.load({
+                scope: me,
+                callback: function (records) {
+                    me.macDashboardData.status = records && records[0] ? Ext.apply({}, records[0].data) : {};
+                    me.updateMacDashboardWidgets();
+                }
+            });
+        }
+        if (me.macCallsStore) {
+            me.macCallsStore.setRemoteFilter(true);
+            me.macCallsStore.filter('hours', 1);
+            me.macCallsStore.load({
+                scope: me,
+                callback: function (records) {
+                    me.macDashboardData.calls = Ext.Array.map(records || [], function (record) {
+                        return Ext.apply({}, record.data);
+                    }).reverse();
+                    me.updateMacDashboardWidgets();
+                }
+            });
+        }
+        if (me.macTrunksStore) {
+            me.macTrunksStore.load({
+                scope: me,
+                callback: function (records) {
+                    me.macDashboardData.trunks = Ext.Array.map(records || [], function (record) {
+                        return Ext.apply({}, record.data);
+                    });
+                    me.updateMacDashboardWidgets();
+                }
+            });
+        }
+    },
+    updateMacDashboardWidgets: function () {
+        if (this.hasMacDashboardAccess() && this.macDashboardWidget && !this.macDashboardWidget.destroyed) {
+            this.macDashboardWidget.update(this.buildMacDashboardHtml());
+        }
+    },
+    getMacDashboardNumber: function (value, fallback) {
+        if (Ext.isEmpty(value) || value === 'undefined') {
+            return Ext.isDefined(fallback) ? fallback : '0';
+        }
+        return value;
+    },
+    getMacDashboardMetric: function (title, value, iconCls, tone) {
+        return '<div class="mb-mac-widget-metric mb-mac-widget-' + tone + '">' +
+            '<span class="mb-mac-widget-icon x-fa ' + iconCls + '"></span>' +
+            '<span class="mb-mac-widget-value">' + Ext.String.htmlEncode(String(value)) + '</span>' +
+            '<span class="mb-mac-widget-label">' + Ext.String.htmlEncode(title) + '</span>' +
+            '</div>';
+    },
+    getMacDashboardCallChart: function (records) {
+        var totalValues = [],
+            answerValues = [],
+            allValues,
+            max,
+            totalPoints = [],
+            answerPoints = [],
+            buildPoints;
+
+        Ext.each(records || [], function (record) {
+            var total = parseFloat(record.total),
+                answer = parseFloat(record.answer);
+            if (!isNaN(total)) {
+                totalValues.push(total);
+            }
+            if (!isNaN(answer)) {
+                answerValues.push(answer);
+            }
+        });
+        totalValues = totalValues.slice(-28);
+        answerValues = answerValues.slice(-28);
+        if (!totalValues.length) {
+            totalValues = [0, 0, 0, 0, 0, 0];
+        }
+        if (!answerValues.length) {
+            answerValues = [0, 0, 0, 0, 0, 0];
+        }
+        allValues = totalValues.concat(answerValues);
+        max = Math.max.apply(Math, allValues);
+        if (!max) {
+            max = 1;
+        }
+        buildPoints = function (values) {
+            var points = [];
+            Ext.each(values, function (value, index) {
+                var x = values.length === 1 ? 120 : (index * (240 / (values.length - 1))),
+                    y = 76 - ((value / max) * 58);
+                points.push(x.toFixed(1) + ',' + y.toFixed(1));
+            });
+            return points;
+        };
+        totalPoints = buildPoints(totalValues);
+        answerPoints = buildPoints(answerValues);
+        return '<svg class="mb-mac-widget-sparkline" viewBox="0 0 240 86" preserveAspectRatio="none" aria-label="' + Ext.String.htmlEncode(t('Simultaneous calls')) + '">' +
+            '<defs>' +
+            '<linearGradient id="mbMacTotalLine" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#b7d45c" stop-opacity=".55"/><stop offset="1" stop-color="#6f8718" stop-opacity=".95"/></linearGradient>' +
+            '<linearGradient id="mbMacAnswerLine" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#7cc8ff" stop-opacity=".55"/><stop offset="1" stop-color="#0a5eb8" stop-opacity=".95"/></linearGradient>' +
+            '</defs>' +
+            '<line x1="0" x2="240" y1="18" y2="18" class="mb-mac-widget-gridline"/>' +
+            '<line x1="0" x2="240" y1="47" y2="47" class="mb-mac-widget-gridline"/>' +
+            '<line x1="0" x2="240" y1="76" y2="76" class="mb-mac-widget-gridline"/>' +
+            '<polyline points="' + totalPoints.join(' ') + '" fill="none" stroke="url(#mbMacTotalLine)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '<polyline points="' + answerPoints.join(' ') + '" fill="none" stroke="url(#mbMacAnswerLine)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '</svg>';
+    },
+    buildMacDashboardHtml: function () {
+        var data = this.macDashboardData || {},
+            status = data.status || {},
+            calls = data.calls || [],
+            trunks = data.trunks || [],
+            currentCalls = calls.length ? calls[calls.length - 1] : {},
+            cpu = this.getMacDashboardNumber(status.cpuPercent),
+            activeUsers = this.getMacDashboardNumber(status.totalActiveUsers),
+            monthProfit = this.getMacDashboardNumber(status.monthprofit),
+            callTotal = this.getMacDashboardNumber(currentCalls.total),
+            callAnswer = this.getMacDashboardNumber(currentCalls.answer),
+            currency = App.user.currency || '';
+
+        return '<div class="mb-mac-widget-shell">' +
+            '<div class="mb-mac-widget-top">' +
+            '<div><div class="mb-mac-widget-kicker">' + Ext.String.htmlEncode(t('Dashboard')) + '</div>' +
+            '<div class="mb-mac-widget-title"></div></div>' +
+            '<div class="mb-mac-widget-live"><span></span>' + Ext.String.htmlEncode(t('Live')) + '</div>' +
+            '</div>' +
+            '<div class="mb-mac-widget-grid">' +
+            this.getMacDashboardMetric('CPU', cpu + '%', 'fa-server', 'blue') +
+            this.getMacDashboardMetric(t('Calls'), callTotal, 'fa-phone', 'orange') +
+            this.getMacDashboardMetric(t('Active users'), activeUsers, 'fa-users', 'green') +
+            this.getMacDashboardMetric(t('Month profit'), currency + ' ' + monthProfit, 'fa-line-chart', 'purple') +
+            '</div>' +
+            '<div class="mb-mac-widget-card mb-mac-widget-card-large">' +
+            '<div class="mb-mac-widget-card-head"><span>' + Ext.String.htmlEncode(t('Simultaneous calls')) + '</span><strong>' + Ext.String.htmlEncode(String(callTotal)) + '</strong></div>' +
+            this.getMacDashboardCallChart(calls) +
+            '<div class="mb-mac-widget-card-foot"><span><i class="mb-mac-widget-dot mb-mac-widget-dot-total"></i>' + Ext.String.htmlEncode(t('Total')) + ': ' + Ext.String.htmlEncode(String(callTotal)) + '</span><span><i class="mb-mac-widget-dot mb-mac-widget-dot-answer"></i>' + Ext.String.htmlEncode(t('Answered')) + ': ' + Ext.String.htmlEncode(String(callAnswer)) + '</span></div>' +
+            '</div>' +
+            '<button class="mb-mac-widget-open-dashboard" type="button">' + t('See more') + '<span class="x-fa fa-chevron-right"></span></button>' +
+            '</div>';
+    },
+    syncMacDashboardWidgetPosition: function () {
+        var me = this,
+            widget = me.macDashboardWidget,
+            bodyWidth,
+            bodyHeight,
+            width,
+            height;
+
+        if (!me.isMacWorkspaceActive() || !widget || widget.destroyed || !me.body) {
+            return;
+        }
+        if (!me.hasMacDashboardAccess()) {
+            widget.hide();
+            return;
+        }
+        bodyWidth = me.body.getWidth();
+        bodyHeight = me.body.getHeight();
+        if (bodyWidth < 980) {
+            widget.hide();
+            return;
+        }
+        widget.show();
+        if (widget.el) {
+            widget.el.setStyle({
+                position: 'absolute',
+                zIndex: 3
+            });
+        }
+        width = Math.min(Math.max(bodyWidth * 0.25, 330), 370);
+        height = 456;
+        widget.setSize(width, height);
+        widget.setPosition(28, 42);
     },
     renderMacDesktopShortcuts: function () {
         var me = this,

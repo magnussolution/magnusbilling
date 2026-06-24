@@ -25,6 +25,8 @@ Ext.define('MBilling.view.main.Login', {
         var me = this,
             isMac = window.isMac === true,
             isWindows = window.isDesktop === true && window.isMac !== true,
+            customName = me.getCustomWindowValue(window.cn),
+            customLogo = me.getCustomLogoPath(window.cl),
             loginItems = [];
 
 
@@ -33,16 +35,25 @@ Ext.define('MBilling.view.main.Login', {
         } else {
             var productName = window.agentTitle || 'MagnusBilling';
         }
+        if ((isMac || isWindows) && customName) {
+            productName = customName;
+        }
         if (window.productCustom) {
             var windowsProductName = window.productCustom;
         } else {
             var windowsProductName = window.agentTitle || t('MagnusBilling System');
+        }
+        if ((isMac || isWindows) && customName) {
+            windowsProductName = customName;
         }
 
         if (window.logoCustom) {
             var loginLogo = window.logoCustom;
         } else {
             var loginLogo = window.agentTitle ? 'resources/images/logo_custom_' + window.agentId + '.png' : 'resources/images/loading.gif';
+        }
+        if ((isMac || isWindows) && customLogo) {
+            loginLogo = customLogo;
         }
 
         me.cls = isMac ? 'auth-locked-window mb-mac-login-window' : (isWindows ? 'auth-locked-window mb-windows-login-window' : 'auth-locked-window');
@@ -54,7 +65,9 @@ Ext.define('MBilling.view.main.Login', {
             loginItems.push({
                 xtype: 'component',
                 cls: 'mb-mac-login-brand',
-                html: '<div class="mb-mac-login-app-icon"><span class="x-fa fa-cloud"></span></div>' +
+                html: '<div class="mb-mac-login-app-icon">' + (customLogo ?
+                    '<img class="mb-mac-login-logo" src="' + Ext.String.htmlEncode(customLogo) + '" alt="" />' :
+                    '<span class="x-fa fa-cloud"></span>') + '</div>' +
                     '<div class="mb-mac-login-product">' + Ext.String.htmlEncode(productName) + '</div>'
             });
         } else if (isWindows) {
@@ -173,5 +186,21 @@ Ext.define('MBilling.view.main.Login', {
             items: loginItems
         }];
         me.callParent(arguments);
+    },
+
+    getCustomWindowValue: function (value) {
+        value = Ext.String.trim(String(value || ''));
+        return value && value !== 'undefined' && value !== 'null' ? value : '';
+    },
+
+    getCustomLogoPath: function (value) {
+        value = this.getCustomWindowValue(value);
+        if (!value) {
+            return '';
+        }
+        if (/^(?:[a-z]+:)?\/\//i.test(value) || value.charAt(0) === '/' || value.indexOf('/') !== -1) {
+            return value;
+        }
+        return 'resources/images/' + value;
     }
 });

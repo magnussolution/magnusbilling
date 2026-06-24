@@ -21,7 +21,8 @@ Ext.define('Ext.ux.form.field.Lookup', {
         me.callParent(arguments);
     },
     initSubFields: function() {
-        var me = this;
+        var me = this,
+            isMobileLayout = me.isMobileLayout();
         me.rawField = Ext.widget('textfield', {
             readOnly: true,
             flex: 1,
@@ -47,18 +48,51 @@ Ext.define('Ext.ux.form.field.Lookup', {
         me.buttonSearch = Ext.widget('button', {
             iconCls: 'ux-gridfilter-text-icon',
             scope: me,
-            text: t('Search'),
-            width: 80,
+            text: isMobileLayout ? '' : t('Search'),
+            tooltip: t('Search'),
+            width: isMobileLayout ? 48 : 80,
             handler: me.onClickSearch,
             hidden: me.hiddenSearchButton
         });
         return [me.rawField, me.buttonSearch];
     },
+    isMobileLayout: function() {
+        return window.isMobileLayout || window.isTablet || window.isTablets;
+    },
+    getWindowSearchMetrics: function() {
+        var me = this,
+            bodySize = Ext.getBody().getViewSize(),
+            isMobileLayout = me.isMobileLayout(),
+            margin = 4,
+            y = me.rawField.getY() + 23,
+            height = me.rawField.getY() > 250 ? 300 : bodySize.height - 270;
+        if (isMobileLayout) {
+            height = bodySize.height - y - margin;
+            if (height < 260) {
+                y = margin;
+                height = bodySize.height - (margin * 2);
+            }
+            return {
+                x: margin,
+                y: y,
+                width: Math.max(240, bodySize.width - (margin * 2)),
+                height: Math.max(220, height)
+            };
+        }
+        return {
+            x: me.rawField.getX() - me.startX,
+            y: y,
+            width: me.rawField.getWidth() + 70 + me.startX,
+            height: height
+        };
+    },
     onChangeRawField: function(field) {
         field.getTrigger('clear').show();
     },
     onClickSearch: function(btn, e) {
-        var me = this;
+        var me = this,
+            metrics = me.getWindowSearchMetrics(),
+            isMobileLayout = me.isMobileLayout();
         if (!me.windowSearch) {
             me.list = Ext.widget(me.gridConfig.xtype, Ext.apply({
                 selType: 'checkboxmodel',
@@ -92,11 +126,13 @@ Ext.define('Ext.ux.form.field.Lookup', {
                 header: false,
                 layout: 'fit',
                 closable: false,
-                resizable: true,
+                resizable: !isMobileLayout,
                 draggable: false,
+                constrain: true,
                 baseCls: 'x-panel',
-                width: me.rawField.getWidth() + 70 + me.startX,
-                height: me.rawField.getY() > 250 ? 300 : Ext.getBody().getViewSize().height - 270,
+                cls: isMobileLayout ? 'mb-mobile-lookup-window' : '',
+                width: metrics.width,
+                height: metrics.height,
                 items: me.list,
                 bbar: ['->', {
                     text: t('Cancel'),
@@ -112,9 +148,9 @@ Ext.define('Ext.ux.form.field.Lookup', {
                 }
             }, me.windowConfig));
         } else {
-            me.windowSearch.setWidth(me.rawField.getWidth() + 23 + me.startX)
+            me.windowSearch.setSize(metrics.width, metrics.height);
         }
-        me.windowSearch.showAt(me.rawField.getX() - me.startX, me.rawField.getY() + 23);
+        me.windowSearch.showAt(metrics.x, metrics.y);
     },
     onSelectionChangeList: function(selModel, selections) {
         this.recordSelected = selections[0];

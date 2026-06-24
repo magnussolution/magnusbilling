@@ -40,6 +40,8 @@ class AuthenticationController extends Controller
 
         $modelUser = User::model()->find("username = :user", [':user' => $user]);
 
+
+
         if (isset($modelUser->idGroup->idUserType->id) && $modelUser->idGroup->idUserType->id == 1) {
             $condition = "username COLLATE utf8_bin = :user AND UPPER(password) COLLATE utf8_bin = :pass ";
         } else {
@@ -50,10 +52,12 @@ class AuthenticationController extends Controller
             }
         }
 
+
+
         $modelUser = User::model()->find(
             [
                 'condition' => $condition,
-                'params'    => [':user' => $user, ':pass' => $password],
+                'params'    => [':user' => $user, ':pass' => strtoupper($password)],
             ]
         );
 

@@ -28,6 +28,7 @@ Ext.define('MBilling.view.did.Lookup', {
             dataIndex: 'activated',
             renderer: Helper.Util.formatBooleanActive,
             flex: 2,
+            hidden: window.isTablet,
             filter: {
                 type: 'list',
                 options: [

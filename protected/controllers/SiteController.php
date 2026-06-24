@@ -74,6 +74,8 @@ class SiteController extends Controller
         }
         echo 'window.signup_auto_pass = ' . $pass . ';';
         echo 'window.backgroundColor = "' . $this->config['global']['backgroundColor'] . '";';
+        echo 'window.cn = "' . $this->config['global']['cn'] . '";';
+        echo 'window.cl = "' . $this->config['global']['cl'] . '";';
         echo 'window.default_codes = "' . $this->config['global']['default_codeds'] . '";';
         echo 'window.global_record_calls = "' . $this->config['global']['global_record_calls'] . '";';
         echo 'window.default_prefix_rule = "' . $this->config['global']['default_prefix_rule'] . '";';

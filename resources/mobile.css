@@ -189,6 +189,38 @@ html.mb-mobile .x-window {
     max-width: calc(100vw - 16px) !important;
 }
 
+html.mb-mobile .mb-mobile-lookup-window {
+    max-width: calc(100vw - 8px) !important;
+}
+
+html.mb-mobile .alert-box {
+    box-sizing: border-box;
+    left: 50% !important;
+    max-width: 500px;
+    pointer-events: none;
+    position: fixed !important;
+    right: auto !important;
+    top: 6px !important;
+    transform: translateX(-50%);
+    width: calc(100vw - 16px);
+}
+
+html.mb-mobile .alert-box table {
+    box-sizing: border-box;
+    width: 100% !important;
+}
+
+html.mb-mobile .alert-box h3 {
+    box-sizing: border-box;
+    max-width: 100%;
+    width: auto !important;
+}
+
+html.mb-mobile .alert-box table,
+html.mb-mobile .alert-box .close {
+    pointer-events: auto;
+}
+
 html.mb-mobile .x-window-body {
     -webkit-overflow-scrolling: touch;
 }
