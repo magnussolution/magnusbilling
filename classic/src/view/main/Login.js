@@ -25,10 +25,25 @@ Ext.define('MBilling.view.main.Login', {
         var me = this,
             isMac = window.isMac === true,
             isWindows = window.isDesktop === true && window.isMac !== true,
-            loginItems = [],
-            productName = window.agentTitle || 'MagnusBilling',
-            windowsProductName = window.agentTitle || t('MagnusBilling System'),
-            loginLogo = window.agentTitle ? 'resources/images/logo_custom_' + window.agentId + '.png' : 'resources/images/loading.gif';
+            loginItems = [];
+        if (window.nameCustom) {
+            var productName = window.nameCustom;
+        } else {
+            var productName = window.agentTitle || 'MagnusBilling';
+        }
+        if (window.productCustom) {
+            var windowsProductName = window.productCustom;
+        } else {
+            var windowsProductName = window.agentTitle || t('MagnusBilling System');
+        }
+
+        if (window.logoCustom) {
+            var loginLogo = window.logoCustom;
+        } else {
+            var loginLogo = window.agentTitle ? 'resources/images/logo_custom_' + window.agentId + '.png' : 'resources/images/loading.gif';
+        }
+
+
         me.cls = isMac ? 'auth-locked-window mb-mac-login-window' : (isWindows ? 'auth-locked-window mb-windows-login-window' : 'auth-locked-window');
         me.title = window.loginheader ? window.loginheader : t("Log in");
         if (isMac || isWindows) {

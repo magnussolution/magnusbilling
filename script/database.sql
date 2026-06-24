@@ -2299,6 +2299,7 @@ CREATE TABLE `pkg_rate` (
   `dialprefix` bigint DEFAULT NULL,
   `destination` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_pkg_rate_plan_prefix` (`id_plan`,`id_prefix`),
   KEY `fk_pkg_plan_pkg_rate` (`id_plan`),
   KEY `fk_pkg_prefix_pkg_rate` (`id_prefix`),
   KEY `fk_pkg_trunk_pkg_rate` (`id_trunk_group`),

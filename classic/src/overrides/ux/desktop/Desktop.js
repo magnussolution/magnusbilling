@@ -36,6 +36,16 @@ Ext.define('Overrides.ux.desktop.Desktop', {
         '</button>',
         '</tpl>'
     ],
+    macDesktopShortcutTpl: [
+        '<tpl for=".">',
+        '<div class="mb-mac-desktop-shortcut" role="button" tabindex="0" aria-label="{name}">',
+        '<span class="mb-mac-app-icon mb-mac-app-icon-{tone}">',
+        '<span class="mb-mac-app-symbol {iconCls}" aria-hidden="true"></span>',
+        '</span>',
+        '<span class="mb-mac-desktop-shortcut-name">{name}</span>',
+        '</div>',
+        '</tpl>'
+    ],
     initComponent: function () {
         var me = this;
         me.callParent(arguments);
@@ -51,7 +61,57 @@ Ext.define('Overrides.ux.desktop.Desktop', {
         me.shortcuts.on('datachanged', me.organizeShortcuts, me);
         if (window.isMac) {
             me.shortcutsView.el.on('click', me.onMacDirectoryClick, me);
+            me.renderMacDesktopShortcuts();
             me.on('resize', me.constrainMacWindows, me);
+        }
+    },
+    renderMacDesktopShortcuts: function () {
+        var me = this,
+            shortcuts = me.macDesktopShortcuts || [],
+            data = [];
+
+        if (!window.isMac || !me.body) {
+            return;
+        }
+        Ext.each(shortcuts, function (shortcut, index) {
+            var visual = me.app.getMacMenuItemVisual(shortcut.name, shortcut.module, false, index);
+            data.push(Ext.apply(Ext.apply({}, shortcut), {
+                iconCls: shortcut.iconCls || visual.iconCls,
+                name: Ext.String.htmlEncode(shortcut.name || ''),
+                tone: visual.tone
+            }));
+        });
+        me.macDesktopShortcutsView = Ext.create('Ext.view.View', {
+            renderTo: me.body,
+            cls: 'mb-mac-desktop-shortcuts',
+            overItemCls: 'mb-mac-desktop-shortcut-over',
+            selectedItemCls: 'mb-mac-desktop-shortcut-selected',
+            trackOver: true,
+            itemSelector: 'div.mb-mac-desktop-shortcut',
+            store: Ext.create('Ext.data.Store', {
+                fields: me.app.fieldsShortcut,
+                data: data
+            }),
+            tpl: new Ext.XTemplate(me.macDesktopShortcutTpl),
+            listeners: {
+                itemclick: me.openMacDesktopShortcut,
+                itemkeydown: function (view, record, item, index, event) {
+                    if (event.getKey() === event.ENTER || event.getKey() === event.SPACE) {
+                        event.stopEvent();
+                        me.openMacDesktopShortcut(view, record);
+                    }
+                },
+                scope: me
+            }
+        });
+    },
+    openMacDesktopShortcut: function (view, record) {
+        var me = this,
+            module = me.app.getModule(record.get('module')),
+            win = module && module.createWindow();
+
+        if (win) {
+            me.restoreWindow(win);
         }
     },
     createWindow: function (config, cls) {
