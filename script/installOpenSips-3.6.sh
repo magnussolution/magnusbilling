@@ -1,4 +1,5 @@
 #!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 clear
 echo
 echo
@@ -44,8 +45,8 @@ apt -y upgrade
 apt -y install m4 git nano sudo curl dbus apache2 lsb-release dirmngr apt-transport-https ca-certificates
 apt -o Acquire::Check-Valid-Until=false update 
 apt -y install php php-gd php-mysql php-xmlrpc php-pear php-cli php-apcu php-curl php-xml libapache2-mod-php
-apt -y install git gcc bison flex make openssl perl libdbi-perl libdbd-mysql-perl libdbd-pg-perl libfrontier-rpc-perl libterm-readline-gnu-perl libberkeleydb-perl ssh libxml2 libxml2-dev libxmlrpc-core-c3-dev libpcre3 libpcre3-dev subversion libncurses5-dev git ngrep libssl-dev net-tools
-apt -y install autoconf automake devscripts gawk ntpdate ntp g++ git-core curl sudo xmlstarlet unixodbc-bin apache2 libjansson-dev git  odbcinst1debian2 libodbc1 odbcinst unixodbc unixodbc-dev
+apt -y install git gcc bison flex make openssl perl libdbi-perl libdbd-mysql-perl libdbd-pg-perl libfrontier-rpc-perl libterm-readline-gnu-perl libberkeleydb-perl ssh libxml2 libxml2-dev libxmlrpc-core-c3-dev libpcre2-8-0 libpcre2-dev subversion libncurses5-dev git ngrep libssl-dev net-tools
+apt -y install autoconf automake devscripts gawk ntpdate ntp g++ git-core curl sudo xmlstarlet apache2 libjansson-dev git  odbcinst1debian2 libodbc1 odbcinst unixodbc unixodbc-dev
 apt -y install php-fpm php  php-dev php-common php-cli php-gd php-pear php-cli php-sqlite3 php-curl php-mbstring unzip libapache2-mod-php uuid-dev libxml2 libxml2-dev openssl libcurl4-openssl-dev gettext gcc g++ libncurses5-dev sqlite3 libsqlite3-dev subversion mpg123
 apt -y install mariadb-server php-mysql
 apt -y install unzip git libcurl4-openssl-dev htop rsyslog cron
@@ -88,14 +89,15 @@ systemctl start  mariadb
 mysqladmin -u root password $password
 
 
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 049AD65B
-echo "deb https://apt.opensips.org $(lsb_release -sc) 3.2-releases" >/etc/apt/sources.list.d/opensips.list
-echo "deb https://apt.opensips.org $(lsb_release -sc) cli-nightly" >/etc/apt/sources.list.d/opensips-cli.list
+curl -fsSL https://apt.opensips.org/opensips-org.gpg -o /usr/share/keyrings/opensips-org.gpg
+echo "deb [signed-by=/usr/share/keyrings/opensips-org.gpg] https://apt.opensips.org trixie 3.6-releases" >/etc/apt/sources.list.d/opensips.list
+echo "deb [signed-by=/usr/share/keyrings/opensips-org.gpg] https://apt.opensips.org trixie cli-nightly" >/etc/apt/sources.list.d/opensips-cli.list
 apt update
 
-apt -y install opensips opensips-cli opensips-mysql-module opensips-postgres-module opensips-unixodbc-module opensips-jabber-module opensips-cpl-module opensips-radius-modules opensips-presence-modules opensips-xmlrpc-module opensips-perl-modules opensips-snmpstats-module opensips-xmpp-module opensips-carrierroute-module opensips-berkeley-module opensips-ldap-modules opensips-geoip-module opensips-regex-module opensips-identity-module opensips-b2bua-module opensips-dbhttp-module opensips-dialplan-module opensips-http-modules opensips-tls-module opensips-cgrates-module
-
+apt -y install opensips opensips-mysql-module opensips-postgres-module opensips-unixodbc-module opensips-jabber-module opensips-cpl-module opensips-radius-modules opensips-presence-modules opensips-xmlrpc-module opensips-perl-modules opensips-snmpstats-module opensips-xmpp-module opensips-carrierroute-module opensips-berkeley-module opensips-ldap-modules opensips-geoip-module opensips-regex-module opensips-identity-module opensips-dbhttp-module opensips-dialplan-module opensips-http-modules opensips-tls-module opensips-cgrates-module opensips-auth-modules
+apt -y install opensips-cli
 apt -y install opensips-stir-shaken-module
+apt -y install opensips-mysql-dbschema
 
 touch /var/log/opensips.log
 chown opensips:opensips /var/log/opensips.log
@@ -153,14 +155,16 @@ echo ""
 echo "----------------USE this password $password--------------------"
 echo ""
 echo ""
-sed -i "s/pswd = getpass(\"Password for admin {} user ({}): \".format(/pswd = \"$password\"/g" /usr/lib/python3/dist-packages/opensipscli/modules/database.py
-sed -i "s/                osdb.get_url_driver/                ##/g" /usr/lib/python3/dist-packages/opensipscli/modules/database.py
-sed -i "s/                osdb.get_url_user(admin_url/                ##/g" /usr/lib/python3/dist-packages/opensipscli/modules/database.py
+
+echo "[default]
+database_admin_url=mysql://root:$password@localhost
+database_url=mysql://opensips:$password@localhost/opensips
+database_schema_path=/usr/share/opensips
+" > /etc/opensips/opensips-cli.cfg
 
 yes | opensips-cli -x database create
 yes | opensips-cli -x database add ratecacher
 
-chkconfig opensips on
 systemctl enable opensips
 
 systemctl restart opensips
@@ -180,8 +184,11 @@ grep -q "/root/sync_opensips_reload.sh" /etc/crontab || echo "* * * * * root flo
 
 cd /etc/opensips/
 mv opensips.cfg opensips.cfg_old
-wget https://raw.githubusercontent.com/magnussolution/magnusbilling7/source/script/opensips-3.1.cfg
-mv opensips-3.1.cfg opensips.cfg
+if [ -f "$SCRIPT_DIR/opensips-3.1.cfg" ]; then
+  cp "$SCRIPT_DIR/opensips-3.1.cfg" opensips.cfg
+else
+  wget -O opensips.cfg https://raw.githubusercontent.com/magnussolution/magnusbilling8/source/script/opensips-3.1.cfg
+fi
 sed -i "s/MYSQLUSER:MYSQLPASS/root:$password/g" /etc/opensips/opensips.cfg
 sed -i "s/MYIP/$proxyip/g" /etc/opensips/opensips.cfg
 sed -i "s/LOCALIP/$localIP/g" /etc/opensips/opensips.cfg
@@ -345,88 +352,35 @@ cd rtpproxy
 make
 make install
 
-groupadd --system rtpproxy
-useradd -s /sbin/nologin --system -g rtpproxy rtpproxy
+groupadd --system rtpproxy || true
+id -u rtpproxy >/dev/null 2>&1 || useradd -s /sbin/nologin --system -g rtpproxy rtpproxy
+mkdir -p /run/rtpproxy
+chown -R rtpproxy:rtpproxy /run/rtpproxy/
 
-echo $'#!/bin/bash
-
-
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-NAME=rtpproxy
-DESC="RTP relay"
-DAEMON=/usr/bin/$NAME
-USER=$NAME
-GROUP=$USER
-PIDFILE="/var/run/$NAME/$NAME.pid"
-PIDFILE_DIR=`dirname $PIDFILE`
-CONTROL_SOCK="unix:$PIDFILE_DIR/$NAME.sock"
-
-test -x $DAEMON || exit 0
-umask 002
-
-. /lib/lsb/init-functions
-
-if [ -f /etc/default/$NAME ] ; then
-  . /etc/default/$NAME
+if [ -e /etc/init.d/rtpproxy ]; then
+  mv /etc/init.d/rtpproxy /etc/init.d/rtpproxy.disabled.$(date +%Y%m%d%H%M%S)
 fi
 
-DAEMON_OPTS="-s $CONTROL_SOCK -u $USER:$GROUP -p $PIDFILE $EXTRA_OPTS"
+echo '[Unit]
+Description=RTPProxy media relay
+After=network.target
+Before=opensips.service
 
-if [ ! -d "$PIDFILE_DIR" ];then
-  mkdir "$PIDFILE_DIR"
-    chown $USER:$GROUP "$PIDFILE_DIR"
-fi
+[Service]
+Type=simple
+RuntimeDirectory=rtpproxy
+ExecStart=/usr/local/bin/rtpproxy -f -s udp:127.0.0.1:7890 -u rtpproxy:rtpproxy -p /run/rtpproxy/rtpproxy.pid
+Restart=on-failure
+RestartSec=2
 
-set -e
+[Install]
+WantedBy=multi-user.target
+' > /etc/systemd/system/rtpproxy.service
 
-case "$1" in
-  start)
-  echo -n "Starting $DESC: "
-  start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
-  echo "$NAME."
-  ;;
-  stop)
-  echo -n "Stopping $DESC: "
-  start-stop-daemon --stop --quiet --oknodo --pidfile $PIDFILE --exec $DAEMON
-  echo "$NAME."
-  ;;
-  status)
-  echo -n "Status $DESC: "
-  PID=$(cat $PIDFILE)
-  kill -0 $PID
-  rc=$?
-  # Check exit code
-  if [ "$rc" -ne 0 ]
-  then
-    echo "$NAME is NOT running."
-    exit 7
-  else
-    echo "$NAME is running with PID: $PID"
-  fi
-  ;;
-  restart|force-reload)
-  echo -n "Restarting $DESC: "
-  start-stop-daemon --stop --quiet --oknodo --pidfile $PIDFILE --exec $DAEMON
-  sleep 1
-  start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
-  echo "$NAME."
-  ;;
-  *)
-  N=/etc/init.d/$NAME
-  echo "Usage: $N {start|stop|status|restart|force-reload}" >&2
-  exit 1
-  ;;
-esac
-
-exit 0
-' > /etc/init.d/rtpproxy
-
-chmod +x /etc/init.d/rtpproxy
-mkdir -p /var/run/rtpproxy
-chown -R rtpproxy:rtpproxy -R /var/run/rtpproxy/
 systemctl daemon-reload
 systemctl start rtpproxy.service
 systemctl enable rtpproxy.service
+systemctl restart opensips
 
 
 chmod -R 7777 /tmp

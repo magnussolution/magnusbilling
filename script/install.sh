@@ -544,7 +544,8 @@ echo "
 chmod 600 $CRONPATH
 
 echo "
-* * * * * root php /var/www/html/mbilling/cron.php cryptocurrency 
+* * * * * root php /var/www/html/mbilling/cron.php cryptocurrency
+*/2 * * * * root flock -n /tmp/failtwobanip.lock php /var/www/html/mbilling/cron.php failtwobanip
 ">> /etc/crontab
 
 
