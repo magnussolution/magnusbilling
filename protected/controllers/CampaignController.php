@@ -396,7 +396,7 @@ class CampaignController extends Controller
                 [':key' => $id_campaign]
             );
 
-            if (! isset($modelCampaignPhonebook->id)) {
+            if (! isset($modelCampaignPhonebook[0]->id_phonebook)) {
                 echo json_encode([
                     $this->nameSuccess => false,
                     $this->nameMsg     => 'Please select one o more phonebook',

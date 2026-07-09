@@ -27,7 +27,23 @@ Ext.define('MBilling.view.main.MainController', {
             modules = [],
             menuText,
             text,
-            isMobileMenu = window.isMobileLayout || window.isTablet || window.isTablets;
+            isMobileMenu = window.isMobileLayout || window.isTablet || window.isTablets,
+            getMenuTreeConfig = function(config) {
+                return Ext.apply({
+                    cls: isMobileMenu ? 'mb-mobile-main-menu-item' : '',
+                    bodyCls: isMobileMenu ? 'mb-mobile-main-menu-item-body' : '',
+                    autoScroll: true,
+                    scrollable: true,
+                    viewConfig: {
+                        cls: isMobileMenu ? 'mb-mobile-main-menu-view' : ''
+                    },
+                    listeners: {
+                        itemclick: 'createTabStandard',
+                        afterrender: 'enableMobileMenuTouchScroll',
+                        expand: 'enableMobileMenuTouchScroll'
+                    }
+                }, config);
+            };
         menu.setLoading();
         Ext.each(App.user.menu, function(menuItem) {
             if (!Ext.isEmpty(menuItem.rows)) {
@@ -46,20 +62,20 @@ Ext.define('MBilling.view.main.MainController', {
             }
             menuText = (menuItem.text.indexOf('t(') !== -1) ? eval(menuItem.text) : menuItem.text;
             if (window.isTablets) {
-                menu.add({
+                menu.add(getMenuTreeConfig({
                     rootVisible: true,
                     root: {
                         text: menuText,
                         children: modules
                     }
-                });
+                }));
             } else {
-                var menuConfig = {
+                var menuConfig = getMenuTreeConfig({
                     title: menuText,
                     root: {
                         children: modules
                     }
-                };
+                });
                 if (!isMobileMenu) {
                     menuConfig.iconCls = menuItem.iconCls;
                 }
@@ -68,6 +84,101 @@ Ext.define('MBilling.view.main.MainController', {
             modules = [];
         }, me);
         menu.setLoading(false);
+    },
+    enableMobileMenuTouchScroll: function(menu) {
+        var me = this,
+            el,
+            startY = 0,
+            startScrollTop = 0,
+            activeScrollEl = null,
+            pushCandidate = function(candidates, node) {
+                if (node && candidates.indexOf(node) === -1) {
+                    candidates.push(node);
+                }
+            },
+            getCandidates = function(target) {
+                var candidates = [],
+                    node = target,
+                    view = menu && menu.getView && menu.getView(),
+                    nodes,
+                    i;
+                while (node && node !== document) {
+                    pushCandidate(candidates, node);
+                    if (node === el) {
+                        break;
+                    }
+                    node = node.parentNode;
+                }
+                pushCandidate(candidates, view && view.el && view.el.dom);
+                pushCandidate(candidates, menu && menu.body && menu.body.dom);
+                pushCandidate(candidates, el);
+                if (el && el.querySelectorAll) {
+                    nodes = el.querySelectorAll('.mb-mobile-main-menu-view, .x-tree-view, .x-grid-view, .x-grid-body, .x-panel-body');
+                    for (i = 0; i < nodes.length; i++) {
+                        pushCandidate(candidates, nodes[i]);
+                    }
+                }
+                return candidates;
+            },
+            getScrollEl = function(target) {
+                var candidates = getCandidates(target),
+                    i,
+                    candidate;
+                for (i = 0; i < candidates.length; i++) {
+                    candidate = candidates[i];
+                    if (candidate && candidate.scrollHeight > candidate.clientHeight) {
+                        return candidate;
+                    }
+                }
+                return candidates[0];
+            };
+        if (!menu) {
+            return;
+        }
+        if (menu.items && menu.items.each) {
+            menu.items.each(function(item) {
+                me.enableMobileMenuTouchScroll(item);
+            });
+        }
+        el = menu.el && menu.el.dom;
+        if (!el || menu.mbTouchScrollBound) {
+            return;
+        }
+        menu.mbTouchScrollBound = true;
+        el.addEventListener('touchstart', function(event) {
+            var touch = event.touches && event.touches[0],
+                scrollEl = getScrollEl(event.target);
+            if (!touch || !scrollEl) {
+                return;
+            }
+            activeScrollEl = scrollEl;
+            startY = touch.clientY;
+            startScrollTop = scrollEl.scrollTop;
+        }, {
+            capture: true,
+            passive: true
+        });
+        el.addEventListener('touchmove', function(event) {
+            var touch = event.touches && event.touches[0],
+                scrollEl = activeScrollEl || getScrollEl(event.target),
+                deltaY,
+                maxScrollTop,
+                nextScrollTop;
+            if (!touch || !scrollEl || scrollEl.scrollHeight <= scrollEl.clientHeight) {
+                return;
+            }
+            deltaY = startY - touch.clientY;
+            if (Math.abs(deltaY) < 3) {
+                return;
+            }
+            maxScrollTop = scrollEl.scrollHeight - scrollEl.clientHeight;
+            nextScrollTop = Math.max(0, Math.min(maxScrollTop, startScrollTop + deltaY));
+            scrollEl.scrollTop = nextScrollTop;
+            event.preventDefault();
+        }, {
+            capture: true,
+            passive: false
+        });
     },
     formatSubModuleStandard: function(menu, isMobileMenu) {
         var me = this,

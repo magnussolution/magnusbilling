@@ -527,7 +527,7 @@ class MassiveCall
                                     break;
                                 }
 
-                                if (is_numeric($dtmf_result)) {
+                                if (is_numeric($dtmf_result) && $dtmf_result >= 0 ) {
                                     $agi->verbose("dtmf_result es numerico ", 8);
 
                                     $sql = "SELECT option" . $dtmf_result . " as resposta_option FROM pkg_campaign_poll WHERE id = $poll->id LIMIT 1";
