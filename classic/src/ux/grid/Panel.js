@@ -85,6 +85,13 @@ Ext.define('Ext.ux.grid.Panel', {
             groupDelete = Ext.id(),
             groupUpdateLot = Ext.id();
         if (isMobileLayout) {
+            me.cls = Ext.String.trim((me.cls || '') + ' mb-mobile-list-grid');
+            me.bodyCls = Ext.String.trim((me.bodyCls || '') + ' mb-mobile-list-grid-body');
+            me.autoScroll = true;
+            me.scrollable = true;
+            me.viewConfig = Ext.apply({}, me.viewConfig || {});
+            me.viewConfig.cls = Ext.String.trim((me.viewConfig.cls || '') + ' mb-mobile-list-grid-view');
+            me.viewConfig.preserveScrollOnRefresh = true;
             me.textButtonCsv = '';
             me.textNew = '';
             me.textDelete = '';
@@ -211,7 +218,7 @@ Ext.define('Ext.ux.grid.Panel', {
                 width: me.widthButtonCsv
             });
         };
-        if (me.extraButtons.length) {
+        if (me.extraButtons.length && window.isTablet === false) {
             me.tbar = Ext.Array.merge(me.tbar, me.extraButtons);
         };
         if (me.buttonPrint && !isMobileLayout) {
@@ -250,9 +257,10 @@ Ext.define('Ext.ux.grid.Panel', {
             me.tbar.push('->', {
                 xtype: 'button',
                 cls: 'mb-mobile-menu-button',
-                text: t('Menu'),
-                width: 64,
-                handler: function() {
+                iconCls: 'x-fa fa-list',
+                tooltip: t('Menu'),
+                width: 44,
+                handler: function () {
                     var main = Ext.ComponentQuery.query('main')[0],
                         controller = main && main.getController && main.getController();
                     controller && controller.showMobileMenu();
@@ -283,6 +291,10 @@ Ext.define('Ext.ux.grid.Panel', {
             groupHeaderTpl: t('Column') + ': {columnName} -> {name} ({rows.length} Item{[values.rows.length > 1 ? "s" : ""]})'
         }];
         me.on('render', me.applyDefaultColumns, me);
+        if (isMobileLayout) {
+            me.on('afterrender', me.enableMobileListTouchScroll, me);
+            me.on('afterrender', me.enableMobileColumnHeaderTriggers, me);
+        }
         me.callParent(arguments);
         me.autoLoadList && !window.isDesktop && me.getStore().load({
             scope: me,
@@ -290,6 +302,222 @@ Ext.define('Ext.ux.grid.Panel', {
                 me.view.refresh();
             }
         });
+    },
+    enableMobileListTouchScroll: function() {
+        var me = this,
+            isMobileLayout = window.isMobileLayout || window.isTablet || window.isTablets,
+            el,
+            startY = 0,
+            startScrollTop = 0,
+            activeScrollEl = null,
+            pushCandidate = function(candidates, node) {
+                if (node && candidates.indexOf(node) === -1) {
+                    candidates.push(node);
+                }
+            },
+            getCandidates = function(target) {
+                var candidates = [],
+                    node = target,
+                    view = me.getView && me.getView(),
+                    nodes,
+                    i;
+                while (node && node !== document) {
+                    pushCandidate(candidates, node);
+                    if (node === el) {
+                        break;
+                    }
+                    node = node.parentNode;
+                }
+                pushCandidate(candidates, view && view.el && view.el.dom);
+                pushCandidate(candidates, me.body && me.body.dom);
+                pushCandidate(candidates, el);
+                if (el && el.querySelectorAll) {
+                    nodes = el.querySelectorAll('.mb-mobile-list-grid-view, .x-grid-view, .x-grid-body, .x-panel-body');
+                    for (i = 0; i < nodes.length; i++) {
+                        pushCandidate(candidates, nodes[i]);
+                    }
+                }
+                return candidates;
+            },
+            getScrollEl = function(target) {
+                var candidates = getCandidates(target),
+                    i,
+                    candidate;
+                for (i = 0; i < candidates.length; i++) {
+                    candidate = candidates[i];
+                    if (candidate && candidate.scrollHeight > candidate.clientHeight) {
+                        return candidate;
+                    }
+                }
+                return candidates[0];
+            };
+        if (!isMobileLayout || me.mbTouchScrollBound) {
+            return;
+        }
+        el = me.el && me.el.dom;
+        if (!el) {
+            return;
+        }
+        me.mbTouchScrollBound = true;
+        el.addEventListener('touchstart', function(event) {
+            var touch = event.touches && event.touches[0],
+                scrollEl = getScrollEl(event.target);
+            if (!touch || !scrollEl) {
+                return;
+            }
+            activeScrollEl = scrollEl;
+            startY = touch.clientY;
+            startScrollTop = scrollEl.scrollTop;
+        }, {
+            capture: true,
+            passive: true
+        });
+        el.addEventListener('touchmove', function(event) {
+            var touch = event.touches && event.touches[0],
+                scrollEl = activeScrollEl || getScrollEl(event.target),
+                deltaY,
+                maxScrollTop,
+                nextScrollTop;
+            if (!touch || !scrollEl || scrollEl.scrollHeight <= scrollEl.clientHeight) {
+                return;
+            }
+            deltaY = startY - touch.clientY;
+            if (Math.abs(deltaY) < 3) {
+                return;
+            }
+            maxScrollTop = scrollEl.scrollHeight - scrollEl.clientHeight;
+            nextScrollTop = Math.max(0, Math.min(maxScrollTop, startScrollTop + deltaY));
+            scrollEl.scrollTop = nextScrollTop;
+            event.preventDefault();
+        }, {
+            capture: true,
+            passive: false
+        });
+    },
+    enableMobileColumnHeaderTriggers: function() {
+        var me = this,
+            isMobileLayout = window.isMobileLayout || window.isTablet || window.isTablets,
+            headerCt = me.headerCt,
+            bindTriggers,
+            scheduleBind,
+            attachTrigger,
+            bindNativeTrigger;
+        if (!isMobileLayout || !headerCt) {
+            return;
+        }
+        bindNativeTrigger = function(dom, column) {
+            var openFromEvent;
+            if (!dom || dom.mbMobileColumnTriggerNativeBound) {
+                return;
+            }
+            openFromEvent = function(event) {
+                var now = new Date().getTime();
+                event.preventDefault();
+                event.stopPropagation();
+                if (dom.mbMobileLastOpen && now - dom.mbMobileLastOpen < 350) {
+                    return;
+                }
+                dom.mbMobileLastOpen = now;
+                me.openMobileColumnMenu(column, dom, event);
+            };
+            dom.mbMobileColumnTriggerNativeBound = true;
+            dom.addEventListener('touchstart', function(event) {
+                event.stopPropagation();
+            }, true);
+            dom.addEventListener('touchend', openFromEvent, true);
+            dom.addEventListener('click', openFromEvent, true);
+        };
+        attachTrigger = function(column) {
+            var headerEl = column && column.el,
+                trigger;
+            if (!column || column.hidden || column.menuDisabled || column.isCheckerHd || !headerEl || !headerEl.dom) {
+                return;
+            }
+            headerEl.addCls('mb-mobile-column-has-trigger');
+            trigger = headerEl.down('.mb-mobile-column-trigger');
+            if (!trigger) {
+                trigger = headerEl.createChild({
+                    tag: 'div',
+                    cls: 'mb-mobile-column-trigger',
+                    html: '&#xf0d7;',
+                    style: [
+                        'align-items:center',
+                        'background:transparent',
+                        'bottom:0',
+                        'color:#5f6f80',
+                        'display:flex',
+                        'font:16px/1 FontAwesome',
+                        'justify-content:center',
+                        'pointer-events:auto',
+                        'position:absolute',
+                        'right:0',
+                        'top:0',
+                        'width:28px',
+                        'z-index:20'
+                    ].join(';')
+                });
+            }
+            if (column.triggerEl && column.triggerEl.dom) {
+                column.triggerEl.setStyle({
+                    display: 'block',
+                    opacity: '1',
+                    visibility: 'visible'
+                });
+                bindNativeTrigger(column.triggerEl.dom, column);
+            }
+            bindNativeTrigger(trigger.dom, column);
+            if (trigger.dom.mbMobileColumnTriggerBound) {
+                return;
+            }
+            trigger.dom.mbMobileColumnTriggerBound = true;
+            trigger.on({
+                touchstart: function(event) {
+                    event.stopPropagation();
+                },
+                touchend: function(event, target) {
+                    me.openMobileColumnMenu(column, target, event);
+                },
+                click: function(event, target) {
+                    me.openMobileColumnMenu(column, target, event);
+                }
+            });
+        };
+        bindTriggers = function() {
+            var columns = headerCt.getVisibleGridColumns ? headerCt.getVisibleGridColumns() : headerCt.getGridColumns && headerCt.getGridColumns(),
+                i;
+            columns = columns || [];
+            for (i = 0; i < columns.length; i++) {
+                attachTrigger(columns[i]);
+            }
+        };
+        scheduleBind = function() {
+            Ext.defer(bindTriggers, 25);
+        };
+        scheduleBind();
+        if (me.mbMobileColumnHeaderTriggersBound) {
+            return;
+        }
+        me.mbMobileColumnHeaderTriggersBound = true;
+        headerCt.on('afterlayout', scheduleBind, me);
+        headerCt.on('columnresize', scheduleBind, me);
+        headerCt.on('columnshow', scheduleBind, me);
+        headerCt.on('columnhide', scheduleBind, me);
+        headerCt.on('columnmove', scheduleBind, me);
+    },
+    openMobileColumnMenu: function(column, target, event) {
+        var headerCt = this.headerCt,
+            targetEl = Ext.get(target) || column.triggerEl || column.el;
+        if (event && event.stopEvent) {
+            event.stopEvent();
+        }
+        if (!headerCt || !headerCt.showMenuBy || !column || column.destroyed || column.menuDisabled) {
+            return;
+        }
+        if (column.activeMenu && column.activeMenu.isVisible && column.activeMenu.isVisible()) {
+            column.activeMenu.focus && column.activeMenu.focus();
+            return;
+        }
+        headerCt.showMenuBy(event, targetEl, column);
     },
     getExtraFilterClass: function (type) {
         switch (type) {

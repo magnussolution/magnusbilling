@@ -164,7 +164,7 @@ Ext.define('Ext.ux.form.Panel', {
             glyph: me.glyphCancel,
             handler: 'onCancel'
         }];
-        if (me.extraButtons && me.extraButtons.length) {
+        if (me.extraButtons && me.extraButtons.length && window.isTablet === false) {
             itemsTbar = Ext.Array.merge(me.extraButtons, itemsTbar);
         };
         me.hideTbar = Ext.isDefined(me.hideTbar) ? me.hideTbar : !me.allowCreate;

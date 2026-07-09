@@ -24,7 +24,8 @@ Ext.define('MBilling.view.main.Main', {
     layout: 'border',
     controller: 'main',
     initComponent: function() {
-        var me = this;
+        var me = this,
+            isMobileLayout = window.isMobileLayout || window.isTablet || window.isTablets;
         me.items = [{
             region: 'north',
             border: false,
@@ -94,26 +95,38 @@ Ext.define('MBilling.view.main.Main', {
             region: 'west',
             width: window.isTablet ? '100%' : 230,
             minWidth: 150,
+            cls: isMobileLayout ? 'mb-mobile-main-menu' : '',
+            bodyCls: isMobileLayout ? 'mb-mobile-main-menu-body' : '',
             split: window.isTablet ? false : true,
             collapsible: !window.isTablets || window.isThemeNeptune ? true : false,
             titleCollapse: false,
             collapsed: false,
-            layout: window.isTablet || window.isTablets ? 'anchor' : 'accordion',
+            layout: 'accordion',
             defaultType: 'treepanel',
             autoScroll: true,
+            scrollable: isMobileLayout ? true : false,
             title: t('Menu'),
             header: !window.isTablet ? true : false,
             defaults: {
                 animFloat: true,
                 border: window.isThemeNeptune ? false : true,
-                autoScroll: window.isTablet || window.isTablets ? false : true,
+                cls: isMobileLayout ? 'mb-mobile-main-menu-item' : '',
+                bodyCls: isMobileLayout ? 'mb-mobile-main-menu-item-body' : '',
+                autoScroll: true,
+                scrollable: isMobileLayout ? true : false,
                 rootVisible: false,
+                viewConfig: {
+                    cls: isMobileLayout ? 'mb-mobile-main-menu-view' : ''
+                },
                 listeners: {
-                    itemclick: 'createTabStandard'
+                    itemclick: 'createTabStandard',
+                    afterrender: 'enableMobileMenuTouchScroll',
+                    expand: 'enableMobileMenuTouchScroll'
                 }
             },
             listeners: {
-                render: 'loadMenuStandard'
+                render: 'loadMenuStandard',
+                afterrender: 'enableMobileMenuTouchScroll'
             }
         }, {
             xtype: 'tabpanel',

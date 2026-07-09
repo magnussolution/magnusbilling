@@ -2,6 +2,7 @@ html.mb-mobile,
 html.mb-mobile body {
     background: #edf1f5;
     -webkit-tap-highlight-color: rgba(42, 123, 190, 0.18);
+    touch-action: pan-y;
 }
 
 html.mb-mobile .x-viewport,
@@ -21,7 +22,17 @@ html.mb-mobile .x-toolbar .x-box-inner {
 }
 
 html.mb-mobile .mb-mobile-menu-button {
+    min-width: 44px;
     min-height: 40px;
+}
+
+html.mb-mobile .mb-mobile-menu-button .x-btn-button {
+    text-align: center;
+}
+
+html.mb-mobile .mb-mobile-menu-button .x-btn-icon-el {
+    color: #253142;
+    font-size: 20px;
 }
 
 html.mb-mobile .x-btn-default-small,
@@ -49,6 +60,24 @@ html.mb-mobile .x-grid-view {
     background: #ffffff;
 }
 
+html.mb-mobile .mb-mobile-list-grid,
+html.mb-mobile .mb-mobile-list-grid-body,
+html.mb-mobile .mb-mobile-list-grid .x-grid-body,
+html.mb-mobile .mb-mobile-list-grid .x-grid-view,
+html.mb-mobile .mb-mobile-list-grid .x-panel-body,
+html.mb-mobile .mb-mobile-list-grid-view {
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y !important;
+}
+
+html.mb-mobile .mb-mobile-list-grid .x-grid-body,
+html.mb-mobile .mb-mobile-list-grid .x-grid-view,
+html.mb-mobile .mb-mobile-list-grid .x-panel-body,
+html.mb-mobile .mb-mobile-list-grid .x-grid-scrollbar-clipper > .x-grid-view,
+html.mb-mobile .mb-mobile-list-grid-view {
+    overflow-y: auto !important;
+}
+
 html.mb-mobile .x-grid-header-ct {
     background: #f7f9fb !important;
     border-color: #d5dee8 !important;
@@ -61,6 +90,87 @@ html.mb-mobile .x-column-header {
 
 html.mb-mobile .x-column-header-inner {
     padding: 10px 8px;
+}
+
+html.mb-mobile .x-column-header:not(.x-column-header-checkbox) .x-column-header-inner {
+    padding-right: 28px !important;
+}
+
+html.mb-mobile .x-column-header:not(.x-column-header-checkbox) .x-column-header-text-container {
+    padding-right: 22px !important;
+}
+
+html.mb-mobile .x-column-header-trigger {
+    background-color: transparent !important;
+    color: #6b7787;
+    cursor: pointer;
+    display: block !important;
+    font: 16px/1 FontAwesome;
+    height: 100% !important;
+    opacity: 1 !important;
+    pointer-events: auto;
+    position: absolute !important;
+    right: 0 !important;
+    top: 0 !important;
+    visibility: visible !important;
+    width: 24px !important;
+    z-index: 5;
+}
+
+html.mb-mobile .x-column-header-trigger:before {
+    content: "\f0d7";
+    display: block;
+    margin-top: -8px;
+    position: relative;
+    text-align: center;
+    top: 50%;
+}
+
+html.mb-mobile .mb-mobile-list-grid .x-column-header-inner {
+    padding-right: 28px;
+}
+
+html.mb-mobile .mb-mobile-list-grid .mb-mobile-column-has-trigger .x-column-header-inner {
+    padding-right: 30px !important;
+}
+
+html.mb-mobile .mb-mobile-column-trigger {
+    -webkit-tap-highlight-color: transparent;
+    align-items: center !important;
+    background: transparent !important;
+    bottom: 0 !important;
+    color: #5f6f80 !important;
+    display: flex !important;
+    font: 16px/1 FontAwesome !important;
+    justify-content: center !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    position: absolute !important;
+    right: 0 !important;
+    top: 0 !important;
+    visibility: visible !important;
+    width: 28px !important;
+    z-index: 20 !important;
+}
+
+html.mb-mobile .mb-mobile-list-grid .x-column-header-trigger {
+    background-color: transparent !important;
+    color: #6b7787;
+    cursor: pointer;
+    display: block !important;
+    font: 16px/1 FontAwesome;
+    opacity: 1 !important;
+    visibility: visible !important;
+    width: 24px;
+}
+
+html.mb-mobile .mb-mobile-list-grid .x-column-header-trigger:before {
+    content: "\f0d7";
+    display: block;
+    margin-top: -8px;
+    position: relative;
+    text-align: center;
+    top: 50%;
 }
 
 html.mb-mobile .x-column-header-text {
@@ -103,6 +213,34 @@ html.mb-mobile .x-tree-view .x-grid-cell-inner {
     line-height: 22px;
     padding-bottom: 13px;
     padding-top: 13px;
+}
+
+html.mb-mobile .mb-mobile-main-menu,
+html.mb-mobile .mb-mobile-main-menu-body,
+html.mb-mobile .mb-mobile-main-menu-item,
+html.mb-mobile .mb-mobile-main-menu-item-body,
+html.mb-mobile .mb-mobile-main-menu .x-panel-body,
+html.mb-mobile .mb-mobile-main-menu .x-grid-body,
+html.mb-mobile .mb-mobile-main-menu .x-tree-view,
+html.mb-mobile .mb-mobile-main-menu .x-grid-view,
+html.mb-mobile .mb-mobile-main-menu-view {
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y !important;
+}
+
+html.mb-mobile .mb-mobile-main-menu-item,
+html.mb-mobile .mb-mobile-main-menu-item-body,
+html.mb-mobile .mb-mobile-main-menu .x-panel-body,
+html.mb-mobile .mb-mobile-main-menu .x-grid-body,
+html.mb-mobile .mb-mobile-main-menu .x-tree-view,
+html.mb-mobile .mb-mobile-main-menu .x-grid-view,
+html.mb-mobile .mb-mobile-main-menu-view {
+    overflow-y: auto !important;
+}
+
+html.mb-mobile .mb-mobile-main-menu,
+html.mb-mobile .mb-mobile-main-menu-body {
+    overflow-y: auto !important;
 }
 
 html.mb-mobile .x-tree-elbow-img {
