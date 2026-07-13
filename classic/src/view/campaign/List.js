@@ -77,13 +77,15 @@ Ext.define('MBilling.view.campaign.List', {
                 type: 'list',
                 options: [
                     [0, t('SMS')],
-                    [1, t('Voice')]
+                    [1, t('Voice')],
+                    [2, t('WhatsApp')]
                 ]
             } : {
                 type: 'list',
                 options: [
                     [0, t('SMS')],
-                    [1, t('Voice')]
+                    [1, t('Voice')],
+                    [2, t('WhatsApp')]
                 ]
             },
             hidden: window.isTablet

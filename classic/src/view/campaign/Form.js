@@ -283,15 +283,25 @@ Ext.define('MBilling.view.campaign.Form', {
                     value: 0
                 }]
             }, {
-                title: t('SMS'),
+                title: t('Messages'),
                 items: [{
                     name: 'from',
                     fieldLabel: 'From',
                     allowBlank: true
                 }, {
+                    name: 'whatsapp_template_name',
+                    fieldLabel: t('WhatsApp template name'),
+                    value: 'hello_world',
+                    allowBlank: true
+                }, {
+                    name: 'whatsapp_template_language',
+                    fieldLabel: t('WhatsApp template language'),
+                    value: 'en_US',
+                    allowBlank: true
+                }, {
                     xtype: 'textareafield',
                     name: 'description',
-                    fieldLabel: t('Description or SMS Text'),
+                    fieldLabel: t('Message text'),
                     allowBlank: true,
                     maxLength: 300,
                     listeners: {

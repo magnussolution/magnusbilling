@@ -231,7 +231,8 @@ Ext.define('MBilling.view.general.TypeCampaign', {
     value: 1,
     store: [
         [1, t('Voice')],
-        [0, t('SMS')]
+        [0, t('SMS')],
+        [2, t('WhatsApp')]
     ]
 });
 Ext.define('MBilling.view.general.TypeFullCampaign', {
@@ -243,7 +244,8 @@ Ext.define('MBilling.view.general.TypeFullCampaign', {
     value: 1,
     store: [
         [1, t('Voice')],
-        [0, t('SMS')]
+        [0, t('SMS')],
+        [2, t('WhatsApp')]
     ]
 });
 Ext.define('MBilling.view.general.RestrictionCombo', {

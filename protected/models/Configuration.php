@@ -57,7 +57,7 @@ class Configuration extends Model
             ['config_key', 'required'],
             ['status', 'numerical', 'integerOnly' => true],
             ['config_title, config_key', 'length', 'max' => 100],
-            ['config_value', 'length', 'max' => 200],
+            ['config_value', 'length', 'max' => 400],
             ['config_description', 'length', 'max' => 500],
             ['config_group_title', 'length', 'max' => 64],
             ['config_value', 'checkConfg'],

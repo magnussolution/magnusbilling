@@ -61,6 +61,19 @@ Ext.define('MBilling.view.sms.List', {
             dataIndex: 'telephone',
             flex: 2
         }, {
+            header: t('Channel'),
+            dataIndex: 'channel',
+            flex: 2,
+            filter: {
+                type: 'string'
+            }
+        }, {
+            header: t('Campaign'),
+            dataIndex: 'idCampaignname',
+            flex: 3,
+            hidden: true,
+            hideable: true
+        }, {
             header: t('Date'),
             renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s'),
             dataIndex: 'date',
@@ -81,6 +94,12 @@ Ext.define('MBilling.view.sms.List', {
             hidden: true,
             hideable: App.user.isAdmin,
             flex: 2
+        }, {
+            header: t('Provider message ID'),
+            dataIndex: 'provider_message_id',
+            hidden: true,
+            hideable: App.user.isAdmin,
+            flex: 3
         }]
         me.callParent(arguments);
     }

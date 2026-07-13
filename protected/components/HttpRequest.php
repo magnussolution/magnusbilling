@@ -22,6 +22,7 @@ class HttpRequest extends CHttpRequest
         }
         $allow = [
             'molpay',
+            'whatsappwebhook',
         ];
         if (in_array($controller, $allow)) {
             return;

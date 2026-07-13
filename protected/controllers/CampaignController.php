@@ -53,6 +53,16 @@ class CampaignController extends Controller
     public function beforeSave($values)
     {
 
+        if (isset($values['type']) && (int) $values['type'] === 2 &&
+            (! isset($values['whatsapp_template_name']) || trim($values['whatsapp_template_name']) === '')) {
+            echo json_encode([
+                'success' => false,
+                'rows'    => [],
+                'errors'  => ['whatsapp_template_name' => [Yii::t('zii', 'WhatsApp template name is required')]],
+            ]);
+            exit;
+        }
+
         if (Yii::app()->session['isClient']) {
             $values['id_plan'] = Yii::app()->session['id_plan'];
 

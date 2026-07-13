@@ -69,6 +69,8 @@ class Campaign extends Model
             ['daily_start_time, daily_stop_time', 'length', 'max' => 8],
             ['forward_number', 'length', 'max' => 160],
             ['description', 'length', 'max' => 300],
+            ['whatsapp_template_name', 'length', 'max' => 512],
+            ['whatsapp_template_language', 'length', 'max' => 20],
             ['tts_audio,tts_audio2,asr_audio,asr_options', 'length', 'max' => 200],
             ['from', 'length', 'max' => 20],
         ];

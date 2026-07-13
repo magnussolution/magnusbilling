@@ -23,13 +23,13 @@
 class SmsController extends Controller
 {
     public $attributeOrder = 'date DESC';
-    public $extraValues    = ['idUser' => 'username'];
+    public $extraValues    = ['idUser' => 'username', 'idCampaign' => 'name'];
 
     public function init()
     {
         $this->instanceModel = new Sms;
         $this->abstractModel = Sms::model();
-        $this->titleReport   = 'SMS';
+        $this->titleReport   = 'Received Messages';
         parent::init();
     }
 

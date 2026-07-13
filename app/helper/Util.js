@@ -368,7 +368,7 @@ Ext.define('Helper.Util', {
         return '<span style="color:' + color + '">' + value + '</span>';
     },
     formatCampaignType: function (value) {
-        value = value == 1 ? t('Voice') : t('SMS');
+        value = value == 1 ? t('Voice') : value == 2 ? t('WhatsApp') : t('SMS');
         return value;
     },
     formatDirection: function (value) {

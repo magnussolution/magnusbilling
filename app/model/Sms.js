@@ -33,6 +33,15 @@ Ext.define('MBilling.model.Sms', {
         name: 'status',
         type: 'int'
     }, {
+        name: 'id_campaign',
+        type: 'int'
+    }, {
+        name: 'channel',
+        type: 'string'
+    }, {
+        name: 'provider_message_id',
+        type: 'string'
+    }, {
         name: 'result',
         type: 'string'
     }, {
@@ -48,7 +57,7 @@ Ext.define('MBilling.model.Sms', {
     }, {
         name: 'sms_from',
         type: 'string'
-    }, 'idUserusername'],
+    }, 'idUserusername', 'idCampaignname'],
     proxy: {
         type: 'uxproxy',
         module: 'sms'

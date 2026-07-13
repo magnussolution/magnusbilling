@@ -54,12 +54,14 @@ class Sms extends Model
     {
         $rules = [
             ['id_user', 'required'],
-            ['id_user, prefix, status', 'numerical', 'integerOnly' => true],
+            ['id_user, id_campaign, prefix, status', 'numerical', 'integerOnly' => true],
             ['telephone', 'numerical'],
-            ['sms', 'length', 'max' => 200],
+            ['sms', 'length', 'max' => 65535],
             ['result', 'length', 'max' => 500],
             ['rate', 'length', 'max' => 10],
             ['sms_from', 'length', 'max' => 16],
+            ['channel', 'length', 'max' => 20],
+            ['provider_message_id', 'length', 'max' => 191],
 
         ];
         return $this->getExtraField($rules);
@@ -71,7 +73,8 @@ class Sms extends Model
     public function relations()
     {
         return [
-            'idUser' => [self::BELONGS_TO, 'User', 'id_user'],
+            'idUser'     => [self::BELONGS_TO, 'User', 'id_user'],
+            'idCampaign' => [self::BELONGS_TO, 'Campaign', 'id_campaign'],
         ];
     }
 }
