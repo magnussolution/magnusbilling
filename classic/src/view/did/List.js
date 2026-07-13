@@ -25,14 +25,37 @@ Ext.define('MBilling.view.did.List', {
     fieldSearch: 'did',
     buttonImportCsv: true,
     initComponent: function() {
-        var me = this;
+        var me = this,
+            isMobileLayout = window.isMobileLayout || window.isTablet || window.isTablets,
+            groupRelease = Ext.id(),
+            releaseButton = {
+                xtype: 'button',
+                text: t('Release DID'),
+                iconCls: 'icon-delete',
+                handler: 'onRelease',
+                disabled: true,
+                reference: 'release'
+            };
         me.buttonUpdateLot = false;
-        me.extraButtons = [{
-            text: t('Release DID'),
-            iconCls: 'icon-delete',
-            handler: 'onRelease',
-            disabled: false
-        }, {
+        if (!isMobileLayout && App.user.isAdmin) {
+            Ext.apply(releaseButton, {
+                xtype: 'splitbutton',
+                menu: [{
+                    text: me.labelAll,
+                    checked: false,
+                    hidden: isMobileLayout || !App.user.isAdmin,
+                    group: groupRelease,
+                    value: 'all'
+                }, {
+                    text: me.labelSelected,
+                    checked: true,
+                    hidden: isMobileLayout || !App.user.isAdmin,
+                    group: groupRelease,
+                    value: 'selected'
+                }]
+            });
+        }
+        me.extraButtons = [releaseButton, {
             text: t('Bulk DID'),
             iconCls: '',
             handler: 'onBulk',

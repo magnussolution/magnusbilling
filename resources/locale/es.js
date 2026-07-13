@@ -218,6 +218,7 @@ Locale.load({
     'Confirm delete all log file?': '¿Confirmar eliminar todos los archivos de LOG?',
     'Confirm release DID': 'Confirmar liberar DID',
     'Confirm release DIDs': 'Confirme que quieres liberar estes DIDs',
+    'This will release all DIDs selected by the current filter. Do you want to continue?': 'Esto liberará todos los DIDs seleccionados por el filtro actual. ¿Desea continuar?',
     'Confirm your password': 'Confirma su contraseña',
     'Confirmation': 'Confirmación',
     'Congestion': 'Congestion',

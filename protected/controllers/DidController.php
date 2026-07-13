@@ -438,9 +438,20 @@ class DidController extends Controller
 
     public function actionLiberar()
     {
-        if (isset($_POST['ids'])) {
+        if (isset($_POST['ids']) || isset($_POST['filter'])) {
 
-            $ids = json_decode($_POST['ids']);
+            if (isset($_POST['filter'])) {
+                if (! Yii::app()->session['isAdmin']) {
+                    echo json_encode([
+                        $this->nameSuccess => false,
+                        $this->nameMsg     => 'You only can release all DIDs as admin',
+                    ]);
+                    exit;
+                }
+                $ids = $this->updateGetIdsFromFilter($this->abstractModel->primaryKey(), $_POST['filter']);
+            } else {
+                $ids = json_decode($_POST['ids']);
+            }
 
             foreach ($ids as $key => $id) {
                 $modelDid = Did::model()->findByPk((int) $id);
@@ -528,18 +539,29 @@ class DidController extends Controller
 
     public function beforeDestroy($values)
     {
+        $ids = [];
 
-        if (is_array($values) && count($values) > 1) {
-            foreach ($values as $key => $value) {
-                $modelDid = Did::model()->findByPk((int) $value['id']);
-                if ($modelDid->reserved == 0) {
-                    CallSummaryMonthDid::model()->deleteAll("id_did = :key", [':key' => $modelDid->id]);
-                    DidUse::model()->deleteAll("id_did = :key", [':key' => $modelDid->id]);
+        if (isset($_POST['filter']) && strlen($_POST['filter']) > 0 && Yii::app()->session['isAdmin']) {
+            $ids = $this->updateGetIdsFromFilter($this->abstractModel->primaryKey(), $_POST['filter']);
+        } else if (is_array($values)) {
+            if (isset($values['id'])) {
+                $ids[] = $values['id'];
+            } else {
+                foreach ($values as $value) {
+                    if (is_array($value) && isset($value['id'])) {
+                        $ids[] = $value['id'];
+                    } else if (is_numeric($value)) {
+                        $ids[] = $value;
+                    }
                 }
             }
-        } else {
-            $modelDid = Did::model()->findByPk((int) $values['id']);
-            if ($modelDid->reserved == 0) {
+        } else if (is_numeric($values)) {
+            $ids[] = $values;
+        }
+
+        foreach (array_unique($ids) as $id) {
+            $modelDid = Did::model()->findByPk((int) $id);
+            if (isset($modelDid->id) && $modelDid->reserved == 0) {
                 CallSummaryMonthDid::model()->deleteAll("id_did = :key", [':key' => $modelDid->id]);
                 DidUse::model()->deleteAll("id_did = :key", [':key' => $modelDid->id]);
             }

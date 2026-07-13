@@ -249,9 +249,7 @@ html.mb-mobile .x-tree-elbow-img {
 
 html.mb-mobile .x-tree-icon,
 html.mb-mobile .x-title-icon,
-html.mb-mobile .x-panel-header-icon,
-html.mb-mobile .x-menu-item-icon,
-html.mb-mobile .x-menu-item-icon-default {
+html.mb-mobile .x-panel-header-icon {
     display: none !important;
 }
 
