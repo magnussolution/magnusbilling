@@ -1,0 +1,53 @@
+name: Sync GitHub Wiki
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - source
+    paths:
+      - "wiki/**"
+      - ".github/workflows/sync-github-wiki.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: github-wiki-sync
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out documentation source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Export GitHub Wiki Markdown
+        run: python3 wiki/tools/export_github_wiki.py --output /tmp/wiki-export
+
+      - name: Check out GitHub Wiki
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: git clone "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" /tmp/wiki-repository
+
+      - name: Replace generated Wiki files
+        run: rsync -a --delete --exclude=.git/ /tmp/wiki-export/ /tmp/wiki-repository/
+
+      - name: Commit and publish changes
+        working-directory: /tmp/wiki-repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet && test -z "$(git status --short)"; then
+            echo "GitHub Wiki is already current."
+            exit 0
+          fi
+          git add --all
+          git commit -m "docs: synchronize GitHub Wiki from ${GITHUB_SHA::12}"
+          git push origin HEAD:master
