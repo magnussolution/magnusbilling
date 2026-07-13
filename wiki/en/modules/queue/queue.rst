@@ -144,7 +144,7 @@ Announce frequency
 Join empty
 ----------
 
-| Allow calls when theres no one to answer the call.
+| Allow calls when there is no one to answer the call.
 
 
 

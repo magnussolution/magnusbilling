@@ -84,7 +84,7 @@ Additional time
 Connection charge
 -----------------
 
-| We did not write the description to this field.
+| Fixed amount charged once when the call is answered, in addition to the per-minute rate.
 
 
 
@@ -104,7 +104,7 @@ Include in offer
 Status
 ------
 
-| Deactivating Tariffs, MagnusBilling will completely desconsider this tariff. Therefore, deleting or deactivating will have the sam effect.
+| Deactivating Tariffs, MagnusBilling will completely disregard this tariff. Therefore, deleting or deactivating will have the same effect.
 
 
 

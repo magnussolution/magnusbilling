@@ -44,7 +44,7 @@ Payment methods
 Month payed
 -----------
 
-| We did not write the description to this field.
+| Number of months paid for this service subscription.
 
 
 
@@ -59,22 +59,22 @@ Reservation date
 
 
 
-.. _servicesUse-contract-period:
-
-End of minimum contract period
-------------------------------
-
-| We did not write the description to this field.
-
-
-
-
 .. _servicesUse-termination-date:
 
 Termination date
 ----------------
 
-| We did not write the description to this field.
+| Date when this service subscription ends or was canceled.
+
+
+
+
+.. _servicesUse-contract-period:
+
+End of minimum contract period
+------------------------------
+
+| Minimum contract end date for this service subscription.
 
 
 

@@ -44,7 +44,7 @@ Senha de administração
 Bloquear reset
 --------------
 
-| Tenha cuidado. Esta opção desativa o reinicio com o comando *73738#.
+| Tenha cuidado. Esta opção desativa o reinicio com o comando \*73738#.
 
 
 
@@ -54,7 +54,7 @@ Bloquear reset
 Ativar acesso WEB
 -----------------
 
-| Tenha cuidado! Se desativado, não será mais possível entrar nas configuraçōes do Linksys.
+| Tenha cuidado! Se desativado, não será mais possível entrar nas configurações do Linksys.
 
 
 
@@ -64,7 +64,7 @@ Ativar acesso WEB
 Dial Tone
 ---------
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Cadência do tom de discagem configurada para o perfil do equipamento Linksys/Sipura.
 
 
 

@@ -122,3 +122,13 @@ ID único
 
 
 
+
+.. _call-terminatecauseid:
+
+Hangup Source
+-------------
+
+| Lado que finalizou a chamada ou origem do desligamento informada pelo Asterisk.
+
+
+

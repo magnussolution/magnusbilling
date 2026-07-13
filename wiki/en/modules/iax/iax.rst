@@ -44,7 +44,7 @@ CallerID
 Disallow
 --------
 
-| In this option will be possible to deactivate codecs. To deactivate all the codecs and letting avaible to the user only what you select below, use "Use all"
+| In this option will be possible to deactivate codecs. To deactivate all the codecs and letting available to the user only what you select below, use "Use all"
 
 
 
@@ -64,7 +64,7 @@ Codec
 Host
 ----
 
-| "Dynamic" is an option that will let the user register his account in any IP. If you want to to authenticate the user by their IP, fill here the IP of the client, let the password field blank and put "insecure" for the port/invite in the tab "Additional Information"
+| "Dynamic" allows the user to register this account from any IP address. To authenticate by IP, enter the client IP here, leave the password blank, and set insecure to port/invite in the Additional Information tab.
 
 
 
@@ -84,7 +84,7 @@ NAT
 Context
 -------
 
-| This is the context that the call will be processed, by default is set to "billing". Only alter if you have knowledge of Asterisk.
+| Asterisk context where calls from this account will be processed. The default is "billing". Change this only if you understand the Asterisk dialplan.
 
 
 
@@ -94,17 +94,17 @@ Context
 Qualify
 -------
 
-| Sent the "OPTION" package to verify if the user is online.
-| Sintax:
+| Sends SIP OPTIONS packets to verify whether the peer is online.
+| Syntax:
 |     
-| qualify = xxx | no | yes
+| qualify = xxx \| no \| yes
 |     
-| Where the XXX is the number of milliseconds used. If "yes", the time configurated in sip.conf is used, 2 seconds is the standard.
+| XXX is the number of milliseconds used as the timeout. If the value is "yes", Asterisk uses the time configured in sip.conf. The common default is 2 seconds.
 | 
-| If you activate "qualify", the Asterisk will sent the command "OPTION" to SIP peer regulary to verify if the device is still online.
-| If the device don't answer the "OPTION" in the set period of time, Asterisk will consider the device offline for future calls.
+| When qualify is enabled, Asterisk sends OPTIONS packets regularly to verify whether the device is still online.
+| If the device does not answer within the configured time, Asterisk considers the device offline for future calls.
 | 
-| This status can be verified with the function "sip show peer XXXX", this funcition will only provide status informations to the SIP peer that have "qualify = yes".
+| This status can be verified with the "sip show peer XXXX" command. Asterisk only shows qualify status when the peer has qualify enabled.
 
 
 
@@ -114,7 +114,7 @@ Qualify
 Dtmfmode
 --------
 
-| Type of DTMF. You can see more details at the link `https://www.voip-info.org/asterisk-sip-dtmfmode/.  <https://www.voip-info.org/asterisk-sip-dtmfmode/.>`_.
+| DTMF mode used by this account. You can see more details at the link `https://www.voip-info.org/asterisk-sip-dtmfmode/.  <https://www.voip-info.org/asterisk-sip-dtmfmode/.>`_.
 
 
 
@@ -124,7 +124,7 @@ Dtmfmode
 Insecure
 --------
 
-| If the host is set to "dynamic", this option will need to be set to "no". To authenticate via IP and alter to port. You can see more details at the link `https://www.voip-info.org/asterisk-sip-insecure/.  <https://www.voip-info.org/asterisk-sip-insecure/.>`_.
+| If the host is dynamic, this option must be set to no. For IP authentication, use port. You can see more details at the link `https://www.voip-info.org/asterisk-sip-insecure/.  <https://www.voip-info.org/asterisk-sip-insecure/.>`_.
 
 
 
@@ -134,7 +134,7 @@ Insecure
 Type
 ----
 
-| Default type is "friend", in other words they can make and receive calls. You can see more details at the link `https://www.voip-info.org/asterisk-sip-type/.  <https://www.voip-info.org/asterisk-sip-type/.>`_.
+| Default type is "friend", which allows the account to make and receive calls. You can see more details at the link `https://www.voip-info.org/asterisk-sip-type/.  <https://www.voip-info.org/asterisk-sip-type/.>`_.
 
 
 

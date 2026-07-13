@@ -29,7 +29,7 @@ Seg-Sex intervalos
 | 
 | Digamos que o horário de atendimento é de 08h às 12h e das 14h às 19h. Neste caso a regra ficaria
 | 
-| 08:00-12:00|14:00-19:00
+| 08:00-12:00\|14:00-19:00
 | 
 | .
 
@@ -326,6 +326,16 @@ Opção padrão
 ---------------
 
 | Selecione o destino caso não for digitado nada.
+
+
+
+
+.. _ivr-type-1:
+
+Tipo
+----
+
+| Tipo de destino usado quando a pessoa que ligou pressiona esta opção da URA.
 
 
 

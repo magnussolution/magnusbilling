@@ -1,6 +1,6 @@
 
 
-Bem vindo à documentação do MagnusBilling 7 em português.
+Bem vindo à documentação do MagnusBilling 8 em português.
 =========================================================
 
 .. meta::
@@ -24,7 +24,20 @@ Bem vindo à documentação do MagnusBilling 7 em português.
    get_started/backup.rst
    get_started/update.rst
    get_started/reset_root_password.rst
-   
+
+.. toctree::
+   :caption: Novidades do MBilling 8
+   :maxdepth: 1
+
+   novidades_mb8.rst
+
+.. toctree::
+   :caption: Módulos pagos
+   :glob:
+   :maxdepth: 2
+
+   modulos_pagos/*
+
 .. toctree::
    :caption: Informações técnicas
    :maxdepth: 1
@@ -34,13 +47,38 @@ Bem vindo à documentação do MagnusBilling 7 em português.
    tts.rst
    offer.rst
    how_to_use_voucher.rst
-   conf.rst
+   whatsapp_campaign.rst
+   config.rst
 
 .. toctree::
    :caption: Configaçōes do Asterisk
    :maxdepth: 1
 
    asterisk_options/directmedia.rst
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Administração
+   :name: sec-Administração
+
+   admin_guide.rst
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Documentação Técnica
+   :name: sec-Técnico
+
+   database_schema.rst
+   yii_backend.rst
+   extjs_frontend.rst
+   ai_codebase_guide.rst
+
+.. toctree::
+   :caption: Administração Avançada
+   :glob:
+   :maxdepth: 2
+
+   admin_guide/*
 
 .. toctree::
    :maxdepth: 1
@@ -61,5 +99,3 @@ Indices and tables
 
 * :ref:`genindex`
 * :ref:`search`
-* :ref:`glossary`
-

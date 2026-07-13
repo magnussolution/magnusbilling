@@ -74,7 +74,28 @@ Expiration date
 Type
 ----
 
-| Choose Voice or SMS. If you choose Voice you will need to import audio. If you choose SMS you will need to set the text in the SMS tab.
+| Choose Voice, SMS, or WhatsApp.
+| For WhatsApp, MagnusBilling uses the official Meta WhatsApp Business Cloud API and sends an approved template configured in the Messages tab. MagnusBilling only provides the integration; Meta processes and delivers the message. The account owner is responsible for recipient consent, content, templates, charges, and compliance with all applicable laws and Meta/WhatsApp policies.
+
+
+
+
+.. _campaign-whatsapp-template-name:
+
+WhatsApp template name
+----------------------
+
+| Exact name of an approved WhatsApp template in WhatsApp Manager. The current integration sends templates without variable components, so use a template that does not require parameters.
+
+
+
+
+.. _campaign-whatsapp-template-language:
+
+WhatsApp template language
+--------------------------
+
+| Exact language code approved for the WhatsApp template, for example en_US or pt_BR. The name and language must match the template in WhatsApp Manager.
 
 
 
@@ -186,8 +207,8 @@ Destination
 
 | Click for more details
 | There are two options available.
-|     *Group, the group name should be put here exactly as it is in the SIP users that should receive the calls.
-|     *Personalized, you may execute any valid option via Asterisk's DIAL command. Example: SIP/sipaccount,45,tTr.
+|     * Group: enter the group name exactly as it appears on the SIP users that should receive the calls.
+|     * Personalized: execute any valid option through Asterisk's Dial application, for example ``PJSIP/endpoint,45,tTr``.
 
 
 
@@ -374,6 +395,4 @@ Audio 2 TTS
 -----------
 
 | Same setting as the previous field but for audio 2. Keep in mind that in between audio 1 and 2, the TTS executes the name imported with the number.
-
-
 

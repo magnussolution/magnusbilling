@@ -17,9 +17,9 @@ Type
 | Type.
 | It's how the system will sort the trunk that belongs to a group.
 | 
-| * In order. The system will send a call to the trunks that are in the selected order
-| * Random. The system will sort the trunks in a randomized manner, using the RAND() function of MYSQL, therefore, will be able to repeat the trunk in sequence.
-| * LCR. Sorth the trunks that have a lower cost. If the trunk owner does not have tariff, will be desconsidered and will be put it in last. 
+| \* In order. The system will send a call to the trunks that are in the selected order
+| \* Random. The system will sort the trunks in a randomized manner, using the RAND() function of MYSQL, therefore, will be able to repeat the trunk in sequence.
+| \* LCR. Sorth the trunks that have a lower cost. If the trunk owner does not have tariff, will be disregarded and will be put it in last. 
 | 
 | MagnusBilling will send the calls to the trunks that belongs in this group, until the calls are answered, occupied or canceled.
 | 
@@ -28,16 +28,6 @@ Type
 | 
 | 
 | 
-
-
-
-
-.. _trunkGroup-id-trunk:
-
-Trunks
-------
-
-| Select the trunks that belongs to this group. If selected the type, order, then select the trunks in the desired order.
 
 
 
@@ -51,6 +41,16 @@ Weight
 | Example.
 | 
 | Let's say you selected 3 trunks, and you want to send 1 call to the first trunk, 2 to the second and 1 to the third, so in this example, put 1,2,1 in this field.
+
+
+
+
+.. _trunkGroup-id-trunk:
+
+Trunks
+------
+
+| Select the trunks that belongs to this group. If selected the type, order, then select the trunks in the desired order.
 
 
 

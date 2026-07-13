@@ -4,7 +4,7 @@
 Number
 ------
 
-| Number that should be blocked. Its necessary to activate the blocked numbers option in the campaign.
+| Number that should be blocked. The blocked numbers option must be enabled in the campaign.
 
 
 
@@ -14,7 +14,7 @@ Number
 Description
 -----------
 
-| We did not write the description to this field.
+| Optional note explaining why this number is restricted for the campaign.
 
 
 

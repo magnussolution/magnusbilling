@@ -104,7 +104,7 @@ Description
 Retail price
 ------------
 
-| We did not write the description to this field.
+| Retail price charged to the customer for this send credit product.
 
 
 
@@ -114,7 +114,7 @@ Retail price
 Type
 ----
 
-| We did not write the description to this field.
+| Method or provider used to send the credit to the destination.
 
 
 

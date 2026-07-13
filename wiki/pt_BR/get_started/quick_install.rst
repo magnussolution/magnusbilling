@@ -11,7 +11,7 @@ Instale o Linux **minimal**.
 
 ::
      
-  wget https://raw.githubusercontent.com/magnussolution/magnusbilling7/source/script/install.sh
+  wget https://raw.githubusercontent.com/magnussolution/magnusbilling8/source/script/install.sh
   bash install.sh     
 
 **2.** Durante a instalação será solicitado o idioma padrão para o Magnus Billing. Escolha digitando o número do idioma escolhido.
@@ -29,5 +29,4 @@ Instale o Linux **minimal**.
 
 .. image:: ../img/ilogin.png
         :scale: 80%
-
 

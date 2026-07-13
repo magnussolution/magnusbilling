@@ -79,7 +79,7 @@ Tronco
 Reinvite
 --------
 
-| Reinvite é o parâmetro que informa se o áudio está passando pelo Asterisk, ou se está passando diretamente entre o cliente e o tronco. Você pode ver mais detalhes no link `https://wiki.magnusbilling.org/pt_BR/source/asterisk_options/directmedia.html.  <https://wiki.magnusbilling.org/pt_BR/source/asterisk_options/directmedia.html.>`_.
+| Reinvite informa se o áudio está passando pelo Asterisk ou diretamente entre o cliente e o tronco. Você pode ver mais detalhes no link `https://wiki.magnusbilling.org/pt_BR/source/asterisk_options/directmedia.html.  <https://wiki.magnusbilling.org/pt_BR/source/asterisk_options/directmedia.html.>`_.
 
 
 
@@ -89,7 +89,7 @@ Reinvite
 From IP
 -------
 
-| Ip do terminal SIP que foi iniciado a chamada.
+| IP do terminal SIP que iniciou a chamada.
 
 
 

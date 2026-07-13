@@ -45,7 +45,7 @@ Modules buttons bar
 
 - Delete Button.
 	Selection one or more records and clicking in Delete, will be requested the confirmation, when confirmed the record will be deleted. The delete button have a property called All, found when clicked on top of the arrow besides the button, this property deletes all the records
-listed in the module. A very useful tool to delete a large amout of data.
+	listed in the module. A very useful tool to delete a large amout of data.
 	**OBS**: MagnusBilling databank uses InnoDB with foreign key, this links every data, therefore is not possible to delete data that are already linked with others. EX: Is not possible to delete an client, if this client made an purchase. Will be necessary to delete all the records linked to this client to be able to delete this client.
 
 - Batch Update button.

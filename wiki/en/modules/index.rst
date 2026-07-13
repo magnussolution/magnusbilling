@@ -3,18 +3,19 @@
 
 
 .. _user-menu-list:
-Menu Clients
-============
+
+Menu Clientes Module
+====================
 
 
-This is the list of all fields with their description of the menu  Clients
+This is the list of all fields with their description of the menu  Clientes Module
 
 Users
 +++++
 
 This menu has the following fields
 
-.. include:: user/user.rst
+:doc:`Users <user/user>`
 
 
 SIP Users
@@ -22,7 +23,7 @@ SIP Users
 
 This menu has the following fields
 
-.. include:: sip/sip.rst
+:doc:`SIP Users <sip/sip>`
 
 
 Calls Online
@@ -30,7 +31,7 @@ Calls Online
 
 This menu has the following fields
 
-.. include:: callonline/callonline.rst
+:doc:`Calls Online <callOnLine/callOnLine>`
 
 
 CallerID
@@ -38,7 +39,7 @@ CallerID
 
 This menu has the following fields
 
-.. include:: callerid/callerid.rst
+:doc:`CallerID <callerid/callerid>`
 
 
 ATA Linksys
@@ -46,7 +47,7 @@ ATA Linksys
 
 This menu has the following fields
 
-.. include:: sipuras/sipuras.rst
+:doc:`ATA Linksys <sipuras/sipuras>`
 
 
 Restricted Number
@@ -54,7 +55,7 @@ Restricted Number
 
 This menu has the following fields
 
-.. include:: restrictedphonenumber/restrictedphonenumber.rst
+:doc:`Restricted Number <restrictedPhonenumber/restrictedPhonenumber>`
 
 
 Callback
@@ -62,15 +63,7 @@ Callback
 
 This menu has the following fields
 
-.. include:: callback/callback.rst
-
-
-Buy Credit
-++++++++++
-
-This menu has the following fields
-
-.. include:: buycredit/buycredit.rst
+:doc:`Callback <callBack/callBack>`
 
 
 Iax
@@ -78,15 +71,7 @@ Iax
 
 This menu has the following fields
 
-.. include:: iax/iax.rst
-
-
-Send Credit
-+++++++++++
-
-This menu has the following fields
-
-.. include:: transfertomobile/transfertomobile.rst
+:doc:`Iax <iax/iax>`
 
 
 User History
@@ -94,7 +79,7 @@ User History
 
 This menu has the following fields
 
-.. include:: userhistory/userhistory.rst
+:doc:`User History <userHistory/userHistory>`
 
 
 
@@ -102,6 +87,7 @@ This menu has the following fields
 
 
 .. _refill-menu-list:
+
 Menu Billing
 ============
 
@@ -113,7 +99,7 @@ Refills
 
 This menu has the following fields
 
-.. include:: refill/refill.rst
+:doc:`Refills <refill/refill>`
 
 
 Payment Methods
@@ -121,7 +107,7 @@ Payment Methods
 
 This menu has the following fields
 
-.. include:: methodpay/methodpay.rst
+:doc:`Payment Methods <methodPay/methodPay>`
 
 
 Voucher
@@ -129,7 +115,7 @@ Voucher
 
 This menu has the following fields
 
-.. include:: voucher/voucher.rst
+:doc:`Voucher <voucher/voucher>`
 
 
 Refill Providers
@@ -137,7 +123,7 @@ Refill Providers
 
 This menu has the following fields
 
-.. include:: refillprovider/refillprovider.rst
+:doc:`Refill Providers <refillprovider/refillprovider>`
 
 
 
@@ -145,6 +131,7 @@ This menu has the following fields
 
 
 .. _did-menu-list:
+
 Menu DIDs
 =========
 
@@ -156,7 +143,7 @@ DIDs
 
 This menu has the following fields
 
-.. include:: did/did.rst
+:doc:`DIDs <did/did>`
 
 
 DID Destination
@@ -164,7 +151,7 @@ DID Destination
 
 This menu has the following fields
 
-.. include:: diddestination/diddestination.rst
+:doc:`DID Destination <diddestination/diddestination>`
 
 
 DIDs Use
@@ -172,7 +159,7 @@ DIDs Use
 
 This menu has the following fields
 
-.. include:: diduse/diduse.rst
+:doc:`DIDs Use <didUse/didUse>`
 
 
 IVRs
@@ -180,7 +167,7 @@ IVRs
 
 This menu has the following fields
 
-.. include:: ivr/ivr.rst
+:doc:`IVRs <ivr/ivr>`
 
 
 Queues
@@ -188,7 +175,7 @@ Queues
 
 This menu has the following fields
 
-.. include:: queue/queue.rst
+:doc:`Queues <queue/queue>`
 
 
 Queues Members
@@ -196,31 +183,7 @@ Queues Members
 
 This menu has the following fields
 
-.. include:: queuemember/queuemember.rst
-
-
-Buy DID
-+++++++
-
-This menu has the following fields
-
-.. include:: didbuy/didbuy.rst
-
-
-Queue DashBoard
-+++++++++++++++
-
-This menu has the following fields
-
-.. include:: dashboardqueue/dashboardqueue.rst
-
-
-DIDww
-+++++
-
-This menu has the following fields
-
-.. include:: didww/didww.rst
+:doc:`Queues Members <queueMember/queueMember>`
 
 
 Holidays
@@ -228,7 +191,7 @@ Holidays
 
 This menu has the following fields
 
-.. include:: holidays/holidays.rst
+:doc:`Holidays <holidays/holidays>`
 
 
 DID History
@@ -236,7 +199,7 @@ DID History
 
 This menu has the following fields
 
-.. include:: didhistory/didhistory.rst
+:doc:`DID History <didHistory/didHistory>`
 
 
 
@@ -244,6 +207,7 @@ This menu has the following fields
 
 
 .. _plan-menu-list:
+
 Menu Rates
 ==========
 
@@ -255,7 +219,7 @@ Plans
 
 This menu has the following fields
 
-.. include:: plan/plan.rst
+:doc:`Plans <Plan/Plan>`
 
 
 Tariffs
@@ -263,7 +227,7 @@ Tariffs
 
 This menu has the following fields
 
-.. include:: rate/rate.rst
+:doc:`Tariffs <rate/rate>`
 
 
 Prefixes
@@ -271,7 +235,7 @@ Prefixes
 
 This menu has the following fields
 
-.. include:: prefix/prefix.rst
+:doc:`Prefixes <prefix/prefix>`
 
 
 User Custom Rates
@@ -279,7 +243,7 @@ User Custom Rates
 
 This menu has the following fields
 
-.. include:: userrate/userrate.rst
+:doc:`User Custom Rates <userRate/userRate>`
 
 
 Offers
@@ -287,7 +251,7 @@ Offers
 
 This menu has the following fields
 
-.. include:: offer/offer.rst
+:doc:`Offers <offer/offer>`
 
 
 Offer CDR
@@ -295,7 +259,7 @@ Offer CDR
 
 This menu has the following fields
 
-.. include:: offercdr/offercdr.rst
+:doc:`Offer CDR <offerCdr/offerCdr>`
 
 
 Offer Use
@@ -303,7 +267,7 @@ Offer Use
 
 This menu has the following fields
 
-.. include:: offeruse/offeruse.rst
+:doc:`Offer Use <offerUse/offerUse>`
 
 
 
@@ -311,6 +275,7 @@ This menu has the following fields
 
 
 .. _call-menu-list:
+
 Menu Reports
 ============
 
@@ -322,15 +287,7 @@ CDR
 
 This menu has the following fields
 
-.. include:: call/call.rst
-
-
-CDR Failed
-++++++++++
-
-This menu has the following fields
-
-.. include:: callfailed/callfailed.rst
+:doc:`CDR <call/call>`
 
 
 Summary per Day
@@ -338,7 +295,7 @@ Summary per Day
 
 This menu has the following fields
 
-.. include:: callsummaryperday/callsummaryperday.rst
+:doc:`Summary per Day <callSummaryPerDay/callSummaryPerDay>`
 
 
 Summary Day User
@@ -346,7 +303,7 @@ Summary Day User
 
 This menu has the following fields
 
-.. include:: callsummarydayuser/callsummarydayuser.rst
+:doc:`Summary Day User <callSummaryDayUser/callSummaryDayUser>`
 
 
 Summary Day Trunk
@@ -354,7 +311,7 @@ Summary Day Trunk
 
 This menu has the following fields
 
-.. include:: callsummarydaytrunk/callsummarydaytrunk.rst
+:doc:`Summary Day Trunk <callSummaryDayTrunk/callSummaryDayTrunk>`
 
 
 Summary Day Agent
@@ -362,7 +319,7 @@ Summary Day Agent
 
 This menu has the following fields
 
-.. include:: callsummarydayagent/callsummarydayagent.rst
+:doc:`Summary Day Agent <callSummaryDayAgent/callSummaryDayAgent>`
 
 
 Summary per Month
@@ -370,7 +327,7 @@ Summary per Month
 
 This menu has the following fields
 
-.. include:: callsummarypermonth/callsummarypermonth.rst
+:doc:`Summary per Month <callSummaryPerMonth/callSummaryPerMonth>`
 
 
 Summary Month User
@@ -378,7 +335,7 @@ Summary Month User
 
 This menu has the following fields
 
-.. include:: callsummarymonthuser/callsummarymonthuser.rst
+:doc:`Summary Month User <callSummaryMonthUser/callSummaryMonthUser>`
 
 
 Summary Month Trunk
@@ -386,7 +343,7 @@ Summary Month Trunk
 
 This menu has the following fields
 
-.. include:: callsummarymonthtrunk/callsummarymonthtrunk.rst
+:doc:`Summary Month Trunk <callSummaryMonthTrunk/callSummaryMonthTrunk>`
 
 
 Summary per User
@@ -394,7 +351,7 @@ Summary per User
 
 This menu has the following fields
 
-.. include:: callsummaryperuser/callsummaryperuser.rst
+:doc:`Summary per User <callSummaryPerUser/callSummaryPerUser>`
 
 
 Summary per Trunk
@@ -402,7 +359,7 @@ Summary per Trunk
 
 This menu has the following fields
 
-.. include:: callsummarypertrunk/callsummarypertrunk.rst
+:doc:`Summary per Trunk <callSummaryPerTrunk/callSummaryPerTrunk>`
 
 
 Call Archive
@@ -410,7 +367,7 @@ Call Archive
 
 This menu has the following fields
 
-.. include:: callarchive/callarchive.rst
+:doc:`Call Archive <callArchive/callArchive>`
 
 
 Send Credit Summary
@@ -418,7 +375,7 @@ Send Credit Summary
 
 This menu has the following fields
 
-.. include:: sendcreditsummary/sendcreditsummary.rst
+:doc:`Send Credit Summary <sendCreditSummary/sendCreditSummary>`
 
 
 Summary Month DID
@@ -426,7 +383,7 @@ Summary Month DID
 
 This menu has the following fields
 
-.. include:: callsummarymonthdid/callsummarymonthdid.rst
+:doc:`Summary Month DID <callSummaryMonthDid/callSummaryMonthDid>`
 
 
 
@@ -434,6 +391,7 @@ This menu has the following fields
 
 
 .. _trunk-menu-list:
+
 Menu Routes
 ===========
 
@@ -445,7 +403,7 @@ Providers
 
 This menu has the following fields
 
-.. include:: provider/provider.rst
+:doc:`Providers <provider/provider>`
 
 
 Trunks
@@ -453,7 +411,7 @@ Trunks
 
 This menu has the following fields
 
-.. include:: trunk/trunk.rst
+:doc:`Trunks <trunk/trunk>`
 
 
 Trunk Groups
@@ -461,7 +419,7 @@ Trunk Groups
 
 This menu has the following fields
 
-.. include:: trunkgroup/trunkgroup.rst
+:doc:`Trunk Groups <trunkGroup/trunkGroup>`
 
 
 Provider Rates
@@ -469,7 +427,7 @@ Provider Rates
 
 This menu has the following fields
 
-.. include:: rateprovider/rateprovider.rst
+:doc:`Provider Rates <rateProvider/rateProvider>`
 
 
 Servers
@@ -477,7 +435,7 @@ Servers
 
 This menu has the following fields
 
-.. include:: servers/servers.rst
+:doc:`Servers <servers/servers>`
 
 
 Trunk Errors
@@ -485,7 +443,7 @@ Trunk Errors
 
 This menu has the following fields
 
-.. include:: trunksipcodes/trunksipcodes.rst
+:doc:`Trunk Errors <trunkSipCodes/trunkSipCodes>`
 
 
 Provider CNL
@@ -493,7 +451,15 @@ Provider CNL
 
 This menu has the following fields
 
-.. include:: providercnl/providercnl.rst
+:doc:`Provider CNL <providerCNL/providerCNL>`
+
+
+Sip Trace
++++++++++
+
+This menu has the following fields
+
+:doc:`Sip Trace <sipTrace/sipTrace>`
 
 
 
@@ -501,6 +467,7 @@ This menu has the following fields
 
 
 .. _configuration-menu-list:
+
 Menu Settings
 =============
 
@@ -512,7 +479,7 @@ Menus
 
 This menu has the following fields
 
-.. include:: module/module.rst
+:doc:`Menus <module/module>`
 
 
 Group Users
@@ -520,7 +487,7 @@ Group Users
 
 This menu has the following fields
 
-.. include:: groupuser/groupuser.rst
+:doc:`Group Users <groupUser/groupUser>`
 
 
 Configuration
@@ -528,7 +495,7 @@ Configuration
 
 This menu has the following fields
 
-.. include:: configuration/configuration.rst
+:doc:`Configuration <configuration/configuration>`
 
 
 Emails Templates
@@ -536,7 +503,7 @@ Emails Templates
 
 This menu has the following fields
 
-.. include:: templatemail/templatemail.rst
+:doc:`Emails Templates <templateMail/templateMail>`
 
 
 Log Users
@@ -544,7 +511,7 @@ Log Users
 
 This menu has the following fields
 
-.. include:: logusers/logusers.rst
+:doc:`Log Users <logUsers/logUsers>`
 
 
 SMTP
@@ -552,15 +519,7 @@ SMTP
 
 This menu has the following fields
 
-.. include:: smtps/smtps.rst
-
-
-Fail2ban
-++++++++
-
-This menu has the following fields
-
-.. include:: firewall/firewall.rst
+:doc:`SMTP <smtps/smtps>`
 
 
 API
@@ -568,15 +527,7 @@ API
 
 This menu has the following fields
 
-.. include:: api/api.rst
-
-
-Dashboard
-+++++++++
-
-This menu has the following fields
-
-.. include:: dashboard/dashboard.rst
+:doc:`API <api/api>`
 
 
 Call per Minutes
@@ -584,15 +535,7 @@ Call per Minutes
 
 This menu has the following fields
 
-.. include:: campaignlog/campaignlog.rst
-
-
-Extra2
-++++++
-
-This menu has the following fields
-
-.. include:: extra2/extra2.rst
+:doc:`Call per Minutes <campaignLog/campaignLog>`
 
 
 Group to Admins
@@ -600,23 +543,7 @@ Group to Admins
 
 This menu has the following fields
 
-.. include:: groupusergroup/groupusergroup.rst
-
-
-Extra3
-++++++
-
-This menu has the following fields
-
-.. include:: extra3/extra3.rst
-
-
-Backup
-++++++
-
-This menu has the following fields
-
-.. include:: backup/backup.rst
+:doc:`Group to Admins <groupUserGroup/groupUserGroup>`
 
 
 Alarms
@@ -624,15 +551,15 @@ Alarms
 
 This menu has the following fields
 
-.. include:: alarm/alarm.rst
+:doc:`Alarms <alarm/alarm>`
 
 
-Extra
-+++++
+Fail2ban
+++++++++
 
 This menu has the following fields
 
-.. include:: extra/extra.rst
+:doc:`Fail2ban <firewall/firewall>`
 
 
 
@@ -640,6 +567,7 @@ This menu has the following fields
 
 
 .. _campaign-menu-list:
+
 Menu Voice Broadcasting
 =======================
 
@@ -651,7 +579,7 @@ Campaigns
 
 This menu has the following fields
 
-.. include:: campaign/campaign.rst
+:doc:`Campaigns <campaign/campaign>`
 
 
 Phonebooks
@@ -659,7 +587,7 @@ Phonebooks
 
 This menu has the following fields
 
-.. include:: phonebook/phonebook.rst
+:doc:`Phonebooks <phoneBook/phoneBook>`
 
 
 Phonenumbers
@@ -667,7 +595,7 @@ Phonenumbers
 
 This menu has the following fields
 
-.. include:: phonenumber/phonenumber.rst
+:doc:`Phonenumbers <phoneNumber/phoneNumber>`
 
 
 Polls
@@ -675,7 +603,7 @@ Polls
 
 This menu has the following fields
 
-.. include:: campaignpoll/campaignpoll.rst
+:doc:`Polls <campaignPoll/campaignPoll>`
 
 
 Polls Reports
@@ -683,7 +611,7 @@ Polls Reports
 
 This menu has the following fields
 
-.. include:: campaignpollinfo/campaignpollinfo.rst
+:doc:`Polls Reports <campaignPollInfo/campaignPollInfo>`
 
 
 Restrict Phone
@@ -691,7 +619,7 @@ Restrict Phone
 
 This menu has the following fields
 
-.. include:: campaignrestrictphone/campaignrestrictphone.rst
+:doc:`Restrict Phone <campaignRestrictPhone/campaignRestrictPhone>`
 
 
 SMS
@@ -699,15 +627,7 @@ SMS
 
 This menu has the following fields
 
-.. include:: sms/sms.rst
-
-
-Quick Campaign
-++++++++++++++
-
-This menu has the following fields
-
-.. include:: campaignsend/campaignsend.rst
+:doc:`SMS <sms/sms>`
 
 
 Campaigns DashBoard
@@ -715,7 +635,7 @@ Campaigns DashBoard
 
 This menu has the following fields
 
-.. include:: campaigndashboard/campaigndashboard.rst
+:doc:`Campaigns DashBoard <campaignDashboard/campaignDashboard>`
 
 
 Campaign Report
@@ -723,7 +643,7 @@ Campaign Report
 
 This menu has the following fields
 
-.. include:: campaignreport/campaignreport.rst
+:doc:`Campaign Report <campaignReport/campaignReport>`
 
 
 
@@ -731,26 +651,19 @@ This menu has the following fields
 
 
 .. _callshop-menu-list:
+
 Menu CallShop
 =============
 
 
 This is the list of all fields with their description of the menu  CallShop
 
-Booths
-++++++
-
-This menu has the following fields
-
-.. include:: callshop/callshop.rst
-
-
 Booths Report
 +++++++++++++
 
 This menu has the following fields
 
-.. include:: callshopcdr/callshopcdr.rst
+:doc:`Booths Report <callShopCdr/callShopCdr>`
 
 
 Booths Tariffs
@@ -758,7 +671,7 @@ Booths Tariffs
 
 This menu has the following fields
 
-.. include:: ratecallshop/ratecallshop.rst
+:doc:`Booths Tariffs <rateCallshop/rateCallshop>`
 
 
 Summary per Day
@@ -766,7 +679,7 @@ Summary per Day
 
 This menu has the following fields
 
-.. include:: callsummarycallshop/callsummarycallshop.rst
+:doc:`Summary per Day <callSummaryCallShop/callSummaryCallShop>`
 
 
 
@@ -774,9 +687,110 @@ This menu has the following fields
 
 
 .. _services-menu-list:
-Menu Summary Month Trunk
-========================
+
+Menu Services
+=============
 
 
-This is the list of all fields with their description of the menu  Summary Month Trunk
+This is the list of all fields with their description of the menu  Services
 
+Services
+++++++++
+
+This menu has the following fields
+
+:doc:`Services <services/services>`
+
+
+Services Use
+++++++++++++
+
+This menu has the following fields
+
+:doc:`Services Use <servicesUse/servicesUse>`
+
+
+
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+   user/user
+   sip/sip
+   callOnLine/callOnLine
+   callerid/callerid
+   sipuras/sipuras
+   restrictedPhonenumber/restrictedPhonenumber
+   callBack/callBack
+   iax/iax
+   userHistory/userHistory
+   refill/refill
+   methodPay/methodPay
+   voucher/voucher
+   refillprovider/refillprovider
+   did/did
+   diddestination/diddestination
+   didUse/didUse
+   ivr/ivr
+   queue/queue
+   queueMember/queueMember
+   holidays/holidays
+   didHistory/didHistory
+   Plan/Plan
+   rate/rate
+   prefix/prefix
+   userRate/userRate
+   offer/offer
+   offerCdr/offerCdr
+   offerUse/offerUse
+   call/call
+   callSummaryPerDay/callSummaryPerDay
+   callSummaryDayUser/callSummaryDayUser
+   callSummaryDayTrunk/callSummaryDayTrunk
+   callSummaryDayAgent/callSummaryDayAgent
+   callSummaryPerMonth/callSummaryPerMonth
+   callSummaryMonthUser/callSummaryMonthUser
+   callSummaryMonthTrunk/callSummaryMonthTrunk
+   callSummaryPerUser/callSummaryPerUser
+   callSummaryPerTrunk/callSummaryPerTrunk
+   callArchive/callArchive
+   sendCreditSummary/sendCreditSummary
+   callSummaryMonthDid/callSummaryMonthDid
+   provider/provider
+   trunk/trunk
+   trunkGroup/trunkGroup
+   rateProvider/rateProvider
+   servers/servers
+   trunkSipCodes/trunkSipCodes
+   providerCNL/providerCNL
+   sipTrace/sipTrace
+   module/module
+   groupUser/groupUser
+   configuration/configuration
+   templateMail/templateMail
+   logUsers/logUsers
+   smtps/smtps
+   api/api
+   campaignLog/campaignLog
+   groupUserGroup/groupUserGroup
+   alarm/alarm
+   firewall/firewall
+   campaign/campaign
+   phoneBook/phoneBook
+   phoneNumber/phoneNumber
+   campaignPoll/campaignPoll
+   campaignPollInfo/campaignPollInfo
+   campaignRestrictPhone/campaignRestrictPhone
+   sms/sms
+   campaignDashboard/campaignDashboard
+   campaignReport/campaignReport
+   callShopCdr/callShopCdr
+   rateCallshop/rateCallshop
+   callSummaryCallShop/callSummaryCallShop
+   services/services
+   servicesUse/servicesUse
+   gAuthenticator/gAuthenticator
+   groupModule/groupModule
+   sendCreditProducts/sendCreditProducts
+   sendCreditRates/sendCreditRates

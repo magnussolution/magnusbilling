@@ -24,7 +24,7 @@ Conta SIP
 Pausado
 -------
 
-| Agentes pausados não receberam chamadas, é possível pausar e despausar discando *180 para pausar, e *181 para despausar.
+| Agentes pausados não receberam chamadas, é possível pausar e despausar discando \*180 para pausar, e \*181 para despausar.
 
 
 

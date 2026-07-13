@@ -66,7 +66,7 @@ Regra prefixo
 
 | Esta regra permite o cliente discar no formato local. 
 | EX 0 DDD ou somente o número dentro de seu DDD. As regras são separadas por vírgula e composta por 2 ou 3 parâmetros separados por /.
-| 1º é o número que será substituído. Pode ser * para pegar qualquer dígito.
+| 1º é o número que será substituído. Pode ser \* para pegar qualquer dígito.
 | 2º é o número que vai substituir o 1º.
 | 3º é a quantidade de dígitos do número. Se nao colocar o 3º parâmetro, não será verificado a quantidade de dígitos.
 | 
@@ -74,7 +74,7 @@ Regra prefixo
 | 
 | Permite ligar 55DDDnº, 0DDDnº ou somente o número
 | 
-| 0/55,*/5511/8,*/5511/9
+| 0/55,\*/5511/8,\*/5511/9
 | Regra 1 -> números que iniciam com 0, o zero será substituído por 55, independente de quantos dígitos tiver o número. 
 | Regra 2 -> números que iniciam com qualquer valor e tem 8 dígitos, será adicionado 5511 na frente. 
 | Regra 3 -> números que iniciam com qualquer valor e tem 9 dígitos, será adicionado 5511 na frente
@@ -82,7 +82,7 @@ Regra prefixo
 | 
 | Permite ligar 55DDDnº, 0DDDnº, DDDnº ou somente o número
 | 
-| 0/55,*/5511/8,*/5511/9,*/55/10,*/55/11
+| 0/55,\*/5511/8,\*/5511/9,\*/55/10,\*/55/11
 | Regra 1 -> números que iniciam com 0, o zero será substituído por 55, independente de quantos dígitos tiver o número. 
 | Regra 2 -> números que iniciam com qualquer valor e tem 8 dígitos, será adicionado 55 na frente. 
 | Regra 3 -> números que iniciam com qualquer valor e tem 9 dígitos, será adicionado 55 na frente
@@ -138,7 +138,7 @@ Limite de CPS
 Descrição
 -----------
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Observações opcionais sobre este usuário, visíveis somente para administradores e revendedores com acesso.
 
 
 
@@ -148,7 +148,7 @@ Descrição
 Site da empresa
 ---------------
 
-| Site da empresa|Tambem usado para customizar o painel de login para um revendedor. Neste caso, o dominio ou subdominio deve ser colocado sem http ou www
+| Site da empresa\|Tambem usado para customizar o painel de login para um revendedor. Neste caso, o dominio ou subdominio deve ser colocado sem http ou www
 
 
 
@@ -158,7 +158,7 @@ Site da empresa
 Nome da empresa
 ---------------
 
-| Nome da empresa.|Tambem usado para customizar o painel de login para um revendedor
+| Nome da empresa.\|Tambem usado para customizar o painel de login para um revendedor
 
 
 
@@ -278,7 +278,17 @@ Celular
 Email
 -----
 
-| Email, é necessário para o envio de notificaçōes do sistema.
+| Email, é necessário para o envio de notificações do sistema.
+
+
+
+
+.. _user-email2:
+
+Email
+-----
+
+| Email 2
 
 
 
@@ -318,7 +328,7 @@ Valor contrato
 DIST
 ----
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Código DIST usado em integrações brasileiras de cobrança ou numeração.
 
 
 
@@ -363,6 +373,26 @@ Notificação de crédito
 
 
 
+.. _user-email-services:
+
+Enviar email de Serviços
+-------------------------
+
+| Ativa ou não as notificações por email dos serviços
+
+
+
+
+.. _user-email-did:
+
+Enviar email de DID
+-------------------
+
+| Ativa ou não as notificações por email dos DIDs
+
+
+
+
 .. _user-enableexpire:
 
 Habilitar vencimento
@@ -393,12 +423,12 @@ Limite de chamada
 
 
 
-.. _user-calllimit-error:
+.. _user-inbound-call-limit:
 
-Erro ao superar limite
-----------------------
+Inbound Call Limit
+------------------
 
-| Sinalização a ser enviada caso o limite de chamadas for superador.
+| Quantidade máxima de chamadas recebidas simultâneas permitidas para este usuário.
 
 
 
@@ -428,7 +458,7 @@ CallShop
 Espaço em disco
 ----------------
 
-| Espaço em GB que o usuário poderá usar com as gravaçōes. Coloque -1 para deixar sem limite.É necessário adicionar no cron o seguinte comando php /var/www/html/mbilling/cron.php UserDiskSpace .
+| Espaço em GB que o usuário poderá usar com as gravações. Coloque -1 para deixar sem limite. É necessário adicionar no cron o seguinte comando php /var/www/html/mbilling/cron.php UserDiskSpace .
 
 
 
@@ -475,8 +505,8 @@ Usar
 
 .. _user-transfer-international-profit:
 
-Lucro
------
+Profit
+------
 
 | Esta função não está disponível no Brasil. Somente usado para recarga de celulares em alguns países.
 
@@ -485,8 +515,8 @@ Lucro
 
 .. _user-transfer-flexiload-profit:
 
-Lucro
------
+Profit
+------
 
 | Esta função não está disponível no Brasil. Somente usado para recarga de celulares em alguns países.
 
@@ -495,8 +525,8 @@ Lucro
 
 .. _user-transfer-bkash-profit:
 
-Lucro
------
+Profit
+------
 
 | Esta função não está disponível no Brasil. Somente usado para recarga de celulares em alguns países.
 
@@ -515,8 +545,8 @@ Enable DBBL/Rocket
 
 .. _user-transfer-dbbl-rocket-profit:
 
-Lucro
------
+Profit
+------
 
 | Esta função não está disponível no Brasil. Somente usado para recarga de celulares em alguns países.
 
@@ -525,40 +555,10 @@ Lucro
 
 .. _user-transfer-show-selling-price:
 
-Mostrar preço de venda
------------------------
+Show selling price
+------------------
 
 | Esta função não está disponível no Brasil. Somente usado para recarga de celulares em alguns países.
-
-
-
-
-.. _user-email2:
-
-Email
------
-
-| Email 2
-
-
-
-
-.. _user-email-services:
-
-Enviar email de Serviços
--------------------------
-
-| Ativa ou não as notificaçōes por email dos serviços
-
-
-
-
-.. _user-email-did:
-
-Enviar email de DID
--------------------
-
-| Ativa ou não as notificaçōes por email dos DIDs
 
 
 

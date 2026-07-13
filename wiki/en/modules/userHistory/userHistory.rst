@@ -4,7 +4,7 @@
 Username
 --------
 
-| We did not write the description to this field.
+| User related to this history record.
 
 
 
@@ -14,17 +14,17 @@ Username
 Date
 ----
 
-| We did not write the description to this field.
+| Date and time when this history record was created.
 
 
 
 
 .. _userHistory-description:
 
+description
+-----------
 
-
-
-| We did not write the description to this field.
+| Description of the action or change recorded in the user history.
 
 
 

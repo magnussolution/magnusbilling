@@ -4,7 +4,7 @@
 Provider
 --------
 
-| We did not write the description to this field.
+| Provider that owns this CNL rule.
 
 
 
@@ -14,7 +14,7 @@ Provider
 CNL
 ---
 
-| We did not write the description to this field.
+| CNL code used to identify the local area or tariff zone for Brazilian numbers.
 
 
 
@@ -24,7 +24,7 @@ CNL
 Zone
 ----
 
-| We did not write the description to this field.
+| Provider zone associated with this CNL code.
 
 
 

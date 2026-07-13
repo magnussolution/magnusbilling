@@ -136,6 +136,16 @@ Linha de registro
 
 
 
+.. _trunk-cnl:
+
+Ativar CNL
+----------
+
+| Ativa a consulta CNL neste tronco para aplicar informações de numeração e roteamento brasileiro.
+
+
+
+
 .. _trunk-fromuser:
 
 Fromuser
@@ -156,12 +166,12 @@ Fromdomain
 
 
 
-.. _trunk-language:
+.. _trunk-block-cid:
 
-Idioma
-------
+Block CID REGEX
+---------------
 
-| Idioma padrão usado para qualquer Playback()/Background().
+| Expressão regular usada para bloquear chamadas pelo CallerID antes de enviá-las por este tronco.
 
 
 
@@ -234,7 +244,7 @@ Qualify
 | Enviar pacote OPTION para verificar se o usuário está online.
 | Sintaxe:
 | 
-| qualify = xxx | no | yes
+| qualify = xxx \| no \| yes
 | 
 | onde XXX é o número de milissegundos usados. Se sim, o tempo configurado no sip.conf é usado, padrão é usado 2 segundos.
 | 
@@ -340,12 +350,22 @@ Parâmetros
 
 
 
-.. _trunk-cnl:
+.. _trunk-cid-add:
 
-Ativar CNL
-----------
+CID Add prefix
+--------------
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Prefixo adicionado ao CallerID antes de enviar a chamada para este tronco.
+
+
+
+
+.. _trunk-cid-remove:
+
+CID Remove prefix
+-----------------
+
+| Prefixo removido do CallerID antes de enviar a chamada para este tronco.
 
 
 

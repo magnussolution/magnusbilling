@@ -20,9 +20,7 @@ extensions = [
     'sphinx_tabs.tabs', 
     'sphinx.ext.imgmath', 
     'sphinx_rtd_theme',
-    'sphinx.ext.autosectionlabel',
 ]
-autosectionlabel_prefix_document = True
 
 templates_path = ['_templates']
 
@@ -44,9 +42,12 @@ version = 'source'
 # The full version, including alpha/beta/rc tags
 release = 'source'
 
-language = 'en'
+language = 'pt-br'
 
-exclude_patterns = ['_build']
+exclude_patterns = ['_build','Thumbs.db',
+    '.DS_Store',
+    '.venv',
+    '.venv/**',]
 
 from gdscript import GDScriptLexer
 from sphinx.highlighting import lexers

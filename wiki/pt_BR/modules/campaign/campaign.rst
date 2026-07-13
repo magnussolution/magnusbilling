@@ -74,7 +74,28 @@ Data de expiração
 Tipo
 ----
 
-| Selecione entre VOZ ou SMS, se for audio, precisa importar áudio, se for SMS, preciso colocar o texto do SMS na tab SMS.
+| Selecione entre Voz, SMS ou WhatsApp.
+| Para WhatsApp, o MagnusBilling usa a API oficial WhatsApp Business Cloud da Meta e envia um template aprovado configurado na aba Mensagens. O MagnusBilling fornece somente a integração; a Meta processa e entrega a mensagem. O titular da conta é responsável pelo consentimento dos destinatários, conteúdo, templates, cobranças e cumprimento das leis e políticas aplicáveis da Meta/WhatsApp.
+
+
+
+
+.. _campaign-whatsapp-template-name:
+
+Nome do template WhatsApp
+-------------------------
+
+| Nome exato de um template do WhatsApp aprovado no WhatsApp Manager. A integração atual envia templates sem componentes variáveis; portanto, use um template que não exija parâmetros.
+
+
+
+
+.. _campaign-whatsapp-template-language:
+
+Idioma do template WhatsApp
+---------------------------
+
+| Código de idioma exato aprovado para o template do WhatsApp, por exemplo en_US ou pt_BR. O nome e o idioma devem corresponder ao template cadastrado no WhatsApp Manager.
 
 
 
@@ -397,6 +418,5 @@ Audio 2 TTS
 -----------
 
 | Mesma função do campo campo anterior, mas para o áudio 2. Lembra que entre o áudio 1 e 2, o TTS executa o nome importado nos números.
-
 
 

@@ -4,7 +4,7 @@
 Username
 --------
 
-| You need use the MagnusBilling API from https://github.com/magnussolution/magnusbilling-api-php. The username owner this API
+| User allowed to access the MagnusBilling API. Use the MagnusBilling API PHP project from https://github.com/magnussolution/magnusbilling-api-php.
 
 
 
@@ -14,7 +14,7 @@ Username
 Api key
 -------
 
-| This apy key will be necessary to execute the API
+| API key required to authenticate API requests.
 
 
 
@@ -24,7 +24,7 @@ Api key
 Api secret
 ----------
 
-| This apy secret will be necessary to execute the API
+| API secret required to authenticate API requests.
 
 
 
@@ -34,7 +34,7 @@ Api secret
 Status
 ------
 
-| You can activete or inactivate this API
+| Enable or disable this API access.
 
 
 
@@ -44,7 +44,7 @@ Status
 Permissions
 -----------
 
-| Which action the user will have execute
+| Actions that this API user is allowed to execute.
 
 
 
@@ -54,7 +54,7 @@ Permissions
 Restriction IPs
 ---------------
 
-| What IPS you want allow access this API. Leave blank to allow any IP. It is very recomended set the IPS
+| IP addresses allowed to access this API. Leave blank to allow any IP. It is strongly recommended to allow only trusted IP addresses.
 
 
 

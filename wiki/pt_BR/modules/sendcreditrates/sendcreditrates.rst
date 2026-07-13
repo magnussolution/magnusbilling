@@ -11,8 +11,8 @@ País
 
 .. _sendCreditRates-idProductoperator-name:
 
-Nome do operador
-----------------
+Operator name
+-------------
 
 | Nome da operadora.
 

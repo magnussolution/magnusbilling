@@ -44,7 +44,7 @@ Admin password
 Antireset
 ---------
 
-| Be cautious.*73738# command prevents resetting LinkSys.
+| Be cautious.\*73738# command prevents resetting LinkSys.
 
 
 
@@ -64,7 +64,7 @@ Enable_Web_Server
 Dial Tone
 ---------
 
-| We did not write the description to this field.
+| Dial tone cadence configured for the Linksys/Sipura device profile.
 
 
 
@@ -194,7 +194,7 @@ Password
 Use_Pref_Codec
 --------------
 
-| Only use preferencial codec.
+| Only use preferred codec.
 
 
 
@@ -204,7 +204,7 @@ Use_Pref_Codec
 Codec
 -----
 
-| Settings of preferincial codec.
+| Settings of preferred codec.
 
 
 
@@ -274,7 +274,7 @@ STUN Test
 Substitute VIA Addr
 -------------------
 
-| Replace publia IP in the VIA.
+| Replace public IP in the VIA.
 
 
 

@@ -4,7 +4,7 @@
 Tipo
 ----
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Tipo de evento que o MagnusBilling vai monitorar antes de enviar este alarme.
 
 
 
@@ -14,7 +14,7 @@ Tipo
 Período
 --------
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Intervalo de tempo usado para verificar a condição do alarme.
 
 
 
@@ -24,7 +24,7 @@ Período
 Condição
 ----------
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Regra de comparação usada pelo alarme, por exemplo maior que, menor que ou igual ao valor configurado.
 
 
 
@@ -34,17 +34,7 @@ Condição
 Quantidade
 ----------
 
-| Nós ainda não escrevemos a descrição deste campo.
-
-
-
-
-.. _alarm-email:
-
-Email
------
-
-| Nós ainda não escrevemos a descrição deste campo.
+| Valor de referência usado junto com a condição para decidir quando o alarme deve ser enviado.
 
 
 
@@ -54,7 +44,17 @@ Email
 Status
 ------
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Ativa ou desativa este alarme sem apagar sua configuração.
+
+
+
+
+.. _alarm-email:
+
+Email
+-----
+
+| Endereço de email que receberá a notificação do alarme.
 
 
 
@@ -64,7 +64,7 @@ Status
 Assunto
 -------
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Assunto usado no email de notificação do alarme.
 
 
 
@@ -74,7 +74,7 @@ Assunto
 Mensagem
 --------
 
-| Nós ainda não escrevemos a descrição deste campo.
+| Mensagem enviada quando a condição do alarme for atingida.
 
 
 

@@ -34,7 +34,7 @@ Name
 DOC
 ---
 
-| We did not write the description to this field.
+| Customer document or tax ID associated with this phone number.
 
 
 
@@ -54,7 +54,7 @@ City
 Email
 -----
 
-| We did not write the description to this field.
+| Customer email address associated with this phone number.
 
 
 

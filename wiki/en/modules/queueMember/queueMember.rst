@@ -24,7 +24,7 @@ Sip user
 Paused
 ------
 
-| Paused agents won't get calls, is possible to pause and unpause dialing *180 to pause, and *181 to unpause.
+| Paused agents won't get calls, is possible to pause and unpause dialing \*180 to pause, and \*181 to unpause.
 
 
 

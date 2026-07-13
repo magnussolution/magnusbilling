@@ -38,3 +38,13 @@ Bloco de tarifação
 
 
 
+
+.. _userRate-id-user:
+
+Usuário
+--------
+
+| Usuário dono desta tarifa personalizada.
+
+
+

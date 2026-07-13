@@ -114,7 +114,7 @@ CPS Limit
 Description
 -----------
 
-| We did not write the description to this field.
+| Optional notes about this user, visible only to administrators and resellers with access.
 
 
 
@@ -124,7 +124,7 @@ Description
 Company website
 ---------------
 
-| Company website.|Also used to agent panel customization. To agent, set the domain without http or wwww.
+| Company website.\|Also used to agent panel customization. To agent, set the domain without http or wwww.
 
 
 
@@ -134,7 +134,7 @@ Company website
 Company name
 ------------
 
-| Company name. Also used to agent panel customization.|Whether is a agent this name will be used on the login panel. Need set the compnay website and use the agent domain to working the customization
+| Company name. Also used to agent panel customization.\|Whether is a agent this name will be used on the login panel. Need set the compnay website and use the agent domain to working the customization
 
 
 
@@ -259,6 +259,16 @@ Email
 
 
 
+.. _user-email2:
+
+Email
+-----
+
+| Secondary email address for this user.
+
+
+
+
 .. _user-doc:
 
 DOC
@@ -284,7 +294,7 @@ VAT
 Contract value
 --------------
 
-| We did not write the description to this field.
+| Monthly contract value or fixed amount associated with this user.
 
 
 
@@ -294,7 +304,7 @@ Contract value
 DIST
 ----
 
-| We did not write the description to this field.
+| DIST code used for Brazilian billing or numbering integrations.
 
 
 
@@ -339,6 +349,26 @@ Credit notification
 
 
 
+.. _user-email-services:
+
+Services email notification
+---------------------------
+
+| Email address used to send service notifications to this user.
+
+
+
+
+.. _user-email-did:
+
+DID email notification
+----------------------
+
+| Email address used to send DID reservation, renewal, and expiration notifications.
+
+
+
+
 .. _user-enableexpire:
 
 Enable expire
@@ -369,12 +399,12 @@ Call limit
 
 
 
-.. _user-calllimit-error:
+.. _user-inbound-call-limit:
 
-Limit error
------------
+Inbound Call Limit
+------------------
 
-| Warning to be send if the call limit is exceeded.
+| Maximum number of simultaneous inbound calls allowed for this user.
 
 
 
@@ -454,7 +484,7 @@ Use
 Profit
 ------
 
-| This function is not avaible in Brazil. It's only used to mobile refills in some countries.
+| This function is not available in Brazil. It's only used to mobile refills in some countries.
 
 
 
@@ -464,7 +494,7 @@ Profit
 Profit
 ------
 
-| This function is not avaible in Brazil. It's only used to mobile refills in some countries.
+| This function is not available in Brazil. It's only used to mobile refills in some countries.
 
 
 
@@ -474,7 +504,7 @@ Profit
 Profit
 ------
 
-| This function is not avaible in Brazil. It's only used to mobile refills in some countries.
+| This function is not available in Brazil. It's only used to mobile refills in some countries.
 
 
 
@@ -484,7 +514,7 @@ Profit
 Enable DBBL/Rocket
 ------------------
 
-| This function is not avaible in Brazil. It's only used to mobile refills in some countries.
+| This function is not available in Brazil. It's only used to mobile refills in some countries.
 
 
 
@@ -494,7 +524,7 @@ Enable DBBL/Rocket
 Profit
 ------
 
-| This function is not avaible in Brazil. It's only used to mobile refills in some countries.
+| This function is not available in Brazil. It's only used to mobile refills in some countries.
 
 
 
@@ -504,37 +534,7 @@ Profit
 Show selling price
 ------------------
 
-| This function is not avaible in Brazil. It's only used to mobile refills in some countries.
-
-
-
-
-.. _user-email2:
-
-Email
------
-
-| We did not write the description to this field.
-
-
-
-
-.. _user-email-services:
-
-Services email notification
----------------------------
-
-| We did not write the description to this field.
-
-
-
-
-.. _user-email-did:
-
-DID email notification
-----------------------
-
-| We did not write the description to this field.
+| This function is not available in Brazil. It's only used to mobile refills in some countries.
 
 
 

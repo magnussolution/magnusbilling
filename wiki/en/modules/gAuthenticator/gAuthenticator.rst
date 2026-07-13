@@ -14,18 +14,18 @@ Username
 Status
 ------
 
-| After activating the TOKEN for the user, login will be only possible using the generated TOKEN by the Google Aunthenticator APP.
+| After activating the TOKEN for the user, login will be only possible using the generated TOKEN by the Google Authenticator app.
 | After activating the TOKEN, in the next user login will be requested to scan the QR CODE as shown in the image below
-|     
-.. image:: ../img/token.png
+
+.. image:: ../../img/token.png
    :scale: 100% 
-|     
-| To scan the code will be necessary to install the Google Aunthenticator APP, this APP wil be avaible to download in the app store for IOS and Android.
+
+| To scan the code will be necessary to install the Google Authenticator app, this app will be available to download in the app store for iOS and Android.
 | 
-| It's important to save the manual code shown in the image, in case if you ever need to activate the token in another cellphone the code will be necessary.
+| It's important to save the manual code shown in the image, in case if you ever need to activate the token in another phone the code will be necessary.
 | 
 | 
-| With the token of Google Aunthentitor will be only possible to login into the panel or deactivate the token function
+| With the token of Google Authenticator will be only possible to login into the panel or deactivate the token function
 
 
 
@@ -45,7 +45,7 @@ Code
 Google authenticator key
 ------------------------
 
-| This KEY will be necessary to activate the TOKEN in a different cellphone
+| This KEY will be necessary to activate the TOKEN in a different phone
 
 
 

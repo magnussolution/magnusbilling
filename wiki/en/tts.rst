@@ -1,7 +1,7 @@
 .. _tts:
 
 TTS Configuration
-==============
+=================
 
 MagnusBilling supports TTS via URL, next some tested providersand their respective configurations.
 
@@ -51,5 +51,4 @@ https://translate.google.com/translate_tts?ie=UTF-8&q=$name&tl=pt-BR&total=1&idx
 MagnusBilling will work like any other TTS provider that accepts the integration via URL.
 
 This service can be charged by the provider.
-
 

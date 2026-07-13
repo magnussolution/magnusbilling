@@ -44,7 +44,7 @@ Add payment
 Date
 ----
 
-| We did not write the description to this field.
+| Date when the refill, payment, or credit adjustment was registered.
 
 
 
@@ -64,7 +64,7 @@ Invoice number
 Payment receipt
 ---------------
 
-| We did not write the description to this field.
+| Payment receipt image attached to this refill.
 
 
 

@@ -76,18 +76,17 @@ Deletar linha 2
   iptables -D INPUT 2
 
 Bloquear endereço de IP
-^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^
 
 ::
      
   iptables -I INPUT -s 62.210.245.132 -j DROP
 
 Salvar mudanças
-^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^
      
 	apt-get install iptables-persistent
 	service iptables-persistent save
 	dpkg-reconfigure iptables-persistent
-
 
 

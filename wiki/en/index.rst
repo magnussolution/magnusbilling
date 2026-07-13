@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to MagnusBilling 7 wiki.
+Welcome to MagnusBilling 8 wiki.
 ================================
 
 .. meta::
@@ -27,7 +27,20 @@ Welcome to MagnusBilling 7 wiki.
    get_started/update.rst
    get_started/first_call.rst
    get_started/reset_root_password.rst
-   
+
+.. toctree::
+   :caption: What's new in MBilling 8
+   :maxdepth: 1
+
+   whats_new_mb8.rst
+
+.. toctree::
+   :caption: Paid modules
+   :glob:
+   :maxdepth: 2
+
+   paid_modules/*
+
 .. toctree::
    :caption: Technical Information
    :maxdepth: 1
@@ -37,7 +50,8 @@ Welcome to MagnusBilling 7 wiki.
    tts.rst
    offer.rst
    how_to_use_voucher.rst
-   conf.rst
+   whatsapp_campaign.rst
+   config.rst
 
 .. toctree::
    :caption: Asterisk option
@@ -47,10 +61,23 @@ Welcome to MagnusBilling 7 wiki.
 
 .. toctree::
    :maxdepth: 1
+   :caption: Technical Documentation
+
+   ai_codebase_guide.rst
+
+.. toctree::
+   :maxdepth: 1
    :caption: Security
    :name: sec-Security
 
    security/iptables.rst
+
+.. toctree::
+   :caption: Administration
+   :glob:
+   :maxdepth: 2
+
+   admin_guide/*
 
 .. toctree::
    :maxdepth: 3
@@ -64,5 +91,3 @@ Indices and tables
 
 * :ref:`genindex`
 * :ref:`search`
-* :ref:`glossary`
-

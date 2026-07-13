@@ -24,11 +24,11 @@ Username
 MonFri intervals
 ----------------
 
-| Weekly interval of attendance, can be configurated with multiples shifts.
+| Weekly interval of attendance, can be configured with multiples shifts.
 | Example:
 | Supposing that the attendance hours are 08h to 12h and 14h to 19h. In this case the rule would be
 | 
-| 08:00-12:00|14:00-19:00
+| 08:00-12:00\|14:00-19:00
 | 
 | 
 
@@ -40,7 +40,7 @@ MonFri intervals
 Saturday intervals
 ------------------
 
-| Interval of attendance in saturdays, can be configurated with multiple shifts
+| Interval of attendance in saturdays, can be configured with multiple shifts
 | Example:
 | 
 | Supposing that the attendance hours in the saturdays are 08h to 13h. In this case the rule would be
@@ -55,10 +55,10 @@ Saturday intervals
 Sunday intervals
 ----------------
 
-| Interval of attendance in sundays, can be configurated with multiple shifts
+| Interval of attendance in sundays, can be configured with multiple shifts
 | Example:
 |     
-| Supposing that theres no attendance hours in the sundays. In this case the rule would be
+| Supposing that there is no attendance hours in the sundays. In this case the rule would be
 |     
 | 00:00-00:00
 |     
@@ -323,6 +323,16 @@ Default option
 --------------
 
 | Select the destination if none of the options was selected.
+
+
+
+
+.. _ivr-type-1:
+
+Type
+----
+
+| Destination type used when the caller presses this IVR option.
 
 
 

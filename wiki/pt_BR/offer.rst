@@ -4,7 +4,7 @@ Pacotes Grátis
 ==============
 
 O que é pacotes grátis?
-+++++++++++++++++++++
++++++++++++++++++++++++
 
 Pacotes grátis são para poder dar aos clientes um quantidade de chamadas sem custo, por um valor mensal ou sem custo algum.
 
@@ -125,5 +125,4 @@ Relatório
 Modelos de Email
 
 .. image:: img/pacotes-emails.png
-
 

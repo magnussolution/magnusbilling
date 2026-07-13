@@ -24,19 +24,27 @@ Funções
 Funções suportadas
 ==================
 
-+-------------------------+-----------------------+-----------------------+----------------------+
-| SoftSwitch 4 & 4        |   Ivr                 | Pacotes grátis de min | Paypal               |
-+-------------------------+-----------------------+-----------------------+----------------------+
-|  CallBack               | CallShop              | Pré e pós pago        | Pagseguro            |
-+-------------------------+-----------------------+-----------------------+----------------------+
-| CallingCard             | CidCallBack           | Venda de serviços     |  Fila de espera      |
-+-------------------------+-----------------------+-----------------------+----------------------+
-| Gerenciamento de DID    | SIP e IAX             |    e muito mais...     
-+-------------------------+-----------------------+-----------------------+----------------------+
+.. list-table::
+   :widths: 25 25 25 25
+
+   * - SoftSwitch 4 & 4
+     - Ivr
+     - Pacotes grátis de min
+     - Paypal
+   * - CallBack
+     - CallShop
+     - Pré e pós pago
+     - Pagseguro
+   * - CallingCard
+     - CidCallBack
+     - Venda de serviços
+     - Fila de espera
+   * - Gerenciamento de DID
+     - SIP e IAX
+     - e muito mais...
+     -
 
 
 .. _Asterisk: http://www.asterisk.org
 .. _Canal youtube: https://www.youtube.com/channel/UCish_6Lxfkh29n4CLVEd90Q
 .. _MagnusBilling: https://www.magnusbilling.org
-
-

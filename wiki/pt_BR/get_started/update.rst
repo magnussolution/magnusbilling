@@ -2,7 +2,7 @@
 Atualizar MagnusBilling
 ***********************
 
-Nossa equipe trabalha diariamente para adicionar novas funçōes e solucionar problemas. Voce pode ver as alteraçoes realizadas no link https://github.com/magnussolution/magnusbilling7/commits/source
+Nossa equipe trabalha diariamente para adicionar novas funçōes e solucionar problemas. Voce pode ver as alteraçoes realizadas no link https://github.com/magnussolution/magnusbilling8/commits/source
 
 Por tanto, nossa equipe recomenda que você mantenha seu servidor atualizado.
 

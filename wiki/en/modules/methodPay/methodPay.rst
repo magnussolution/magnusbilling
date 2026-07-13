@@ -34,7 +34,7 @@ Country
 Active
 ------
 
-| Activate this if you want to be avaible for the clients.
+| Activate this if you want to be available for the clients.
 
 
 
@@ -74,7 +74,7 @@ Username
 URL
 ---
 
-| Payment method URL, in the most cases the methods this URL is already preconfigurated.
+| Payment method URL, in the most cases the methods this URL is already preconfigured.
 
 
 
@@ -165,6 +165,16 @@ Client secret
 -------------
 
 | This field is exclusive for some payments methods.
+
+
+
+
+.. _methodPay-payment-method:
+
+Payment methods
+---------------
+
+| Payment method made available to users for adding credit or paying invoices.
 
 
 
