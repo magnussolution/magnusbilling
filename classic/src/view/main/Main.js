@@ -104,7 +104,7 @@ Ext.define('MBilling.view.main.Main', {
             layout: 'accordion',
             defaultType: 'treepanel',
             autoScroll: true,
-            scrollable: isMobileLayout ? true : false,
+            scrollable: true,
             title: t('Menu'),
             header: !window.isTablet ? true : false,
             defaults: {
@@ -113,7 +113,7 @@ Ext.define('MBilling.view.main.Main', {
                 cls: isMobileLayout ? 'mb-mobile-main-menu-item' : '',
                 bodyCls: isMobileLayout ? 'mb-mobile-main-menu-item-body' : '',
                 autoScroll: true,
-                scrollable: isMobileLayout ? true : false,
+                scrollable: true,
                 rootVisible: false,
                 viewConfig: {
                     cls: isMobileLayout ? 'mb-mobile-main-menu-view' : ''

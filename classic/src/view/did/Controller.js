@@ -96,6 +96,12 @@ Ext.define('MBilling.view.did.Controller', {
         me.lookupReference('generalTab').show();
         me.callParent(arguments);
     },
+    onSelectionChange: function(selModel, selections) {
+        var me = this,
+            btnRelease = me.lookupReference('release');
+        btnRelease && btnRelease.setDisabled(!selections.length);
+        me.callParent(arguments);
+    },
     onDelete: function(btn) {
         var me = this,
             records = me.list.getSelectionModel().getSelection(),
@@ -113,43 +119,54 @@ Ext.define('MBilling.view.did.Controller', {
     },
     onRelease: function(btn, pressed) {
         var me = this,
-            records,
-            record = me.list.getSelectionModel().getSelection()[0],
-            idRecord = []
-        if (record) {
-            dids = "";
-            Ext.each(me.list.getSelectionModel().getSelection(), function(record) {
+            records = me.list.getSelectionModel().getSelection(),
+            releaseType = btn.menu ? btn.menu.down('menucheckitem[checked=true]').value : 'selected',
+            idRecord = [],
+            params = {},
+            filters,
+            dids = '',
+            msgConfirmation;
+        if (releaseType === 'all') {
+            msgConfirmation = t('This will release all DIDs selected by the current filter. Do you want to continue?');
+        } else if (records.length) {
+            Ext.each(records, function(record) {
                 dids = dids + ', ' + record.get('did');
             });
-            msgConfirmation = t('Confirm release DIDs') + dids,
-                Ext.Msg.confirm(me.titleConfirmation, msgConfirmation, function(btn) {
-                    if (btn === 'yes') {
-                        Ext.each(me.list.getSelectionModel().getSelection(), function(record) {
-                            idRecord.push(record.get('id'));
-                        });
-                        Ext.Ajax.request({
-                            url: 'index.php/did/liberar',
-                            params: {
-                                ids: Ext.encode(idRecord)
-                            },
-                            scope: me,
-                            success: function(response) {
-                                response = Ext.decode(response.responseText);
-                                if (response[me.nameSuccessRequest]) {
-                                    var msg = Helper.Util.convertErrorsJsonToString(response[me.nameMsgRequest]);
-                                    Ext.ux.Alert.alert(me.titleSuccess, t(msg), 'success');
-                                } else {
-                                    var errors = Helper.Util.convertErrorsJsonToString(response[me.nameMsgRequest]);
-                                    Ext.ux.Alert.alert(me.titleError, t(errors), 'error');
-                                }
-                            }
-                        });
-                        me.store.load();
-                    }
-                }, me);
+            msgConfirmation = t('Confirm release DIDs') + dids;
         } else {
             Ext.ux.Alert.alert(me.titleError, t('Please select one or more records'), 'notification');
+            return;
         }
+        Ext.Msg.confirm(me.titleConfirmation, msgConfirmation, function(btn) {
+            if (btn === 'yes') {
+                if (releaseType === 'all') {
+                    filters = me.list.filters.getFilterData();
+                    Ext.apply(filters, me.store.defaultFilter);
+                    params.filter = Ext.encode(filters);
+                } else {
+                    Ext.each(records, function(record) {
+                        idRecord.push(record.get('id'));
+                    });
+                    params.ids = Ext.encode(idRecord);
+                }
+                Ext.Ajax.request({
+                    url: 'index.php/did/liberar',
+                    params: params,
+                    scope: me,
+                    success: function(response) {
+                        response = Ext.decode(response.responseText);
+                        if (response[me.nameSuccessRequest]) {
+                            var msg = Helper.Util.convertErrorsJsonToString(response[me.nameMsgRequest]);
+                            Ext.ux.Alert.alert(me.titleSuccess, t(msg), 'success');
+                        } else {
+                            var errors = Helper.Util.convertErrorsJsonToString(response[me.nameMsgRequest]);
+                            Ext.ux.Alert.alert(me.titleError, t(errors), 'error');
+                        }
+                        me.store.load();
+                    }
+                });
+            }
+        }, me);
     },
     onBuy: function(btn, pressed) {
         var me = this,

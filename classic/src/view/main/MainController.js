@@ -33,7 +33,7 @@ Ext.define('MBilling.view.main.MainController', {
                     cls: isMobileMenu ? 'mb-mobile-main-menu-item' : '',
                     bodyCls: isMobileMenu ? 'mb-mobile-main-menu-item-body' : '',
                     autoScroll: true,
-                    scrollable: isMobileMenu ? true : false,
+                    scrollable: true,
                     viewConfig: {
                         cls: isMobileMenu ? 'mb-mobile-main-menu-view' : ''
                     },
@@ -87,7 +87,6 @@ Ext.define('MBilling.view.main.MainController', {
     },
     enableMobileMenuTouchScroll: function(menu) {
         var me = this,
-            isMobileMenu = window.isMobileLayout || window.isTablet || window.isTablets,
             el,
             startY = 0,
             startScrollTop = 0,
@@ -133,7 +132,7 @@ Ext.define('MBilling.view.main.MainController', {
                 }
                 return candidates[0];
             };
-        if (!isMobileMenu || !menu) {
+        if (!menu) {
             return;
         }
         if (menu.items && menu.items.each) {

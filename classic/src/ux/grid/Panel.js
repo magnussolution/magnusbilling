@@ -84,14 +84,14 @@ Ext.define('Ext.ux.grid.Panel', {
             isMobileLayout = window.isMobileLayout || window.isTablet || window.isTablets,
             groupDelete = Ext.id(),
             groupUpdateLot = Ext.id();
+        me.autoScroll = true;
+        me.scrollable = true;
+        me.viewConfig = Ext.apply({}, me.viewConfig || {});
+        me.viewConfig.preserveScrollOnRefresh = true;
         if (isMobileLayout) {
             me.cls = Ext.String.trim((me.cls || '') + ' mb-mobile-list-grid');
             me.bodyCls = Ext.String.trim((me.bodyCls || '') + ' mb-mobile-list-grid-body');
-            me.autoScroll = true;
-            me.scrollable = true;
-            me.viewConfig = Ext.apply({}, me.viewConfig || {});
             me.viewConfig.cls = Ext.String.trim((me.viewConfig.cls || '') + ' mb-mobile-list-grid-view');
-            me.viewConfig.preserveScrollOnRefresh = true;
             me.textButtonCsv = '';
             me.textNew = '';
             me.textDelete = '';
@@ -291,8 +291,8 @@ Ext.define('Ext.ux.grid.Panel', {
             groupHeaderTpl: t('Column') + ': {columnName} -> {name} ({rows.length} Item{[values.rows.length > 1 ? "s" : ""]})'
         }];
         me.on('render', me.applyDefaultColumns, me);
+        me.on('afterrender', me.enableMobileListTouchScroll, me);
         if (isMobileLayout) {
-            me.on('afterrender', me.enableMobileListTouchScroll, me);
             me.on('afterrender', me.enableMobileColumnHeaderTriggers, me);
         }
         me.callParent(arguments);
@@ -305,7 +305,6 @@ Ext.define('Ext.ux.grid.Panel', {
     },
     enableMobileListTouchScroll: function() {
         var me = this,
-            isMobileLayout = window.isMobileLayout || window.isTablet || window.isTablets,
             el,
             startY = 0,
             startScrollTop = 0,
@@ -351,7 +350,7 @@ Ext.define('Ext.ux.grid.Panel', {
                 }
                 return candidates[0];
             };
-        if (!isMobileLayout || me.mbTouchScrollBound) {
+        if (me.mbTouchScrollBound) {
             return;
         }
         el = me.el && me.el.dom;
