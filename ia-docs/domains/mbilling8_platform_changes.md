@@ -26,8 +26,7 @@ tags: [mbilling8, asterisk20, pjsip, whatsapp-business, migration]
   WhatsApp campaign recipients.
 - `protected/controllers/WhatsappWebhookController.php` verifies and stores
   inbound webhook messages.
-- `wiki/en/whatsapp_campaign.rst` and `wiki/pt_BR/whatsapp_campaign.rst` are the
-  user-facing operational guides.
+- `wiki/en/whatsapp_campaign.rst` is the user-facing operational guide.
 
 ## Support Routing
 

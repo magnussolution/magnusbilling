@@ -9,7 +9,7 @@ User-facing documentation for configuring and operating WhatsApp campaigns in Ma
 ## Current state
 
 - The durable field-help sources are `resources/help/help_en.js` and `resources/help/help_pt_BR.js`.
-- Generated campaign field pages exist at `wiki/en/modules/campaign/campaign.rst` and `wiki/pt_BR/modules/campaign/campaign.rst`.
+- The generated English campaign field page exists at `wiki/en/modules/campaign/campaign.rst`.
 - The existing campaign help describes only Voice and SMS. It does not describe the WhatsApp campaign type or its template fields.
 - The Wiki has no end-to-end guide for Meta app creation, Cloud API credentials, webhook configuration, approved templates, campaign creation, inbound replies, or operational responsibility.
 - `wiki/generate.php` still contains MBilling_7-specific absolute paths and database settings, so it is unsafe to run unchanged from this MBilling_8 checkout.

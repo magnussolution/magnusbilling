@@ -15,8 +15,7 @@ tags: [routing, triage, investigation]
 - WhatsApp sending: `protected/components/WhatsAppBusinessApi.php` and
   `protected/commands/WhatsappCampaignCommand.php`
 - WhatsApp replies: `protected/controllers/WhatsappWebhookController.php`
-- User guide: `wiki/en/whatsapp_campaign.rst` or
-  `wiki/pt_BR/whatsapp_campaign.rst`
+- User guide: `wiki/en/whatsapp_campaign.rst`
 
 ## Login / Session / Permission
 
@@ -92,5 +91,5 @@ tags: [routing, triage, investigation]
 - Start source: resources/help/help_en.js and resources/help/help_pt_BR.js
 - Field inventory: classic/src/view/*/Form.js
 - Generator: wiki/generate.php
-- Generated output: wiki/en/modules/*/*.rst and wiki/pt_BR/modules/*/*.rst
+- Published output: wiki/en/modules/*/*.rst
 - Domain doc: MB-RAG-DOMAIN-DOCS-WIKI-FIELD-HELP

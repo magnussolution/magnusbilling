@@ -62,11 +62,10 @@ tags: [source, code, files]
 - resources/locale/*.js
 - classic/src/view/*/Form.js
 - wiki/en/modules/*/*.rst
-- wiki/pt_BR/modules/*/*.rst
 
-Field descriptions are used by both the published Wiki and the in-panel help
-icons. For field-help edits, update `resources/help/help_{LANG}.js` first and
-regenerate Wiki files with `wiki/generate.php`.
+English field descriptions are used by both the published Wiki and the
+in-panel help icons. Other `resources/help/help_{LANG}.js` files continue to
+serve localized in-panel help, but only English Wiki files are published.
 
 ## Reports and PDF
 

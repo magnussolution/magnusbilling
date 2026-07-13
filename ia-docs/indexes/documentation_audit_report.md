@@ -24,9 +24,9 @@ Scope:
 Primary source policy:
 
 1. Current code in this repository is authoritative for behavior.
-2. Existing English documentation in `wiki/en` and `ia-docs` is the primary documentation source of truth.
+2. Existing English documentation in `wiki/en` and `ia-docs` is the documentation source of truth.
 3. Generated Sphinx output under `wiki/*/_build` should not be edited directly.
-4. Portuguese docs under `wiki/pt_BR` contain useful legacy detail, but requested updates must remain in English.
+4. Public documentation is maintained and published in English only. Application localization remains independent.
 
 ## Executive Summary
 
@@ -49,7 +49,7 @@ Several English wiki pages are structurally outdated. The most important issue i
 
 - `wiki/en/index.rst`
   - References `conf.rst`, but the existing English page is `config.rst`.
-  - References `asterisk_options/directmedia.rst`, but this page exists only in `wiki/pt_BR`.
+  - References `asterisk_options/directmedia.rst`; this was missing in English at the audit date.
 
 - `wiki/en/get_started/quick_install.rst`
   - Still gives the basic install command, but does not describe the repository's current entrypoints to verify after installation: `index.php`, `cron.php`, `resources/asterisk/mbilling.php`, `protected/config/main.php`, `protected/config/cron.php`, and `script/database.sql`.

@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """Export the MagnusBilling Sphinx Wiki to a GitHub Wiki checkout.
 
-The RST files remain the source of truth. This exporter creates a flat set of
-GitHub-Flavored Markdown pages so that English and Brazilian Portuguese files
-with equal names cannot overwrite each other in the GitHub Wiki repository.
+The English RST files remain the source of truth. This exporter creates a flat
+set of GitHub-Flavored Markdown pages for the GitHub Wiki repository.
 """
 
 from __future__ import annotations
@@ -19,7 +18,6 @@ ROOT = Path(__file__).resolve().parents[2]
 WIKI = ROOT / "wiki"
 LANGUAGES = {
     "en": {"prefix": "EN", "label": "English", "home": "English documentation"},
-    "pt_BR": {"prefix": "PT-BR", "label": "Português", "home": "Documentação em português"},
 }
 SKIP_PARTS = {"_build", ".venv", "__pycache__", "ntemplates", "_templates"}
 HEADING_CHARS = {"=": "#", "-": "##", "~": "###", "+": "###", "^": "####", '"': "####"}
@@ -311,10 +309,10 @@ def rst_to_markdown(
 def write_navigation(output: Path, pages: dict[tuple[str, str], str]) -> None:
     home = """# MagnusBilling 8 Documentation
 
-Choose your language:
-
-- [English](EN--index)
-- [Português do Brasil](PT-BR--index)
+- [Open the documentation](EN--index)
+- [What's new in MBilling 8](EN--whats_new_mb8)
+- [Installation](EN--get_started--quick_install)
+- [WhatsApp Business](EN--whatsapp_campaign)
 
 The pages in this Wiki are generated from the documentation maintained in the
 [`magnussolution/magnusbilling8`](https://github.com/magnussolution/magnusbilling8)
@@ -324,16 +322,11 @@ may be replaced by the next synchronization.
     (output / "Home.md").write_text(home, encoding="utf-8")
 
     links = [
-        ("English", "EN--index"),
+        ("Documentation", "EN--index"),
         ("What's new in MBilling 8", "EN--whats_new_mb8"),
         ("Installation", "EN--get_started--quick_install"),
         ("WhatsApp Business", "EN--whatsapp_campaign"),
-        ("English modules", "EN--modules--index"),
-        ("Português", "PT-BR--index"),
-        ("Novidades do MBilling 8", "PT-BR--novidades_mb8"),
-        ("Instalação", "PT-BR--get_started--quick_install"),
-        ("WhatsApp Business (PT-BR)", "PT-BR--whatsapp_campaign"),
-        ("Módulos em português", "PT-BR--modules--index"),
+        ("Modules", "EN--modules--index"),
     ]
     available = {slug for slug in pages.values()}
     sidebar = ["## MagnusBilling 8", "", "- [Home](Home)"]

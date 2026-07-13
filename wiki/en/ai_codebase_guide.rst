@@ -221,9 +221,6 @@ Recommended Reference Files
 
 - resources/asterisk/AGI_RAG.md
 - resources/asterisk/FLUXOS_DE_CHAMADAS.md
-- wiki/pt_BR/yii_backend.rst
-- wiki/pt_BR/extjs_frontend.rst
-- wiki/pt_BR/database_schema.rst
 - ia-docs/indexes/documentation_audit_report.md
 - ia-docs/sources/top30_operational_tables.md
 

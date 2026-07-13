@@ -14,7 +14,6 @@ tags: [documentation, wiki, field-help, extjs, sphinx, readthedocs]
 - resources/help/help_pt_BR.js
 - resources/locale/*.js
 - wiki/en/modules/*/*.rst
-- wiki/pt_BR/modules/*/*.rst
 - classic/src/view/*/Form.js
 
 ## What This Domain Controls
@@ -26,14 +25,15 @@ tags: [documentation, wiki, field-help, extjs, sphinx, readthedocs]
 
 ## Source of Truth Rule
 
-The field help files are the shared source for both documentation surfaces:
+The field help files support both documentation surfaces:
 
-- Public Wiki: generated `.rst` files under `wiki/<lang>/modules/`.
+- Public Wiki: English `.rst` files under `wiki/en/modules/`.
 - In-panel help: tooltip/help icons beside ExtJS form fields.
 
 When a field description is wrong or missing, update `resources/help/help_en.js`
-and `resources/help/help_pt_BR.js` first, then run `wiki/generate.php` to update
-the `wiki` table and regenerate module pages.
+for the public documentation. Localized files such as
+`resources/help/help_pt_BR.js` remain available for in-panel help. Run
+`wiki/generate.php` to update the `wiki` table and regenerate module pages.
 
 ## Field Discovery Path
 
@@ -42,7 +42,7 @@ the `wiki` table and regenerate module pages.
 3. Support labels built from multiple translations, such as `t('CID') + ' ' + t('Add prefix')`.
 4. Insert or update rows in the `wiki` table for each language.
 5. Load descriptions from `resources/help/help_{LANG}.js`.
-6. Generate module `.rst` pages under `wiki/<lang>/modules/`.
+6. Publish the English module `.rst` pages under `wiki/en/modules/`.
 
 ## Current Coverage Baseline
 
