@@ -18,22 +18,24 @@ tags: [documentation, wiki, field-help, extjs, sphinx, readthedocs]
 
 ## What This Domain Controls
 
-- Human-facing Wiki pages published from `wiki/` through Sphinx/Read the Docs.
+- Human-facing Wiki pages maintained under `wiki/en` and published to GitHub.
 - Contextual help icons shown beside fields in the MagnusBilling admin panel.
 - Field-level descriptions loaded from `resources/help/help_{LANG}.js`.
 - Synchronization between ExtJS form fields, the `wiki` database table, and generated `.rst` files.
 
 ## Source of Truth Rule
 
-The field help files support both documentation surfaces:
+The public Wiki and contextual field help are separate documentation surfaces:
 
-- Public Wiki: English `.rst` files under `wiki/en/modules/`.
-- In-panel help: tooltip/help icons beside ExtJS form fields.
+- Public Wiki: curated English `.rst` files under `wiki/en`, excluding the
+  generated `modules` tree.
+- In-panel help: tooltip/help icons beside ExtJS form fields, sourced from
+  `resources/help/help_{LANG}.js` and the generated module `.rst` files.
 
 When a field description is wrong or missing, update `resources/help/help_en.js`
-for the public documentation. Localized files such as
-`resources/help/help_pt_BR.js` remain available for in-panel help. Run
-`wiki/generate.php` to update the `wiki` table and regenerate module pages.
+and the relevant localized help files for the panel. Run `wiki/generate.php`
+to update the `wiki` table and regenerate the internal module pages. Public
+module orientation belongs in `wiki/en/module_overview.rst`.
 
 ## Field Discovery Path
 
@@ -42,7 +44,8 @@ for the public documentation. Localized files such as
 3. Support labels built from multiple translations, such as `t('CID') + ' ' + t('Add prefix')`.
 4. Insert or update rows in the `wiki` table for each language.
 5. Load descriptions from `resources/help/help_{LANG}.js`.
-6. Publish the English module `.rst` pages under `wiki/en/modules/`.
+6. Generate the internal module `.rst` pages under `wiki/en/modules/`; the
+   GitHub Wiki exporter intentionally excludes this tree.
 
 ## Current Coverage Baseline
 
@@ -59,8 +62,8 @@ when validating future changes.
 - The admin panel can show field help icons beside each field.
 - The option `Show fields help` under Settings, Configuration controls whether
   those icons are shown.
-- A good description must work in both places: short enough for an in-panel
-  tooltip, but precise enough for the generated Wiki page.
+- A good description must be concise enough for in-panel contextual help while
+  remaining precise in the generated internal reference.
 
 ## Verification Checklist
 
@@ -74,7 +77,7 @@ when validating future changes.
 
 ## Common Failure Modes
 
-- A field exists in ExtJS but has no help entry, causing missing tooltip/Wiki text.
+- A field exists in ExtJS but has no help entry, causing missing contextual help.
 - A description exists in only one language.
 - The field parser misses unusual label formats or fields where `fieldLabel`
   appears before `name`.

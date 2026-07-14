@@ -8,10 +8,12 @@ set of GitHub-Flavored Markdown pages for the GitHub Wiki repository.
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import re
 import shutil
 import sys
 from pathlib import Path
+from urllib.parse import quote
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -20,7 +22,9 @@ LANGUAGES = {
     "en": {"prefix": "EN", "label": "English", "home": "English documentation"},
 }
 SKIP_PARTS = {"_build", ".venv", "__pycache__", "ntemplates", "_templates"}
+PUBLIC_EXCLUDED_ROOTS = {"modules"}
 HEADING_CHARS = {"=": "#", "-": "##", "~": "###", "+": "###", "^": "####", '"': "####"}
+REPOSITORY_URL = "https://github.com/magnussolution/magnusbilling8"
 
 
 def page_slug(language: str, relative: Path) -> str:
@@ -42,6 +46,8 @@ def discover_pages() -> dict[tuple[str, str], str]:
             if path.stem.endswith(" 2"):
                 continue
             relative = path.relative_to(source)
+            if relative.parts and relative.parts[0] in PUBLIC_EXCLUDED_ROOTS:
+                continue
             pages[(language, relative.with_suffix("").as_posix())] = page_slug(language, relative)
     return pages
 
@@ -62,6 +68,72 @@ def normalize_doc_target(current: Path, target: str) -> str:
             continue
         parts.append(part)
     return Path(*parts).as_posix()
+
+
+def document_title(source_file: Path) -> str:
+    """Return the first RST heading without changing the source document."""
+    lines = source_file.read_text(encoding="utf-8-sig", errors="replace").splitlines()
+    for index, line in enumerate(lines):
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if (
+            index + 2 < len(lines)
+            and len(stripped) >= 3
+            and len(set(stripped)) == 1
+            and lines[index + 1].strip()
+            and lines[index + 2].strip() == stripped
+        ):
+            return lines[index + 1].strip()
+        if index + 1 < len(lines):
+            underline = lines[index + 1].strip()
+            if len(underline) >= 3 and len(set(underline)) == 1 and underline[0] in HEADING_CHARS:
+                return stripped
+    return source_file.stem.replace("_", " ").replace("-", " ").title()
+
+
+def page_title(language: str, key: str) -> str:
+    return document_title(WIKI / language / f"{key}.rst")
+
+
+def toctree_links(
+    block: list[str],
+    language: str,
+    relative: Path,
+    pages: dict[tuple[str, str], str],
+) -> tuple[str | None, list[tuple[str, str]]]:
+    """Convert Sphinx toctree entries to a caption and GitHub Wiki links."""
+    caption: str | None = None
+    links: list[tuple[str, str]] = []
+    seen: set[str] = set()
+    for item in block:
+        entry = item.strip()
+        if not entry:
+            continue
+        option = re.match(r":([A-Za-z0-9_-]+):\s*(.*)$", entry)
+        if option:
+            if option.group(1) == "caption" and option.group(2):
+                caption = option.group(2).strip()
+            continue
+
+        explicit = re.match(r"(.+?)\s*<([^>]+)>$", entry)
+        label = explicit.group(1).strip() if explicit else None
+        raw_target = explicit.group(2).strip() if explicit else entry
+        if raw_target == "self":
+            continue
+        normalized = normalize_doc_target(relative, raw_target)
+        matching_keys = (
+            sorted(key for lang, key in pages if lang == language and fnmatch.fnmatch(key, normalized))
+            if any(character in normalized for character in "*?[")
+            else [normalized]
+        )
+        for key in matching_keys:
+            slug = pages.get((language, key))
+            if not slug or slug in seen:
+                continue
+            seen.add(slug)
+            links.append((label or page_title(language, key), slug))
+    return caption, links
 
 
 def convert_inline(text: str, language: str, current: Path, pages: dict[tuple[str, str], str]) -> str:
@@ -137,6 +209,17 @@ def rst_to_markdown(
     while index < len(lines):
         line = lines[index].rstrip()
 
+        if (
+            index + 2 < len(lines)
+            and len(line.strip()) >= 3
+            and len(set(line.strip())) == 1
+            and lines[index + 1].strip()
+            and lines[index + 2].strip() == line.strip()
+        ):
+            rendered.extend([f"# {convert_inline(lines[index + 1].strip(), language, relative, pages)}", ""])
+            index += 3
+            continue
+
         if index + 1 < len(lines):
             underline = lines[index + 1].strip()
             if line.strip() and len(underline) >= 3 and len(set(underline)) == 1 and underline[0] in HEADING_CHARS:
@@ -161,6 +244,19 @@ def rst_to_markdown(
             kind, argument = directive.groups()
             block, next_index = indented_block(lines, index + 1)
             if kind == "toctree":
+                caption, links = toctree_links(block, language, relative, pages)
+                if caption and links:
+                    rendered.extend([f"## {convert_inline(caption, language, relative, pages)}", ""])
+                rendered.extend(f"- [{label}]({slug})" for label, slug in links)
+                if links:
+                    rendered.append("")
+                index = next_index
+                continue
+            if kind == "include":
+                key = normalize_doc_target(relative, argument)
+                slug = pages.get((language, key))
+                if slug:
+                    rendered.extend([f"[Open the {page_title(language, key)} field reference]({slug})", ""])
                 index = next_index
                 continue
             if kind in {"image", "figure"}:
@@ -303,36 +399,142 @@ def rst_to_markdown(
         cleaned.append(line.rstrip())
     while cleaned and not cleaned[-1].strip():
         cleaned.pop()
-    return "\n".join(cleaned) + "\n"
+    markdown = "\n".join(cleaned) + "\n"
+    if relative.as_posix() == "index.rst":
+        markdown = re.sub(
+            r"\n# Indices and tables\n\n\* genindex\n\* search\n?",
+            "\n",
+            markdown,
+        )
+    return markdown
+
+
+def append_page_navigation(markdown: str, language: str, relative: Path) -> str:
+    source_path = quote(f"wiki/{language}/{relative.as_posix()}")
+    edit_url = f"{REPOSITORY_URL}/edit/source/{source_path}"
+    navigation = (
+        "\n---\n\n"
+        "[Documentation home](Home) · "
+        "[Documentation index](EN--index) · "
+        f"[Edit this page]({edit_url})\n"
+    )
+    return markdown.rstrip() + "\n" + navigation
+
+
+def available_link(
+    pages: dict[tuple[str, str], str], label: str, key: str
+) -> str | None:
+    slug = pages.get(("en", key))
+    return f"- [{label}]({slug})" if slug else None
 
 
 def write_navigation(output: Path, pages: dict[tuple[str, str], str]) -> None:
-    home = """# MagnusBilling 8 Documentation
+    def links(items: list[tuple[str, str]]) -> str:
+        return "\n".join(
+            link for label, key in items if (link := available_link(pages, label, key))
+        )
 
-- [Open the documentation](EN--index)
-- [What's new in MBilling 8](EN--whats_new_mb8)
-- [Installation](EN--get_started--quick_install)
-- [WhatsApp Business](EN--whatsapp_campaign)
+    home = f"""# MagnusBilling 8 Documentation
 
-The pages in this Wiki are generated from the documentation maintained in the
-[`magnussolution/magnusbilling8`](https://github.com/magnussolution/magnusbilling8)
-repository. Edit the RST sources there; direct changes made in this GitHub Wiki
-may be replaced by the next synchronization.
+MagnusBilling is an open-source billing and management platform for IP
+telephony providers. This Wiki documents installation, daily operation,
+billing, Asterisk 20, PJSIP, campaigns, and integrations.
+
+## Start here
+
+{links([
+    ("Introduction and supported functions", "intro"),
+    ("Install MagnusBilling 8", "get_started/quick_install"),
+    ("Place the first call", "get_started/first_call"),
+    ("Understand the web interface", "get_started/interface"),
+    ("Update an installation", "get_started/update"),
+    ("Back up the system", "get_started/backup"),
+])}
+
+## MBilling 8 platform
+
+{links([
+    ("What's new: Asterisk 20, PJSIP, and WhatsApp Business", "whats_new_mb8"),
+    ("Configure WhatsApp Business campaigns", "whatsapp_campaign"),
+    ("Understand Direct Media in Asterisk", "asterisk_options/directmedia"),
+    ("Review system configuration", "config"),
+])}
+
+## Billing and routing
+
+{links([
+    ("How prices are calculated", "price_calculation"),
+    ("How MagnusBilling selects a tariff", "find_rate"),
+    ("Offers and packages", "offer"),
+    ("Using vouchers", "how_to_use_voucher"),
+])}
+
+## Administration and troubleshooting
+
+{links([
+    ("Module overview", "module_overview"),
+    ("Troubleshoot calls without audio", "admin_guide/troubleshooting_no_audio"),
+    ("Troubleshoot errors when saving", "admin_guide/troubleshooting_save_errors"),
+    ("Firewall and security", "security/iptables"),
+    ("Technical architecture guide", "ai_codebase_guide"),
+])}
+
+## Need help or want to contribute?
+
+- [Report a documentation problem]({REPOSITORY_URL}/issues/new)
+- [View the documentation source]({REPOSITORY_URL}/tree/source/wiki/en)
+- [Open the complete documentation index](EN--index)
+
+> **Documentation policy:** The public Wiki is maintained in English. These
+> pages are generated from the RST sources in the main repository. Direct edits
+> in the GitHub Wiki may be replaced by the next synchronization.
 """
     (output / "Home.md").write_text(home, encoding="utf-8")
 
-    links = [
-        ("Documentation", "EN--index"),
-        ("What's new in MBilling 8", "EN--whats_new_mb8"),
-        ("Installation", "EN--get_started--quick_install"),
-        ("WhatsApp Business", "EN--whatsapp_campaign"),
-        ("Modules", "EN--modules--index"),
+    sections = [
+        ("Getting started", [
+            ("Installation", "get_started/quick_install"),
+            ("First call", "get_started/first_call"),
+            ("Web interface", "get_started/interface"),
+            ("Update", "get_started/update"),
+            ("Backup", "get_started/backup"),
+        ]),
+        ("MBilling 8", [
+            ("What's new", "whats_new_mb8"),
+            ("WhatsApp Business", "whatsapp_campaign"),
+            ("Asterisk Direct Media", "asterisk_options/directmedia"),
+        ]),
+        ("Operations", [
+            ("Configuration", "config"),
+            ("No-audio troubleshooting", "admin_guide/troubleshooting_no_audio"),
+            ("Save-error troubleshooting", "admin_guide/troubleshooting_save_errors"),
+            ("Security", "security/iptables"),
+        ]),
+        ("Billing", [
+            ("Price calculation", "price_calculation"),
+            ("Tariff selection", "find_rate"),
+            ("Offers", "offer"),
+            ("Vouchers", "how_to_use_voucher"),
+        ]),
+        ("Reference", [
+            ("Module overview", "module_overview"),
+            ("Technical architecture", "ai_codebase_guide"),
+            ("Complete index", "index"),
+        ]),
     ]
-    available = {slug for slug in pages.values()}
     sidebar = ["## MagnusBilling 8", "", "- [Home](Home)"]
-    sidebar.extend(f"- [{label}]({slug})" for label, slug in links if slug in available)
+    for heading, items in sections:
+        section_links = [
+            link for label, key in items if (link := available_link(pages, label, key))
+        ]
+        if section_links:
+            sidebar.extend(["", f"### {heading}", "", *section_links])
     (output / "_Sidebar.md").write_text("\n".join(sidebar) + "\n", encoding="utf-8")
-    footer = "Generated from the MagnusBilling 8 RST documentation.\n"
+    footer = (
+        f"[Documentation source]({REPOSITORY_URL}/tree/source/wiki/en) · "
+        f"[Report an issue]({REPOSITORY_URL}/issues) · "
+        "English documentation generated from the MagnusBilling 8 RST sources.\n"
+    )
     (output / "_Footer.md").write_text(footer, encoding="utf-8")
 
 
@@ -368,6 +570,7 @@ def export(output: Path) -> int:
         relative = Path(key + ".rst")
         source = WIKI / language / relative
         markdown = rst_to_markdown(source, language, relative, pages, output)
+        markdown = append_page_navigation(markdown, language, relative)
         (output / f"{slug}.md").write_text(markdown, encoding="utf-8")
     write_navigation(output, pages)
     errors = validate_export(output, pages)

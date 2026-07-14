@@ -59,7 +59,8 @@ Free Support
 We provide several avenues for you to get your system up and running on your own and learn the basics of the system.
 
 1. [Youtube Channel](https://www.youtube.com/channel/UCish_6Lxfkh29n4CLVEd90Q)
-2. [Documentation](https://magnusbilling.org) Menu Documentation
-3. [Telegram Group(English)](https://t.me/joinchat/NXwoZRPGpG6rPqp3yssLzQ)
-4. [Telegram Grupo(Spanish)](https://t.me/joinchat/NXwoZRXQbjokWrliVGObkQ)
-5. [Telegram Grupo(Português)](https://t.me/joinchat/NXwoZQtJRKN-5e03uY6_XQ)
+2. [MagnusBilling 8 GitHub Wiki](https://github.com/magnussolution/magnusbilling8/wiki)
+3. [MagnusBilling website](https://magnusbilling.org) — open the Documentation menu
+4. [Telegram Group(English)](https://t.me/joinchat/NXwoZRPGpG6rPqp3yssLzQ)
+5. [Telegram Grupo(Spanish)](https://t.me/joinchat/NXwoZRXQbjokWrliVGObkQ)
+6. [Telegram Grupo(Português)](https://t.me/joinchat/NXwoZQtJRKN-5e03uY6_XQ)

@@ -63,9 +63,9 @@ tags: [source, code, files]
 - classic/src/view/*/Form.js
 - wiki/en/modules/*/*.rst
 
-English field descriptions are used by both the published Wiki and the
-in-panel help icons. Other `resources/help/help_{LANG}.js` files continue to
-serve localized in-panel help, but only English Wiki files are published.
+Field descriptions serve contextual in-panel help and generate the internal
+module reference tree. The public GitHub Wiki excludes that generated tree and
+uses curated English pages such as `wiki/en/module_overview.rst` instead.
 
 ## Reports and PDF
 

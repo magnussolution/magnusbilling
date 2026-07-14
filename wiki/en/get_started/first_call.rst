@@ -1,66 +1,92 @@
-**********************
 Making your first call
-**********************
+======================
 
-This will be a guide to show you how to configure MagnusBilling to make your first call.
+This guide creates a customer, SIP endpoint, plan, provider route, tariff, and
+initial balance for a controlled test call.
 
-If you prefer a guide in video form, you access this link: https://www.youtube.com/watch?v=GBm424z5KSE
+Before you begin
+----------------
 
-Guide
-^^^^^
+Confirm that the installation checks in :doc:`Installation <quick_install>`
+pass and that you have valid trunk credentials from a voice provider. Use a
+test destination that you are authorized to call.
 
-First, you need to login to MagnusBilling, the default username and password is " root " and " magnus ". 
+1. Create a customer and plan
+-----------------------------
 
-After loggin in, the first thing you need to do is create an User.
-To do this, you need to click the Clients tab, Users, New. 
+Sign in to MagnusBilling and open **Customers > Users > New**. Create the
+customer and select the customer group.
 
 .. image:: ../img/users_img.png
-        :scale: 80%
-
+   :scale: 80%
+   :alt: MagnusBilling Users menu
 
 .. image:: ../img/users_newimg.png
-        :scale: 80%
+   :scale: 80%
+   :alt: Creating a MagnusBilling user
 
-A new User will be created, the username and password will be created automatically.
-
-Now you need to select the group of the user. In this case we are creating an client, so select the client option.
+Open **Rates > Plans > New** and create a plan. Return to the user form and
+assign that plan to the customer.
 
 .. image:: ../img/user_clientimg.png
-        :scale: 80%    
-
-We have no plans created, so let's create one so we assign one plan to the client.
-In order to do that, first click the Rates tab, Plans, New.
-
-For this guide we will only name the plan Golden, and not change any other of the settings.
-
-
-Back at the Users tab, you select the newly created plan in the search button.
+   :scale: 80%
+   :alt: Selecting the customer group
 
 .. image:: ../img/user_selectplan2.png
-        :scale: 80%
+   :scale: 80%
+   :alt: Assigning a plan to a user
 
-After successfully  creating an user, MagnusBilling will automatically create a Sip account for this user.
+MagnusBilling normally creates a SIP account for the new customer. Open the
+SIP Users module and record the generated username and password.
 
-Now we are going to use Zoiper software (you can use your preferred software).
+2. Register the SIP endpoint
+----------------------------
 
-In Zoiper configure the SIP credentials accordingly to the user we just created. In the domain field put your server IP address.
-**Note:** After the server ip (:5061) is the Asterisk Port that in this example is set up for 5061. The default MagnusBilling port is 5060. Also, since 5060 is the default SIP port, you can just use your IP address.
+Configure a SIP client with the generated credentials. Use the MagnusBilling
+server IP address as the domain. New MBilling 8 installations use PJSIP and
+listen on UDP port ``5060`` by default unless the administrator changed the
+transport configuration.
 
 .. image:: ../img/zoiper_config.png
-        :scale: 80%
+   :scale: 80%
+   :alt: Example SIP client configuration
 
+Confirm the endpoint status in the panel and with the Asterisk PJSIP commands
+available on the server. Do not continue until registration succeeds.
 
-If the setup is done correctly, the SIP user status will change to OK.
+3. Configure the provider route
+-------------------------------
 
+1. Open **Routes > Providers** and create the provider record.
+2. Create a trunk with the PJSIP credentials and routing information supplied
+   by the provider.
+3. Create a trunk group and add the trunk in the desired routing order.
 
-Now we need to create a Provider. To do this, go to the Routes tab, Providers. 
-You can just name it and click save. 
+Do not copy a legacy ``chan_sip`` peer unchanged. Translate the provider
+settings into PJSIP transport, endpoint, authentication, AOR, identification,
+codec, and registration settings as required.
 
-And after that we need to create a Trunk, fill the fields of the trunk with the credentials.
-Furthermore we need to create an Trunk Group.
+4. Configure destination pricing
+--------------------------------
 
-Lastly, we need to create an Prefix and a Tariff. Located in the Rates tab. They are pretty straight forward, so configure it to your needs.
+Create the destination prefix and tariff under **Rates**, then associate the
+tariff with the customer's plan and the correct trunk group. Review the
+:doc:`Tariff selection <../find_rate>` and :doc:`Price calculation <../price_calculation>` guides before using production rates.
 
-Going to back to Zoiper. If we try to make an call, we are going to receive an warning that your balance is empty. To fix that you need to go to the Billing Tab, refills. And create a new refill to the user we created.
+5. Add test credit and call
+---------------------------
 
-If everything was done correctly, you can make your first call.
+Open **Billing > Refills** and add a small test balance to the customer. Place
+a call from the registered endpoint and verify:
+
+* the expected trunk is selected;
+* two-way audio and DTMF work;
+* the call appears in Calls Online while active;
+* the completed CDR contains the expected destination, duration, buy price,
+  sell price, and hangup cause;
+* the customer balance changes by the expected amount.
+
+If registration succeeds but the call fails, investigate authentication,
+number formatting, tariff matching, trunk routing, provider responses, and
+firewall/NAT separately. For audio problems, see the
+:doc:`no-audio troubleshooting guide <../admin_guide/troubleshooting_no_audio>`.

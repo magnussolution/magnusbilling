@@ -1,47 +1,78 @@
-*************
 Installation
-*************
+============
 
-In order to install MagnusBilling you'll need a server with Debian , minimal install.
+MagnusBilling 8 requires a server running a minimal Debian installation. Use a
+dedicated server or virtual machine and make a backup before reinstalling or
+upgrading an existing system.
 
-    
-**1.** Execute the following commands as root to run the script that will install MagnusBilling, Asterisk and all dependencies needed like: IPTables, Fail2ban, Apache, PHP and MySQL.
+Run the installer
+-----------------
 
-Install Debian **minimal**.
-
-::
-     
-    wget https://raw.githubusercontent.com/magnussolution/magnusbilling8/source/script/install.sh
-    bash install.sh 
-
-**2.** During the install you'll be asked what language MagnusBilling should use. Choose by typing the number of the language.
+Connect to the server through SSH as ``root``, then download and run the
+installation script:
 
 ::
 
-   Install complete. The server will restart automatically..
+   wget https://raw.githubusercontent.com/magnussolution/magnusbilling8/source/script/install.sh
+   bash install.sh
 
-   Use a browser to access the interface.
-      Go to: http://000.000.000.000
-      User: root
-      Password: magnus (Remember to change the password)
+The installer prepares MagnusBilling and its main dependencies, including
+Asterisk 20, PJSIP, the web server, PHP, the database service, Fail2ban, and
+firewall rules. Follow the prompts displayed in the terminal. The server may
+restart when installation is complete.
 
+First login
+-----------
+
+After the restart, open the server IP address in a browser:
+
+::
+
+   http://SERVER_IP
+
+Use the initial credentials displayed by the installer. A standard new
+installation uses the following panel credentials:
+
+::
+
+   Username: root
+   Password: magnus
+
+.. warning::
+
+   Change the default panel password immediately. Restrict administrative and
+   SSH access to trusted networks whenever possible.
 
 .. image:: ../img/ilogin.png
-        :scale: 80%
+   :scale: 80%
+   :alt: MagnusBilling login page
 
-Current code notes
-==================
+Verify the installation
+-----------------------
 
-After installation, the main entrypoints used by the current source code are:
+Before adding production traffic, verify that:
 
-* ``index.php`` for the Yii web panel.
-* ``cron.php`` for Yii console commands.
-* ``resources/asterisk/mbilling.php`` for Asterisk AGI call execution.
-* ``protected/config/main.php`` for the web application configuration.
-* ``protected/config/cron.php`` for console command configuration.
-* ``script/database.sql`` for the base database structure.
+* the web panel opens and the administrator can sign in;
+* the database service is running;
+* Asterisk starts and reports version 20;
+* PJSIP transports and endpoints load without configuration errors;
+* scheduled MagnusBilling commands are present;
+* the server firewall allows only the services required by the deployment.
 
 The console configuration reads the database connection from
-``/etc/asterisk/res_config_mysql.conf``. If the web panel, cron commands, or
-AGI calls cannot connect to the database after installation, verify this file
-before changing application code.
+``/etc/asterisk/res_config_mysql.conf``. If the web panel, scheduled commands,
+or AGI calls cannot connect to the database, verify that file before changing
+application code.
+
+Important runtime entrypoints
+-----------------------------
+
+* ``index.php`` starts the Yii web panel.
+* ``cron.php`` runs Yii console commands.
+* ``resources/asterisk/mbilling.php`` handles Asterisk AGI call execution.
+* ``protected/config/main.php`` contains the web application configuration.
+* ``protected/config/cron.php`` contains the console configuration.
+* ``script/database.sql`` contains the base database structure.
+
+Continue with :doc:`Making your first call <first_call>` after the installation
+checks pass.

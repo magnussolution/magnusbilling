@@ -28,6 +28,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Test GitHub Wiki exporter
+        run: python3 -m unittest wiki/tools/test_export_github_wiki.py
+
       - name: Export GitHub Wiki Markdown
         run: python3 wiki/tools/export_github_wiki.py --output /tmp/wiki-export
 

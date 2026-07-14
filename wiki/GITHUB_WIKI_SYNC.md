@@ -15,7 +15,10 @@ The exporter:
 - converts all English RST pages to Markdown;
 - prefixes and flattens page names for GitHub Wiki compatibility;
 - converts Sphinx document links and copies referenced images;
+- turns Sphinx `toctree` and generated module references into navigable links;
+- fixes RST heading adornments for GitHub Markdown rendering;
 - creates `Home.md`, `_Sidebar.md`, and `_Footer.md`;
+- adds links back to the documentation index and editable RST source;
 - validates that generated internal page and asset links resolve.
 
 ## Publication
@@ -38,6 +41,12 @@ sources under `resources/help`, update the English help source and regenerate
 its RST page before committing. Application translations and localized panel
 help remain independent from the English-only public documentation. Direct
 edits in the GitHub Wiki may be overwritten by the next synchronization.
+
+The exporter is intentionally presentation-only. It does not publish or
+rewrite `wiki/en/modules/*` or `resources/help/help_en.js`, because that
+generated tree supplies the contextual help displayed beside fields in
+MagnusBilling. Public module documentation is maintained separately in
+`wiki/en/module_overview.rst`.
 
 Do not publish `ia-docs` to the user Wiki. It is a machine-oriented RAG source
 with internal support and code-navigation material.

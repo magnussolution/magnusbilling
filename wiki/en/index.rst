@@ -67,6 +67,12 @@ Welcome to MagnusBilling 8 wiki.
 
 .. toctree::
    :maxdepth: 1
+   :caption: Module overview
+
+   module_overview.rst
+
+.. toctree::
+   :maxdepth: 1
    :caption: Security
    :name: sec-Security
 

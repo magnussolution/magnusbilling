@@ -91,5 +91,6 @@ tags: [routing, triage, investigation]
 - Start source: resources/help/help_en.js and resources/help/help_pt_BR.js
 - Field inventory: classic/src/view/*/Form.js
 - Generator: wiki/generate.php
-- Published output: wiki/en/modules/*/*.rst
+- Internal generated output: wiki/en/modules/*/*.rst
+- Public module overview: wiki/en/module_overview.rst
 - Domain doc: MB-RAG-DOMAIN-DOCS-WIKI-FIELD-HELP
