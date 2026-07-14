@@ -700,6 +700,8 @@ Ext.define('Helper.Util', {
         return errors;
     },
     formatStatusImage: function (value) {
+        if (value === 'Unavail') value = 'Unavailable';
+        if (value === 'Unavailable') return '<img src="resources/images/UNKNOWN.png" /> ' + t(value);
         if (value.match(/^OK/g)) return '<img src="resources/images/registered.png" /> ' + t(value);
         else if (value.match(/^LAGGED/g)) return '<img src="resources/images/Unmonitored.png" /> ' + t(value);
         else return '<img src="resources/images/' + value + '.png" /> ' + t(value);

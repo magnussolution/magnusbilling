@@ -128,6 +128,16 @@ class AsteriskAccess
         return $this->asmanager->Command("sip show peer " . $peer);
     }
 
+    public function pjsipShowEndpoint($endpoint)
+    {
+        return $this->asmanager->Command("pjsip show endpoint " . $endpoint);
+    }
+
+    public function pjsipShowAor($aor)
+    {
+        return $this->asmanager->Command("pjsip show aor " . $aor);
+    }
+
     public function pjsipShowContacts()
     {
         return $this->asmanager->Command('pjsip show contacts');
