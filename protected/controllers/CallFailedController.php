@@ -422,6 +422,7 @@
 
         public function actionCallInfo()
         {
+            header('Content-Type: text/html; charset=utf-8');
         ?>
 
 <style type="text/css">
@@ -554,5 +555,6 @@ table.blueTable tfoot .links a{
                     header('Location: http://' . $ip . '/mbilling?id=' . $model->id);
 
                 }
+                Yii::app()->end();
             }
     }
