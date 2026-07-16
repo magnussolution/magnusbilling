@@ -38,8 +38,8 @@ class Call0800WebController extends Controller
 
         } else {
 
-            $destination = isset($_REQUEST['number']) ? $_REQUEST['number'] : '';
-            $user        = isset($_GET['user']) ? $_GET['user'] : '';
+            $destination = isset($_REQUEST['number']) ? $this->getCallFileValue($_REQUEST['number']) : '';
+            $user        = isset($_GET['user']) ? $this->getCallFileValue($_GET['user']) : '';
 
             $model = Sip::model()->find("name = :user", [':user' => $user]);
 
@@ -62,9 +62,9 @@ class Call0800WebController extends Controller
             // gerar os arquivos .call
             $call = "Channel: " . $dialstr . "\n";
             if (isset($_GET['callerid'])) {
-                $call .= "Callerid: " . $_GET['callerid'] . "\n";
+                $call .= "Callerid: " . $this->getCallFileValue($_GET['callerid']) . "\n";
             } else {
-                $call .= "Callerid: " . $model->callerid . "\n";
+                $call .= "Callerid: " . $this->getCallFileValue($model->callerid) . "\n";
             }
 
             $call .= "Context: billing\n";
@@ -74,7 +74,7 @@ class Call0800WebController extends Controller
             $call .= "Set:SECCALL=" . $destination . "\n";
 
             if (isset($_GET['max_duration'])) {
-                $call .= "Set:TIMEOUT(absolute)=" . $_GET['max_duration'] . "\n";
+                $call .= "Set:TIMEOUT(absolute)=" . $this->getCallFileValue($_GET['max_duration']) . "\n";
             }
 
             AsteriskAccess::generateCallFile($call);
@@ -85,6 +85,21 @@ class Call0800WebController extends Controller
 
         }
 
+    }
+
+    private function getCallFileValue($value)
+    {
+        if ( ! is_scalar($value)) {
+            throw new CHttpException(400, Yii::t('zii', 'Invalid input'));
+        }
+
+        $value = (string) $value;
+
+        if (preg_match('/[\r\n\x00-\x1F\x7F]/', $value)) {
+            throw new CHttpException(400, Yii::t('zii', 'Invalid input'));
+        }
+
+        return $value;
     }
 
     public function actionCallback()
