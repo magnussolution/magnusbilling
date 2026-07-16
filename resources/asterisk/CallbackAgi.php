@@ -72,35 +72,24 @@ class CallbackAgi
 
                         $dialstr = "$providertech/$ipaddress/$prefix$destination";
 
-                        $call = "Channel: " . $dialstr . "\n";
-                        $call .= "Callerid: " . $MAGNUS->CallerID . "\n";
-                        $call .= "Context: billing\n";
-                        $call .= "Extension: " . $MAGNUS->destination . "\n";
-                        $call .= "Priority: 1\n";
-                        $call .= "Set:CALLED=" . $MAGNUS->destination . "\n";
-                        $call .= "Set:TARRIFID=" . $CalcAgi->tariffObj[0]['id_rate'] . "\n";
-                        $call .= "Set:SELLCOST=" . $CalcAgi->tariffObj[0]['rateinitial'] . "\n";
-                        $call .= "Set:BUYCOST=" . $CalcAgi->tariffObj[0]['buyrate'] . "\n";
-                        $call .= "Set:CIDCALLBACK=1\n";
-                        $call .= "Set:IDUSER=" . $MAGNUS->id_user . "\n";
-                        $call .= "Set:IDPREFIX=" . $CalcAgi->tariffObj[0]['id_prefix'] . "\n";
-                        $call .= "Set:IDTRUNK=" . $CalcAgi->tariffObj[0]['id_trunk'] . "\n";
-                        $call .= "Set:IDPLAN=" . $MAGNUS->id_plan . "\n";
-
-                        $aleatorio    = str_replace(" ", "", microtime(true));
-                        $arquivo_call = "/tmp/$aleatorio.call";
-                        $fp           = fopen("$arquivo_call", "a+");
-                        fwrite($fp, $call);
-                        fclose($fp);
-
-                        $time += time() + 3;
-
-                        touch("$arquivo_call", $time);
-                        @chown("$arquivo_call", "asterisk");
-                        @chgrp("$arquivo_call", "asterisk");
-                        chmod("$arquivo_call", 0755);
-
-                        system("mv $arquivo_call /var/spool/asterisk/outgoing/$aleatorio.call");
+                        $call = AsteriskAccess::buildCallFile([
+                            'Channel'   => $dialstr,
+                            'Callerid'  => $MAGNUS->CallerID,
+                            'Context'   => 'billing',
+                            'Extension' => $MAGNUS->destination,
+                            'Priority'  => 1,
+                        ], [
+                            'CALLED'      => $MAGNUS->destination,
+                            'TARRIFID'    => $CalcAgi->tariffObj[0]['id_rate'],
+                            'SELLCOST'    => $CalcAgi->tariffObj[0]['rateinitial'],
+                            'BUYCOST'     => $CalcAgi->tariffObj[0]['buyrate'],
+                            'CIDCALLBACK' => 1,
+                            'IDUSER'      => $MAGNUS->id_user,
+                            'IDPREFIX'    => $CalcAgi->tariffObj[0]['id_prefix'],
+                            'IDTRUNK'     => $CalcAgi->tariffObj[0]['id_trunk'],
+                            'IDPLAN'      => $MAGNUS->id_plan,
+                        ]);
+                        AsteriskAccess::generateCallFile($call, 3);
 
                         $agi->answer();
                     }
@@ -157,29 +146,17 @@ class CallbackAgi
         }
 
         $dialstr = "SIP/$destino";
-        // gerar os arquivos .call
-        $call = "Channel: " . $dialstr . "\n";
-        $call .= "Callerid: " . $destination . "\n";
-        $call .= "Context: billing\n";
-        $call .= "Extension: " . $destination . "\n";
-        $call .= "Priority: 1\n";
-        $call .= "Set:IDUSER=" . $id_user . "\n";
-        $call .= "Set:SECCALL=" . $destination . "\n";
-
-        $aleatorio    = str_replace(" ", "", microtime(true));
-        $arquivo_call = "/tmp/$aleatorio.call";
-        $fp           = fopen("$arquivo_call", "a+");
-        fwrite($fp, $call);
-        fclose($fp);
-
-        $time += time();
-
-        touch("$arquivo_call", $time);
-        @chown("$arquivo_call", "asterisk");
-        @chgrp("$arquivo_call", "asterisk");
-        chmod("$arquivo_call", 0755);
-
-        system("mv $arquivo_call /var/spool/asterisk/outgoing/$aleatorio.call");
+        $call = AsteriskAccess::buildCallFile([
+            'Channel'   => $dialstr,
+            'Callerid'  => $destination,
+            'Context'   => 'billing',
+            'Extension' => $destination,
+            'Priority'  => 1,
+        ], [
+            'IDUSER'  => $id_user,
+            'SECCALL' => $destination,
+        ]);
+        AsteriskAccess::generateCallFile($call);
 
         $agi->evaluate("ANSWER 0");
         $MAGNUS->hangup($agi);

@@ -80,8 +80,11 @@ find /etc/asterisk -name "*mbilling*" -exec chown asterisk:asterisk {} \;
 find /etc/asterisk -name "*mbilling*" -exec chmod 660 {} \;
 
 chmod 600 /root/passwordMysql.log
+mkdir -p /var/spool/asterisk/outgoing/.magnusbilling-tmp
 chown root:asterisk /var/spool/asterisk/outgoing
 chmod 775 /var/spool/asterisk/outgoing
+chown $APACHE_USER:asterisk /var/spool/asterisk/outgoing/.magnusbilling-tmp
+chmod 770 /var/spool/asterisk/outgoing/.magnusbilling-tmp
 chown -R root:asterisk /usr/local/src/magnus
 chmod -R 775 /usr/local/src/magnus
 chown -R root:asterisk /var/lib/asterisk/moh
@@ -226,4 +229,3 @@ php /var/www/html/mbilling/cron.php UpdateMysql
 if [[ -e /var/www/html/mbilling/protected/commands/update3.sh ]]; then
 	/var/www/html/mbilling/protected/commands/update3.sh
 fi
-

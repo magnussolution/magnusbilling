@@ -162,24 +162,25 @@ class Start0800CallBackCommand extends ConsoleCommand
 
                     $dialstr = "$providertech/$ipaddress/$prefix$destination";
 
-                    // gerar os arquivos .call
-                    $call = "Channel: " . $dialstr . "\n";
-                    $call .= "Callerid: " . $callerid . "\n";
-                    $call .= "Context: billing\n";
-                    $call .= "Extension: " . $modelDiddestination->idDid->did . "\n";
-                    $call .= "Priority: 1\n";
-                    $call .= "Priority: 1\n";
-                    $call .= "Set:CALLED=" . $destination . "\n";
-                    $call .= "Set:TARRIFID=" . $searchTariff[0]['id_rate'] . "\n";
-                    $call .= "Set:SELLCOST=" . $searchTariff[0]['rateinitial'] . "\n";
-                    $call .= "Set:SELLINITBLOCK=" . $searchTariff[0]['initblock'] . "\n";
-                    $call .= "Set:SELLINCREMENT=" . $searchTariff[0]['billingblock'] . "\n";
-                    $call .= "Set:IDUSER=" . $modelDiddestination->id_user . "\n";
-                    $call .= "Set:IDPREFIX=" . $searchTariff[0]['id_prefix'] . "\n";
-                    $call .= "Set:IDTRUNK=" . $idTrunk . "\n";
-                    $call .= "Set:IDPLAN=" . $modelDiddestination->idUser->id_plan . "\n";
-                    $call .= "Set:IDCALLBACK=" . $callback->id . "\n";
-                    $call .= "Set:ISFROMCALLBACKPRO=1\n";
+                    $call = AsteriskAccess::buildCallFile([
+                        'Channel'   => $dialstr,
+                        'Callerid'  => $callerid,
+                        'Context'   => 'billing',
+                        'Extension' => $modelDiddestination->idDid->did,
+                        'Priority'  => 1,
+                    ], [
+                        'CALLED'            => $destination,
+                        'TARRIFID'          => $searchTariff[0]['id_rate'],
+                        'SELLCOST'          => $searchTariff[0]['rateinitial'],
+                        'SELLINITBLOCK'     => $searchTariff[0]['initblock'],
+                        'SELLINCREMENT'     => $searchTariff[0]['billingblock'],
+                        'IDUSER'            => $modelDiddestination->id_user,
+                        'IDPREFIX'          => $searchTariff[0]['id_prefix'],
+                        'IDTRUNK'           => $idTrunk,
+                        'IDPLAN'            => $modelDiddestination->idUser->id_plan,
+                        'IDCALLBACK'        => $callback->id,
+                        'ISFROMCALLBACKPRO' => 1,
+                    ]);
                     AsteriskAccess::generateCallFile($call, 1);
 
                     echo $call;

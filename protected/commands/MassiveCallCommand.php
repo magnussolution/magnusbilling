@@ -241,28 +241,26 @@ class MassiveCallCommand extends ConsoleCommand
 
                 $dialstr = "$providertech/$trunkcode/$destination";
 
-                // gerar os arquivos .call
-                $call = "Action: Originate\n";
-                $call = "Channel: " . $dialstr . "\n";
-                $call .= "Callerid: " . $campaign->callerid . "\n";
-                $call .= "Account:  MC!" . $campaign->name . "!" . $phone->id . "\n";
-                //$call .= "MaxRetries: 1\n";
-                //$call .= "RetryTime: 100\n";
-                //$call .= "WaitTime: 45\n";
-                $call .= "Context: billing\n";
-                $call .= "Extension: " . $extension . "\n";
-                $call .= "Priority: 1\n";
-                $call .= "Set:CALLED=" . $extension . "\n";
-                $call .= "Set:USERNAME=" . $username . "\n";
-                $call .= "Set:IDUSER=" . $id_user . "\n";
-                $call .= "Set:PHONENUMBER_ID=" . $phone->id . "\n";
-                $call .= "Set:PHONENUMBER_CITY=" . $phone->city . "\n";
-                $call .= "Set:CAMPAIGN_ID=" . $campaign->id . "\n";
-                $call .= "Set:RATE_ID=" . $searchTariff[0]['id_rate'] . "\n";
-                $call .= "Set:TRUNK_ID=" . $idTrunk . "\n";
-                $call .= "Set:AGENT_ID=" . $id_agent . "\n";
-                $call .= "Set:AGENT_ID_PLAN=" . $id_plan_agent . "\n";
-                $call .= "Set:SIPDOMAIN=" . $config['global']['ip_servers'] . "\n";
+                $call = AsteriskAccess::buildCallFile([
+                    'Channel'   => $dialstr,
+                    'Callerid'  => $campaign->callerid,
+                    'Account'   => 'MC!' . $campaign->name . '!' . $phone->id,
+                    'Context'   => 'billing',
+                    'Extension' => $extension,
+                    'Priority'  => 1,
+                ], [
+                    'CALLED'           => $extension,
+                    'USERNAME'         => $username,
+                    'IDUSER'           => $id_user,
+                    'PHONENUMBER_ID'   => $phone->id,
+                    'PHONENUMBER_CITY' => $phone->city,
+                    'CAMPAIGN_ID'      => $campaign->id,
+                    'RATE_ID'          => $searchTariff[0]['id_rate'],
+                    'TRUNK_ID'         => $idTrunk,
+                    'AGENT_ID'         => $id_agent,
+                    'AGENT_ID_PLAN'    => $id_plan_agent,
+                    'SIPDOMAIN'        => $config['global']['ip_servers'],
+                ]);
 
                 if ($this->debug > 1) {
                     echo $call . "\n\n";

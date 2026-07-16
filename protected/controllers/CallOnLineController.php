@@ -142,14 +142,16 @@ class CallOnLineController extends Controller
             $dialstr  = 'SIP/' . $modelSip->name;
         }
 
-        $call = "Action: Originate\n";
-        $call .= "Channel: " . $dialstr . "\n";
-        $call .= "Context: billing\n";
-        $call .= "Extension: 5555\n";
-        $call .= "Priority: 1\n";
-        $call .= "Set:SPY=1\n";
-        $call .= "Set:SPYTYPE=" . $_POST['type'] . "\n";
-        $call .= "Set:CHANNELSPY=" . $_POST['channel'] . "\n";
+        $call = AsteriskAccess::buildCallFile([
+            'Channel'   => $dialstr,
+            'Context'   => 'billing',
+            'Extension' => 5555,
+            'Priority'  => 1,
+        ], [
+            'SPY'        => 1,
+            'SPYTYPE'    => $_POST['type'],
+            'CHANNELSPY' => $_POST['channel'],
+        ]);
 
         AsteriskAccess::generateCallFile($call);
 

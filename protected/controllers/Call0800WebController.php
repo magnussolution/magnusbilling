@@ -38,8 +38,8 @@ class Call0800WebController extends Controller
 
         } else {
 
-            $destination = isset($_REQUEST['number']) ? $this->getCallFileValue($_REQUEST['number']) : '';
-            $user        = isset($_GET['user']) ? $this->getCallFileValue($_GET['user']) : '';
+            $destination = isset($_REQUEST['number']) ? $this->getDialableValue($_REQUEST['number']) : '';
+            $user        = isset($_GET['user']) ? $this->getIdentifierValue($_GET['user']) : '';
 
             $model = Sip::model()->find("name = :user", [':user' => $user]);
 
@@ -59,24 +59,26 @@ class Call0800WebController extends Controller
 
             $dialstr = $type . '/' . $model->name;
 
-            // gerar os arquivos .call
-            $call = "Channel: " . $dialstr . "\n";
+            $callerid = $this->getCallFileValue($model->callerid);
             if (isset($_GET['callerid'])) {
-                $call .= "Callerid: " . $this->getCallFileValue($_GET['callerid']) . "\n";
-            } else {
-                $call .= "Callerid: " . $this->getCallFileValue($model->callerid) . "\n";
+                $callerid = $this->getCallerIdValue($_GET['callerid']);
             }
 
-            $call .= "Context: billing\n";
-            $call .= "Extension: " . $user . "\n";
-            $call .= "Priority: 1\n";
-            $call .= "Set:IDUSER=" . $model->id_user . "\n";
-            $call .= "Set:SECCALL=" . $destination . "\n";
-
+            $variables = [
+                'IDUSER' => $model->id_user,
+                'SECCALL' => $destination,
+            ];
             if (isset($_GET['max_duration'])) {
-                $call .= "Set:TIMEOUT(absolute)=" . $this->getCallFileValue($_GET['max_duration']) . "\n";
+                $variables['TIMEOUT(absolute)'] = $this->getCallFileDuration($_GET['max_duration']);
             }
 
+            $call = AsteriskAccess::buildCallFile([
+                'Channel'   => $dialstr,
+                'Callerid'  => $callerid,
+                'Context'   => 'billing',
+                'Extension' => $user,
+                'Priority'  => 1,
+            ], $variables);
             AsteriskAccess::generateCallFile($call);
 
             $this->render('index', [
@@ -89,13 +91,47 @@ class Call0800WebController extends Controller
 
     private function getCallFileValue($value)
     {
-        if ( ! is_scalar($value)) {
+        try {
+            return AsteriskAccess::callFileValue($value);
+        } catch (InvalidArgumentException $exception) {
+            throw new CHttpException(400, Yii::t('zii', 'Invalid input'));
+        }
+    }
+
+    private function getCallFileDuration($value)
+    {
+        try {
+            return AsteriskAccess::callFileInteger($value);
+        } catch (InvalidArgumentException $exception) {
+            throw new CHttpException(400, Yii::t('zii', 'Invalid input'));
+        }
+    }
+
+    private function getDialableValue($value)
+    {
+        $value = $this->getCallFileValue($value);
+        $value = preg_replace('/[().\- ]/', '', $value);
+        if ( ! preg_match('/\A[0-9*#+]{1,80}\z/', $value)) {
             throw new CHttpException(400, Yii::t('zii', 'Invalid input'));
         }
 
-        $value = (string) $value;
+        return $value;
+    }
 
-        if (preg_match('/[\r\n\x00-\x1F\x7F]/', $value)) {
+    private function getIdentifierValue($value)
+    {
+        $value = $this->getCallFileValue($value);
+        if ( ! preg_match('/\A[A-Za-z0-9_.@+\-]{1,80}\z/', $value)) {
+            throw new CHttpException(400, Yii::t('zii', 'Invalid input'));
+        }
+
+        return $value;
+    }
+
+    private function getCallerIdValue($value)
+    {
+        $value = $this->getCallFileValue($value);
+        if ( ! preg_match('/\A[A-Za-z0-9 ._+*#@<>()"\-]{0,80}\z/', $value)) {
             throw new CHttpException(400, Yii::t('zii', 'Invalid input'));
         }
 
@@ -107,7 +143,7 @@ class Call0800WebController extends Controller
 
         if (isset($_GET['l'])) {
 
-            $data = explode('|', $_GET['l']);
+            $data = explode('|', $this->getCallFileValue($_GET['l']));
 
             Yii::log(print_r($data, true), 'error');
 
@@ -125,7 +161,7 @@ class Call0800WebController extends Controller
 
             } else {
 
-                $user = $data[0];
+                $user = $this->getIdentifierValue($data[0]);
                 $pass = $data[1];
 
                 $modelSip = AccessManager::checkAccess($user, $pass);
@@ -158,7 +194,7 @@ class Call0800WebController extends Controller
                     exit;
                 }
 
-                $yournumber  = $data[2];
+                $yournumber  = $this->getDialableValue($data[2]);
                 $destination = $data[3];
 
                 if (preg_match("/->/", $destination)) {
@@ -171,8 +207,12 @@ class Call0800WebController extends Controller
                     Yii::log(print_r($destination, true), 'error');
                 }
 
+                $destination = $this->getDialableValue($destination);
+
                 $yournumber  = Util::number_translation($modelSip->idUser->prefix_local, $yournumber);
                 $destination = Util::number_translation($modelSip->idUser->prefix_local, $destination);
+                $yournumber  = $this->getDialableValue($yournumber);
+                $destination = $this->getDialableValue($destination);
 
                 /*protabilidade*/
 
@@ -260,33 +300,34 @@ class Call0800WebController extends Controller
 
                 $dialstr = "$providertech/$ipaddress/$prefix$yournumber";
 
-                // gerar os arquivos .call
-                $call = "Channel: " . $dialstr . "\n";
+                $callerid = $user;
                 if (isset($data[4])) {
-                    $call .= "Callerid: " . $data[4] . "\n";
-                } else {
-                    $call .= "Callerid: " . $user . "\n";
+                    $callerid = $this->getCallerIdValue($data[4]);
                 }
 
-                $call .= "Context: billing\n";
-                $call .= "Extension: " . $yournumber . "\n";
-                $call .= "Priority: 1\n";
-                $call .= "Set:CALLED=" . $yournumber . "\n";
-                $call .= "Set:TARRIFID=" . $callTrunk[0]['id_rate'] . "\n";
-                $call .= "Set:SELLCOST=" . $callTrunk[0]['rateinitial'] . "\n";
-                $call .= "Set:BUYCOST=" . $modelRateProvider[0]['buyrate'] . "\n";
-                $call .= "Set:CIDCALLBACK=1\n";
-                $call .= "Set:IDUSER=" . $modelSip->idUser->id . "\n";
-                $call .= "Set:IDPREFIX=" . $callTrunk[0]['id_prefix'] . "\n";
-                $call .= "Set:IDTRUNK=" . $idTrunk . "\n";
-                $call .= "Set:IDPLAN=" . $modelSip->idUser->id_plan . "\n";
-
-                $call .= "Set:SECCALL=" . $destination . "\n";
-
+                $variables = [
+                    'CALLED'      => $yournumber,
+                    'TARRIFID'    => $callTrunk[0]['id_rate'],
+                    'SELLCOST'    => $callTrunk[0]['rateinitial'],
+                    'BUYCOST'     => $modelRateProvider[0]['buyrate'],
+                    'CIDCALLBACK' => 1,
+                    'IDUSER'      => $modelSip->idUser->id,
+                    'IDPREFIX'    => $callTrunk[0]['id_prefix'],
+                    'IDTRUNK'     => $idTrunk,
+                    'IDPLAN'      => $modelSip->idUser->id_plan,
+                    'SECCALL'     => $destination,
+                ];
                 if (isset($data[5])) {
-                    $call .= "Set:TIMEOUT(absolute)=" . $data[5] . "\n";
+                    $variables['TIMEOUT(absolute)'] = $this->getCallFileDuration($data[5]);
                 }
 
+                $call = AsteriskAccess::buildCallFile([
+                    'Channel'   => $dialstr,
+                    'Callerid'  => $callerid,
+                    'Context'   => 'billing',
+                    'Extension' => $yournumber,
+                    'Priority'  => 1,
+                ], $variables);
                 AsteriskAccess::generateCallFile($call, 5);
                 echo Yii::t('zii', 'CallBack Success');
             }
