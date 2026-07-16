@@ -53,8 +53,10 @@ class CampaignController extends Controller
     public function beforeSave($values)
     {
 
-        if (isset($values['type']) && (int) $values['type'] === 2 &&
-            (! isset($values['whatsapp_template_name']) || trim($values['whatsapp_template_name']) === '')) {
+        if (
+            isset($values['type']) && (int) $values['type'] === 2 &&
+            (! isset($values['whatsapp_template_name']) || trim($values['whatsapp_template_name']) === '')
+        ) {
             echo json_encode([
                 'success' => false,
                 'rows'    => [],
@@ -468,7 +470,7 @@ class CampaignController extends Controller
                 $criteria->params[':key1'] = date('Y-m-d H:i:s');
                 $modelPhoneNumber          = PhoneNumber::model()->find($criteria);
 
-                if (! isset($modelPhoneNumber[0])) {
+                if (! isset($modelPhoneNumber->id)) {
                     echo json_encode([
                         $this->nameSuccess => false,
                         $this->nameMsg     => 'There are active numbers but the start time is in the future',

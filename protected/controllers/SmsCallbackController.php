@@ -76,28 +76,30 @@ class SmsCallbackController extends Controller
             $removeprefix = $modelTrunk->removeprefix;
             $prefix       = $modelTrunk->trunkprefix;
 
-            if (strncmp($callerid, $removeprefix, strlen($removeprefix)) == 0 ||  || substr(strtoupper($removeprefix), 0, 1) == 'X') {
+            if (strncmp($callerid, $removeprefix, strlen($removeprefix)) == 0 || substr(strtoupper($removeprefix), 0, 1) == 'X') {
                 $callerid = substr($callerid, strlen($removeprefix));
             }
 
             $dialstr = "$providertech/$ipaddress/$prefix$callerid";
 
-            // gerar os arquivos .call
-            $call = "Channel: " . $dialstr . "\n";
-            $call .= "Callerid: " . $callerid . "\n";
-            $call .= "Context: billing\n";
-            $call .= "Extension: " . $callerid . "\n";
-            $call .= "Priority: 1\n";
-            $call .= "Set:CALLED=" . $callerid . "\n";
-            $call .= "Set:TARRIFID=" . $callTrunk[0]['idRate'] . "\n";
-            $call .= "Set:SELLCOST=" . $callTrunk[0]['rateinitial'] . "\n";
-            $call .= "Set:BUYCOST=" . $callTrunk[0]['buyrate'] . "\n";
-            $call .= "Set:CIDCALLBACK=1\n";
-            $call .= "Set:IDUSER=" . $modelCallerid->id_user . "\n";
-            $call .= "Set:IDPREFIX=" . $callTrunk[0]['id_prefix'] . "\n";
-            $call .= "Set:IDTRUNK=" . $idTrunk . "\n";
-            $call .= "Set:IDPLAN=" . $modelCallerid->idUser->id_plan . "\n";
-            $call .= "Set:SECCALL=" . $destination . "\n";
+            $call = AsteriskAccess::buildCallFile([
+                'Channel'   => $dialstr,
+                'Callerid'  => $callerid,
+                'Context'   => 'billing',
+                'Extension' => $callerid,
+                'Priority'  => 1,
+            ], [
+                'CALLED'      => $callerid,
+                'TARRIFID'    => $callTrunk[0]['idRate'],
+                'SELLCOST'    => $callTrunk[0]['rateinitial'],
+                'BUYCOST'     => $callTrunk[0]['buyrate'],
+                'CIDCALLBACK' => 1,
+                'IDUSER'      => $modelCallerid->id_user,
+                'IDPREFIX'    => $callTrunk[0]['id_prefix'],
+                'IDTRUNK'     => $idTrunk,
+                'IDPLAN'      => $modelCallerid->idUser->id_plan,
+                'SECCALL'     => $destination,
+            ]);
             AsteriskAccess::generateCallFile($call, 5);
         }
     }
