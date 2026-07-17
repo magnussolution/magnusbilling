@@ -7,7 +7,7 @@ class WhatsappWebhookController extends CController
 {
     public function actionIndex()
     {
-        if (Yii::app()->request->getIsGetRequest()) {
+        if (Yii::app()->request->getRequestType() === 'GET') {
             $this->verifyWebhook();
             return;
         }
