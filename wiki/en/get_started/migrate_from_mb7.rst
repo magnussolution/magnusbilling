@@ -67,7 +67,7 @@ Install MagnusBilling 8 on a new minimal Debian server:
    bash install.sh
 
 For a staged migration, the repository also includes
-``script/install_asterisk20.sh``. It can be run on a clean Debian server
+``script/updateV7_to_V8.sh``. It can be run on a clean Debian server
 before the web application is installed. The script compiles Asterisk 20 with
 PJSIP, disables ``chan_sip`` in the generated baseline, creates the MagnusBilling
 include files, and leaves the database connection file for the MagnusBilling 8
@@ -75,9 +75,9 @@ installer to create:
 
 ::
 
-   curl -O https://raw.githubusercontent.com/magnussolution/magnusbilling8/source/script/install_asterisk20.sh
-   chmod 750 install_asterisk20.sh
-   sudo ./install_asterisk20.sh --configure-firewall
+   curl -O https://raw.githubusercontent.com/magnussolution/magnusbilling8/source/script/updateV7_to_V8.sh
+   chmod 750 updateV7_to_V8.sh
+   sudo ./updateV7_to_V8.sh --configure-firewall
 
 If ``/etc/asterisk`` already contains files, the script automatically archives
 the old directory under ``/root/asterisk-config-before-mb8-*.tar.gz`` and
