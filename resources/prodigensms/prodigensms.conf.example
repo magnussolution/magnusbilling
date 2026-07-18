@@ -1,0 +1,5 @@
+api_url = "https://prodigensms.com/api/v1/sms/send"
+api_token = "REPLACE_WITH_PRODIGENSMS_TOKEN"
+webhook_secret = "REPLACE_WITH_RANDOM_SECRET"
+shortener_id = "689"
+original_url = "https://cadastro.example.com/"

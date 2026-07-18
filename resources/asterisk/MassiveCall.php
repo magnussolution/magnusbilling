@@ -115,7 +115,16 @@ class MassiveCall
                 $agi->verbose($sql, 25);
                 $modelCampaignPoll = $agi->query($sql)->fetchAll(PDO::FETCH_OBJ);
 
-                if (isset($modelCampaign->audio_2) && strlen($modelPhoneNumber->name) > 3 && (strlen($modelCampaign->audio_2) > 5) || strlen($modelCampaign->tts_audio2) > 2) {
+                $hasTtsNamePlaceholder =
+                    strpos((string) $modelCampaign->tts_audio, '%name%') !== false ||
+                    strpos((string) $modelCampaign->tts_audio2, '%name%') !== false;
+
+                if (
+                    ! $hasTtsNamePlaceholder &&
+                    strlen($modelPhoneNumber->name) > 3 &&
+                    ((isset($modelCampaign->audio_2) && strlen($modelCampaign->audio_2) > 5) ||
+                        strlen($modelCampaign->tts_audio2) > 2)
+                ) {
                     $agi->verbose('get phonenumber name from TTS', 10);
                     $tts  = true;
                     $file = $idPhonenumber . date("His");
@@ -125,18 +134,20 @@ class MassiveCall
 
                 /*AUDIO FOR CAMPAIN*/
                 if (strlen($modelCampaign->tts_audio) > 2) {
-
-                    $file = 'campaign_' . MD5($modelCampaign->tts_audio);
-                    if (file_exists('/tmp/' . $file . '.wav')) {
-                        $agi->verbose('Audio already exist');
-                        $audio = '/tmp/' . $file;
-                    } else {
-                        $agi->verbose('Get audio from TTS');
-                        $audio = Tts::create($MAGNUS, $agi, $modelCampaign->tts_audio);
-                    }
+                    $ttsText = str_replace(
+                        '%name%',
+                        (string) $modelPhoneNumber->name,
+                        (string) $modelCampaign->tts_audio
+                    );
+                    $agi->verbose('Get audio from TTS');
+                    $audio = Tts::create($MAGNUS, $agi, $ttsText);
                 } else {
                     $audio = $uploaddir . "idCampaign_" . $modelCampaign->id;
                 }
+
+                $hasSecondCampaignAudio =
+                    strlen($modelCampaign->audio_2) > 5 ||
+                    strlen($modelCampaign->tts_audio2) > 2;
 
                 //If exist audio2 execute audio1
                 if (isset($tts)) {
@@ -144,7 +155,8 @@ class MassiveCall
                 } else {
                     // CHECK IF NEED AUTORIZATION FOR EXECUTE POLL OR IS EXISTE FORWARD NUMBER
                     if (strlen($forward_number) > 2 || (isset($modelCampaignPoll[0]->id) && $modelCampaignPoll[0]->request_authorize == 1)) {
-                        $res_dtmf = $agi->get_data($audio, 5000, 1);
+                        $firstAudioTimeout = $hasSecondCampaignAudio ? 100 : 5000;
+                        $res_dtmf = $agi->get_data($audio, $firstAudioTimeout, 1);
                     } else {
                         $agi->stream_file($audio, ' #');
                     }
@@ -155,13 +167,23 @@ class MassiveCall
                     $agi->stream_file($audio_name, ' #');
                 }
 
-                if (strlen($modelCampaign->audio_2) > 5 || strlen($modelCampaign->tts_audio2) > 2) {
+                $hasFirstAudioDtmf =
+                    isset($res_dtmf['result']) &&
+                    is_numeric($res_dtmf['result']) &&
+                    (int) $res_dtmf['result'] >= 0 &&
+                    strlen((string) $res_dtmf['result']) > 0;
+
+                if ($hasSecondCampaignAudio && ! $hasFirstAudioDtmf) {
 
                     /*Execute audio 2*/
 
                     if (strlen($modelCampaign->tts_audio2) > 2) {
-
-                        $audio = Tts::create($MAGNUS, $agi, $modelCampaign->tts_audio2);
+                        $ttsText2 = str_replace(
+                            '%name%',
+                            (string) $modelPhoneNumber->name,
+                            (string) $modelCampaign->tts_audio2
+                        );
+                        $audio = Tts::create($MAGNUS, $agi, $ttsText2);
                     } else {
                         $audio = $uploaddir . "idCampaign_" . $idCampaign . "_2";
                     }
@@ -305,7 +327,7 @@ class MassiveCall
                         if (preg_match('/^http/', $forwardOption[1])) {
 
                             $url = preg_replace("/\%number\%/", $destination, $forwardOption[1]);
-                            $url = preg_replace("/\%name\%/", $modelPhoneNumber->name, $url);
+                            $url = preg_replace("/\%name\%/", rawurlencode($modelPhoneNumber->name), $url);
 
                             if (preg_match('/POST/', $url)) {
                                 $url = explode('?', $url);
