@@ -17,6 +17,10 @@ echo
 
 sleep 3
 
+if [[ ${EUID} -ne 0 ]]; then
+  echo "Run this installer as root."
+  exit 1
+fi
 
 if [[ -f /var/www/html/mbilling/index.php ]]; then
   echo "This server already has MagnusBilling installed";
@@ -59,15 +63,6 @@ genpasswd()
     [ "$length" == "" ] && length=16
     tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${length} | xargs
 }
-password=$(genpasswd)
-
-if [ -e "/root/passwordMysql.log" ] && [ ! -z "/root/passwordMysql.log" ]
-then
-    password=$(awk '{print $1}' /root/passwordMysql.log)
-fi
-
-touch /root/passwordMysql.log
-echo "$password" > /root/passwordMysql.log 
 
 
 
@@ -193,13 +188,12 @@ sed -i 's/<Directory \/var\/www\/>/<Directory \/var\/www\/html\/>/' "${HTTP_CONF
 systemctl enable apache2 
 systemctl enable --now ntpsec
 echo
-echo "----------- Create mysql password: Your mysql root password is $password ----------"
+echo "----------- Starting MariaDB with unix_socket root authentication ----------"
 echo
 
 
 systemctl start mariadb
-sudo systemctl enable --now mariadb
-sudo mariadb -e "ALTER USER 'root'@'localhost' IDENTIFIED VIA mysql_native_password USING PASSWORD('${password}');FLUSH PRIVILEGES;"
+systemctl enable --now mariadb
 
 echo "
 [server]
@@ -437,20 +431,57 @@ sleep 2
 
 
 MBillingMysqlPass=$(genpasswd)
+DATABASE_FILE=/var/www/html/mbilling/script/database.sql
+DB_CONFIG_FILE=/etc/asterisk/res_config_mysql.conf
 
-mysql -uroot -p${password} -e "CREATE DATABASE IF NOT EXISTS mbilling;"
-mysql -uroot -p${password} -e "CREATE USER 'mbillingUser'@'localhost' IDENTIFIED BY '${MBillingMysqlPass}';"
-mysql -uroot -p${password} -e "GRANT ALL PRIVILEGES ON \`mbilling\` . * TO 'mbillingUser'@'localhost' WITH GRANT OPTION;FLUSH PRIVILEGES;"    
-mysql -uroot -p${password} -e "GRANT FILE ON * . * TO  'mbillingUser'@'localhost' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0;"
-mysql mbilling -u root -p${password}  < /var/www/html/mbilling/script/database.sql
+if [[ ! -f ${DATABASE_FILE} ]]; then
+  echo "Database schema not found: ${DATABASE_FILE}"
+  exit 1
+fi
+
+# Debian and Ubuntu MariaDB packages authenticate the OS root user through the
+# local Unix socket. Keep that authentication method and create a separate
+# password-based account for MagnusBilling.
+if ! mariadb --protocol=socket <<SQL
+CREATE DATABASE IF NOT EXISTS mbilling;
+CREATE USER IF NOT EXISTS 'mbillingUser'@'localhost' IDENTIFIED BY '${MBillingMysqlPass}';
+ALTER USER 'mbillingUser'@'localhost' IDENTIFIED BY '${MBillingMysqlPass}';
+CREATE USER IF NOT EXISTS 'mbillingUser'@'127.0.0.1' IDENTIFIED BY '${MBillingMysqlPass}';
+ALTER USER 'mbillingUser'@'127.0.0.1' IDENTIFIED BY '${MBillingMysqlPass}';
+GRANT ALL PRIVILEGES ON \`mbilling\`.* TO 'mbillingUser'@'localhost' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON \`mbilling\`.* TO 'mbillingUser'@'127.0.0.1' WITH GRANT OPTION;
+GRANT FILE ON *.* TO 'mbillingUser'@'localhost';
+GRANT FILE ON *.* TO 'mbillingUser'@'127.0.0.1';
+FLUSH PRIVILEGES;
+SQL
+then
+  echo "Unable to create the MagnusBilling MariaDB database user."
+  exit 1
+fi
+
+if ! mariadb --protocol=socket mbilling < "${DATABASE_FILE}"; then
+  echo "Unable to import the MagnusBilling database schema."
+  exit 1
+fi
+
+if ! MYSQL_PWD="${MBillingMysqlPass}" mariadb --protocol=tcp --host=127.0.0.1 --user=mbillingUser mbilling \
+  --execute="SELECT 1;" > /dev/null; then
+  echo "Unable to connect to MariaDB using the MagnusBilling application account."
+  exit 1
+fi
+
+if ! install -o root -g asterisk -m 0640 /dev/null "${DB_CONFIG_FILE}"; then
+  echo "Unable to create the MagnusBilling database configuration."
+  exit 1
+fi
+
+if ! printf '[general]\ndbhost = 127.0.0.1\ndbname = mbilling\ndbuser = mbillingUser\ndbpass = %s\n' \
+  "${MBillingMysqlPass}" > "${DB_CONFIG_FILE}"; then
+  echo "Unable to write the MagnusBilling database configuration."
+  exit 1
+fi
+
 rm -rf /var/www/html/mbilling/script
-
-echo "[general]
-dbhost = 127.0.0.1
-dbname = mbilling
-dbuser = mbillingUser
-dbpass = $MBillingMysqlPass
-" > /etc/asterisk/res_config_mysql.conf
 
 echo '[directories](!)
 astetcdir => /etc/asterisk
@@ -830,7 +861,6 @@ find /etc/asterisk -name "*mbilling*" -exec chown asterisk:asterisk {} \;
 find /etc/asterisk -name "*mbilling*" -exec chmod 660 {} \;
 
 
-chmod 600 /root/passwordMysql.log
 mkdir -p /var/spool/asterisk/outgoing/.magnusbilling-tmp
 chown root:asterisk /var/spool/asterisk/outgoing
 chmod 730 /var/spool/asterisk/outgoing
@@ -1032,6 +1062,6 @@ sleep 4
 asterisk -rx 'core show translation'
 
 
-whiptail --title "MagnusBilling Instalation Result" --msgbox "Congratulations! You have installed MagnusBilling in your Server.\n\nAccess your MagnusBilling in http://your_ip/ \n  Username = root \n  Password = magnus \n\nYour mysql root password is $password\n\n\nPRESS ANY KEY TO REBOOT YOUR SERVER" --fb 20 70
+whiptail --title "MagnusBilling Instalation Result" --msgbox "Congratulations! You have installed MagnusBilling in your Server.\n\nAccess your MagnusBilling in http://your_ip/ \n  Username = root \n  Password = magnus \n\nMariaDB root access uses the local Unix socket (run: mariadb).\n\n\nPRESS ANY KEY TO REBOOT YOUR SERVER" --fb 20 70
 
 reboot
