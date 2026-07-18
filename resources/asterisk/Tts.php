@@ -35,6 +35,21 @@ class Tts
             $string     = $data[2];
         }
 
+        if (isset($MAGNUS->config['global']['tts_url']) &&
+            stripos($MAGNUS->config['global']['tts_url'], 'elevenlabs') === 0) {
+            try {
+                return self::createElevenLabs(
+                    $agi,
+                    $string,
+                    isset($VID_CUSTOM) ? $VID_CUSTOM : null,
+                    isset($LID_CUSTOM) ? $LID_CUSTOM : null
+                );
+            } catch (Exception $exception) {
+                $agi->verbose('ElevenLabs TTS error: ' . $exception->getMessage(), 1);
+                throw $exception;
+            }
+        }
+
         $name = urlencode($string);
 
         $file = 'tts_audio_' . MD5($string);
@@ -135,6 +150,162 @@ class Tts
 
         }
         return '/tmp/' . $file;
+    }
+
+    private static function createElevenLabs($agi, $string, $customVoiceId = null, $customModelId = null)
+    {
+        $configPath = getenv('ELEVENLABS_CONFIG');
+        if (! is_string($configPath) || $configPath === '') {
+            $configPath = '/etc/asterisk/elevenlabs.conf';
+        }
+
+        $config = @parse_ini_file($configPath, false, INI_SCANNER_RAW);
+        if (! is_array($config)) {
+            throw new RuntimeException('Unable to read ElevenLabs configuration');
+        }
+
+        $required = ['api_key', 'voice_id', 'model_id', 'output_format'];
+        foreach ($required as $key) {
+            if (! isset($config[$key]) || trim((string) $config[$key]) === '') {
+                throw new RuntimeException('Missing ElevenLabs configuration key: ' . $key);
+            }
+        }
+
+        $voiceId = $customVoiceId !== null && $customVoiceId !== ''
+            ? (string) $customVoiceId
+            : (string) $config['voice_id'];
+        $modelId = $customModelId !== null && $customModelId !== ''
+            ? (string) $customModelId
+            : (string) $config['model_id'];
+
+        if (! preg_match('/\A[A-Za-z0-9_-]{10,64}\z/', $voiceId) ||
+            ! preg_match('/\A[A-Za-z0-9_-]{3,80}\z/', $modelId) ||
+            ! preg_match('/\A[a-z0-9_]{3,40}\z/', $config['output_format'])) {
+            throw new RuntimeException('Invalid ElevenLabs voice, model, or output format');
+        }
+
+        $text = self::normalizeUtf8(trim((string) $string));
+        if ($text === '' || strlen($text) > 10000) {
+            throw new RuntimeException('Invalid ElevenLabs TTS text length');
+        }
+
+        $file = 'tts_audio_' . md5(
+            'elevenlabs|' . $voiceId . '|' . $modelId . '|' . $config['output_format'] . '|' . $text
+        );
+        $basePath = '/tmp/' . $file;
+        $wavPath  = $basePath . '.wav';
+
+        if (file_exists($wavPath) && filesize($wavPath) > 44) {
+            return $basePath;
+        }
+
+        $lock = fopen($basePath . '.lock', 'c');
+        if ($lock === false || ! flock($lock, LOCK_EX)) {
+            throw new RuntimeException('Unable to lock ElevenLabs TTS cache');
+        }
+
+        try {
+            if (file_exists($wavPath) && filesize($wavPath) > 44) {
+                return $basePath;
+            }
+
+            $apiBase = isset($config['api_url']) && trim((string) $config['api_url']) !== ''
+                ? rtrim((string) $config['api_url'], '/')
+                : 'https://api.elevenlabs.io/v1/text-to-speech';
+
+            if (filter_var($apiBase, FILTER_VALIDATE_URL) === false ||
+                stripos($apiBase, 'https://api.elevenlabs.io/') !== 0) {
+                throw new RuntimeException('Invalid ElevenLabs API URL');
+            }
+
+            $requestBody = json_encode([
+                'text'     => $text,
+                'model_id' => $modelId,
+            ]);
+            if ($requestBody === false) {
+                throw new RuntimeException('Unable to encode ElevenLabs request');
+            }
+
+            $url = $apiBase . '/' . rawurlencode($voiceId) .
+                '?output_format=' . rawurlencode($config['output_format']);
+            $curl = curl_init($url);
+            curl_setopt_array($curl, [
+                CURLOPT_POST           => true,
+                CURLOPT_POSTFIELDS     => $requestBody,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_CONNECTTIMEOUT => 8,
+                CURLOPT_TIMEOUT        => 45,
+                CURLOPT_HTTPHEADER     => [
+                    'xi-api-key: ' . $config['api_key'],
+                    'Content-Type: application/json',
+                    'Accept: audio/mpeg',
+                ],
+            ]);
+
+            $audio       = curl_exec($curl);
+            $curlError   = curl_error($curl);
+            $httpStatus  = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            $contentType = (string) curl_getinfo($curl, CURLINFO_CONTENT_TYPE);
+            curl_close($curl);
+
+            if ($audio === false || $httpStatus < 200 || $httpStatus >= 300 ||
+                strlen($audio) < 100 || stripos($contentType, 'audio/') !== 0) {
+                $agi->verbose(
+                    'ElevenLabs TTS failed; HTTP ' . $httpStatus .
+                    ($curlError !== '' ? '; cURL: ' . $curlError : ''),
+                    1
+                );
+                throw new RuntimeException('ElevenLabs TTS request failed');
+            }
+
+            $mp3Path     = $basePath . '.' . getmypid() . '.mp3';
+            $tempWavPath = $basePath . '.' . getmypid() . '.wav';
+            if (file_put_contents($mp3Path, $audio, LOCK_EX) === false) {
+                throw new RuntimeException('Unable to save ElevenLabs audio');
+            }
+
+            $command = 'mpg123 -q -m -r 8000 -w ' . escapeshellarg($tempWavPath) .
+                ' ' . escapeshellarg($mp3Path) . ' 2>&1';
+            $output = [];
+            $status = 0;
+            exec($command, $output, $status);
+            @unlink($mp3Path);
+
+            if ($status !== 0 || ! file_exists($tempWavPath) || filesize($tempWavPath) <= 44) {
+                @unlink($tempWavPath);
+                $agi->verbose('ElevenLabs audio conversion failed: ' . implode(' ', $output), 1);
+                throw new RuntimeException('Unable to convert ElevenLabs audio');
+            }
+
+            if (! rename($tempWavPath, $wavPath)) {
+                @unlink($tempWavPath);
+                throw new RuntimeException('Unable to publish ElevenLabs audio cache');
+            }
+            @chmod($wavPath, 0644);
+        } finally {
+            flock($lock, LOCK_UN);
+            fclose($lock);
+        }
+
+        return $basePath;
+    }
+
+    private static function normalizeUtf8($value)
+    {
+        if (preg_match('//u', $value) === 1) {
+            return $value;
+        }
+
+        if (! function_exists('iconv')) {
+            throw new RuntimeException('Unable to normalize TTS text to UTF-8');
+        }
+
+        $converted = iconv('Windows-1252', 'UTF-8//IGNORE', $value);
+        if ($converted === false || preg_match('//u', $converted) !== 1) {
+            throw new RuntimeException('Unable to normalize TTS text to UTF-8');
+        }
+
+        return $converted;
     }
 
     public static function make_token($line)

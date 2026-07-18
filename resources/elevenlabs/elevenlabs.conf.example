@@ -1,0 +1,5 @@
+api_url = "https://api.elevenlabs.io/v1/text-to-speech"
+api_key = "REPLACE_WITH_ELEVENLABS_API_KEY"
+voice_id = "REPLACE_WITH_VOICE_ID"
+model_id = "eleven_multilingual_v2"
+output_format = "mp3_44100_128"

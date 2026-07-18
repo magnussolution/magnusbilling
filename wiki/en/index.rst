@@ -48,6 +48,7 @@ Welcome to MagnusBilling 8 wiki.
    price_calculation.rst
    find_rate.rst
    tts.rst
+   prodigensms_campaign.rst
    offer.rst
    how_to_use_voucher.rst
    whatsapp_campaign.rst
