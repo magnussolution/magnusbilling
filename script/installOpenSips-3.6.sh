@@ -46,7 +46,7 @@ apt -y install m4 git nano sudo curl dbus apache2 lsb-release dirmngr apt-transp
 apt -o Acquire::Check-Valid-Until=false update 
 apt -y install php php-gd php-mysql php-xmlrpc php-pear php-cli php-apcu php-curl php-xml libapache2-mod-php
 apt -y install git gcc bison flex make openssl perl libdbi-perl libdbd-mysql-perl libdbd-pg-perl libfrontier-rpc-perl libterm-readline-gnu-perl libberkeleydb-perl ssh libxml2 libxml2-dev libxmlrpc-core-c3-dev libpcre2-8-0 libpcre2-dev subversion libncurses5-dev git ngrep libssl-dev net-tools
-apt -y install autoconf automake devscripts gawk ntpdate ntp g++ git-core curl sudo xmlstarlet apache2 libjansson-dev git  odbcinst1debian2 libodbc1 odbcinst unixodbc unixodbc-dev
+apt -y install autoconf automake devscripts gawk ntpdate ntp g++ git-core curl sudo xmlstarlet apache2 libjansson-dev git libodbc1 odbcinst unixodbc unixodbc-dev
 apt -y install php-fpm php  php-dev php-common php-cli php-gd php-pear php-cli php-sqlite3 php-curl php-mbstring unzip libapache2-mod-php uuid-dev libxml2 libxml2-dev openssl libcurl4-openssl-dev gettext gcc g++ libncurses5-dev sqlite3 libsqlite3-dev subversion mpg123
 apt -y install mariadb-server php-mysql
 apt -y install unzip git libcurl4-openssl-dev htop rsyslog cron

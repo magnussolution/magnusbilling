@@ -76,7 +76,7 @@ update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
 
 apt-get -o Acquire::Check-Valid-Until=false update 
 apt-get install -y apache2
-apt-get install -y autoconf automake devscripts gawk ntpsec g++ git-core curl sudo xmlstarlet libjansson-dev git  odbcinst1debian2 libodbc1 odbcinst unixodbc unixodbc-dev 
+apt-get install -y autoconf automake devscripts gawk ntpsec g++ git-core curl sudo xmlstarlet libjansson-dev git libodbc1 odbcinst unixodbc unixodbc-dev
 apt-get install -y php-fpm php  php-dev php-common php-cli php-gd php-pear php-cli php-sqlite3 php-curl php-mbstring unzip libapache2-mod-php uuid-dev libxml2 libxml2-dev openssl libcurl4-openssl-dev gettext gcc g++ sqlite3 libsqlite3-dev subversion mpg123
 apt-get install -y libncurses5-dev 
 apt-get install -y libncurses-dev
