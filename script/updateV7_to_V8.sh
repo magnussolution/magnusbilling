@@ -85,7 +85,7 @@ install_dependencies() {
         libpq-dev libspeexdsp-dev libsqlite3-dev \
         libssl-dev libtool libtool-bin libvorbis-dev libxml2-dev \
         libxslt1-dev pkg-config subversion uuid-dev wget \
-        unixodbc-dev odbcinst
+        unixodbc-dev odbcinst patchelf
 }
 
 prepare_user_and_directories() {
@@ -105,15 +105,17 @@ preserve_existing_config() {
     if [[ ! -d "${ASTERISK_ETC}" ]] || [[ -z "$(find "${ASTERISK_ETC}" -mindepth 1 -maxdepth 1 -print -quit 2>/dev/null)" ]]; then
         return
     fi
-    local archive="/root/asterisk-config-before-mb8-$(date -u +%Y%m%dT%H%M%SZ).tar.gz"
+
     systemctl stop asterisk >/dev/null 2>&1 || true
-    tar -C / -czf "${archive}" etc/asterisk
+    cp -rf /etc/asterisk /etc/asterisk_1.3
     log "Existing Asterisk configuration archived at ${archive}."
     find "${ASTERISK_ETC}" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
 }
 
 
 build_asterisk() {
+
+    rm -rf /usr/lib/asterisk/modules/
     cd /usr/src
     rm -rf asterisk*
     clear
@@ -135,6 +137,8 @@ build_asterisk() {
     make config
     ldconfig
 }
+
+
 
 write_configuration() {
     install -d -o "${ASTERISK_USER}" -g "${ASTERISK_USER}" \
@@ -247,8 +251,118 @@ replateM7ToM8() {
     rm -rf MagnusBilling8-current.tar.gz
     wget --no-check-certificate https://magnusbilling.org/download/MagnusBilling8-current.tar.gz
     tar xzf MagnusBilling8-current.tar.gz
-    /var/www/html/mbilling/protected/commandas/update.sh
+    /var/www/html/mbilling/protected/commands/update.sh
 }
+
+
+p4_proc()
+{
+    set $(grep "model name" /proc/cpuinfo);
+
+    if [ "$4" == "Celeron" ]; then
+
+        wget https://www.magnusbilling.org/download/codecs/codec_g723-ast200-gcc4-glibc-pentium.so
+        wget https://www.magnusbilling.org/download/codecs/codec_g729-ast200-gcc4-glibc-pentium.so
+        cp /usr/src/codec_g723-ast200-gcc4-glibc-pentium.so /usr/lib/asterisk/modules/codec_g723.so
+        cp /usr/src/codec_g729-ast200-gcc4-glibc-pentium.so /usr/lib/asterisk/modules/codec_g729.so
+
+        return 0;
+    fi
+
+    wget https://www.magnusbilling.org/download/codecs/codec_g723-ast200-gcc4-glibc-pentium4.so
+    wget https://www.magnusbilling.org/download/codecs/codec_g729-ast200-gcc4-glibc-pentium4.so
+    mv /usr/src/codec_g723-ast200-gcc4-glibc-pentium4.so  /usr/lib/asterisk/modules/codec_g723.so
+    mv codec_g729-ast200-gcc4-glibc-pentium4.so /usr/lib/asterisk/modules/codec_g729.so
+
+}
+p4_x64_proc()
+{
+    wget https://www.magnusbilling.org/download/codecs/codec_g723-ast200-gcc4-glibc-x86_64-pentium4.so
+    wget https://www.magnusbilling.org/download/codecs/codec_g729-ast200-gcc4-glibc-x86_64-pentium4.so
+    mv /usr/src/codec_g723-ast200-gcc4-glibc-x86_64-pentium4.so /usr/lib/asterisk/modules/codec_g723.so
+    mv /usr/src/codec_g729-ast200-gcc4-glibc-x86_64-pentium4.so /usr/lib/asterisk/modules/codec_g729.so
+
+}
+p3_proc()
+{
+    set $(grep "model name" /proc/cpuinfo);
+    if [ "$4" == "Intel(R)" &&  "$5" == "Pentium(R)" && "$6"== "III" ];then
+        wget https://www.magnusbilling.org/download/codecs/codec_g723-ast200-gcc4-glibc-pentium.so
+        wget https://www.magnusbilling.org/download/codecs/codec_g729-ast200-gcc4-glibc-pentium.so
+        mv /usr/src/codec_g723-ast200-gcc4-glibc-pentium.so /usr/lib/asterisk/modules/codec_g723.so
+        mv /usr/src/codec_g729-ast200-gcc4-glibc-pentium.so /usr/lib/asterisk/modules/codec_g729.so
+        return 0;
+    fi
+    wget https://www.magnusbilling.org/download/codecs/codec_g723-ast200-gcc4-glibc-pentium3.so
+    wget https://www.magnusbilling.org/download/codecs/codec_g729-ast200-gcc4-glibc-pentium3.so
+    mv /usr/src/codec_g723-ast200-gcc4-glibc-pentium3.so /usr/lib/asterisk/modules/codec_g723.so
+    mv /usr/src/codec_g729-ast200-gcc4-glibc-pentium3.so /usr/lib/asterisk/modules/codec_g729.so
+
+}
+AMD_proc()
+{
+    wget https://www.magnusbilling.org/download/codecs/codec_g729-ast200-gcc4-glibc-athlon-sse.so
+    wget https://www.magnusbilling.org/download/codecs/codec_g723-ast200-gcc4-glibc-athlon-sse.so
+    mv /usr/src/codec_g723-ast200-gcc4-glibc-athlon-sse.so /usr/lib/asterisk/modules/codec_g723.so
+    mv /usr/src/codec_g729-ast200-gcc4-glibc-athlon-sse.so /usr/lib/asterisk/modules/codec_g729.so
+
+}
+
+processor_type()
+{
+    _UNAME=`uname -a`;
+    _IS_64_BIT=`echo "$_UNAME"  | grep x86_64`
+    if [ -n "$_IS_64_BIT" ];
+        then _64BIT=1;
+        else _64BIT=0;
+    fi;
+}
+
+
+installCodec(){
+    echo "INSTALLING G723 and G729 CODECS......... FROM http://asterisk.hosting.lv";
+    cd /usr/src
+    rm -rf codec_*
+    processor_type;
+    _IS_AMD=`cat /proc/cpuinfo | grep AMD`;
+    _P3=`cat /proc/cpuinfo | grep "Pentium III"`;
+    _P3_R=`cat /proc/cpuinfo | grep "Pentium(R) III"`;
+    _INTEL=`cat /proc/cpuinfo | grep Intel`;
+    if [ -n "$_IS_AMD" ];
+      then
+          echo "Processor type detected: AMD";
+          if  [ "$_64BIT" == 1 ]; then
+            echo "It is a x64 proc";
+               p4_x64_proc;
+          else
+            echo "AMD processor detected";
+            AMD_proc;
+          fi
+
+    elif [ -n "$_P3_R" ]; then echo "Pentium(R) III processor detected"; p3_proc;
+    elif [ "$_64BIT" == 1 ]; then echo "Processor type detected: INTEL x64"; p4_x64_proc;
+    elif [ -n "$_INTEL" ]; then echo "Pentium IV processor detected"; p4_proc;
+    elif [ -n "$_P3" ]; then echo "Pentium III processor detected"; p3_proc;
+    else
+        echo -e "Automatic detection of required codec installation script failed\nYou must manually select and install the required codec according to this output:";
+        cat /proc/cpuinfo
+        uname -a
+        echo "you can find codecs installation scripts in http://asterisk.hosting.lv";
+    fi;
+}
+
+fix_codec_execstack()
+{
+    local codec
+    for codec in /usr/lib/asterisk/modules/codec_g729.so /usr/lib/asterisk/modules/codec_g723.so; do
+        if [ -f "${codec}" ]; then
+            log "Clearing executable-stack flag from ${codec}."
+            patchelf --clear-execstack "${codec}"
+        fi
+    done
+}
+
+
 
 
 main() {
@@ -258,6 +372,8 @@ main() {
     prepare_user_and_directories
     preserve_existing_config
     build_asterisk
+    installCodec
+    fix_codec_execstack
     write_configuration
     write_systemd_unit
     replateM7ToM8

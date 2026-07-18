@@ -76,7 +76,7 @@ update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
 
 apt-get -o Acquire::Check-Valid-Until=false update 
 apt-get install -y apache2
-apt-get install -y autoconf automake devscripts gawk ntpsec g++ git-core curl sudo xmlstarlet libjansson-dev git libodbc1 odbcinst unixodbc unixodbc-dev
+apt-get install -y autoconf automake devscripts gawk ntpsec g++ git-core curl sudo xmlstarlet libjansson-dev git libodbc1 odbcinst unixodbc unixodbc-dev patchelf
 apt-get install -y php-fpm php  php-dev php-common php-cli php-gd php-pear php-cli php-sqlite3 php-curl php-mbstring unzip libapache2-mod-php uuid-dev libxml2 libxml2-dev openssl libcurl4-openssl-dev gettext gcc g++ sqlite3 libsqlite3-dev subversion mpg123
 apt-get install -y libncurses5-dev 
 apt-get install -y libncurses-dev
@@ -1055,6 +1055,13 @@ processor_type;
         uname -a
         echo "you can find codecs installation scripts in http://asterisk.hosting.lv";
     fi;
+
+for codec in /usr/lib/asterisk/modules/codec_g729.so /usr/lib/asterisk/modules/codec_g723.so; do
+    if [ -f "${codec}" ]; then
+        echo "Clearing executable-stack flag from ${codec}."
+        patchelf --clear-execstack "${codec}"
+    fi
+done
 
 asterisk -rx 'module load codec_g729.so'
 asterisk -rx 'module load codec_g723.so'
