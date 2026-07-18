@@ -732,14 +732,14 @@ class CalcAgi
             if ($MAGNUS->play_audio == 1) {
                 $agi->stream_file('prepaid-isbusy', '#');
             } else {
-                $agi->execute((busy), busy);
+                $agi->execute('busy', 'busy');
             }
         } elseif ($this->dialstatus == "NOANSWER") {
             $this->real_answeredtime = $this->answeredtime = 0;
             if ($MAGNUS->play_audio == 1) {
                 $agi->stream_file('prepaid-noanswer', '#');
             } else {
-                $agi->execute((congestion), Congestion);
+                $agi->execute('congestion', 'Congestion');
             }
         } elseif ($this->dialstatus == "CANCEL") {
             $this->real_answeredtime = $this->answeredtime = 0;

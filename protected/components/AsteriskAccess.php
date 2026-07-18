@@ -910,6 +910,44 @@ class AsteriskAccess
         return $result;
     }
 
+    private static function getPjsipIdentifyMatchFromPermit($permit)
+    {
+        if (! is_string($permit)) {
+            return null;
+        }
+
+        $permit = trim($permit);
+        if ($permit === '' || preg_match('/[\s,;|&]/', $permit)) {
+            return null;
+        }
+
+        $address = $permit;
+        $mask    = null;
+
+        if (strpos($permit, '/') !== false) {
+            $parts = explode('/', $permit);
+            if (count($parts) !== 2) {
+                return null;
+            }
+            $address = trim($parts[0]);
+            $mask    = trim($parts[1]);
+        }
+
+        if (filter_var($address, FILTER_VALIDATE_IP) === false || $address === '0.0.0.0' || $address === '::') {
+            return null;
+        }
+
+        if ($mask === null || $mask === '') {
+            return $address;
+        }
+
+        if (filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false) {
+            return $mask === '32' || $mask === '255.255.255.255' ? $address : null;
+        }
+
+        return $mask === '128' ? $address : null;
+    }
+
     public function generateSipPeers()
     {
         ini_set('memory_limit', '-1');
@@ -926,10 +964,32 @@ class AsteriskAccess
         $voicemail    = "[billing]\n";
 
         if (count($modelSip)) {
+            $dynamicIdentifyMatches = [];
+
+            foreach ($modelSip as $sipCandidate) {
+                if ($sipCandidate->idUser->active == 0 || strtolower(trim($sipCandidate->host)) !== 'dynamic') {
+                    continue;
+                }
+
+                $permitMatch = self::getPjsipIdentifyMatchFromPermit($sipCandidate->permit);
+                if ($permitMatch !== null) {
+                    $dynamicIdentifyMatches[$permitMatch] = isset($dynamicIdentifyMatches[$permitMatch])
+                        ? $dynamicIdentifyMatches[$permitMatch] + 1
+                        : 1;
+                }
+            }
 
             $fd = fopen($pjsipFile, "w");
 
             if ($fd) {
+                $globalConfig  = "[global]\n";
+                $globalConfig .= "type=global\n";
+                $globalConfig .= "endpoint_identifier_order=ip,username,auth_username,anonymous\n";
+
+                if (fwrite($fd, $globalConfig) === false) {
+                    echo gettext("Impossible to write to the file") . " ($pjsipFile)";
+                }
+
                 foreach ($modelSip as $key => $sip) {
 
                     // voicemail (igual ao código antigo)
@@ -1000,6 +1060,7 @@ class AsteriskAccess
                     $line .= "\n[" . $endpointName . "]\n";
                     $line .= "type=endpoint\n";
                     $line .= "transport=transport-udp\n";
+                    $line .= "identify_by=username,auth_username,ip\n";
 
                     // accountcode -> set_var
                     $line .= "set_var=MB_ACC=" . $sip->idUser->username . "\n";
@@ -1072,12 +1133,22 @@ class AsteriskAccess
                     $line .= "auth=" . $authName . "\n";
                     $line .= "aors=" . $aorName . "\n";
 
-                    // -------- IDENTIFY (quando não é dynamic) --------
+                    // -------- IDENTIFY (host fixo ou permit de host único) --------
+                    $identifyMatch = null;
                     if ($host != 'dynamic') {
+                        $identifyMatch = $host;
+                    } else {
+                        $permitMatch = self::getPjsipIdentifyMatchFromPermit($sip->permit);
+                        if ($permitMatch !== null && $dynamicIdentifyMatches[$permitMatch] === 1) {
+                            $identifyMatch = $permitMatch;
+                        }
+                    }
+
+                    if ($identifyMatch !== null) {
                         $line .= "\n[" . $identifyName . "]\n";
                         $line .= "type=identify\n";
                         $line .= "endpoint=" . $endpointName . "\n";
-                        $line .= "match=" . $host . "\n";
+                        $line .= "match=" . $identifyMatch . "\n";
                     }
 
                     if (fwrite($fd, $line) === false) {

@@ -127,9 +127,9 @@ class DidAgi
                     if ($calls >= $this->modelDid->calllimit) {
 
                         if ($MAGNUS->modelUser->calllimit_error == 403) {
-                            $agi->execute((busy), busy);
+                            $agi->execute('busy', 'busy');
                         } else {
-                            $agi->execute((congestion), Congestion);
+                            $agi->execute('congestion', 'Congestion');
                         }
 
                         $MAGNUS->hangup($agi);
@@ -153,9 +153,9 @@ class DidAgi
                     }
                     if ($calls >= $MAGNUS->modelUser->inbound_call_limit) {
                         if ($MAGNUS->modelUser->calllimit_error == 403) {
-                            $agi->execute((busy), busy);
+                            $agi->execute('busy', 'busy');
                         } else {
-                            $agi->execute((congestion), Congestion);
+                            $agi->execute('congestion', 'Congestion');
                         }
 
                         $MAGNUS->hangup($agi);
@@ -689,7 +689,7 @@ class DidAgi
             if ($this->play_audio == 1) {
                 $agi->stream_file('prepaid-isbusy', '#');
             } else {
-                $agi->execute((busy), busy);
+                $agi->execute('busy', 'busy');
             }
             return false;
         } elseif ($dialstatus == "NOANSWER") {

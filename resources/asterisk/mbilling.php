@@ -130,7 +130,7 @@
 
     //Hangup call that start with 1111, avoid fake call to Brasilian portability
     if (substr($MAGNUS->dnid, 0, 4) == 1111) {
-        $agi->execute((congestion), Congestion);
+        $agi->execute('congestion', 'Congestion');
         $MAGNUS->hangup($agi);
     }
 

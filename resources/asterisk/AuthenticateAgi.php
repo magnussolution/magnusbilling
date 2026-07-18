@@ -385,9 +385,9 @@ class AuthenticateAgi
             $agi->verbose("Send Congestion user call limit", 3);
 
             if ($MAGNUS->modelUser->calllimit_error == 403) {
-                $agi->execute((busy), busy);
+                $agi->execute('busy', 'busy');
             } else {
-                $agi->execute((congestion), Congestion);
+                $agi->execute('congestion', 'Congestion');
             }
 
             $MAGNUS->hangup($agi);
@@ -421,9 +421,9 @@ class AuthenticateAgi
                 $agi->verbose("Send Congestion user call limit", 3);
 
                 if ($MAGNUS->modelUser->calllimit_error == 403) {
-                    $agi->execute((busy), busy);
+                    $agi->execute('busy', 'busy');
                 } else {
-                    $agi->execute((congestion), Congestion);
+                    $agi->execute('congestion', 'Congestion');
                 }
 
                 $MAGNUS->hangup($agi);

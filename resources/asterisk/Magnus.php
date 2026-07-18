@@ -701,7 +701,7 @@ class Magnus
                     $agi->answer();
                     $agi->stream_file('prepaid-dest-unreachable', '#');
                 } else {
-                    $agi->execute((congestion), Congestion);
+                    $agi->execute('congestion', 'Congestion');
                 }
                 $this->hangup($agi);
             }
@@ -728,7 +728,7 @@ class Magnus
                     $agi->answer();
                     $agi->stream_file('prepaid-dest-unreachable', '#');
                 } else {
-                    $agi->execute((congestion), Congestion);
+                    $agi->execute('congestion', 'Congestion');
                 }
                 $this->hangup($agi);
             }
@@ -743,7 +743,7 @@ class Magnus
                         $agi->answer();
                         $agi->stream_file('prepaid-dest-unreachable', '#');
                     } else {
-                        $agi->execute((congestion), Congestion);
+                        $agi->execute('congestion', 'Congestion');
                     }
                     $this->hangup($agi);
                 }
@@ -756,7 +756,7 @@ class Magnus
                         $agi->answer();
                         $agi->stream_file('prepaid-dest-unreachable', '#');
                     } else {
-                        $agi->execute((congestion), Congestion);
+                        $agi->execute('congestion', 'Congestion');
                     }
                     $this->hangup($agi);
                 }
