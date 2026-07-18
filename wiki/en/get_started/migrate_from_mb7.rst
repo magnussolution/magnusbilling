@@ -79,10 +79,11 @@ installer to create:
    chmod 750 install_asterisk20.sh
    sudo ./install_asterisk20.sh --configure-firewall
 
-If ``/etc/asterisk`` already contains files, the script stops and asks for
-``--allow-existing``. With that option it archives the old directory under
-``/root/asterisk-config-before-mb8-*.tar.gz`` and creates a clean PJSIP
-configuration; it does not import the old ``sip.conf`` or ``chan_sip`` modules.
+If ``/etc/asterisk`` already contains files, the script automatically archives
+the old directory under ``/root/asterisk-config-before-mb8-*.tar.gz`` and
+creates a clean PJSIP configuration; it does not import the old ``sip.conf``
+or ``chan_sip`` modules. The old ``--allow-existing`` option is accepted for
+backward compatibility but is no longer required.
 For the normal clean installation, running ``script/install.sh`` remains the
 shortest path because it installs the web application and Asterisk together.
 
