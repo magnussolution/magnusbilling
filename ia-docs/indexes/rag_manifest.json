@@ -9,6 +9,11 @@
   ],
   "documents": [
     {
+      "doc_id": "MB-RAG-PLAYBOOK-AGENT-LEARNINGS",
+      "path": "ia-docs/playbooks/agent_learnings.md",
+      "kind": "playbook"
+    },
+    {
       "doc_id": "MB-RAG-PLAYBOOK-ANSWER-EXAMPLES",
       "path": "ia-docs/playbooks/answer_examples.md",
       "kind": "playbook"

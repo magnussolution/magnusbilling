@@ -391,6 +391,43 @@ def split_text(text: str, target: int = 800, min_size: int = 260) -> list[str]:
     return merged
 
 
+def strip_markdown_frontmatter(text: str) -> str:
+    if not text.startswith("---\n"):
+        return text
+    parts = text.split("\n---\n", 1)
+    return parts[1] if len(parts) == 2 else text
+
+
+def build_curated_chunks(start_index: int) -> list[dict]:
+    chunks: list[dict] = []
+    counter = start_index
+    for kind in ["playbooks", "domains", "sources"]:
+        folder = IA_DOCS / kind
+        for md_file in sorted(folder.glob("*.md")):
+            doc_id = read_doc_id(md_file)
+            if not doc_id:
+                continue
+            raw = md_file.read_text(encoding="utf-8", errors="ignore")
+            text = clean_text(strip_markdown_frontmatter(raw))
+            if is_low_quality_chunk(text):
+                continue
+            for idx, part in enumerate(split_text(text, target=900, min_size=220), start=1):
+                if is_low_quality_chunk(part):
+                    continue
+                chunks.append(
+                    {
+                        "chunk_id": f"MB-CHUNK-C{counter:04d}",
+                        "doc_id": doc_id,
+                        "title": f"{md_file.stem} / curated segment {idx}",
+                        "text": part,
+                        "tags": ["curated", kind, md_file.stem.replace("_", "-")],
+                        "source_file": md_file.relative_to(ROOT).as_posix(),
+                    }
+                )
+                counter += 1
+    return deduplicate_chunks(chunks)
+
+
 def normalize_for_dedup(text: str) -> str:
     normalized = text.lower()
     normalized = re.sub(r"[^a-z0-9\s]", " ", normalized)
@@ -425,6 +462,7 @@ def score_chunk_priority(chunk: dict) -> tuple[float, str]:
     text = chunk.get("text", "")
     is_faq = "video-logic" in tags or "faq" in tags
     is_seed = str(chunk.get("chunk_id", "")).startswith("MB-CHUNK-00")
+    is_curated = str(chunk.get("chunk_id", "")).startswith("MB-CHUNK-C")
     is_transcript = str(chunk.get("chunk_id", "")).startswith("MB-CHUNK-T")
     is_wiki = str(chunk.get("chunk_id", "")).startswith("MB-CHUNK-W")
 
@@ -433,6 +471,9 @@ def score_chunk_priority(chunk: dict) -> tuple[float, str]:
         tier = "faq"
     elif is_seed:
         score = 0.9
+        tier = "core"
+    elif is_curated:
+        score = 0.88
         tier = "core"
     elif is_transcript:
         score = 0.62
@@ -999,10 +1040,11 @@ def main() -> None:
     write_json(INDEXES / "rag_manifest.json", manifest)
 
     seed = base_chunks()
+    curated = build_curated_chunks(start_index=1)
     transcript = build_transcript_chunks(start_index=1)
     video_logic = build_video_logic_chunks(start_index=1)
     user_wiki = build_user_wiki_chunks(start_index=1)
-    all_chunks = deduplicate_chunks(seed + transcript + video_logic + user_wiki)
+    all_chunks = deduplicate_chunks(seed + curated + transcript + video_logic + user_wiki)
     all_chunks = enrich_chunks_for_ranking(all_chunks)
     write_jsonl(INDEXES / "rag_chunks.jsonl", all_chunks)
 
@@ -1015,6 +1057,7 @@ def main() -> None:
 
     print(f"Manifest documents: {len(manifest['documents'])}")
     print(f"Seed chunks: {len(seed)}")
+    print(f"Curated chunks: {len(curated)}")
     print(f"Transcript chunks: {len(transcript)}")
     print(f"Video logic QA chunks: {len(video_logic)}")
     print(f"User wiki chunks: {len(user_wiki)}")

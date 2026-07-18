@@ -15,6 +15,7 @@ Welcome to MagnusBilling 7 wiki.
     :maxdepth: 2
 
     intro
+    lifecycle.rst
 
 
 .. toctree::

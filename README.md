@@ -1,13 +1,18 @@
-###############
-MagnusBilling 7 
-###############
-
-Do you like this software? Star the project and become a [stargazer](https://github.com/magnussolution/magnusbilling7/stargazers).
-
-
 # MagnusBilling 7
 
-Voip sistem to Asterisk.
+> [!WARNING]
+> MagnusBilling 7 entered maintenance mode on July 18, 2026. No new features
+> will be added. Critical bug, security, and compatibility fixes continue
+> through December 31, 2026. Regular maintenance ends on January 1, 2027.
+> New deployments and new feature development must use
+> [MagnusBilling 8](https://github.com/magnussolution/magnusbilling8).
+
+MagnusBilling 7 is the legacy Asterisk 13 and `chan_sip` release. Read the
+[lifecycle policy](LIFECYCLE.md) and plan a
+[side-by-side migration to MagnusBilling 8](https://github.com/magnussolution/magnusbilling8/blob/source/wiki/en/get_started/migrate_from_mb7.rst).
+
+Do you like this software? Star the project and become a
+[stargazer](https://github.com/magnussolution/magnusbilling7/stargazers).
 
 ## Getting Started
 
@@ -25,8 +30,14 @@ MagnusBilling 7 supports only:
 
 Debian 13 is not supported by MagnusBilling 7. Use MagnusBilling 8 on Debian 13.
 
+CentOS 7 is end-of-life and is not supported. Existing CentOS 7 installations
+must be migrated to a new Debian server; an in-place upgrade is not supported.
 
 ### Installing
+
+New installations are not recommended. MagnusBilling 7 remains available only
+for legacy maintenance and controlled recovery work through December 31, 2026.
+
 ```
 
 curl -O https://raw.githubusercontent.com/magnussolution/magnusbilling7/source/script/install.sh
@@ -39,7 +50,7 @@ bash install.sh
 
 * [YiiFramework](http://www.yiiframework.com) - The BackEnd framework used
 * [EXTJS6](https://www.sencha.com/products/extjs) - The FrontEnd framework used
-* [ASTERISK](http://www.asterisk.org) - Telephone freamwork
+* [Asterisk](https://www.asterisk.org) - Telephony framework
 
 ## Contributing
 
@@ -47,7 +58,7 @@ Please read [CONTRIBUTING.md](https://github.com/magnussolution/magnusbilling7/b
 
 ## Versioning
 
-We are in MagnusBilling version 7.x.x 
+MagnusBilling uses the 7.x version series and is in maintenance mode.
 
 ## Authors
 

@@ -1,20 +1,17 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
+name: Feature request moved to MagnusBilling 8
+about: New features are accepted only for MagnusBilling 8
 title: ''
 labels: ''
 assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+MagnusBilling 7 is in maintenance mode and does not accept new features.
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+Please submit the request to MagnusBilling 8:
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+https://github.com/magnussolution/magnusbilling8/issues
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+MagnusBilling 7 receives critical bug, security, and compatibility fixes only
+through December 31, 2026. Regular maintenance ends on January 1, 2027.

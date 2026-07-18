@@ -48,10 +48,10 @@ Ext.define('MBilling.view.refill.Controller', {
             me.store.on({
                 scope: me,
                 beforeload: function () {
-                    btnChart.el && btnChart.disable();
+                    btnChart && btnChart.el && btnChart.disable();
                 },
                 load: function (store) {
-                    btnChart.el && btnChart.enable();
+                    btnChart && btnChart.el && btnChart.enable();
                     me.onSetTotal();
                 }
             });
@@ -62,6 +62,9 @@ Ext.define('MBilling.view.refill.Controller', {
                     me.onSetTotal();
                 }
             });
+        }
+        if (me.list.autoLoadList && !me.store.isLoading() && !me.store.loadCount) {
+            me.store.load();
         }
     },
     onChart: function () {

@@ -5,6 +5,7 @@ email, or any other method with the owners of this repository before making a ch
 
 Please note we have a code of conduct, please follow it in all your interactions with the project.
 
+All new or updated user-facing documentation must be written in English.
 
 ## Sencha EXTJS build
 1. Install Sencha CMD 6.2

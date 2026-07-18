@@ -17,6 +17,24 @@ echo
 
 sleep 3
 
+echo "====================================================================="
+echo "MAGNUSBILLING 7 MAINTENANCE NOTICE"
+echo
+echo "MagnusBilling 7 receives no new features."
+echo "Critical fixes continue through December 31, 2026."
+echo "Regular maintenance ends on January 1, 2027."
+echo "New installations should use MagnusBilling 8 on a new Debian server."
+echo "====================================================================="
+echo
+
+if [[ "${MAGNUSBILLING7_ACCEPT_MAINTENANCE:-}" != "1" ]]; then
+  read -r -p "Type I UNDERSTAND to continue this legacy installation: " maintenance_confirmation
+  if [[ "${maintenance_confirmation}" != "I UNDERSTAND" ]]; then
+    echo "Installation cancelled."
+    exit 1
+  fi
+fi
+
 
 if [[ -f /var/www/html/mbilling/index.php ]]; then
   echo "This server already has MagnusBilling installed";
