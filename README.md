@@ -1,13 +1,17 @@
-#####################
-MagnusBilling 8 BETA
-#####################
-
-Do you like this software? Star the project and become a [stargazer](https://github.com/magnussolution/magnusbilling8/stargazers).
-
-
 # MagnusBilling 8
 
-Voip sistem to Asterisk.
+MagnusBilling 8 is the actively developed MagnusBilling release for Asterisk
+20 and PJSIP.
+
+> [!IMPORTANT]
+> MagnusBilling 7 entered maintenance mode on July 18, 2026. It receives
+> critical bug, security, and compatibility fixes through December 31, 2026,
+> but no new features. See the
+> [MagnusBilling 7 lifecycle policy](wiki/en/lifecycle.rst) and the
+> [MagnusBilling 7 to 8 migration guide](wiki/en/get_started/migrate_from_mb7.rst).
+
+Do you like this software? Star the project and become a
+[stargazer](https://github.com/magnussolution/magnusbilling8/stargazers).
 
 ## Getting Started
 
@@ -18,7 +22,11 @@ Video:
 
 ### Prerequisites
 
-Linux Debian.
+Use a new server with a minimal Debian installation. Do not install
+MagnusBilling 8 over an existing MagnusBilling 7 server.
+
+Ubuntu support is planned but is not currently part of the supported
+installation path.
 
 
 ### Installing
@@ -29,12 +37,16 @@ bash install.sh
 
 ```
 
+Existing MagnusBilling 7 installations must follow the
+[migration guide](wiki/en/get_started/migrate_from_mb7.rst). This is a
+side-by-side migration to a new server, not an in-place upgrade.
+
 
 ## Built With
 
 * [YiiFramework](http://www.yiiframework.com) - The BackEnd framework used
 * [EXTJS6](https://www.sencha.com/products/extjs) - The FrontEnd framework used
-* [ASTERISK](http://www.asterisk.org) - Telephone freamwork
+* [Asterisk](https://www.asterisk.org) - Telephony framework
 
 ## Contributing
 
@@ -42,7 +54,7 @@ Please read [CONTRIBUTING.md](https://github.com/magnussolution/magnusbilling8/b
 
 ## Versioning
 
-We are in MagnusBilling version 8.x.x 
+MagnusBilling uses the 8.x version series.
 
 ## Authors
 

@@ -26,7 +26,6 @@ class UpdateMysqlCommand extends CConsoleCommand
 
     public function run($args)
     {
-
         $this->config = LoadConfig::getConfig();
 
         if (file_exists('/var/spool/cron/root')) {
@@ -35,36 +34,50 @@ class UpdateMysqlCommand extends CConsoleCommand
             $CRONPATH = '/var/spool/cron/crontabs/root';
         }
 
-        $version  = $this->config['global']['version'];
-        $language = $this->config['global']['base_language'];
+        if (empty($this->config['global']['version'])) {
+            throw new RuntimeException('Unable to determine the current MagnusBilling database version.');
+        }
 
-        echo $version;
+        $version = trim($this->config['global']['version']);
+        $this->logMessage('Current database version: ' . $version);
+
+        if (! preg_match('/^(7|8)(\.|$)/', $version)) {
+            throw new RuntimeException(
+                'Unsupported source database version: ' . $version . '. Expected MagnusBilling 7 or 8.'
+            );
+        }
 
         if (preg_match('/^7/', $version)) {
-
-            $sql = "UPDATE pkg_trunk SET providertech = 'pjsip' WHERE providertech = 'sip' ";
-            $this->executeDB($sql);
-
+            $this->logMessage('Migrating MagnusBilling 7 trunk technology values to PJSIP.');
+            $this->executeDB("UPDATE pkg_trunk SET providertech = 'pjsip' WHERE providertech = 'sip'");
+            $this->migrateLegacySipReferences();
             $version = '8.0.0.0';
-            $sql     = "UPDATE pkg_configuration SET config_value = '" . $version . "'WHERE config_key = 'version'";
-            $this->executeDB($sql);
+            $this->update($version);
         }
 
         if ($version == '8.0.0.0') {
-
-            $sql = "ALTER TABLE `pkg_sip` ADD `max_contacts` INT(11) NOT NULL DEFAULT '1' AFTER `cnl`; ";
-            $this->executeDB($sql);
+            $this->logMessage('Applying database migration 8.0.0.0 -> 8.0.0.1.');
+            if (! $this->columnExists('pkg_sip', 'max_contacts')) {
+                $this->executeDB(
+                    "ALTER TABLE `pkg_sip` ADD `max_contacts` INT(11) NOT NULL DEFAULT '1' AFTER `cnl`"
+                );
+            }
 
             $version = '8.0.0.1';
-            $sql     = "UPDATE pkg_configuration SET config_value = '" . $version . "'WHERE config_key = 'version'";
-            $this->executeDB($sql);
+            $this->update($version);
         }
 
         //2026-06-24
         if ($version == '8.0.0.1') {
-            $sql = "";
-            $sql = "UPDATE pkg_configuration SET `config_title` = 'hash', `config_key` = 'hash', `config_description` = 'hash' WHERE id = 4;";
-            $this->executeDB($sql);
+            $this->logMessage('Applying database migration 8.0.0.1 -> 8.0.0.2.');
+            if (! $this->rowExists('pkg_configuration', 'id', 4)) {
+                throw new RuntimeException('Expected pkg_configuration row id=4 was not found.');
+            }
+            $this->executeDB(
+                "UPDATE pkg_configuration
+                 SET `config_title` = 'hash', `config_key` = 'hash', `config_description` = 'hash'
+                 WHERE id = 4"
+            );
 
             $version = '8.0.0.2';
             $this->update($version);
@@ -72,6 +85,7 @@ class UpdateMysqlCommand extends CConsoleCommand
 
         //2026-07-13
         if ($version == '8.0.0.2') {
+            $this->logMessage('Applying database migration 8.0.0.2 -> 8.0.0.3.');
             $this->executeDB(
                 'ALTER TABLE `pkg_configuration` MODIFY `config_value` VARCHAR(400) NULL DEFAULT NULL'
             );
@@ -131,6 +145,7 @@ class UpdateMysqlCommand extends CConsoleCommand
 
         //2026-07-13
         if ($version == '8.0.0.3') {
+            $this->logMessage('Applying database migration 8.0.0.3 -> 8.0.0.4.');
             if (! $this->columnExists('pkg_sms', 'channel')) {
                 $this->executeDB(
                     "ALTER TABLE `pkg_sms` ADD `channel` VARCHAR(20) NOT NULL DEFAULT 'sms' AFTER `status`"
@@ -187,6 +202,8 @@ class UpdateMysqlCommand extends CConsoleCommand
             $version = '8.0.0.4';
             $this->update($version);
         }
+
+        $this->logMessage('Database migration completed at version ' . $version . '.');
     }
 
     private function columnExists($table, $column)
@@ -211,18 +228,102 @@ class UpdateMysqlCommand extends CConsoleCommand
         return (int) $command->queryScalar() > 0;
     }
 
+    private function rowExists($table, $column, $value)
+    {
+        $command = Yii::app()->db->createCommand(
+            'SELECT COUNT(*) FROM `' . $table . '` WHERE `' . $column . '` = :value'
+        );
+        $command->bindValue(':value', $value, PDO::PARAM_INT);
+        return (int) $command->queryScalar() > 0;
+    }
+
+    /**
+     * Convert only legacy technology tokens. SIP usernames, table names, and
+     * arbitrary descriptions must remain unchanged.
+     */
+    private function migrateLegacySipReferences()
+    {
+        $references = [
+            ['pkg_did_destination', 'destination', ['SIP/', 'sip/', 'Sip/']],
+            ['pkg_campaign', 'forward_number', ['SIP|', 'sip|', 'Sip|', 'SIP/', 'sip/', 'Sip/']],
+        ];
+
+        foreach ($references as $reference) {
+            [$table, $column, $tokens] = $reference;
+            $expression = '`' . $column . '`';
+            foreach ($tokens as $token) {
+                $replacement = strpos($token, '|') !== false
+                    ? 'pjsip|'
+                    : (substr($token, -1) === ':' ? 'pjsip:' : 'PJSIP/');
+                $expression = 'REPLACE(' . $expression . ', ' .
+                    Yii::app()->db->quoteValue($token) . ', ' .
+                    Yii::app()->db->quoteValue($replacement) . ')';
+            }
+
+            $affected = $this->executeDB(
+                'UPDATE `' . $table . '` SET `' . $column . '` = ' . $expression .
+                ' WHERE `' . $column . '` IS NOT NULL AND `' . $column . '` <> ' . $expression
+            );
+            $this->logMessage('Converted ' . (int) $affected . ' legacy SIP reference(s) in ' . $table . '.' . $column . '.');
+        }
+
+        // pkg_sip is still the MBilling table name in version 8. It has no
+        // pkg_sip technology column; sip_config is the only free-text field
+        // where a legacy SIP dial/URI token may need conversion.
+        if ($this->columnExists('pkg_sip', 'sip_config')) {
+            $tokens = ['SIP/', 'sip/', 'Sip/'];
+            $expression = '`sip_config`';
+            foreach ($tokens as $token) {
+                $replacement = substr($token, -1) === ':' ? 'pjsip:' : 'PJSIP/';
+                $expression = 'REPLACE(' . $expression . ', ' .
+                    Yii::app()->db->quoteValue($token) . ', ' .
+                    Yii::app()->db->quoteValue($replacement) . ')';
+            }
+
+            $affected = $this->executeDB(
+                'UPDATE `pkg_sip` SET `sip_config` = ' . $expression .
+                ' WHERE `sip_config` IS NOT NULL AND `sip_config` <> ' . $expression
+            );
+            $this->logMessage('Converted ' . (int) $affected . ' legacy SIP reference(s) in pkg_sip.sip_config.');
+        }
+    }
+
     public function executeDB($sql)
     {
         try {
-            Yii::app()->db->createCommand($sql)->execute();
+            return Yii::app()->db->createCommand($sql)->execute();
         } catch (Exception $e) {
-            //print_r($e);
+            $this->logMessage('Database migration failed: ' . $e->getMessage(), true);
+            throw $e;
         }
     }
 
     public function update($version = '')
     {
-        $sql = "UPDATE pkg_configuration SET config_value = '" . $version . "' WHERE config_key = 'version' ";
-        $this->executeDB($sql);
+        if (! preg_match('/^\d+\.\d+\.\d+\.\d+$/', $version)) {
+            throw new InvalidArgumentException('Invalid MagnusBilling database version: ' . $version);
+        }
+
+        $command = Yii::app()->db->createCommand(
+            "UPDATE pkg_configuration SET config_value = :version WHERE config_key = 'version'"
+        );
+        $command->bindValue(':version', $version, PDO::PARAM_STR);
+        $command->execute();
+
+        $storedVersion = Yii::app()->db->createCommand(
+            "SELECT config_value FROM pkg_configuration WHERE config_key = 'version' LIMIT 1"
+        )->queryScalar();
+
+        if ($storedVersion !== $version) {
+            throw new RuntimeException('Unable to persist database version ' . $version . '.');
+        }
+
+        $this->logMessage('Database version updated to ' . $version . '.');
+    }
+
+    private function logMessage($message, $error = false)
+    {
+        $stream = $error ? STDERR : STDOUT;
+        fwrite($stream, '[UpdateMysql] ' . $message . PHP_EOL);
     }
 }

@@ -13,6 +13,12 @@ To update run the following command.
 
  /var/www/html/mbilling/protected/commands/update.sh
 
+.. warning::
+
+   This command updates an existing MagnusBilling 8 installation. It does not
+   convert a MagnusBilling 7 server into MagnusBilling 8. Version 7 installations
+   must use the :doc:`side-by-side migration procedure <migrate_from_mb7>`.
+
 
 Post update checks
 ==================

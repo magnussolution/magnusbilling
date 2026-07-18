@@ -33,16 +33,9 @@ get_linux_distribution ()
         MYSQL_CONFIG="/etc/mysql/mariadb.conf.d/50-server.cnf"
         SERVICE='apache2'
         APACHE_USER="www-data"
-      elif [ -f /etc/redhat-release ]; then
-        DIST="CENTOS"
-        HTTP_DIR="/etc/httpd/"
-        HTTP_CONFIG=${HTTP_DIR}"conf/httpd.conf"
-        MYSQL_CONFIG="/etc/my.cnf"
-        SERVICE='httpd'
-        APACHE_USER="apache"
     else
         DIST="OTHER"
-        echo 'Installation does not support your distribution'
+        echo 'MagnusBilling 8 currently supports Debian only.'
         exit 1
     fi
 }
@@ -78,7 +71,6 @@ find /etc/asterisk -name "*magnus*" -exec chmod 660 {} \;
 find /etc/asterisk -name "*mbilling*" -exec chown asterisk:asterisk {} \;
 find /etc/asterisk -name "*mbilling*" -exec chmod 660 {} \;
 
-chmod 600 /root/passwordMysql.log
 mkdir -p /var/spool/asterisk/outgoing/.magnusbilling-tmp
 chown root:asterisk /var/spool/asterisk/outgoing
 chmod 775 /var/spool/asterisk/outgoing
@@ -111,7 +103,10 @@ chmod 500 /var/www/html/mbilling/resources/asterisk/mbilling.php
 chmod +x /var/www/html/mbilling/protected/commands/*.sh
 
 ##update database
-php /var/www/html/mbilling/cron.php UpdateMysql
+if ! php /var/www/html/mbilling/cron.php UpdateMysql; then
+    echo "The database migration failed. The MagnusBilling update was aborted."
+    exit 1
+fi
 
 if [[ -e /var/www/html/mbilling/protected/commands/update3.sh ]]; then
 	/var/www/html/mbilling/protected/commands/update3.sh

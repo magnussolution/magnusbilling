@@ -22,6 +22,7 @@ Welcome to MagnusBilling 8 wiki.
    :maxdepth: 2
 
    get_started/quick_install.rst
+   get_started/migrate_from_mb7.rst
    get_started/interface.rst
    get_started/backup.rst
    get_started/update.rst
@@ -33,6 +34,7 @@ Welcome to MagnusBilling 8 wiki.
    :maxdepth: 1
 
    whats_new_mb8.rst
+   lifecycle.rst
 
 .. toctree::
    :caption: Paid modules

@@ -4,7 +4,16 @@ Backup
 
 It`s always a good idea to have a backup.
 
-The backup don`t saves the rejected calls table, since normally it`s enourmous.
+The standard backup intentionally excludes data from several large historical
+tables. This keeps routine backups manageable, but it also means that a standard
+backup is not a complete migration backup.
+
+.. warning::
+
+   Do not use only the Backup menu or the ``Backup`` console command when
+   migrating from MagnusBilling 7 to MagnusBilling 8. Follow the
+   :doc:`MagnusBilling 7 migration guide <migrate_from_mb7>` and create a full
+   database dump if historical CDR data must be preserved.
 
 Manual Backup
 ^^^^^^^^^^^^^
@@ -37,7 +46,6 @@ Backup Menu
 ^^^^^^^^^^^
 
 It`s possible to view, download and delete backups via the Backup menu as well. The menu is located in the settings.
-
 
 
 
