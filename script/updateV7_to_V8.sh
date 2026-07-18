@@ -89,10 +89,13 @@ install_dependencies() {
 }
 
 prepare_user_and_directories() {
-    if ! id -u "${ASTERISK_USER}" >/dev/null 2>&1; then
+    if ! getent passwd "${ASTERISK_USER}" >/dev/null 2>&1; then
         useradd --system --home-dir /var/lib/asterisk --shell /usr/sbin/nologin \
             --comment "Asterisk PBX" "${ASTERISK_USER}"
+    else
+        log "Using existing ${ASTERISK_USER} system user."
     fi
+    usermod --home /var/lib/asterisk --shell /usr/sbin/nologin "${ASTERISK_USER}"
     install -d -o "${ASTERISK_USER}" -g "${ASTERISK_USER}" \
         /var/lib/asterisk /var/log/asterisk /var/spool/asterisk /var/run/asterisk
     install -d -o root -g "${ASTERISK_USER}" -m 0750 "${ASTERISK_ETC}"
@@ -118,9 +121,7 @@ build_asterisk() {
     tar xzvf asterisk-20.9.2.tar.gz
     rm -rf asterisk-20.9.2.tar.gz
     cd asterisk-*
-    useradd -r -d /var/lib/asterisk -s /usr/sbin/nologin -c 'Asterisk PBX' asterisk
-    mkdir /var/run/asterisk
-    mkdir /var/log/asterisk
+    install -d /var/run/asterisk /var/log/asterisk
     chown -R asterisk:asterisk /var/run/asterisk
     chown -R asterisk:asterisk /var/log/asterisk
     make clean
