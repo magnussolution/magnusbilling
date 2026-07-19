@@ -27,18 +27,57 @@ if [[ -f /var/www/html/mbilling/index.php ]]; then
   exit;
 fi
 get_linux_distribution ()
-{ 
-    if [ -f /etc/debian_version ]; then
-        DIST="DEBIAN"
-        HTTP_DIR="/etc/apache2/"
-        HTTP_CONFIG=${HTTP_DIR}"apache2.conf"
-        MYSQL_CONFIG="/etc/mysql/mariadb.conf.d/50-server.cnf"
-        APACHE_USER="www-data"
-    else
-        DIST="OTHER"
-        echo 'Installation does not support your distribution'
+{
+    if [ ! -r /etc/os-release ]; then
+        echo "Unable to identify the Linux distribution: /etc/os-release not found."
         exit 1
     fi
+
+    # shellcheck disable=SC1091
+    . /etc/os-release
+
+    case "${ID:-}" in
+        debian)
+            DEBIAN_MAJOR="${VERSION_ID%%.*}"
+            case "${DEBIAN_MAJOR}" in
+                11|12)
+                    ODBC_RUNTIME_PACKAGE="libodbc1"
+                    ;;
+                13)
+                    ODBC_RUNTIME_PACKAGE="libodbc2"
+                    ;;
+                *)
+                    echo "Unsupported Debian version: ${VERSION_ID:-unknown}."
+                    echo "Supported Debian versions: 11, 12 and 13."
+                    exit 1
+                    ;;
+            esac
+            DIST="DEBIAN"
+            ;;
+        ubuntu)
+            # Ubuntu support is handled separately. Keep the existing path
+            # functional while using the ODBC package name from newer releases.
+            DIST="UBUNTU"
+            UBUNTU_MAJOR="${VERSION_ID%%.*}"
+            if [ "${UBUNTU_MAJOR:-0}" -ge 24 ]; then
+                ODBC_RUNTIME_PACKAGE="libodbc2"
+            else
+                ODBC_RUNTIME_PACKAGE="libodbc1"
+            fi
+            ;;
+        *)
+            echo "Installation does not support distribution: ${ID:-unknown}."
+            exit 1
+            ;;
+    esac
+
+    HTTP_DIR="/etc/apache2/"
+    HTTP_CONFIG="${HTTP_DIR}apache2.conf"
+    MYSQL_CONFIG="/etc/mysql/mariadb.conf.d/60-magnusbilling.cnf"
+    APACHE_USER="www-data"
+
+    echo "Detected ${PRETTY_NAME:-${ID}}."
+    echo "Using ODBC runtime package: ${ODBC_RUNTIME_PACKAGE}."
 }
 
 
@@ -48,10 +87,13 @@ get_linux_distribution
 startup_services() 
 {
     # Startup Services
-    if [ ${DIST} = "DEBIAN" ]; then
-        systemctl restart mariadb
-        systemctl restart apache2
-        systemctl restart asterisk   
+    if [ "${DIST}" = "DEBIAN" ] || [ "${DIST}" = "UBUNTU" ]; then
+        for service in mariadb apache2 asterisk; do
+            if ! systemctl restart "${service}"; then
+                echo "Unable to restart required service: ${service}."
+                exit 1
+            fi
+        done
     fi
 }
 
@@ -64,34 +106,48 @@ genpasswd()
     tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${length} | xargs
 }
 
+apt_install()
+{
+    if ! DEBIAN_FRONTEND=noninteractive apt-get install -y "$@"; then
+        echo "Unable to install required packages: $*"
+        exit 1
+    fi
+}
 
 
-apt-get update --allow-releaseinfo-change
-apt-get install -y locales
+if ! apt-get update --allow-releaseinfo-change; then
+    echo "Unable to update the APT package lists."
+    exit 1
+fi
+
+apt_install locales
 sed -i 's/^# *en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen || echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 locale-gen
 echo 'LANG=en_US.UTF-8' > /etc/default/locale
 echo 'LC_ALL=en_US.UTF-8' >> /etc/default/locale
 update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
 
-apt-get -o Acquire::Check-Valid-Until=false update 
-apt-get install -y apache2
-apt-get install -y autoconf automake devscripts gawk ntpsec g++ git-core curl sudo xmlstarlet libjansson-dev git libodbc1 odbcinst unixodbc unixodbc-dev patchelf
-apt-get install -y php-fpm php  php-dev php-common php-cli php-gd php-pear php-cli php-sqlite3 php-curl php-mbstring unzip libapache2-mod-php uuid-dev libxml2 libxml2-dev openssl libcurl4-openssl-dev gettext gcc g++ sqlite3 libsqlite3-dev subversion mpg123
-apt-get install -y libncurses5-dev 
-apt-get install -y libncurses-dev
-apt-get install -y mariadb-server php-mysql
-apt-get install -y unzip git libcurl4-openssl-dev htop sngrep firewalld fail2ban cron
-apt-get install -y rsyslog
-apt-get install -y whiptail
-apt-get install -y libblocksruntime-dev
+if ! apt-get -o Acquire::Check-Valid-Until=false update; then
+    echo "Unable to refresh the APT package lists."
+    exit 1
+fi
 
-PHP_INI=$(php -i | grep /.+/php.ini -oE)
+apt_install apache2
+apt_install autoconf automake devscripts gawk ntpsec g++ curl wget ca-certificates sudo xmlstarlet libjansson-dev git "${ODBC_RUNTIME_PACKAGE}" odbcinst unixodbc unixodbc-dev patchelf
+apt_install php-fpm php php-dev php-common php-cli php-gd php-pear php-sqlite3 php-curl php-mbstring php-xml php-mysql libapache2-mod-php
+apt_install unzip uuid-dev libxml2 libxml2-dev openssl libcurl4-openssl-dev gettext gcc sqlite3 libsqlite3-dev subversion mpg123
+apt_install libncurses-dev mariadb-server htop sngrep firewalld fail2ban cron rsyslog whiptail libblocksruntime-dev iproute2 iptables
 
 mkdir -p /var/www/html/mbilling
 cd /var/www/html/mbilling
-wget --no-check-certificate  https://magnusbilling.org/download/MagnusBilling8-current.tar.gz
-tar xzf MagnusBilling8-current.tar.gz
+if ! wget -O MagnusBilling8-current.tar.gz https://magnusbilling.org/download/MagnusBilling8-current.tar.gz; then
+    echo "Unable to download MagnusBilling."
+    exit 1
+fi
+if ! tar xzf MagnusBilling8-current.tar.gz; then
+    echo "Unable to extract MagnusBilling."
+    exit 1
+fi
 
 
 echo
@@ -106,25 +162,35 @@ if [ -d "/etc/asterisk" ]; then
   cp -a /etc/asterisk/. /etc/asterisk2/
 fi
 
-mv /var/www/html/mbilling/script/asterisk-20.9.2.tar.gz /usr/src/
-tar xzvf asterisk-20.9.2.tar.gz
-rm -rf asterisk-20.9.2.tar.gz
+if ! mv /var/www/html/mbilling/script/asterisk-20.9.2.tar.gz /usr/src/; then
+    echo "Asterisk source archive not found."
+    exit 1
+fi
+if ! tar xzf asterisk-20.9.2.tar.gz; then
+    echo "Unable to extract the Asterisk source archive."
+    exit 1
+fi
+rm -f asterisk-20.9.2.tar.gz
 cd asterisk-*
-useradd -r -d /var/lib/asterisk -s /usr/sbin/nologin -c 'Asterisk PBX' asterisk
-mkdir /var/run/asterisk
-mkdir /var/log/asterisk
+if ! id -u asterisk >/dev/null 2>&1; then
+  useradd -r -d /var/lib/asterisk -s /usr/sbin/nologin -c 'Asterisk PBX' asterisk
+fi
+install -d -o asterisk -g asterisk -m 0755 /var/run/asterisk /var/log/asterisk
 chown -R asterisk:asterisk /var/run/asterisk
 chown -R asterisk:asterisk /var/log/asterisk
-make clean
-contrib/scripts/install_prereq install
-./configure --with-jansson-bundled --with-pjproject-bundled
-make menuselect.makeopts
-menuselect/menuselect --enable res_config_mysql  menuselect.makeopts
-make
-make install
-make samples
-make config
-ldconfig
+if ! make clean \
+    || ! contrib/scripts/install_prereq install \
+    || ! ./configure --with-jansson-bundled --with-pjproject-bundled \
+    || ! make menuselect.makeopts \
+    || ! menuselect/menuselect --enable res_config_mysql menuselect.makeopts \
+    || ! make \
+    || ! make install \
+    || ! make samples \
+    || ! make config \
+    || ! ldconfig; then
+    echo "Asterisk compilation or installation failed."
+    exit 1
+fi
 
  echo '
 noload => chan_sip.so
@@ -165,22 +231,30 @@ AddType application/octet-stream .csv
 <Files "*.log">
   deny from all
 </Files>
-' >> ${HTTP_CONFIG}
+' >> "${HTTP_CONFIG}"
 
 
-rm -rf ${PHP_INI}_old
-cp -rf ${PHP_INI} ${PHP_INI}_old
+PHP_VERSION=$(php -r 'echo PHP_MAJOR_VERSION, ".", PHP_MINOR_VERSION;')
+PHP_TIMEZONE=$(timedatectl show --property=Timezone --value 2>/dev/null)
+[ -n "${PHP_TIMEZONE}" ] || PHP_TIMEZONE="UTC"
+PHP_MAGNUS_INI="/etc/php/${PHP_VERSION}/mods-available/magnusbilling.ini"
 
-sed -i "s/upload_max_filesize = 2M/upload_max_filesize = 3M /" ${PHP_INI}
-sed -i "s/post_max_size = 8M/post_max_size = 20M/" ${PHP_INI}
-sed -i "s/max_execution_time = 30/max_execution_time = 90/" ${PHP_INI}
-sed -i "s/max_input_time = 60/max_input_time = 120/" ${PHP_INI}
-sed -i '/date.timezone/s/= .*/= '$phptimezone'/' ${PHP_INI}
-sed -i "s/session.cookie_secure = 1/" ${PHP_INI}
-sed -i "s/memory_limit = 16M/memory_limit = 512M /" ${PHP_INI}
-sed -i "s/memory_limit = 128M/memory_limit = 512M /" ${PHP_INI}
-sed -i 's/^;*\s*phar.readonly\s*=.*/phar.readonly = On/' ${PHP_INI}
-sed -i 's/^;*\s*phar.require_hash\s*=.*/phar.require_hash = On/' ${PHP_INI}
+cat > "${PHP_MAGNUS_INI}" <<EOF
+; MagnusBilling settings
+upload_max_filesize = 3M
+post_max_size = 20M
+max_execution_time = 90
+max_input_time = 120
+date.timezone = ${PHP_TIMEZONE}
+memory_limit = 512M
+phar.readonly = On
+phar.require_hash = On
+EOF
+
+if ! phpenmod -v "${PHP_VERSION}" magnusbilling; then
+    echo "Unable to enable the MagnusBilling PHP configuration."
+    exit 1
+fi
 
 mkdir -p /var/www/html
 sed -i 's/<Directory \/var\/www\/>/<Directory \/var\/www\/html\/>/' "${HTTP_CONFIG}"
@@ -195,45 +269,25 @@ echo
 systemctl start mariadb
 systemctl enable --now mariadb
 
-echo "
-[server]
-
+cat > "${MYSQL_CONFIG}" <<'EOF'
 [mysqld]
-user    = mysql
-pid-file  = /var/run/mysqld/mysqld.pid
-socket    = /var/run/mysqld/mysqld.sock
-port    = 3306
-basedir   = /usr
-datadir   = /var/lib/mysql
-tmpdir    = /tmp
-lc-messages-dir = /usr/share/mysql
-skip-external-locking
 max_connections = 500
-key_buffer_size   = 64M
-max_allowed_packet  = 64M
-thread_stack    = 1M
-thread_cache_size       = 8
+key_buffer_size = 64M
+max_allowed_packet = 64M
+thread_stack = 1M
+thread_cache_size = 8
 query_cache_limit = 8M
-query_cache_size        = 64M
-log_error = /var/log/mysql/error.log
-expire_logs_days  = 10
-max_binlog_size   = 1G
+query_cache_size = 64M
+expire_logs_days = 10
+max_binlog_size = 1G
 secure_file_priv = /var/lib/mysql-files
-symbolic-links=0
-sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
-tmp_table_size=128MB
-open_files_limit=500000
+symbolic_links = 0
+sql_mode = NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+tmp_table_size = 128M
+open_files_limit = 500000
+EOF
 
-[embedded]
-
-[mariadb]
-
-" > ${MYSQL_CONFIG}
-
-
-mkdir /var/lib/mysql-files
-chown root:root /var/lib/mysql-files
-chmod 755 /var/lib/mysql-files
+install -d -o root -g root -m 0755 /var/lib/mysql-files
 
 
 
@@ -248,14 +302,14 @@ sleep 2
 rm -rf /var/www/html/index.html
 cd  /var/www/html/mbilling/resources/images/
 rm -rf lock-screen-background.jpg
-wget --no-check-certificate https://magnusbilling.org/download/lock-screen-background.jpg
+wget https://magnusbilling.org/download/lock-screen-background.jpg
 
 
 cd /var/www/html/mbilling/
 rm -rf /var/www/html/mbilling/tmp && mkdir /var/www/html/mbilling/tmp
-mkdir /var/www/html/mbilling/assets
-mkdir /var/run/magnus
-mkdir /usr/local/src/magnus
+mkdir -p /var/www/html/mbilling/assets
+mkdir -p /var/run/magnus
+mkdir -p /usr/local/src/magnus
 touch /etc/asterisk/extensions_magnus.conf
 touch /etc/asterisk/extensions_magnus_did.conf
 touch /etc/asterisk/pjsip_magnus.conf
@@ -292,7 +346,7 @@ installBr() {
    language='br'
    cp -rf /var/www/html/mbilling/script/br /var/lib/asterisk/
    cd /var/lib/asterisk
-   wget --no-check-certificate https://raw.githubusercontent.com/magnussolution/magnusbilling7/source/script/sounds/Sounds-br.tar.gz
+   wget https://raw.githubusercontent.com/magnussolution/magnusbilling7/source/script/sounds/Sounds-br.tar.gz
    tar xzvf Sounds-br.tar.gz
 }
 
@@ -307,7 +361,7 @@ installEs() {
     cp -n /var/www/html/mbilling/resources/sounds/en/* /var/lib/asterisk/sounds
     mkdir /var/lib/asterisk/es
     cd /var/lib/asterisk/es
-     wget --no-check-certificate https://raw.githubusercontent.com/magnussolution/magnusbilling7/source/script/sounds/Sounds-es.tar.gz
+   wget https://raw.githubusercontent.com/magnussolution/magnusbilling7/source/script/sounds/Sounds-es.tar.gz
    tar xzvf Sounds-es.tar.gz
 }
 
@@ -615,7 +669,7 @@ systemctl daemon-reload
 
 install_fail2ban()
 {
-    apt-get -y install fail2ban
+    apt_install fail2ban
 }
 
 
@@ -652,7 +706,7 @@ fi
 
 
 
-apt install -y firewalld
+apt_install firewalld
 
 install_fail2ban
 systemctl enable fail2ban
@@ -819,7 +873,7 @@ magnus => debug
 
 touch /var/log/auth.log
 
-mkdir /var/run/fail2ban/
+install -d -m 0755 /var/run/fail2ban
 asterisk -rx "module reload logger"
 systemctl enable fail2ban.service 
 systemctl restart fail2ban.service 

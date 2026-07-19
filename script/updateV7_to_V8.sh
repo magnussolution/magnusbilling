@@ -108,8 +108,6 @@ preserve_existing_config() {
 
     systemctl stop asterisk >/dev/null 2>&1 || true
     cp -rf /etc/asterisk /etc/asterisk_1.3
-    log "Existing Asterisk configuration archived at ${archive}."
-    find "${ASTERISK_ETC}" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
 }
 
 
@@ -136,6 +134,7 @@ build_asterisk() {
     make samples
     make config
     ldconfig
+    cp -rf /etc/asterisk_1.3/res_config_mysql.conf /etc/asterisk/
 }
 
 
