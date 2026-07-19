@@ -55,15 +55,20 @@ get_linux_distribution ()
             DIST="DEBIAN"
             ;;
         ubuntu)
-            # Ubuntu support is handled separately. Keep the existing path
-            # functional while using the ODBC package name from newer releases.
             DIST="UBUNTU"
-            UBUNTU_MAJOR="${VERSION_ID%%.*}"
-            if [ "${UBUNTU_MAJOR:-0}" -ge 24 ]; then
-                ODBC_RUNTIME_PACKAGE="libodbc2"
-            else
-                ODBC_RUNTIME_PACKAGE="libodbc1"
-            fi
+            case "${VERSION_ID:-}" in
+                22.04)
+                    ODBC_RUNTIME_PACKAGE="libodbc1"
+                    ;;
+                24.04|26.04)
+                    ODBC_RUNTIME_PACKAGE="libodbc2"
+                    ;;
+                *)
+                    echo "Unsupported Ubuntu version: ${VERSION_ID:-unknown}."
+                    echo "Supported Ubuntu LTS versions: 22.04, 24.04 and 26.04."
+                    exit 1
+                    ;;
+            esac
             ;;
         *)
             echo "Installation does not support distribution: ${ID:-unknown}."
@@ -127,6 +132,14 @@ echo 'LANG=en_US.UTF-8' > /etc/default/locale
 echo 'LC_ALL=en_US.UTF-8' >> /etc/default/locale
 update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
 
+if [ "${DIST}" = "UBUNTU" ]; then
+    apt_install software-properties-common
+    if ! add-apt-repository -y universe; then
+        echo "Unable to enable the Ubuntu universe repository."
+        exit 1
+    fi
+fi
+
 if ! apt-get -o Acquire::Check-Valid-Until=false update; then
     echo "Unable to refresh the APT package lists."
     exit 1
@@ -135,7 +148,7 @@ fi
 apt_install apache2
 apt_install autoconf automake devscripts gawk ntpsec g++ curl wget ca-certificates sudo xmlstarlet libjansson-dev git "${ODBC_RUNTIME_PACKAGE}" odbcinst unixodbc unixodbc-dev patchelf
 apt_install php-fpm php php-dev php-common php-cli php-gd php-pear php-sqlite3 php-curl php-mbstring php-xml php-mysql libapache2-mod-php
-apt_install unzip uuid-dev libxml2 libxml2-dev openssl libcurl4-openssl-dev gettext gcc sqlite3 libsqlite3-dev subversion mpg123
+apt_install unzip uuid-dev libxml2-dev openssl libcurl4-openssl-dev gettext gcc sqlite3 libsqlite3-dev subversion mpg123
 apt_install libncurses-dev mariadb-server htop sngrep firewalld fail2ban cron rsyslog whiptail libblocksruntime-dev iproute2 iptables
 
 mkdir -p /var/www/html/mbilling
@@ -162,15 +175,17 @@ if [ -d "/etc/asterisk" ]; then
   cp -a /etc/asterisk/. /etc/asterisk2/
 fi
 
-if ! mv /var/www/html/mbilling/script/asterisk-20.9.2.tar.gz /usr/src/; then
-    echo "Asterisk source archive not found."
+ASTERISK_ARCHIVE="asterisk-20-current.tar.gz"
+if ! wget -O "${ASTERISK_ARCHIVE}" \
+    "https://downloads.asterisk.org/pub/telephony/asterisk/${ASTERISK_ARCHIVE}"; then
+    echo "Unable to download the current Asterisk 20 LTS source archive."
     exit 1
 fi
-if ! tar xzf asterisk-20.9.2.tar.gz; then
+if ! tar xzf "${ASTERISK_ARCHIVE}"; then
     echo "Unable to extract the Asterisk source archive."
     exit 1
 fi
-rm -f asterisk-20.9.2.tar.gz
+rm -f "${ASTERISK_ARCHIVE}"
 cd asterisk-*
 if ! id -u asterisk >/dev/null 2>&1; then
   useradd -r -d /var/lib/asterisk -s /usr/sbin/nologin -c 'Asterisk PBX' asterisk
@@ -714,6 +729,9 @@ systemctl enable fail2ban
 
 systemctl disable --now iptables 2>/dev/null || true
 systemctl disable --now netfilter-persistent 2>/dev/null || true
+if [ "${DIST}" = "UBUNTU" ]; then
+    systemctl disable --now ufw 2>/dev/null || true
+fi
 systemctl enable --now firewalld
 
 
@@ -1077,9 +1095,6 @@ processor_type()
     fi;
 }
 
-cd /usr/src/asterisk-*
-make config
-
 echo "INSTALLING G723 and G729 CODECS......... FROM http://asterisk.hosting.lv";   
 cd /usr/src
 rm -rf codec_*
@@ -1112,13 +1127,16 @@ processor_type;
 
 for codec in /usr/lib/asterisk/modules/codec_g729.so /usr/lib/asterisk/modules/codec_g723.so; do
     if [ -f "${codec}" ]; then
-        echo "Clearing executable-stack flag from ${codec}."
-        patchelf --clear-execstack "${codec}"
+        if patchelf --help 2>&1 | grep -q -- '--clear-execstack'; then
+            echo "Clearing executable-stack flag from ${codec}."
+            patchelf --clear-execstack "${codec}"
+        else
+            echo "This patchelf version cannot clear the executable-stack flag from ${codec}."
+        fi
+        asterisk -rx "module load $(basename "${codec}")"
     fi
 done
 
-asterisk -rx 'module load codec_g729.so'
-asterisk -rx 'module load codec_g723.so'
 sleep 4
 asterisk -rx 'core show translation'
 

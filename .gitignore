@@ -4,9 +4,7 @@ build/temp
 .DS_Store
 Mbilling_7.sublime-workspace
 Mbilling_7.sublime-project
-/protected/runtime/*.log.*
-/protected/runtime/cache*
-/protected/runtime/cron*
+/protected/runtime/*
 /protected/models/overrides
 /protected/controllers/overrides
 /protected/config/overrides.php
@@ -87,3 +85,4 @@ build/ApplicationPUBLIC.js
 wiki/generate.php
 script/install_18.sh
 script/test.sql
+classic/src/Application.js
