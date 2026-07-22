@@ -332,6 +332,7 @@ touch /etc/asterisk/pjsip_magnus_user.conf
 touch /etc/asterisk/musiconhold_magnus.conf
 touch /etc/asterisk/queues_magnus.conf
 touch /etc/asterisk/voicemail_magnus.conf
+touch /etc/asterisk/mbilling.conf
 
 
 selectLanguage() {
@@ -625,6 +626,7 @@ CRONPATH='/var/spool/cron/crontabs/root'
 
 
 echo "
+* * * * * php /var/www/html/mbilling/cron.php massivecall
 8 8 * * * php /var/www/html/mbilling/cron.php servicescheck
 * * * * * php /var/www/html/mbilling/cron.php callchart
 1 * * * * php /var/www/html/mbilling/cron.php NotifyClient
