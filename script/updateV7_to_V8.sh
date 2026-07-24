@@ -140,11 +140,81 @@ build_asterisk() {
 
 
 write_configuration() {
-    install -d -o "${ASTERISK_USER}" -g "${ASTERISK_USER}" \
-        /var/lib/asterisk/agi-bin /var/lib/asterisk/sounds /var/lib/asterisk/moh
 
-    cat > "${ASTERISK_ETC}/asterisk.conf" <<'EOF'
-[directories](!)
+
+mkdir -p /usr/local/src/magnus
+touch /etc/asterisk/extensions_magnus.conf
+touch /etc/asterisk/extensions_magnus_did.conf
+touch /etc/asterisk/pjsip_magnus.conf
+touch /etc/asterisk/pjsip_magnus_user.conf
+touch /etc/asterisk/musiconhold_magnus.conf
+touch /etc/asterisk/queues_magnus.conf
+touch /etc/asterisk/voicemail_magnus.conf
+touch /etc/asterisk/mbilling.conf
+
+
+echo $'[billing]
+exten => _[*0-9].,1,AGI("/var/www/html/mbilling/resources/asterisk/mbilling.php")
+  same => n,Hangup()
+
+exten => _+X.,1,Goto(billing,${EXTEN:1},1)
+
+exten => h,1,hangup()
+
+exten => *111,1,VoiceMailMain(${CHANNEL(peername)}@billing)
+  same => n,Hangup()
+
+[trunk_answer_handler]
+exten => s,1,Set(MASTER_CHANNEL(TRUNKANSWERTIME)=${EPOCH})
+  same => n,Return()
+
+' > /etc/asterisk/extensions_magnus.conf
+
+
+echo "
+[general]
+enabled = yes
+
+port = 5038
+bindaddr = 0.0.0.0
+displayconnects = no
+
+[magnus]
+secret = magnussolution
+deny=0.0.0.0/0.0.0.0
+permit=127.0.0.1/255.255.255.0
+read = system,call,log,verbose,agent,user,config,dtmf,reporting,cdr,dialplan
+write = system,call,agent,user,config,command,reporting,originate
+" > /etc/asterisk/manager.conf
+
+
+echo "#include extensions_magnus.conf" >> /etc/asterisk/extensions.conf
+echo '#include extensions_magnus_did.conf' >> /etc/asterisk/extensions.conf
+echo "#include musiconhold_magnus.conf" >> /etc/asterisk/musiconhold.conf
+echo "#include voicemail_magnus.conf" >> /etc/asterisk/voicemail.conf
+
+
+echo "
+noload => res_config_sqlite3.so
+noload => res_config_sqlite.so
+noload => chan_skinny.so
+noload => cdr_custom.so
+noload => cdr_odbc.so
+noload => cdr_sqlite3_custom.so
+noload => cdr_csv.so
+noload => cdr_manager.so
+noload => chan_iax2.so
+noload => cdr_mysql.so
+noload => app_celgenuserevent.so
+noload => cel_custom.so
+noload => cel_manager.so
+noload => cel_odbc.so
+noload => cel_sqlite3_custom.so
+noload => res_format_attr_celt.so
+noload => chan_sip.so
+" >> /etc/asterisk/modules.conf
+
+echo '[directories](!)
 astetcdir => /etc/asterisk
 astmoddir => /usr/lib/asterisk/modules
 astvarlibdir => /var/lib/asterisk
@@ -157,58 +227,42 @@ astrundir => /var/run/asterisk
 astlogdir => /var/log/asterisk
 runuser = asterisk
 rungroup = asterisk
+' > /etc/asterisk/asterisk.conf
 
+
+echo "
 [options]
-documentation_language = en_US
+documentation_language = en_US 
 verbose = 5
+debug = 0
 maxfiles = 500000
-hideconnect = yes
-EOF
+hideconnect = 1
 
-    cat > "${ASTERISK_ETC}/pjsip.conf" <<'EOF'
-[global]
-type=global
+[compat]
+pbx_realtime=1.6
+res_agi=1.6
+app_set=1.6" >> /etc/asterisk/asterisk.conf
+
+
+
+echo "
+[general]
+bindaddr = 0.0.0.0
 
 [transport-udp]
-type=transport
-protocol=udp
-bind=0.0.0.0:5060
+type = transport
+protocol = udp
+bind = 0.0.0.0:5060
 
 #include pjsip_magnus.conf
 #include pjsip_magnus_user.conf
-EOF
-    : > "${ASTERISK_ETC}/pjsip_magnus.conf"
-    : > "${ASTERISK_ETC}/pjsip_magnus_user.conf"
-    : > "${ASTERISK_ETC}/extensions_magnus.conf"
-    : > "${ASTERISK_ETC}/extensions_magnus_did.conf"
-    : > "${ASTERISK_ETC}/musiconhold_magnus.conf"
-    : > "${ASTERISK_ETC}/queues_magnus.conf"
-    : > "${ASTERISK_ETC}/voicemail_magnus.conf"
+" > /etc/asterisk/pjsip.conf
 
-    cat > "${ASTERISK_ETC}/extensions.conf" <<'EOF'
-[general]
-static=yes
-writeprotect=no
 
-#include extensions_magnus.conf
-#include extensions_magnus_did.conf
-EOF
-    cat > "${ASTERISK_ETC}/manager.conf" <<'EOF'
-[general]
-enabled = yes
-port = 5038
-bindaddr = 127.0.0.1
-displayconnects = no
-EOF
-    cat > "${ASTERISK_ETC}/modules.conf" <<'EOF'
-[modules]
-autoload=yes
-noload => chan_sip.so
-noload => res_config_sqlite3.so
-noload => res_config_sqlite.so
-noload => cdr_sqlite3_custom.so
-noload => cdr_sqlite3.so
-EOF
+echo "
+#include queues_magnus.conf
+" >> /etc/asterisk/queues.conf
+
     chown -R "${ASTERISK_USER}:${ASTERISK_USER}" /var/lib/asterisk /var/log/asterisk /var/spool/asterisk /var/run/asterisk
     chown root:"${ASTERISK_USER}" "${ASTERISK_ETC}"/*
     chmod 0640 "${ASTERISK_ETC}"/*.conf

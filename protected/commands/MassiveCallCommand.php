@@ -251,7 +251,7 @@ class MassiveCallCommand extends ConsoleCommand
                     'USERNAME'         => $username,
                     'IDUSER'           => $id_user,
                     'PHONENUMBER_ID'   => $phone->id,
-                    'PHONENUMBER_CITY' => $phone->city,
+                    'PHONENUMBER_CITY' => (string) $phone->city,
                     'CAMPAIGN_ID'      => $campaign->id,
                     'RATE_ID'          => $searchTariff[0]['id_rate'],
                     'TRUNK_ID'         => $idTrunk,
