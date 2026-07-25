@@ -8,6 +8,7 @@ Ext.define('MBilling.view.magnusSentinel.Module', {
     requires: [
         'MBilling.store.MagnusSentinelIncident',
         'MBilling.view.magnusSentinel.Controller',
+        'MBilling.view.magnusSentinel.Health',
         'MBilling.view.magnusSentinel.Summary',
         'MBilling.view.magnusSentinel.List',
         'MBilling.view.magnusSentinel.Detail'
@@ -23,7 +24,20 @@ Ext.define('MBilling.view.magnusSentinel.Module', {
         var mobile = window.isMobileLayout ||
             window.isTablet || window.isTablets;
         me.items = [{
-            xtype: 'magnussentinelsummary'
+            xtype: 'container',
+            region: 'north',
+            height: mobile ? 310 : 250,
+            layout: {
+                type: 'vbox',
+                align: 'stretch'
+            },
+            items: [{
+                xtype: 'magnussentinelhealth',
+                height: mobile ? 218 : 158
+            }, {
+                xtype: 'magnussentinelsummary',
+                height: 92
+            }]
         }, {
             xtype: 'magnussentinellist'
         }, {

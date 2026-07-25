@@ -79,11 +79,15 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
         if (!successful) {
             return;
         }
-        summary = summary || data.summary || {};
+        var metadata = summary || data || {};
+        var health = metadata.health || null;
+        summary = metadata.summary || {};
         me.getView().down('magnussentinelsummary').setSummary(
             summary,
             state === 'resolved' || state === 'false_positive'
         );
+        me.getView().down('magnussentinelhealth').setHealth(health);
+        me.list.setHealthEmptyState(health, state);
         me.list.getSelectionModel().deselectAll();
         me.detail.clearIncident();
         me.detail.collapse();

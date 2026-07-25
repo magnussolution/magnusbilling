@@ -29,6 +29,11 @@ class MagnusSentinelIncidentController extends Controller
         $this->runReadAction('getTransitions', true);
     }
 
+    public function actionHealth()
+    {
+        $this->runReadAction('getHealth');
+    }
+
     public function actionSave()
     {
         $this->readOnly();

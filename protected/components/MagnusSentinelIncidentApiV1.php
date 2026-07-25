@@ -28,6 +28,13 @@ class MagnusSentinelIncidentApiV1
     ];
     private static $severities = ['warning', 'critical'];
     private static $entityKinds = ['trunk', 'server', 'proxy'];
+    private static $healthRanks = [
+        'HEALTHY' => 0,
+        'UNKNOWN' => 1,
+        'DEGRADED' => 2,
+        'STALE' => 3,
+        'UNHEALTHY' => 4,
+    ];
     private static $evidenceKeys = [
         'response_code',
         'response_reason',
@@ -205,6 +212,7 @@ class MagnusSentinelIncidentApiV1
                 'critical' => (int) $summary['critical'],
                 'warning' => (int) $summary['warning'],
             ],
+            'health' => self::getHealth($db),
             'filters' => [
                 'state' => $options['state'],
                 'severity' => $options['severity'],
@@ -217,6 +225,309 @@ class MagnusSentinelIncidentApiV1
                     true
                 ) ? $options['days'] : null,
             ],
+        ];
+    }
+
+    public static function getHealth($db, $input = [])
+    {
+        $evaluatedAt = (string) self::queryScalar(
+            $db,
+            'SELECT UTC_TIMESTAMP(6)',
+            []
+        );
+        $rows = self::queryAll(
+            $db,
+            "
+            SELECT h.component,h.id_server,h.heartbeat_at,
+                   h.process_started_at,h.last_cycle_success_at,
+                   h.last_event_seen_at,h.last_event_committed_at,
+                   h.pending_events,h.oldest_pending_event_at,
+                   h.consecutive_database_failures,h.last_error_at,
+                   h.last_error_code,h.last_error_message,
+                   h.stale_after_seconds,h.version,
+                   COALESCE(NULLIF(s.name,''),NULLIF(s.public_ip,'')) server_name,
+                   TIMESTAMPDIFF(
+                       SECOND,h.heartbeat_at,UTC_TIMESTAMP(6)
+                   ) heartbeat_age_seconds,
+                   CASE WHEN h.pending_events>0
+                        AND h.oldest_pending_event_at IS NOT NULL
+                        THEN TIMESTAMPDIFF(
+                            SECOND,h.oldest_pending_event_at,UTC_TIMESTAMP(6)
+                        )
+                        ELSE 0 END ingest_lag_seconds
+            FROM pkg_magnus_sentinel_component_health h
+            LEFT JOIN pkg_servers s ON s.id=h.id_server AND h.id_server<>0
+            ORDER BY h.id_server,h.component
+            ",
+            []
+        );
+        $serverRows = self::queryAll(
+            $db,
+            "
+            SELECT id,COALESCE(NULLIF(name,''),NULLIF(public_ip,'')) name
+            FROM pkg_servers
+            WHERE type IN ('asterisk','mbilling')
+              AND status IN (1,4)
+            ORDER BY id
+            ",
+            []
+        );
+
+        $records = [];
+        $serverNames = [0 => 'MASTER'];
+        foreach ($serverRows as $serverRow) {
+            $serverNames[(int) $serverRow['id']] = (
+                $serverRow['name'] !== null
+                ? (string) $serverRow['name']
+                : 'Server ' . (int) $serverRow['id']
+            );
+        }
+        foreach ($rows as $row) {
+            $record = self::projectHealthRow($row, $evaluatedAt);
+            $key = $record['component'] . ':' . $record['id_server'];
+            $records[$key] = $record;
+            if ($record['server_name'] !== '') {
+                $serverNames[$record['id_server']] = $record['server_name'];
+            }
+        }
+
+        $masterId = 0;
+        foreach ($records as $record) {
+            if ($record['component'] === 'analyzer') {
+                $masterId = $record['id_server'];
+                break;
+            }
+        }
+        if ($masterId === 0 && isset($serverNames[1])) {
+            $masterId = isset($records['collector:0']) ? 0 : 1;
+        }
+        self::ensureHealthRecord(
+            $records,
+            'analyzer',
+            $masterId,
+            isset($serverNames[$masterId]) ? $serverNames[$masterId] : 'MASTER',
+            1200,
+            $evaluatedAt
+        );
+        self::ensureHealthRecord(
+            $records,
+            'collector',
+            $masterId,
+            isset($serverNames[$masterId]) ? $serverNames[$masterId] : 'MASTER',
+            180,
+            $evaluatedAt
+        );
+        foreach ($serverRows as $serverRow) {
+            $idServer = (int) $serverRow['id'];
+            if ($idServer === $masterId || $idServer === 1) {
+                continue;
+            }
+            self::ensureHealthRecord(
+                $records,
+                'collector',
+                $idServer,
+                $serverNames[$idServer],
+                180,
+                $evaluatedAt
+            );
+        }
+
+        $components = array_values($records);
+        usort($components, function ($left, $right) {
+            if ($left['id_server'] === $right['id_server']) {
+                return strcmp($left['component'], $right['component']);
+            }
+            return $left['id_server'] < $right['id_server'] ? -1 : 1;
+        });
+        $aggregateStatus = 'HEALTHY';
+        foreach ($components as $component) {
+            if (
+                self::$healthRanks[$component['health_status']]
+                > self::$healthRanks[$aggregateStatus]
+            ) {
+                $aggregateStatus = $component['health_status'];
+            }
+        }
+        if (! $components) {
+            $aggregateStatus = 'UNKNOWN';
+        }
+        $aggregateReasons = [];
+        $servers = [];
+        foreach ($components as $component) {
+            $serverKey = (string) $component['id_server'];
+            if (! isset($servers[$serverKey])) {
+                $servers[$serverKey] = [
+                    'id_server' => (
+                        $component['id_server'] === 0
+                        ? null
+                        : $component['id_server']
+                    ),
+                    'server_name' => $component['server_name'],
+                    'health_status' => 'HEALTHY',
+                    'health_reasons' => [],
+                    'components' => [],
+                ];
+            }
+            $servers[$serverKey]['components'][] = $component['component'];
+            if (
+                self::$healthRanks[$component['health_status']]
+                > self::$healthRanks[$servers[$serverKey]['health_status']]
+            ) {
+                $servers[$serverKey]['health_status'] =
+                    $component['health_status'];
+                $servers[$serverKey]['health_reasons'] =
+                    $component['health_reasons'];
+            } elseif (
+                $component['health_status']
+                === $servers[$serverKey]['health_status']
+            ) {
+                $servers[$serverKey]['health_reasons'] = array_values(
+                    array_unique(array_merge(
+                        $servers[$serverKey]['health_reasons'],
+                        $component['health_reasons']
+                    ))
+                );
+            }
+            if ($component['health_status'] === $aggregateStatus) {
+                foreach ($component['health_reasons'] as $reason) {
+                    $aggregateReasons[] = [
+                        'component' => $component['component'],
+                        'id_server' => (
+                            $component['id_server'] === 0
+                            ? null
+                            : $component['id_server']
+                        ),
+                        'server_name' => $component['server_name'],
+                        'reason' => $reason,
+                    ];
+                }
+            }
+        }
+        return [
+            'health_status' => $aggregateStatus,
+            'health_reasons' => $aggregateReasons,
+            'evaluated_at' => $evaluatedAt,
+            'components' => $components,
+            'servers' => array_values($servers),
+        ];
+    }
+
+    private static function ensureHealthRecord(
+        &$records,
+        $component,
+        $idServer,
+        $serverName,
+        $staleAfter,
+        $evaluatedAt
+    ) {
+        $key = $component . ':' . $idServer;
+        if (isset($records[$key])) {
+            return;
+        }
+        $records[$key] = [
+            'component' => $component,
+            'id_server' => (int) $idServer,
+            'server_name' => (string) $serverName,
+            'heartbeat_at' => null,
+            'process_started_at' => null,
+            'last_cycle_success_at' => null,
+            'last_event_seen_at' => null,
+            'last_event_committed_at' => null,
+            'pending_events' => 0,
+            'oldest_pending_event_at' => null,
+            'consecutive_database_failures' => 0,
+            'last_error_at' => null,
+            'last_error_code' => null,
+            'last_error_message' => null,
+            'stale_after_seconds' => (int) $staleAfter,
+            'version' => null,
+            'heartbeat_age_seconds' => null,
+            'ingest_lag_seconds' => 0,
+            'health_status' => 'UNKNOWN',
+            'health_reasons' => ['heartbeat_missing'],
+            'evaluated_at' => $evaluatedAt,
+        ];
+    }
+
+    private static function projectHealthRow($row, $evaluatedAt)
+    {
+        $pending = (int) $row['pending_events'];
+        $failures = (int) $row['consecutive_database_failures'];
+        $heartbeatAge = max(0, (int) $row['heartbeat_age_seconds']);
+        $lag = max(0, (int) $row['ingest_lag_seconds']);
+        $staleAfter = (int) $row['stale_after_seconds'];
+        $reasons = [];
+        if ($heartbeatAge > $staleAfter) {
+            $status = 'STALE';
+            $reasons[] = 'heartbeat_stale';
+        } elseif ($row['last_cycle_success_at'] === null) {
+            $status = 'UNKNOWN';
+            $reasons[] = 'successful_cycle_missing';
+        } elseif (
+            $row['last_error_at'] !== null
+            && (
+                $row['last_cycle_success_at'] === null
+                || $row['last_error_at'] > $row['last_cycle_success_at']
+            )
+        ) {
+            $status = 'UNHEALTHY';
+            $reasons[] = (
+                $row['last_error_code'] ?: 'component_error'
+            );
+        } elseif ($failures >= 3) {
+            $status = 'UNHEALTHY';
+            $reasons[] = 'repeated_database_failures';
+        } elseif ($failures > 0 || $pending > 0) {
+            $status = 'DEGRADED';
+            if ($failures > 0) {
+                $reasons[] = 'recoverable_database_failures';
+            }
+            if ($pending > 0) {
+                $reasons[] = 'pending_events';
+            }
+        } elseif (
+            $row['component'] === 'collector'
+            && $row['last_event_committed_at'] === null
+        ) {
+            $status = 'UNKNOWN';
+            $reasons[] = 'committed_event_evidence_missing';
+        } else {
+            $status = 'HEALTHY';
+        }
+        return [
+            'component' => (string) $row['component'],
+            'id_server' => (int) $row['id_server'],
+            'server_name' => (
+                $row['id_server'] == 0
+                ? 'MASTER'
+                : (
+                    $row['server_name'] !== null
+                    ? self::boundedText($row['server_name'], 160)
+                    : 'Server ' . (int) $row['id_server']
+                )
+            ),
+            'heartbeat_at' => $row['heartbeat_at'],
+            'process_started_at' => $row['process_started_at'],
+            'last_cycle_success_at' => $row['last_cycle_success_at'],
+            'last_event_seen_at' => $row['last_event_seen_at'],
+            'last_event_committed_at' => $row['last_event_committed_at'],
+            'pending_events' => $pending,
+            'oldest_pending_event_at' => $row['oldest_pending_event_at'],
+            'consecutive_database_failures' => $failures,
+            'last_error_at' => $row['last_error_at'],
+            'last_error_code' => $row['last_error_code'],
+            'last_error_message' => (
+                $row['last_error_message'] !== null
+                ? self::boundedText($row['last_error_message'], 255)
+                : null
+            ),
+            'stale_after_seconds' => $staleAfter,
+            'version' => $row['version'],
+            'heartbeat_age_seconds' => $heartbeatAge,
+            'ingest_lag_seconds' => $lag,
+            'health_status' => $status,
+            'health_reasons' => $reasons,
+            'evaluated_at' => $evaluatedAt,
         ];
     }
 
