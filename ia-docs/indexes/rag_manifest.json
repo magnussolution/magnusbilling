@@ -44,6 +44,11 @@
       "kind": "playbook"
     },
     {
+      "doc_id": "PLAYBOOK-SERVER-REGISTRY-SUPPORT",
+      "path": "ia-docs/playbooks/server_registry_support.md",
+      "kind": "playbook"
+    },
+    {
       "doc_id": "MB-RAG-PLAYBOOK-SUPPORT-TRIAGE-SYMPTOM",
       "path": "ia-docs/playbooks/support_triage_by_symptom.md",
       "kind": "playbook"
