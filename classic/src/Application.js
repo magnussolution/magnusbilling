@@ -5,7 +5,7 @@
  */
 Ext.define('MBilling.Application', {
     extend: 'Ext.app.Application',
-    requires: ['MBilling.view.main.Start', 'Helper.Util', 'Ext.ux.Alert', 'Ext.ux.form.field.MarkAllowBlank', 'Ext.ux.button.Locale', 'Ext.ux.button.Credit', 'Ext.window.MessageBox', 'Ext.ux.data.proxy.Ajax', 'Overrides.*', 'Ext.ux.DragDropTag'],
+    requires: ['MBilling.view.main.Start', 'MBilling.view.magnusSentinel.Module', 'Helper.Util', 'Ext.ux.Alert', 'Ext.ux.form.field.MarkAllowBlank', 'Ext.ux.button.Locale', 'Ext.ux.button.Credit', 'Ext.window.MessageBox', 'Ext.ux.data.proxy.Ajax', 'Overrides.*', 'Ext.ux.DragDropTag'],
     name: 'MBilling',
     titleNotification: t('Notification'),
     msgSessionExpired: t('Your session has expired. Log in again.'),
