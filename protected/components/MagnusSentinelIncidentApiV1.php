@@ -27,7 +27,7 @@ class MagnusSentinelIncidentApiV1
         'active',
     ];
     private static $severities = ['warning', 'critical'];
-    private static $entityKinds = ['trunk', 'server', 'proxy'];
+    private static $entityKinds = ['trunk', 'server', 'proxy', 'fleet'];
     private static $healthRanks = [
         'HEALTHY' => 0,
         'UNKNOWN' => 1,
@@ -54,6 +54,13 @@ class MagnusSentinelIncidentApiV1
         'previous_rate',
         'current_events',
         'expected_events',
+        'drop_percentage',
+        'involved_servers',
+        'monitored_servers',
+        'server_distribution',
+        'current_expected_ratio',
+        'peer_ratio_median',
+        'additional_to_global_drop',
         'error_rate',
         'peer_median',
         'events',
