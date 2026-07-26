@@ -206,7 +206,7 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
                 '#8e1b12' : '#8a3418',
             title: incident.title || '',
             summary: incident.summary || '',
-            entity: me.entityLabel(entity.kind) + ' ' + (entity.name || ''),
+            entity: me.formatEntity(entity.kind, entity.name),
             state: me.stateLabel(data.state),
             firstSeen: me.formatDate(data.first_seen),
             lastSeen: me.formatDate(data.last_seen),
@@ -252,6 +252,13 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
             previous_rate: t('Previous rate'),
             current_events: t('Current events'),
             expected_events: t('Expected events'),
+            drop_percentage: t('Traffic drop'),
+            involved_servers: t('Involved servers'),
+            monitored_servers: t('Monitored servers'),
+            server_distribution: t('Distribution by server'),
+            current_expected_ratio: t('Current versus expected'),
+            peer_ratio_median: t('Peer median'),
+            additional_to_global_drop: t('Additional server degradation'),
             error_rate: t('Error rate'),
             peer_median: t('Peer median'),
             events: t('Events'),
@@ -296,6 +303,13 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
             previous_rate: t('Historical percentage share of this occurrence.'),
             current_events: t('Events received from this server in the current window.'),
             expected_events: t('Expected event count based on the recent behavior of the servers.'),
+            drop_percentage: t('Percentage reduction of current total compared with the expected total.'),
+            involved_servers: t('Servers that dropped simultaneously and in a similar proportion.'),
+            monitored_servers: t('Servers with sufficient baseline and healthy telemetry included in the evaluation.'),
+            server_distribution: t('Current, expected and proportional distribution used to compare each server with the fleet.'),
+            current_expected_ratio: t('Percentage of expected activity observed for this server.'),
+            peer_ratio_median: t('Median current-versus-expected percentage for servers in the same drop.'),
+            additional_to_global_drop: t('Indicates that this server degraded clearly more than the global behavior.'),
             error_rate: t('Percentage of this server attempts classified as failures by the detector.'),
             peer_median: t('Median failure rate of the other comparable servers.'),
             events: t('Total events used to calculate the displayed rate.'),
@@ -345,7 +359,8 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
         }
         if (Ext.isNumber(value) && [
             'current_asr', 'baseline_asr', 'error_rate',
-            'current_rate', 'previous_rate'
+            'current_rate', 'previous_rate', 'drop_percentage',
+            'current_expected_ratio', 'peer_ratio_median'
         ].indexOf(item.key) !== -1) {
             return value + '%';
         }
@@ -377,8 +392,15 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
         return {
             trunk: t('Trunk'),
             server: t('Server'),
-            proxy: t('Proxy')
+            proxy: t('Proxy'),
+            fleet: t('Fleet')
         }[value] || value;
+    },
+    formatEntity: function(kind, name) {
+        if (kind === 'fleet') {
+            return t('Fleet');
+        }
+        return this.entityLabel(kind) + ' ' + (name || '');
     },
     formatDate: function(value) {
         if (!value) {
