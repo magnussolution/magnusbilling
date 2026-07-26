@@ -55,7 +55,7 @@ Ext.define('MBilling.model.MagnusSentinelIncident', {
             rootProperty: 'data.items',
             totalProperty: 'data.pagination.total',
             successProperty: 'success',
-            metaProperty: 'data.summary'
+            metaProperty: 'data'
         }
     }
 });

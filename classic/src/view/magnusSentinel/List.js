@@ -15,7 +15,8 @@ Ext.define('MBilling.view.magnusSentinel.List', {
         loadMask: {
             msg: t('Loading...')
         },
-        emptyText: '<div class="grid-empty">' + t('No problems found') + '</div>',
+        emptyText: '<div class="grid-empty">' +
+            t('Sentinel health has not been confirmed yet.') + '</div>',
         deferEmptyText: false
     },
     listeners: {
@@ -190,6 +191,24 @@ Ext.define('MBilling.view.magnusSentinel.List', {
             displayInfo: true
         }];
         me.callParent(arguments);
+    },
+    setHealthEmptyState: function(health, state) {
+        var status = health && health.health_status;
+        var message;
+        if (state !== 'active') {
+            message = t('No incidents match the selected filters.');
+        } else if (status === 'HEALTHY') {
+            message = t(
+                'No active incidents were detected in the received data.'
+            );
+        } else {
+            message = t(
+                'It is not possible to confirm the environment health because the Sentinel data is unavailable or outdated.'
+            );
+        }
+        this.getView().emptyText = '<div class="grid-empty">' +
+            Ext.util.Format.htmlEncode(message) + '</div>';
+        this.getView().refresh();
     },
     stateLabel: function (value) {
         return {
