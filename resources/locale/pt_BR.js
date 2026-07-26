@@ -1200,6 +1200,7 @@ Locale.load({
     'Select an incident to see what happened, the evidence and the recommended action.': 'Selecione um incidente para ver o que aconteceu, as evidências e a ação recomendada.',
     'Server activity drop': 'Queda de atividade do servidor',
     'State history': 'Histórico do estado',
+    'The details did not respond. Refresh and try again.': 'Os detalhes não responderam. Atualize e tente novamente.',
     'Trunk offline': 'Trunk offline',
     'UTC': 'UTC',
     'Unable to open details': 'Não foi possível abrir os detalhes',
