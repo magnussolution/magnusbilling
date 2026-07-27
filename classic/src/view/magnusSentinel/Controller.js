@@ -189,15 +189,10 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
         var entity = incident.entity || {};
         var probableCause = incident.probable_cause || {};
         var action = incident.recommended_action || {};
-        var operatorSteps = action.operator_steps || [
-            t('Confirm whether calls are affected and note numbers, times and results.'),
-            t('Send this incident and your observations to support. Do not change the configuration without guidance.')
-        ];
-        var technicalSteps = action.technical_steps || (
-            action.description ? [action.description] : [
-                t('Review the evidence and correlate it with logs and configuration before making changes.')
-            ]
-        );
+        var display = data.display || {};
+        var fallbackSteps = me.legacyActionSteps(incident);
+        var operatorSteps = action.operator_steps || fallbackSteps.operator;
+        var technicalSteps = action.technical_steps || fallbackSteps.technical;
         return {
             loaded: true,
             priority: data.severity === 'critical' ?
@@ -206,10 +201,23 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
                 '#8e1b12' : '#8a3418',
             title: incident.title || '',
             summary: incident.summary || '',
-            entity: me.entityLabel(entity.kind) + ' ' + (entity.name || ''),
+            entity: me.formatEntity(entity.kind, entity.name),
             state: me.stateLabel(data.state),
-            firstSeen: me.formatDate(data.first_seen),
-            lastSeen: me.formatDate(data.last_seen),
+            firstSeen: me.formatDisplayDate(
+                display.first_seen,
+                display.timezone,
+                data.first_seen
+            ),
+            lastSeen: me.formatDisplayDate(
+                display.last_seen,
+                display.timezone,
+                data.last_seen
+            ),
+            detectionWindow: me.formatDetectionWindow(
+                display,
+                incident.window
+            ),
+            displayTimezone: display.timezone || t('UTC'),
             impact: (incident.impact || {}).description || '',
             probableCause: probableCause.description || '',
             probableCauseHelp: probableCause.hypothesis === true ?
@@ -252,6 +260,13 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
             previous_rate: t('Previous rate'),
             current_events: t('Current events'),
             expected_events: t('Expected events'),
+            drop_percentage: t('Traffic drop'),
+            involved_servers: t('Involved servers'),
+            monitored_servers: t('Monitored servers'),
+            server_distribution: t('Distribution by server'),
+            current_expected_ratio: t('Current versus expected'),
+            peer_ratio_median: t('Peer median'),
+            additional_to_global_drop: t('Additional server degradation'),
             error_rate: t('Error rate'),
             peer_median: t('Peer median'),
             events: t('Events'),
@@ -296,6 +311,13 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
             previous_rate: t('Historical percentage share of this occurrence.'),
             current_events: t('Events received from this server in the current window.'),
             expected_events: t('Expected event count based on the recent behavior of the servers.'),
+            drop_percentage: t('Percentage reduction of current total compared with the expected total.'),
+            involved_servers: t('Servers that dropped simultaneously and in a similar proportion.'),
+            monitored_servers: t('Servers with sufficient baseline and healthy telemetry included in the evaluation.'),
+            server_distribution: t('Current, expected and proportional distribution used to compare each server with the fleet.'),
+            current_expected_ratio: t('Percentage of expected activity observed for this server.'),
+            peer_ratio_median: t('Median current-versus-expected percentage for servers in the same drop.'),
+            additional_to_global_drop: t('Indicates that this server degraded clearly more than the global behavior.'),
             error_rate: t('Percentage of this server attempts classified as failures by the detector.'),
             peer_median: t('Median failure rate of the other comparable servers.'),
             events: t('Total events used to calculate the displayed rate.'),
@@ -345,7 +367,8 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
         }
         if (Ext.isNumber(value) && [
             'current_asr', 'baseline_asr', 'error_rate',
-            'current_rate', 'previous_rate'
+            'current_rate', 'previous_rate', 'drop_percentage',
+            'current_expected_ratio', 'peer_ratio_median'
         ].indexOf(item.key) !== -1) {
             return value + '%';
         }
@@ -361,7 +384,11 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
             this.stateLabel(item.from_state) : t('Creation');
         return {
             state: from + ' → ' + this.stateLabel(item.to_state),
-            date: this.formatDate(item.changed_at),
+            date: this.formatDisplayDate(
+                item.changed_at_display,
+                item.display_timezone,
+                item.changed_at
+            ),
             note: item.note || ''
         };
     },
@@ -377,13 +404,85 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
         return {
             trunk: t('Trunk'),
             server: t('Server'),
-            proxy: t('Proxy')
+            proxy: t('Proxy'),
+            fleet: t('Fleet')
         }[value] || value;
     },
+    formatEntity: function(kind, name) {
+        if (kind === 'fleet') {
+            return t('Fleet');
+        }
+        return this.entityLabel(kind) + ' ' + (name || '');
+    },
+    legacyActionSteps: function(incident) {
+        if (incident.type === 'server_activity_drop') {
+            return {
+                operator: [
+                    t('Check the Pipeline health section and note the status of the collector for the affected server.'),
+                    t('Confirm whether calls, campaigns or traffic were expected during the exact detection window.'),
+                    t('Send the server, detection window, current events, expected events and collector status to support.'),
+                    t('Do not restart Asterisk, the collector or the server without technical confirmation.')
+                ],
+                technical: [
+                    t('Use the exact detection window and first confirm that the collector was healthy and had no backlog.'),
+                    t('Check Asterisk and the collector with read-only commands and compare channels, load, disk and inodes with peer servers.'),
+                    t('Compare event counts and traffic share with the other servers during the same window.'),
+                    t('If there is a proxy, verify the persistent and in-memory dispatcher state without reloading it.'),
+                    t('Do not restart or remove the server from load balancing before confirming the cause and rollback procedure.')
+                ]
+            };
+        }
+        return {
+            operator: [
+                t('Confirm whether calls are affected and note numbers, times and results.'),
+                t('Send this incident and your observations to support. Do not change the configuration without guidance.')
+            ],
+            technical: incident.recommended_action &&
+                incident.recommended_action.description ?
+                [incident.recommended_action.description] : [
+                    t('Review the evidence and correlate it with logs and configuration before making changes.')
+                ]
+        };
+    },
+    formatDisplayDate: function(value, timezone, utcFallback) {
+        if (value) {
+            return String(value) + (timezone ? ' ' + timezone : '');
+        }
+        return this.formatDate(utcFallback);
+    },
+    formatDetectionWindow: function(display, window) {
+        var start = display.window_start;
+        var end = display.window_end;
+        var minutes = display.window_minutes;
+        if (start && end) {
+            return Ext.String.format(
+                t('{0} to {1} ({2} minutes)'),
+                start,
+                end,
+                Ext.isNumber(minutes) ? minutes : 15
+            );
+        }
+        window = window || {};
+        if (window.start && window.end) {
+            return Ext.String.format(
+                t('{0} to {1}'),
+                this.formatDate(window.start),
+                this.formatDate(window.end)
+            );
+        }
+        return t('Not informed');
+    },
     formatDate: function(value) {
+        var text;
         if (!value) {
             return t('Not informed');
         }
-        return String(value).replace(/\.\d+$/, '') + ' ' + t('UTC');
+        text = String(value).replace('T', ' ');
+        text = text.replace(
+            /\.\d+(?=Z$|[+-]\d{2}:\d{2}$|$)/,
+            ''
+        );
+        text = text.replace(/Z$|\+00:00$/, '');
+        return text + ' ' + t('UTC');
     }
 });

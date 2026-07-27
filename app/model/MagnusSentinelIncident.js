@@ -38,6 +38,12 @@ Ext.define('MBilling.model.MagnusSentinelIncident', {
         name: 'last_seen',
         type: 'string'
     }, {
+        name: 'last_seen_display',
+        type: 'string'
+    }, {
+        name: 'display_timezone',
+        type: 'string'
+    }, {
         name: 'occurrence_count',
         type: 'int'
     }],

@@ -52,7 +52,9 @@ Ext.define('MBilling.view.magnusSentinel.List', {
             flex: 4,
             renderer: function (value, metadata, record) {
                 return Ext.util.Format.htmlEncode(
-                    me.entityLabel(record.get('entity_kind')) + ' ' + value
+                    record.get('entity_kind') === 'fleet' ?
+                        t('Fleet') :
+                        me.entityLabel(record.get('entity_kind')) + ' ' + value
                 );
             }
         }, {
@@ -69,10 +71,15 @@ Ext.define('MBilling.view.magnusSentinel.List', {
             align: 'right'
         }, {
             text: t('Last detection'),
-            dataIndex: 'last_seen',
+            dataIndex: 'last_seen_display',
             flex: 3,
-            renderer: function (value) {
-                return Ext.util.Format.htmlEncode(me.formatDate(value));
+            renderer: function (value, metadata, record) {
+                var timezone = record.get('display_timezone');
+                return Ext.util.Format.htmlEncode(
+                    value ?
+                        value + (timezone ? ' ' + timezone : '') :
+                        me.formatDate(record.get('last_seen'))
+                );
             }
         }];
         me.dockedItems = [{
@@ -127,7 +134,8 @@ Ext.define('MBilling.view.magnusSentinel.List', {
                     ['', t('All')],
                     ['trunk', t('Trunks')],
                     ['server', t('Servers')],
-                    ['proxy', t('Proxies')]
+                    ['proxy', t('Proxies')],
+                    ['fleet', t('Fleets')]
                 ],
                 listeners: {
                     change: 'onFilterChange'
