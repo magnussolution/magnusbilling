@@ -561,6 +561,7 @@ class MagnusSentinelIncidentApiV1
         $row['entity_id'] = (int) $row['entity_id'];
         $row['occurrence_count'] = (int) $row['occurrence_count'];
         $row['incident'] = $contract;
+        $row['display'] = self::incidentDisplay($row, $contract);
         return $row;
     }
 
@@ -590,6 +591,10 @@ class MagnusSentinelIncidentApiV1
         );
         foreach ($rows as &$row) {
             $row['id'] = (int) $row['id'];
+            $row['changed_at_display'] = self::displayDatabaseTimestamp(
+                $row['changed_at']
+            );
+            $row['display_timezone'] = self::displayTimezone();
         }
         unset($row);
         return [
@@ -634,9 +639,96 @@ class MagnusSentinelIncidentApiV1
                 ),
             'first_seen' => (string) $row['first_seen'],
             'last_seen' => (string) $row['last_seen'],
+            'last_seen_display' => self::displayDatabaseTimestamp(
+                $row['last_seen']
+            ),
+            'display_timezone' => self::displayTimezone(),
             'occurrence_count' => (int) $row['occurrence_count'],
             'state_changed_at' => (string) $row['state_changed_at'],
         ];
+    }
+
+    private static function incidentDisplay($row, $contract)
+    {
+        $window = isset($contract['window']) && is_array($contract['window'])
+            ? $contract['window']
+            : [];
+        $start = isset($window['start']) ? (string) $window['start'] : null;
+        $end = isset($window['end']) ? (string) $window['end'] : null;
+        return [
+            'timezone' => self::displayTimezone(),
+            'first_seen' => self::displayDatabaseTimestamp(
+                $row['first_seen']
+            ),
+            'last_seen' => self::displayDatabaseTimestamp(
+                $row['last_seen']
+            ),
+            'state_changed_at' => self::displayDatabaseTimestamp(
+                $row['state_changed_at']
+            ),
+            'window_start' => self::displayIsoTimestamp($start),
+            'window_end' => self::displayIsoTimestamp($end),
+            'window_minutes' => self::windowMinutes($start, $end),
+        ];
+    }
+
+    private static function displayTimezone()
+    {
+        $name = date_default_timezone_get();
+        return $name !== false && $name !== '' ? $name : 'UTC';
+    }
+
+    private static function displayDatabaseTimestamp($value)
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        $format = strpos((string) $value, '.') === false
+            ? 'Y-m-d H:i:s'
+            : 'Y-m-d H:i:s.u';
+        $date = DateTime::createFromFormat(
+            $format,
+            (string) $value,
+            new DateTimeZone('UTC')
+        );
+        return self::formatDisplayDate($date);
+    }
+
+    private static function displayIsoTimestamp($value)
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        try {
+            $date = new DateTime((string) $value);
+        } catch (Exception $exc) {
+            return null;
+        }
+        return self::formatDisplayDate($date);
+    }
+
+    private static function formatDisplayDate($date)
+    {
+        if (! $date instanceof DateTime) {
+            return null;
+        }
+        $date->setTimezone(new DateTimeZone(self::displayTimezone()));
+        return $date->format('Y-m-d H:i:s');
+    }
+
+    private static function windowMinutes($start, $end)
+    {
+        if ($start === null || $end === null) {
+            return null;
+        }
+        try {
+            $startDate = new DateTime($start);
+            $endDate = new DateTime($end);
+        } catch (Exception $exc) {
+            return null;
+        }
+        $seconds = $endDate->getTimestamp() - $startDate->getTimestamp();
+        return $seconds >= 0 ? round($seconds / 60, 2) : null;
     }
 
     public static function decodeContract($raw)
