@@ -51,6 +51,10 @@ class SearchTariff
         $result = $agi->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
         if (! is_array($result) || count($result) == 0) {
+            $agi->verboseEvent('Rate', 'RATE_NOT_FOUND', 'No active rate matches the destination in the selected plan.', 1, [
+                'destination' => $MAGNUS->destination,
+                'plan' => $MAGNUS->id_plan,
+            ]);
             return 0;
         }
 
@@ -82,9 +86,17 @@ class SearchTariff
         }
 
         if ($MAGNUS->sip_id_trunk_group > 0) {
-            $agi->verbose('SIP USER have ' . $MAGNUS->sip_account . ' trunk group ' . $MAGNUS->sip_id_trunk_group, 5);
+            $agi->verboseEvent('Rate', 'SIP_TRUNK_GROUP_OVERRIDE', 'The SIP account trunk group overrides the rate trunk group.', 3, [
+                'sipAccount' => $MAGNUS->sip_account,
+                'trunkGroup' => $MAGNUS->sip_id_trunk_group,
+            ]);
             $result[0]['id_trunk_group'] = $MAGNUS->sip_id_trunk_group;
         }
+
+        $sql = 'SELECT name FROM pkg_trunk_group WHERE id = ' . (int) $result[0]['id_trunk_group'] . ' LIMIT 1';
+        $agi->verbose($sql, 25);
+        $modelTrunkGroup = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
+        $result[0]['trunk_group_name'] = isset($modelTrunkGroup->name) ? $modelTrunkGroup->name : '';
 
         if (file_exists(dirname(__FILE__) . '/AfterSearchTariff.php')) {
             include dirname(__FILE__) . '/AfterSearchTariff.php';

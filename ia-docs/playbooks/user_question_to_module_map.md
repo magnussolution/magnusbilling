@@ -15,7 +15,8 @@ and evidence paths.
 
 - Panel modules: Calls, Rejected Calls, SIP Trace, SIP Users, Trunks, Trunk
   Groups, Rates, Provider Rates, Prefixes, Users.
-- Start docs: MB-RAG-DOMAIN-CALLFLOW-BILLING, MB-RAG-DOMAIN-RATES-PROVIDER-COSTS.
+- Start docs: MB-RAG-DOMAIN-CALL-DIAGNOSTICS,
+  MB-RAG-DOMAIN-CALLFLOW-BILLING, MB-RAG-DOMAIN-RATES-PROVIDER-COSTS.
 - First checks: user credit/status, SIP user status, dialed number format,
   matching prefix/rate, selected trunk, final SIP response.
 
@@ -30,7 +31,9 @@ and evidence paths.
 
 - Panel modules: DIDs, DID Destination, SIP Users, Queues, IVR, Rejected Calls,
   SIP Trace.
-- Start docs: MB-RAG-DOMAIN-INBOUND-DID-QUEUE-IVR, MB-RAG-DOMAIN-QUEUE-CONTACT-CENTER.
+- Start docs: MB-RAG-DOMAIN-CALL-DIAGNOSTICS,
+  MB-RAG-DOMAIN-INBOUND-DID-QUEUE-IVR,
+  MB-RAG-DOMAIN-QUEUE-CONTACT-CENTER.
 - First checks: DID active status, destination type, destination target status,
   inbound AGI path, downstream SIP/trunk response.
 

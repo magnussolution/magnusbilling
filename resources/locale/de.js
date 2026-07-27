@@ -1126,4 +1126,15 @@ Locale.load({
     'to refill': 'zum aufladen',
     'week': 'Woche',
 
+    'Account code': 'Kontocode',
+    'Dial string': 'Wählroute',
+    'Dial parameters': 'Wählparameter',
+    'Timeout': 'Zeitlimit',
+    'Hangup cause': 'Auflegeursache',
+    'Route summary': 'Routenübersicht',
+    'AGI validation trace': 'AGI-Prüfschritte',
+    'SQL queries': 'Erweiterte SQL-Abfragen',
+    'Process errors': 'Prozessfehler',
+    'Ready to dial': 'Bereit zum Wählen',
+    'Blocked before Dial': 'Vor dem Wählen gestoppt',
 });

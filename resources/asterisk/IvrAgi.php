@@ -26,7 +26,6 @@ class IvrAgi
 
         $agi->verbose("Ivr module", 5);
         $agi->verbose("DID IVR - CallerID=" . $MAGNUS->CallerID . " -> DID=" . $DidAgi->modelDid->did, 6);
-        $agi->answer();
         $MAGNUS->sip_account = '';
         $startTime           = time();
 
@@ -35,6 +34,17 @@ class IvrAgi
         $sql = "SELECT *, pkg_ivr.id id, pkg_ivr.id_user id_user FROM pkg_ivr LEFT JOIN pkg_user ON pkg_ivr.id_user = pkg_user.id WHERE pkg_ivr.id = " . $DidAgi->modelDestination[0]['id_ivr'] . " LIMIT 1";
         $agi->verbose($sql, 25);
         $modelIvr = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
+        if (! isset($modelIvr->id)) {
+            $agi->verboseEvent('DID', 'DID_IVR_MISSING', 'The DID route is configured as IVR, but no valid IVR is selected.', 1, [
+                'did' => isset($DidAgi->modelDid->did) ? $DidAgi->modelDid->did : '',
+                'ivrId' => isset($DidAgi->modelDestination[0]['id_ivr']) ? $DidAgi->modelDestination[0]['id_ivr'] : 0,
+            ]);
+            if ($agi->debugMode) {
+                $agi->finishDebug('blocked');
+                exit;
+            }
+            $MAGNUS->hangup($agi);
+        }
 
         $username        = $modelIvr->username;
         $MAGNUS->id_user = $modelIvr->id_user;
@@ -42,12 +52,14 @@ class IvrAgi
 
         $work = $MAGNUS->checkIVRSchedule($modelIvr->monFriStart, $modelIvr->satStart, $modelIvr->sunStart);
 
+        $holidayApplied = false;
         if ($modelIvr->use_holidays == 1) {
             $sql = "SELECT * FROM pkg_holidays  WHERE day = '" . date('Y-m-d') . "' LIMIT 1";
             $agi->verbose($sql, 25);
             $modelHolidays = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
             if (isset($modelHolidays->id)) {
                 $work = 'closed';
+                $holidayApplied = true;
             }
         }
 
@@ -59,6 +71,85 @@ class IvrAgi
             $audioURA   = 'idIvrDidNoWork_';
             $optionName = 'option_out_';
         }
+
+        $audio = $MAGNUS->magnusFilesDirectory . '/sounds/' . $audioURA . $DidAgi->modelDestination[0]['id_ivr'];
+        $audioFormat = file_exists($audio . '.gsm')
+            ? 'gsm'
+            : (file_exists($audio . '.wav') ? 'wav' : '');
+        $optionCount = 0;
+        for ($optionIndex = 0; $optionIndex <= 10; $optionIndex++) {
+            $optionField = $optionName . $optionIndex;
+            if (isset($modelIvr->{$optionField}) && trim((string) $modelIvr->{$optionField}) !== '') {
+                $optionCount++;
+            }
+        }
+        $scheduleCode = $work === 'open' ? 'DID_IVR_SCHEDULE' : 'DID_IVR_OUT_OF_HOURS';
+        $scheduleMessage = $work === 'open'
+            ? 'The IVR is within its service hours.'
+            : 'The IVR is outside its service hours.';
+        $agi->verboseEvent('DID', $scheduleCode, $scheduleMessage, $work === 'open' ? 3 : 2, [
+            'did' => $DidAgi->modelDid->did,
+            'ivrId' => $modelIvr->id,
+            'ivrName' => $modelIvr->name,
+            'scheduleStatus' => $work,
+            'holidayApplied' => $holidayApplied ? 1 : 0,
+        ]);
+        if ($audioFormat === '') {
+            $agi->verboseEvent('DID', 'DID_IVR_AUDIO_MISSING', 'The IVR audio for the current schedule was not found.', 2, [
+                'did' => $DidAgi->modelDid->did,
+                'ivrId' => $modelIvr->id,
+                'ivrName' => $modelIvr->name,
+                'scheduleStatus' => $work,
+                'expectedAudio' => $audio,
+            ]);
+        } else {
+            $audioFile = $audio . '.' . $audioFormat;
+            $audioInfo = self::inspectAsteriskAudio($audioFile, $audioFormat);
+            $audioContext = [
+                'did' => $DidAgi->modelDid->did,
+                'ivrId' => $modelIvr->id,
+                'ivrName' => $modelIvr->name,
+                'scheduleStatus' => $work,
+                'audio' => $audioFile,
+                'audioFormat' => $audioFormat,
+                'channels' => $audioInfo['channels'],
+                'sampleRate' => $audioInfo['sampleRate'],
+                'reason' => $audioInfo['reason'],
+            ];
+            if ($audioInfo['valid']) {
+                $agi->verboseEvent('DID', 'DID_IVR_AUDIO_FOUND', 'The IVR audio is compatible with Asterisk.', 3, $audioContext);
+            } else {
+                $agi->verboseEvent('DID', 'DID_IVR_AUDIO_INCOMPATIBLE', 'The IVR audio is not mono at 8000 Hz or has an invalid format.', 2, $audioContext);
+            }
+        }
+        if ($optionCount === 0) {
+            $agi->verboseEvent('DID', 'DID_IVR_NO_OPTIONS', 'The IVR has no options configured for the current schedule.', 1, [
+                'did' => $DidAgi->modelDid->did,
+                'ivrId' => $modelIvr->id,
+                'ivrName' => $modelIvr->name,
+                'scheduleStatus' => $work,
+            ]);
+            if ($agi->debugMode) {
+                $agi->finishDebug('blocked');
+                exit;
+            }
+        }
+        if ($agi->debugMode) {
+            $agi->finishDebug('ready_to_dial', [
+                'routeType' => 'IVR',
+                'did' => $DidAgi->modelDid->did,
+                'ivrId' => $modelIvr->id,
+                'ivrName' => $modelIvr->name,
+                'scheduleStatus' => $work,
+                'holidayApplied' => $holidayApplied,
+                'audio' => $audioFormat !== '' ? $audio . '.' . $audioFormat : '',
+                'optionCount' => $optionCount,
+                'callerId' => $MAGNUS->CallerID,
+            ]);
+            exit;
+        }
+
+        $agi->answer();
 
         $continue  = true;
         $insertCDR = false;
@@ -72,7 +163,6 @@ class IvrAgi
                 $continue = false;
                 break;
             }
-            $audio         = $MAGNUS->magnusFilesDirectory . '/sounds/' . $audioURA . $DidAgi->modelDestination[0]['id_ivr'];
             $digit_timeout = 1;
             $wait_time     = 3000;
 
@@ -235,9 +325,13 @@ class IvrAgi
                     $modelSip = $agi->query($sql)->fetchAll(PDO::FETCH_OBJ);
 
                     if (! isset($modelSip[0]->id)) {
-                        $agi->verbose('GROUP NOT FOUND');
-                        $agi->stream_file('prepaid-invalid-digits', '#');
-                        continue;
+                        $agi->verboseEvent('DID', 'DID_SIP_GROUP_EMPTY', 'The selected SIP group has no SIP accounts.', 1, [
+                            'did' => $DidAgi->modelDid->did,
+                            'ivrId' => $modelIvr->id,
+                            'ivrName' => $modelIvr->name,
+                            'sipGroup' => $optionValue,
+                        ]);
+                        $MAGNUS->hangup($agi);
                     }
                     $MAGNUS->sip_account = $modelSip[0]->name;
                     $group               = '';
@@ -312,5 +406,66 @@ class IvrAgi
         }
 
         return;
+    }
+
+    private static function inspectAsteriskAudio($file, $format)
+    {
+        $result = [
+            'valid' => false,
+            'channels' => null,
+            'sampleRate' => null,
+            'reason' => '',
+        ];
+        $size = @filesize($file);
+        if (! is_int($size) || $size <= 0) {
+            $result['reason'] = 'empty_file';
+            return $result;
+        }
+        if ($format === 'gsm') {
+            $result['channels'] = 1;
+            $result['sampleRate'] = 8000;
+            $result['valid'] = ($size % 33) === 0;
+            $result['reason'] = $result['valid'] ? '' : 'invalid_gsm_frames';
+            return $result;
+        }
+
+        $handle = @fopen($file, 'rb');
+        if (! is_resource($handle)) {
+            $result['reason'] = 'unreadable_file';
+            return $result;
+        }
+        $header = fread($handle, 12);
+        if (strlen($header) !== 12 || substr($header, 0, 4) !== 'RIFF' || substr($header, 8, 4) !== 'WAVE') {
+            fclose($handle);
+            $result['reason'] = 'invalid_wav_header';
+            return $result;
+        }
+        while (! feof($handle)) {
+            $chunkHeader = fread($handle, 8);
+            if (strlen($chunkHeader) !== 8) {
+                break;
+            }
+            $chunkId = substr($chunkHeader, 0, 4);
+            $chunkSizeData = unpack('Vsize', substr($chunkHeader, 4, 4));
+            $chunkSize = (int) $chunkSizeData['size'];
+            if ($chunkId === 'fmt ') {
+                $formatData = fread($handle, min($chunkSize, 16));
+                if (strlen($formatData) >= 8) {
+                    $values = unpack('vcodec/vchannels/VsampleRate', substr($formatData, 0, 8));
+                    $result['channels'] = (int) $values['channels'];
+                    $result['sampleRate'] = (int) $values['sampleRate'];
+                    $result['valid'] = $result['channels'] === 1 && $result['sampleRate'] === 8000;
+                    $result['reason'] = $result['valid'] ? '' : 'requires_mono_8000hz';
+                } else {
+                    $result['reason'] = 'invalid_wav_format_chunk';
+                }
+                fclose($handle);
+                return $result;
+            }
+            fseek($handle, $chunkSize + ($chunkSize % 2), SEEK_CUR);
+        }
+        fclose($handle);
+        $result['reason'] = 'wav_format_chunk_not_found';
+        return $result;
     }
 }

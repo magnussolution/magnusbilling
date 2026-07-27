@@ -20,6 +20,7 @@
  */
 Ext.define('MBilling.view.sip.Controller', {
     extend: 'Ext.ux.app.ViewController',
+    requires: ['MBilling.view.callDiagnostic.Window'],
     alias: 'controller.sip',
     init: function () {
         var me = this;
@@ -29,6 +30,27 @@ Ext.define('MBilling.view.sip.Controller', {
             }
         });
         me.callParent(arguments);
+    },
+    onSelectionChange: function (selModel, selections) {
+        var button = this.lookupReference('checkUser');
+        button && button.setDisabled(selections.length !== 1);
+        this.callParent(arguments);
+    },
+    onCheckUser: function () {
+        var records = this.list.getSelectionModel().getSelection();
+        if (records.length !== 1) {
+            Ext.ux.Alert.alert(t('Warning'), t('Select exactly one SIP user.'), 'warning');
+            return;
+        }
+        this.formPanel.collapse();
+
+        Ext.create('MBilling.view.callDiagnostic.Window', {
+            diagnosticType: 'outbound',
+            ownerList: this.list,
+            recordId: records[0].get('id'),
+            recordLabel: records[0].get('name'),
+            defaultCallerId: records[0].get('callerid')
+        }).show();
     },
     onSelectMethod: function (combo, records) {
         this.showFieldsRelated(records.getData().showFields);

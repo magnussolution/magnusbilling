@@ -30,6 +30,16 @@ Ext.define('MBilling.view.sip.Form', {
         Ext.each(App.user.menu, function (item) {
             if (item.text == "t('Services')") haveServiceMenu = true;
         });
+
+        me.extraButtons = [{
+            text: t('Check User'),
+            iconCls: 'x-fa fa-stethoscope',
+            handler: 'onCheckUser',
+            disabled: true,
+            reference: 'checkUser',
+            hidden: !App.user.isAdmin
+        }];
+
         me.items = [{
             xtype: 'tabpanel',
             defaults: {

@@ -24,7 +24,7 @@ Ext.define('MBilling.view.did.List', {
     store: 'Did',
     fieldSearch: 'did',
     buttonImportCsv: true,
-    initComponent: function() {
+    initComponent: function () {
         var me = this,
             isMobileLayout = window.isMobileLayout || window.isTablet || window.isTablets,
             groupRelease = Ext.id(),

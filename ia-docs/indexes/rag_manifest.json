@@ -59,6 +59,11 @@
       "kind": "domain"
     },
     {
+      "doc_id": "MB-RAG-DOMAIN-CALL-DIAGNOSTICS",
+      "path": "ia-docs/domains/call_diagnostics.md",
+      "kind": "domain"
+    },
+    {
       "doc_id": "MB-RAG-DOMAIN-CALLFLOW-BILLING",
       "path": "ia-docs/domains/call_flow_and_billing.md",
       "kind": "domain"

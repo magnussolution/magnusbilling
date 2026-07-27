@@ -23,6 +23,61 @@ class QueueAgi
 {
     public static function callQueue(&$agi, &$MAGNUS, &$CalcAgi, $DidAgi = null, $type = 'queue', $startTime = 0)
     {
+        if ($agi->debugMode) {
+            $queueId = isset($DidAgi->modelDestination[0]['id_queue'])
+                ? (int) $DidAgi->modelDestination[0]['id_queue']
+                : 0;
+            $modelQueue = null;
+            if ($queueId > 0) {
+                $sql = "SELECT id,name FROM pkg_queue WHERE id = $queueId LIMIT 1";
+                $agi->verbose($sql, 25);
+                $modelQueue = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
+            }
+            if (! isset($modelQueue->id)) {
+                $agi->verboseEvent('DID', 'DID_QUEUE_MISSING', 'The DID route is configured as Queue, but no valid Queue is selected.', 1, [
+                    'did' => isset($DidAgi->modelDid->did) ? $DidAgi->modelDid->did : '',
+                    'queueId' => $queueId,
+                ]);
+                $agi->finishDebug('blocked');
+                exit;
+            }
+            $sql = "SELECT COUNT(*) AS agent_count,
+                           SUM(CASE WHEN qm.paused = 0 THEN 1 ELSE 0 END) AS available_agent_count
+                    FROM pkg_queue_member qm
+                    INNER JOIN pkg_queue q ON q.name = qm.queue_name
+                    WHERE q.id = " . (int) $modelQueue->id;
+            $agi->verbose($sql, 25);
+            $queueAgents = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
+            $agentCount = isset($queueAgents->agent_count) ? (int) $queueAgents->agent_count : 0;
+            $availableAgentCount = isset($queueAgents->available_agent_count)
+                ? (int) $queueAgents->available_agent_count
+                : 0;
+            if ($agentCount === 0) {
+                $agi->verboseEvent('DID', 'DID_QUEUE_NO_AGENTS', 'The Queue selected for the DID has no agents.', 2, [
+                    'did' => isset($DidAgi->modelDid->did) ? $DidAgi->modelDid->did : '',
+                    'queueId' => $modelQueue->id,
+                    'queueName' => $modelQueue->name,
+                ]);
+            }
+            $agi->verboseEvent('DID', 'DID_QUEUE_SELECTED', 'A valid Queue was selected for the DID route.', 3, [
+                'did' => isset($DidAgi->modelDid->did) ? $DidAgi->modelDid->did : '',
+                'queueId' => $modelQueue->id,
+                'queueName' => $modelQueue->name,
+                'agentCount' => $agentCount,
+                'availableAgentCount' => $availableAgentCount,
+            ]);
+            $agi->finishDebug('ready_to_dial', [
+                'routeType' => 'Queue',
+                'did' => isset($DidAgi->modelDid->did) ? $DidAgi->modelDid->did : '',
+                'queueId' => $modelQueue->id,
+                'queueName' => $modelQueue->name,
+                'agentCount' => $agentCount,
+                'availableAgentCount' => $availableAgentCount,
+                'callerId' => $MAGNUS->CallerID,
+            ]);
+            exit;
+        }
+
         $agi->verbose("Queue module", 5);
         $MAGNUS->sip_account = '';
         $agi->answer();

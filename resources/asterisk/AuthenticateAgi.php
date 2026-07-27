@@ -1,4 +1,5 @@
 <?php
+
 /**
  * =======================================
  * ###################################
@@ -22,7 +23,9 @@ class AuthenticateAgi
 {
     public static function authenticateUser($agi, $MAGNUS)
     {
-        $agi->verbose('AuthenticateUser ' . $MAGNUS->accountcode, 15);
+        $agi->verboseEvent('Authentication', 'AUTH_STARTED', 'Authenticating the call owner.', 4, [
+            'account' => $MAGNUS->accountcode,
+        ]);
         $authentication = false;
 
         /* TRY WITH THE CALLERID AUTHENTICATION*/
@@ -43,10 +46,19 @@ class AuthenticateAgi
         $authentication = AuthenticateAgi::checkIfCallShopCall($MAGNUS, $agi, $authentication);
 
         if ($authentication == false || $MAGNUS->active == 0 || $MAGNUS->active == 2) {
+            $agi->verboseEvent('Authentication', 'AUTH_FAILED', 'Call authentication failed or the user account is inactive.', 1, [
+                'account' => $MAGNUS->accountcode,
+                'userStatus' => isset($MAGNUS->active) ? $MAGNUS->active : '',
+            ]);
             $prompt = "prepaid-auth-fail";
             //force the audio to play
             $MAGNUS->play_audio = true;
         } else {
+            $agi->verboseEvent('Authentication', 'AUTH_SUCCESS', 'Call owner authenticated successfully.', 3, [
+                'username' => $MAGNUS->username,
+                'sipAccount' => $MAGNUS->sip_account,
+                'plan' => $MAGNUS->id_plan,
+            ]);
             $prompt = $MAGNUS->check_expirationdate_customer($agi);
         }
 
@@ -92,7 +104,10 @@ class AuthenticateAgi
 
                 AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser, $modelSip);
 
-                $agi->verbose("AUTHENTICATION BY CALLERID:" . $MAGNUS->CallerID, 6);
+                $agi->verboseEvent('Authentication', 'AUTH_BY_CALLERID', 'Authenticated using an authorized CallerID.', 3, [
+                    'callerid' => $MAGNUS->CallerID,
+                    'username' => $MAGNUS->username,
+                ]);
                 $authentication = true;
             }
         }
@@ -127,7 +142,11 @@ class AuthenticateAgi
                 AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser, $modelSip);
                 $MAGNUS->sip_account = $modelSip->name;
                 $MAGNUS->dnid        = substr($MAGNUS->dnid, $MAGNUS->config['global']['ip_tech_length']);
-                $agi->verbose("AUTHENTICATION BY TECHPREFIX $tech_prefix - Username: " . $MAGNUS->username . '  ' . $MAGNUS->dnid, 6);
+                $agi->verboseEvent('Authentication', 'AUTH_BY_TECHPREFIX', 'Authenticated using the provider tech prefix.', 3, [
+                    'techPrefix' => $tech,
+                    'username' => $MAGNUS->username,
+                    'destination' => $MAGNUS->dnid,
+                ]);
                 $authentication = true;
             }
         }
@@ -145,7 +164,9 @@ class AuthenticateAgi
 
             if (isset($modelUser->id)) {
                 AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser);
-                $agi->verbose("AUTHENTICATION BY ACCOUNTCODE:" . $MAGNUS->username, 6);
+                $agi->verboseEvent('Authentication', 'AUTH_BY_ACCOUNTCODE', 'Authenticated using the account code.', 3, [
+                    'username' => $MAGNUS->username,
+                ]);
                 $authentication = true;
             }
         }
@@ -189,7 +210,6 @@ class AuthenticateAgi
                         AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser);
                         $authentication = true;
                         $agi->verbose("AUTHENTICATION BY P-Accountcode header " . $MAGNUS->accountcode);
-
                     }
                 }
             } else {
@@ -287,7 +307,7 @@ class AuthenticateAgi
 
                     $pin = $res_dtmf["result"];
 
-                    if ( ! isset($pin) || strlen($pin) == 0) {
+                    if (! isset($pin) || strlen($pin) == 0) {
                         $prompt = "prepaid-no-card-entered";
                         $agi->verbose('No user entered', 6);
                         continue;
@@ -348,7 +368,7 @@ class AuthenticateAgi
     public static function checkIfIsAgent(&$MAGNUS, $agi)
     {
         /*check if user is a agent user*/
-        if ( ! is_null($MAGNUS->id_agent) && $MAGNUS->id_agent > 1) {
+        if (! is_null($MAGNUS->id_agent) && $MAGNUS->id_agent > 1) {
             $MAGNUS->id_plan_agent = $MAGNUS->id_plan;
             $sql                   = "SELECT * FROM pkg_user WHERE id =" . $MAGNUS->id_agent . " LIMIT 1";
             $agi->verbose($sql, 25);
@@ -370,9 +390,16 @@ class AuthenticateAgi
             $modelPlan = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
 
             if (isset($modelPlan->id)) {
-                $MAGNUS->id_plan = $modelPlan->id;
-                $MAGNUS->dnid    = substr($MAGNUS->dnid, 5);
+                $planTechPrefix        = substr($MAGNUS->dnid, 0, 5);
+                $MAGNUS->id_plan       = $modelPlan->id;
+                $MAGNUS->dnid          = substr($MAGNUS->dnid, 5);
+                $MAGNUS->planTechPrefix = $planTechPrefix;
                 $agi->verbose("Changed plan via TechPrefix: Plan used $MAGNUS->id_plan - Number: $MAGNUS->dnid ", 15);
+                $agi->verboseEvent('Rate', 'PLAN_BY_TECHPREFIX', 'The rate plan was selected using the plan tech prefix.', 3, [
+                    'techPrefix' => $planTechPrefix,
+                    'plan' => $MAGNUS->id_plan,
+                    'destination' => $MAGNUS->dnid,
+                ]);
                 $MAGNUS->portabilidadeMobile = $modelPlan->portabilidadeMobile;
                 $MAGNUS->portabilidadeFixed  = $modelPlan->portabilidadeFixed;
             }
@@ -391,7 +418,6 @@ class AuthenticateAgi
             }
 
             $MAGNUS->hangup($agi);
-
         } elseif ($MAGNUS->mode == 'standard' && $MAGNUS->user_calllimit >= 0) {
             //check user call limit
             $agi->verbose('check user call limit', 5);
@@ -428,7 +454,6 @@ class AuthenticateAgi
 
                 $MAGNUS->hangup($agi);
             }
-
         }
     }
 
@@ -452,7 +477,7 @@ class AuthenticateAgi
     public static function setMagnusAttrubutes(&$MAGNUS, &$agi, $model, $modelSip = null)
     {
 
-        if ( ! isset($model->removeinterprefix)) {
+        if (! isset($model->removeinterprefix)) {
             $sql = "SELECT removeinterprefix, play_audio, portabilidadeMobile, portabilidadeFixed, tariff_limit  FROM pkg_plan WHERE id = " . $model->id_plan . " LIMIT 1";
             $agi->verbose($sql, 25);
             $modelPlan                  = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
@@ -493,10 +518,10 @@ class AuthenticateAgi
         $MAGNUS->user_calllimit      = $model->calllimit;
         $MAGNUS->mix_monitor_format  = $model->mix_monitor_format;
         $MAGNUS->credit              = $MAGNUS->typepaid == 1
-        ? $MAGNUS->credit + $MAGNUS->creditlimit
-        : $MAGNUS->credit;
+            ? $MAGNUS->credit + $MAGNUS->creditlimit
+            : $MAGNUS->credit;
 
-        if ( ! isset($modelSip->id)) {
+        if (! isset($modelSip->id)) {
             $sql = "SELECT * FROM pkg_sip WHERE name = '$MAGNUS->sip_account' LIMIT 1";
             $agi->verbose($sql, 25);
             $MAGNUS->modelSip = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
@@ -513,5 +538,4 @@ class AuthenticateAgi
             $MAGNUS->record_call = (isset($MAGNUS->modelSip->id) && $MAGNUS->modelSip->record_call) || $MAGNUS->agiconfig['record_call'] ? true : false;
         }
     }
-
 }

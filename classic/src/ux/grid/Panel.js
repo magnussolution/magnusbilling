@@ -206,16 +206,14 @@ Ext.define('Ext.ux.grid.Panel', {
             me.tbar.push({
                 iconCls: me.iconButtonCsv,
                 text: me.textButtonCsv,
-                handler: me.actionButtonCsv,
-                width: me.widthButtonCsv
+                handler: me.actionButtonCsv
             });
         };
         if (me.buttonImportCsv && !isMobileLayout) {
             me.tbar.push({
                 iconCls: me.iconButtonImportCsv,
                 text: me.textButtonImportCsv,
-                handler: 'onImportCsv',
-                width: me.widthButtonCsv
+                handler: 'onImportCsv'
             });
         };
         if (me.extraButtons.length && window.isTablet === false) {
@@ -226,7 +224,6 @@ Ext.define('Ext.ux.grid.Panel', {
                 xtype: 'splitbutton',
                 glyph: me.glyphPrint,
                 text: isMobileLayout ? '' : me.textPrint,
-                width: App.user.language == 'en' ? 100 : 110,
                 hidden: !me.allowPrint,
                 handler: 'onPrint',
                 menu: [{
@@ -249,7 +246,6 @@ Ext.define('Ext.ux.grid.Panel', {
                 iconCls: me.iconClsCleanFilter,
                 text: isMobileLayout ? '' : me.textCleanFilter,
                 scope: me,
-                width: isMobileLayout ? 50 : App.user.language == 'en' ? 110 : 120,
                 handler: me.cleanFilters
             });
         }
@@ -303,18 +299,18 @@ Ext.define('Ext.ux.grid.Panel', {
             }
         });
     },
-    enableMobileListTouchScroll: function() {
+    enableMobileListTouchScroll: function () {
         var me = this,
             el,
             startY = 0,
             startScrollTop = 0,
             activeScrollEl = null,
-            pushCandidate = function(candidates, node) {
+            pushCandidate = function (candidates, node) {
                 if (node && candidates.indexOf(node) === -1) {
                     candidates.push(node);
                 }
             },
-            getCandidates = function(target) {
+            getCandidates = function (target) {
                 var candidates = [],
                     node = target,
                     view = me.getView && me.getView(),
@@ -338,7 +334,7 @@ Ext.define('Ext.ux.grid.Panel', {
                 }
                 return candidates;
             },
-            getScrollEl = function(target) {
+            getScrollEl = function (target) {
                 var candidates = getCandidates(target),
                     i,
                     candidate;
@@ -358,7 +354,7 @@ Ext.define('Ext.ux.grid.Panel', {
             return;
         }
         me.mbTouchScrollBound = true;
-        el.addEventListener('touchstart', function(event) {
+        el.addEventListener('touchstart', function (event) {
             var touch = event.touches && event.touches[0],
                 scrollEl = getScrollEl(event.target);
             if (!touch || !scrollEl) {
@@ -371,7 +367,7 @@ Ext.define('Ext.ux.grid.Panel', {
             capture: true,
             passive: true
         });
-        el.addEventListener('touchmove', function(event) {
+        el.addEventListener('touchmove', function (event) {
             var touch = event.touches && event.touches[0],
                 scrollEl = activeScrollEl || getScrollEl(event.target),
                 deltaY,
@@ -393,7 +389,7 @@ Ext.define('Ext.ux.grid.Panel', {
             passive: false
         });
     },
-    enableMobileColumnHeaderTriggers: function() {
+    enableMobileColumnHeaderTriggers: function () {
         var me = this,
             isMobileLayout = window.isMobileLayout || window.isTablet || window.isTablets,
             headerCt = me.headerCt,
@@ -404,12 +400,12 @@ Ext.define('Ext.ux.grid.Panel', {
         if (!isMobileLayout || !headerCt) {
             return;
         }
-        bindNativeTrigger = function(dom, column) {
+        bindNativeTrigger = function (dom, column) {
             var openFromEvent;
             if (!dom || dom.mbMobileColumnTriggerNativeBound) {
                 return;
             }
-            openFromEvent = function(event) {
+            openFromEvent = function (event) {
                 var now = new Date().getTime();
                 event.preventDefault();
                 event.stopPropagation();
@@ -420,13 +416,13 @@ Ext.define('Ext.ux.grid.Panel', {
                 me.openMobileColumnMenu(column, dom, event);
             };
             dom.mbMobileColumnTriggerNativeBound = true;
-            dom.addEventListener('touchstart', function(event) {
+            dom.addEventListener('touchstart', function (event) {
                 event.stopPropagation();
             }, true);
             dom.addEventListener('touchend', openFromEvent, true);
             dom.addEventListener('click', openFromEvent, true);
         };
-        attachTrigger = function(column) {
+        attachTrigger = function (column) {
             var headerEl = column && column.el,
                 trigger;
             if (!column || column.hidden || column.menuDisabled || column.isCheckerHd || !headerEl || !headerEl.dom) {
@@ -470,18 +466,18 @@ Ext.define('Ext.ux.grid.Panel', {
             }
             trigger.dom.mbMobileColumnTriggerBound = true;
             trigger.on({
-                touchstart: function(event) {
+                touchstart: function (event) {
                     event.stopPropagation();
                 },
-                touchend: function(event, target) {
+                touchend: function (event, target) {
                     me.openMobileColumnMenu(column, target, event);
                 },
-                click: function(event, target) {
+                click: function (event, target) {
                     me.openMobileColumnMenu(column, target, event);
                 }
             });
         };
-        bindTriggers = function() {
+        bindTriggers = function () {
             var columns = headerCt.getVisibleGridColumns ? headerCt.getVisibleGridColumns() : headerCt.getGridColumns && headerCt.getGridColumns(),
                 i;
             columns = columns || [];
@@ -489,7 +485,7 @@ Ext.define('Ext.ux.grid.Panel', {
                 attachTrigger(columns[i]);
             }
         };
-        scheduleBind = function() {
+        scheduleBind = function () {
             Ext.defer(bindTriggers, 25);
         };
         scheduleBind();
@@ -503,7 +499,7 @@ Ext.define('Ext.ux.grid.Panel', {
         headerCt.on('columnhide', scheduleBind, me);
         headerCt.on('columnmove', scheduleBind, me);
     },
-    openMobileColumnMenu: function(column, target, event) {
+    openMobileColumnMenu: function (column, target, event) {
         var headerCt = this.headerCt,
             targetEl = Ext.get(target) || column.triggerEl || column.el;
         if (event && event.stopEvent) {

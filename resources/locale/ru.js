@@ -1105,4 +1105,15 @@ Locale.load({
     'to refill': 'пополнить',
     'week': 'неделя',
 
+    'Account code': 'Код учётной записи',
+    'Dial string': 'Маршрут вызова',
+    'Dial parameters': 'Параметры вызова',
+    'Timeout': 'Тайм-аут',
+    'Hangup cause': 'Причина завершения',
+    'Route summary': 'Сводка маршрута',
+    'AGI validation trace': 'Этапы проверки AGI',
+    'SQL queries': 'Расширенные SQL-запросы',
+    'Process errors': 'Ошибки процесса',
+    'Ready to dial': 'Готово к вызову',
+    'Blocked before Dial': 'Остановлено до вызова',
 });

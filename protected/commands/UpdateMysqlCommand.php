@@ -203,7 +203,23 @@ class UpdateMysqlCommand extends CConsoleCommand
             $this->update($version);
         }
 
-        $this->logMessage('Database migration completed at version ' . $version . '.');
+
+        //2026-07-27
+        if ($version == '8.0.0.4') {
+            $this->logMessage('Applying database migration 8.0.0.4 -> 8.0.0.5.');
+            $sql = "INSERT INTO pkg_module (text,module,icon_cls,id_module,priority) SELECT 't(''Call diagnostics'')','callDiagnostic','x-fa fa-stethoscope',12,99 WHERE NOT EXISTS (SELECT 1 FROM pkg_module WHERE module='callDiagnostic');";
+            $this->executeDB($sql);
+
+            $sql = "INSERT INTO pkg_group_module (id_group,id_module,action,show_menu,createShortCut,createQuickStart)
+                SELECT 1,m.id,'r',0,0,0 FROM pkg_module m
+                WHERE m.module='callDiagnostic'
+                AND NOT EXISTS (
+                    SELECT 1 FROM pkg_group_module gm WHERE gm.id_group=1 AND gm.id_module=m.id
+                )";
+            $this->executeDB($sql);
+            $version = '8.0.0.5';
+            $this->update($version);
+        }
     }
 
     private function columnExists($table, $column)
@@ -262,7 +278,7 @@ class UpdateMysqlCommand extends CConsoleCommand
 
             $affected = $this->executeDB(
                 'UPDATE `' . $table . '` SET `' . $column . '` = ' . $expression .
-                ' WHERE `' . $column . '` IS NOT NULL AND `' . $column . '` <> ' . $expression
+                    ' WHERE `' . $column . '` IS NOT NULL AND `' . $column . '` <> ' . $expression
             );
             $this->logMessage('Converted ' . (int) $affected . ' legacy SIP reference(s) in ' . $table . '.' . $column . '.');
         }
@@ -282,7 +298,7 @@ class UpdateMysqlCommand extends CConsoleCommand
 
             $affected = $this->executeDB(
                 'UPDATE `pkg_sip` SET `sip_config` = ' . $expression .
-                ' WHERE `sip_config` IS NOT NULL AND `sip_config` <> ' . $expression
+                    ' WHERE `sip_config` IS NOT NULL AND `sip_config` <> ' . $expression
             );
             $this->logMessage('Converted ' . (int) $affected . ' legacy SIP reference(s) in pkg_sip.sip_config.');
         }

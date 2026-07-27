@@ -143,8 +143,10 @@ class SipCallAgi
             $modelSip = $agi->query($sql)->fetchAll(PDO::FETCH_OBJ);
 
             if (! isset($modelSip[0]->id)) {
-                $agi->verbose('GROUP NOT FOUND');
-                $agi->stream_file('prepaid-invalid-digits', '#');
+                $agi->verboseEvent('DID', 'DID_SIP_GROUP_EMPTY', 'The selected SIP group has no SIP accounts.', 1, [
+                    'sipGroup' => $optionValue,
+                ]);
+                $MAGNUS->hangup($agi);
             }
             $MAGNUS->sip_account = $modelSip[0]->name;
             $group               = '';

@@ -28,7 +28,6 @@ Ext.define('MBilling.view.sip.List', {
         me.extraButtons = [{
             text: t('Bulk SIP'),
             handler: 'onBulk',
-            width: App.user.language == 'en' ? 80 : 110,
             disabled: false,
             hidden: App.user.isClient || !me.allowCreate || window.isTablet
         }];

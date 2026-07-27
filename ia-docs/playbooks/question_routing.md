@@ -34,6 +34,17 @@ tags: [routing, triage, investigation]
 - Start: resources/asterisk/mbilling.php
 - Then: AuthenticateAgi.php -> StandardCallAgi.php -> SearchTariff.php -> CalcAgi.php
 
+## Check User / Check DID / AGI Dry-Run
+
+- Start domain: `ia-docs/domains/call_diagnostics.md`
+- Web flow: `protected/controllers/CallDiagnosticController.php` ->
+  `protected/components/CallDiagnosticService.php`
+- AGI flow: `resources/asterisk/mbilling.php` -> route-specific `*Agi.php`
+- Safety boundary: `resources/asterisk/AGI.Class.php` and
+  `resources/asterisk/Magnus.php::run_dial()`
+- UI: `classic/src/view/callDiagnostic/Window.js`, with buttons in the SIP and
+  DID `Form.js` files
+
 ## DID / Inbound / Queue / IVR
 
 - Start: resources/asterisk/DidAgi.php

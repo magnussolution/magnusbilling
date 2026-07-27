@@ -57,6 +57,7 @@ class Magnus
     public $callshop;
     public $id_plan_agent;
     public $id_offer;
+    public $planTechPrefix = '';
     public $record_call;
     public $mix_monitor_format = 'gsm';
     public $prefix_local;
@@ -181,6 +182,17 @@ class Magnus
          */
         $agi->verbose('Hangup Call ' . $this->destination . ' Username ' . $this->username, 6);
 
+        if ($agi->debugMode) {
+            $agi->finishDebug('blocked', [
+                'hangupCause' => (string) $code,
+                'destination' => (string) $this->destination,
+                'accountcode' => (string) $this->accountcode,
+                'sipAccount' => (string) $this->sip_account,
+                'callerId' => (string) $this->CallerID,
+            ]);
+            exit;
+        }
+
         if ($code == '') {
             $code = $agi->get_variable("HANGUPCAUSE", true);
         }
@@ -255,7 +267,9 @@ class Magnus
 
         if ($this->destination <= 0) {
             $prompt = "prepaid-invalid-digits";
-            $agi->verbose($prompt, 3);
+            $agi->verboseEvent('Number', 'INVALID_DESTINATION', 'The destination is empty or invalid after normalization.', 1, [
+                'destination' => $this->destination,
+            ]);
             if (is_numeric($this->destination)) {
                 $agi->answer();
             }
@@ -271,6 +285,10 @@ class Magnus
 
         $this->number_translation($agi, $this->destination);
 
+        $agi->verboseEvent('Number', 'DESTINATION_NORMALIZED', 'Destination normalization and translation completed.', 3, [
+            'destination' => $this->destination,
+        ]);
+
         $this->checkRestrictPhoneNumber($agi);
 
         $agi->verbose("USERNAME=" . $this->username . " DESTINATION=" . $this->destination . " PLAN=" . $this->id_plan . " CREDIT=" . $this->credit, 6);
@@ -283,7 +301,6 @@ class Magnus
         $CalcAgi->tariffObj = $resfindrate;
 
         if ($resfindrate == 0) {
-            $agi->verbose("The number $this->destination, no exist in the plan $this->id_plan", 3);
             $this->executePlayAudio("prepaid-dest-unreachable", $agi);
             if ($this->agiconfig['number_try'] > 1 && ($this->agiconfig['number_try'] > $try_num + 1)) {
                 $try_num++;
@@ -294,6 +311,36 @@ class Magnus
 
         /* CHECKING THE TIMEOUT*/
         $res_all_calcultimeout = $CalcAgi->calculateAllTimeout($this, $agi);
+        $offer = isset($CalcAgi->offerToApply[0]) && is_array($CalcAgi->offerToApply[0])
+            ? $CalcAgi->offerToApply[0]
+            : null;
+        $agi->verboseEvent('Rate', 'RATE_SELECTED', 'The longest matching active rate was selected.', 3, [
+            'destination' => $this->destination,
+            'plan' => $CalcAgi->tariffObj[0]['id_plan'],
+            'planName' => $CalcAgi->tariffObj[0]['name'],
+            'planSource' => $this->planTechPrefix !== '' ? 'plan_techprefix' : 'user',
+            'planTechPrefix' => $this->planTechPrefix,
+            'rate' => $CalcAgi->tariffObj[0]['id_rate'],
+            'prefix' => $CalcAgi->tariffObj[0]['dialprefix'],
+            'rateInitial' => $offer ? 0 : $CalcAgi->tariffObj[0]['rateinitial'],
+            'nominalRate' => $CalcAgi->tariffObj[0]['rateinitial'],
+            'connectCharge' => $offer ? 0 : $CalcAgi->tariffObj[0]['connectcharge'],
+            'initBlock' => $offer ? $offer['initblock'] : $CalcAgi->tariffObj[0]['initblock'],
+            'billingBlock' => $offer ? $offer['billingblock'] : $CalcAgi->tariffObj[0]['billingblock'],
+            'trunkGroup' => $CalcAgi->tariffObj[0]['id_trunk_group'],
+            'trunkGroupName' => $CalcAgi->tariffObj[0]['trunk_group_name'],
+            'offerId' => $offer ? $offer['id'] : '',
+            'offerName' => $offer ? $offer['name'] : '',
+            'offerType' => $offer ? $offer['label'] : '',
+        ]);
+        if ($offer) {
+            $agi->verboseEvent('Rate', 'OFFER_APPLIED', 'An active offer package will make this call free.', 3, [
+                'offerId' => $offer['id'],
+                'offerName' => $offer['name'],
+                'offerType' => $offer['label'],
+                'effectiveRate' => 0,
+            ]);
+        }
 
         if ($this->id_agent > 1) {
             $agi->verbose("Check reseller credit -> " . $this->id_agent, 20);
@@ -307,6 +354,11 @@ class Magnus
         }
 
         if (! $res_all_calcultimeout) {
+            $agi->verboseEvent('Credit', 'INSUFFICIENT_CREDIT', 'Available credit does not cover the minimum call duration.', 1, [
+                'username' => $this->username,
+                'credit' => $this->credit,
+                'destination' => $this->destination,
+            ]);
             $this->executePlayAudio("prepaid-no-enough-credit", $agi);
             return false;
         }
@@ -596,6 +648,18 @@ class Magnus
 
         $dialparams = str_replace("%timeout%", min($timeout * 1000, $max_long), $dialparams);
 
+        if ($agi->debugMode) {
+            $agi->finishDebug('ready_to_dial', [
+                'dialString' => (string) $dialstr,
+                'dialParams' => (string) $dialparams,
+                'timeout' => (int) $timeout,
+                'destination' => (string) $this->destination,
+                'accountcode' => (string) $this->accountcode,
+                'sipAccount' => (string) $this->sip_account,
+                'callerId' => (string) $this->CallerID,
+            ]);
+            exit;
+        }
         if ($this->modelSip->directmedia == 'yes' && $trunk_directmedia == 'yes') {
             $agi->verbose("DIRECT MEDIA ACTIVE", 10);
             $dialparams = preg_replace("/L\(.*\)/", "", $dialparams);

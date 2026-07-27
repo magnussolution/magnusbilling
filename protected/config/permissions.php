@@ -19,5 +19,5 @@
  */
 
 return [
-    'only_admin' => ['refillprovider', 'provider', 'trunk', 'configuration'],
+    'only_admin' => ['refillprovider', 'provider', 'trunk', 'configuration', 'callDiagnostic'],
 ];

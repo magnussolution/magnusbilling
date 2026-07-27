@@ -22,8 +22,20 @@ Ext.define('MBilling.view.did.Form', {
     extend: 'Ext.ux.form.Panel',
     alias: 'widget.didform',
     fieldsHideUpdateLot: ['did'],
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
+
+        me.extraButtons = [{
+            xtype: 'button',
+            text: t('Check DID'),
+            iconCls: 'x-fa fa-stethoscope',
+            handler: 'onCheckDid',
+            disabled: true,
+            reference: 'checkDid',
+            hidden: !App.user.isAdmin
+        }];
+
+
         me.items = [{
             xtype: 'tabpanel',
             defaults: {

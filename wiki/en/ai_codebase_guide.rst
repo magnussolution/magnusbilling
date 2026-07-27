@@ -219,10 +219,95 @@ Common Interpretation Risks
 Recommended Reference Files
 ===========================
 
-- resources/asterisk/AGI_RAG.md
-- resources/asterisk/FLUXOS_DE_CHAMADAS.md
-- ia-docs/indexes/documentation_audit_report.md
-- ia-docs/sources/top30_operational_tables.md
+- ``wiki/en/ai_codebase_guide.rst``
+- ``wiki/en/lifecycle.rst``
+- ``wiki/en/module_overview.rst``
+- ``wiki/GITHUB_WIKI_SYNC.md``
+
+Durable Maintenance Conventions
+================================
+
+Documentation
+-------------
+
+* ``wiki/en`` is the source of truth for public English documentation.
+* The GitHub Wiki is generated from ``wiki/en`` and must not be edited as an
+  independent source.
+* Keep project documentation inside ``wiki`` and follow the GitHub Wiki
+  publication workflow described in ``wiki/GITHUB_WIKI_SYNC.md``.
+* ``ia-docs`` is internal, machine-oriented material and must not be published
+  as user documentation.
+* Database installation and upgrade changes belong in
+  ``protected/commands/UpdateMysqlCommand.php``.
+
+Call diagnostics
+----------------
+
+* Diagnostics must execute the production AGI decision flow instead of
+  reimplementing routing rules in a web service.
+* The supported CLI diagnostic entrypoint is
+  ``php resources/asterisk/mbilling.php debug NUMBER MB_ACC CALLERID``.
+* Debug mode is a dry-run. It may read configuration and database records, but
+  must not execute ``Dial``, ``Queue``, audio or channel commands, create CDRs,
+  charge accounts, update operational tables, call external integrations, or
+  leave database writes committed.
+* The dry-run must stop at ``Magnus::run_dial()`` before dialing, CDR creation,
+  or charging. Every new AGI path used by diagnostics must preserve this
+  boundary.
+* Do not bypass validations that occur before a channel operation. IVR
+  schedules, holidays, audio compatibility, IVR options, Queue existence and
+  membership, DID destinations, SIP groups, rates, offers, and trunk
+  eligibility must be evaluated by their real AGI paths.
+* Missing optional media or Queue agents may be warnings when the production
+  flow can continue. Missing required routing objects or an empty selected
+  destination is a blocking error.
+* Technical details exposed by the web diagnostic are administrator-only and
+  must never contain SIP passwords, trunk credentials, API keys, DSNs, or
+  other secrets.
+
+AGI logging
+-----------
+
+* Use ``AGI::verboseEvent()`` for validated routing decisions that the
+  diagnostic must interpret.
+* Event codes are stable identifiers used by tests, translations, and the web
+  formatter.
+* Verbose levels follow the project convention:
+
+  * level 1: blocking error;
+  * level 2: warning or skipped candidate;
+  * level 3: routing decision;
+  * level 4: operational detail;
+  * level 25: SQL or deep technical trace.
+
+* The normal initial Asterisk log level is 5. Messages visible at normal levels
+  must be concise, actionable, and understandable without reading SQL.
+
+Translations and presentation
+-----------------------------
+
+* Backend user-facing messages use ``Yii::t('zii', 'English source text')``.
+* Add each new key to
+  ``resources/locale/php/LANG/zii.php`` for every supported language.
+* Web diagnostics follow the language selected in the active UI session, not
+  the default language stored in ``pkg_configuration``.
+* Preserve established technical terms such as ``Techprefix``; do not replace
+  them with an invented localized term.
+* Monetary values displayed by diagnostics use
+  ``Yii::app()->session['currency']``.
+* DID destination type names must match the values in
+  ``classic/src/view/diddestination/Combo.js``.
+
+Diagnostic user interface
+-------------------------
+
+* ``Check User`` belongs to ``classic/src/view/sip/Form.js`` and ``Check DID``
+  belongs to ``classic/src/view/did/Form.js``. Both use the form
+  ``extraButtons`` convention.
+* Diagnostic actions and technical details are available exclusively to
+  administrators.
+* Diagnostic text must remain selectable so an administrator can copy either
+  the complete result or only the relevant passage.
 
 Maintenance Notes
 =================
@@ -233,3 +318,5 @@ Update this guide whenever there is:
 - a login/auth flow change
 - a new central module (controller/model/AGI class)
 - a structural change in core tables
+- a change to the diagnostic dry-run safety boundary
+- a change to translation, currency, permission, or documentation conventions

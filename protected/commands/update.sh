@@ -96,9 +96,15 @@ done
 
 
 chown -R asterisk:asterisk /var/www/html/mbilling/resources/asterisk
-chmod +x /var/www/html/mbilling/resources/asterisk/mbilling.php
-chmod 500 /var/www/html/mbilling/resources/asterisk
-chmod 500 /var/www/html/mbilling/resources/asterisk/mbilling.php
+find /var/www/html/mbilling/resources/asterisk \
+  -type d -exec chmod 550 {} \;
+
+find /var/www/html/mbilling/resources/asterisk \
+  -type f -exec chmod 440 {} \;
+
+chmod 550 /var/www/html/mbilling/resources/asterisk/mbilling.php
+
+
 
 chmod +x /var/www/html/mbilling/protected/commands/*.sh
 

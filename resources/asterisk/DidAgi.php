@@ -32,6 +32,7 @@ class DidAgi
     public $id_prefix = 0;
     public $did_voip_model;
     public $did_voip_model_sip_account;
+    public $matchedExpressionNumber = 0;
 
     public function checkIfIsDidCall(&$agi, &$MAGNUS, &$CalcAgi)
     {
@@ -63,12 +64,18 @@ class DidAgi
             }
         }
 
-        $agi->verbose('Check If Is Did ' . $mydnid, 10);
+        $agi->verboseEvent('DID', 'DID_LOOKUP', 'Checking whether the destination is an active DID.', 4, [
+            'did' => $mydnid,
+        ]);
         $sql = "SELECT * FROM pkg_did WHERE did = '$mydnid' AND activated = 1 LIMIT 1";
         $agi->verbose($sql, 25);
         $this->modelDid = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
         if (isset($this->modelDid->id)) {
-            $agi->verbose("Is a DID call", 5);
+            $agi->verboseEvent('DID', 'DID_FOUND', 'An active DID was found.', 3, [
+                'did' => $this->modelDid->did,
+                'didId' => $this->modelDid->id,
+                'userId' => $this->modelDid->id_user,
+            ]);
             $sql = "SELECT * FROM pkg_did_destination WHERE id_did = '" . $this->modelDid->id . "' ORDER BY priority";
             $agi->verbose($sql, 25);
             $this->modelDestination = $agi->query($sql)->fetchAll(PDO::FETCH_ASSOC);
@@ -77,7 +84,10 @@ class DidAgi
                 $this->modelDid->record_call = 1;
             }
             if (count($this->modelDestination)) {
-                $agi->verbose("Did have destination", 15);
+                $agi->verboseEvent('DID', 'DID_DESTINATIONS_FOUND', 'Active DID routing destinations were found.', 3, [
+                    'did' => $this->modelDid->did,
+                    'count' => count($this->modelDestination),
+                ]);
 
                 $this->did           = $this->modelDid->did;
                 $MAGNUS->record_call = $this->modelDid->record_call;
@@ -95,9 +105,11 @@ class DidAgi
                     $agi->verbose($sql, 25);
                     $modelPrefix = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
                     if (! isset($modelPrefix->id)) {
-                        $agi->verbose('Not found prefix to DID ' . $this->did);
+                        $agi->verboseEvent('DID', 'DID_PREFIX_NOT_FOUND', 'No prefix matches the DID number.', 2, [
+                            'did' => $this->did,
+                        ]);
                     }
-                    $CalcAgi->id_prefix = $modelPrefix->id;
+                    $CalcAgi->id_prefix = isset($modelPrefix->id) ? $modelPrefix->id : null;
 
                     $sql = "SELECT * FROM pkg_trunk WHERE trunkcode = '" . $MAGNUS->sip_account . "' LIMIT 1";
                     $agi->verbose($sql, 25);
@@ -125,6 +137,11 @@ class DidAgi
 
                     $agi->verbose('Did ' . $this->did . ' have ' . $calls . ' Calls');
                     if ($calls >= $this->modelDid->calllimit) {
+                        $agi->verboseEvent('DID', 'DID_CALL_LIMIT_REACHED', 'The DID simultaneous call limit has been reached.', 1, [
+                            'did' => $this->did,
+                            'activeCalls' => $calls,
+                            'callLimit' => $this->modelDid->calllimit,
+                        ]);
 
                         if ($MAGNUS->modelUser->calllimit_error == 403) {
                             $agi->execute('busy', 'busy');
@@ -152,6 +169,12 @@ class DidAgi
                         $calls += $this->getCallsPerDid($value->did, $agi, $channelsData);
                     }
                     if ($calls >= $MAGNUS->modelUser->inbound_call_limit) {
+                        $agi->verboseEvent('DID', 'DID_USER_INBOUND_LIMIT_REACHED', 'The user inbound simultaneous call limit has been reached.', 1, [
+                            'did' => $this->did,
+                            'username' => $MAGNUS->modelUser->username,
+                            'activeCalls' => $calls,
+                            'callLimit' => $MAGNUS->modelUser->inbound_call_limit,
+                        ]);
                         if ($MAGNUS->modelUser->calllimit_error == 403) {
                             $agi->execute('busy', 'busy');
                         } else {
@@ -164,7 +187,9 @@ class DidAgi
                 }
                 $this->checkDidDestinationType($agi, $MAGNUS, $CalcAgi);
             } else {
-                $agi->verbose("Is a DID call But not have destination Hangup Call");
+                $agi->verboseEvent('DID', 'DID_DESTINATION_MISSING', 'The DID has no configured routing destination.', 1, [
+                    'did' => $this->modelDid->did,
+                ]);
                 $MAGNUS->hangup($agi);
             }
             if ($this->voip_call != 3) {
@@ -173,7 +198,7 @@ class DidAgi
         }
     }
 
-    public function getCallsPerDid($did, $agi = null, $channelsData)
+    public function getCallsPerDid($did, $agi, $channelsData)
     {
         $calls = 0;
         foreach ($channelsData as $key => $line) {
@@ -195,6 +220,20 @@ class DidAgi
         $this->didCallCost($agi, $MAGNUS);
 
         $this->did = $this->modelDid->did;
+        $matchedExpression = $this->matchedExpressionNumber > 0
+            ? $this->modelDid->{'expression_' . $this->matchedExpressionNumber}
+            : '';
+        $agi->verboseEvent('DID', 'DID_RATE_SELECTED', 'The DID buy and sell rates were calculated.', 3, [
+            'did' => $this->did,
+            'callerId' => $MAGNUS->CallerID,
+            'expressionNumber' => $this->matchedExpressionNumber,
+            'expression' => $matchedExpression,
+            'sellRate' => $this->sell_price,
+            'buyRate' => $this->buy_price,
+            'connectionSell' => $this->modelDid->connection_sell,
+            'initBlock' => $this->modelDid->initblock,
+            'billingBlock' => $this->modelDid->increment,
+        ]);
         $agi->verbose('DID ' . $this->did, 5);
 
         //if DID option charge of was = 0 only allow call from existent callerid
@@ -211,7 +250,11 @@ class DidAgi
                 $this->modelDid->selling_rate_1     = $this->sell_price;
                 $this->modelDid->buy_rate_1         = $this->buy_price;
             } else {
-                $agi->verbose('NOT found callerid, = ' . $MAGNUS->CallerID . ' to did ' . $this->did . ' and was selected charge_of to callerID');
+                $agi->verboseEvent('DID', 'DID_CALLERID_NOT_AUTHORIZED', 'The CallerID is not authorized to pay for this DID call.', 1, [
+                    'did' => $this->did,
+                    'callerId' => $MAGNUS->CallerID,
+                    'chargeOf' => 'callerid',
+                ]);
                 $MAGNUS->hangup($agi);
             }
         }
@@ -225,7 +268,24 @@ class DidAgi
         $this->voip_call = $this->modelDestination[0]['voip_call'];
         $this->checkBlockCallerID($agi, $MAGNUS);
 
-        $agi->verbose('voip_call ' . $this->voip_call, 5);
+        $routeTypes = [
+            1 => 'SIP account',
+            2 => 'IVR',
+            3 => 'Calling card',
+            4 => 'Voice portal',
+            5 => 'Callback',
+            6 => '0800 callback',
+            7 => 'Queue',
+            8 => 'SIP group',
+            9 => 'Custom',
+            10 => 'Dialplan',
+            11 => 'Multiple IPs',
+        ];
+        $agi->verboseEvent('DID', 'DID_ROUTE_SELECTED', 'The DID routing type was selected.', 3, [
+            'did' => $this->did,
+            'type' => isset($routeTypes[$this->voip_call]) ? $routeTypes[$this->voip_call] : 'PSTN',
+            'typeCode' => $this->voip_call,
+        ]);
 
         if ($this->modelDid->cbr == 1 && ! $agi->get_variable("ISFROMCALLBACKPRO", true)) {
             if (! $agi->get_variable("SECCALL", true)) {
@@ -243,6 +303,28 @@ class DidAgi
 
         switch ($this->voip_call) {
             case 2:
+                $ivrId = isset($this->modelDestination[0]['id_ivr'])
+                    ? (int) $this->modelDestination[0]['id_ivr']
+                    : 0;
+                $modelIvr = null;
+                if ($ivrId > 0) {
+                    $sql = "SELECT id,name,id_user FROM pkg_ivr WHERE id = $ivrId LIMIT 1";
+                    $agi->verbose($sql, 25);
+                    $modelIvr = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
+                }
+                if (! isset($modelIvr->id)) {
+                    $agi->verboseEvent('DID', 'DID_IVR_MISSING', 'The DID route is configured as IVR, but no valid IVR is selected.', 1, [
+                        'did' => $this->did,
+                        'destinationId' => isset($this->modelDestination[0]['id']) ? $this->modelDestination[0]['id'] : '',
+                        'ivrId' => $ivrId,
+                    ]);
+                    $MAGNUS->hangup($agi);
+                }
+                $agi->verboseEvent('DID', 'DID_IVR_SELECTED', 'A valid IVR was selected for the DID route.', 3, [
+                    'did' => $this->did,
+                    'ivrId' => $modelIvr->id,
+                    'ivrName' => $modelIvr->name,
+                ]);
                 $MAGNUS->mode = 'ivr';
                 IvrAgi::callIvr($agi, $MAGNUS, $CalcAgi, $this);
                 break;
@@ -279,6 +361,60 @@ class DidAgi
                 }
                 break;
             case 7:
+                $queueId = isset($this->modelDestination[0]['id_queue'])
+                    ? (int) $this->modelDestination[0]['id_queue']
+                    : 0;
+                $modelQueue = null;
+                if ($queueId > 0) {
+                    $sql = "SELECT id,name,id_user FROM pkg_queue WHERE id = $queueId LIMIT 1";
+                    $agi->verbose($sql, 25);
+                    $modelQueue = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
+                }
+                if (! isset($modelQueue->id)) {
+                    $agi->verboseEvent('DID', 'DID_QUEUE_MISSING', 'The DID route is configured as Queue, but no valid Queue is selected.', 1, [
+                        'did' => $this->did,
+                        'destinationId' => isset($this->modelDestination[0]['id']) ? $this->modelDestination[0]['id'] : '',
+                        'queueId' => $queueId,
+                    ]);
+                    $MAGNUS->hangup($agi);
+                }
+                $sql = "SELECT COUNT(*) AS agent_count,
+                               SUM(CASE WHEN qm.paused = 0 THEN 1 ELSE 0 END) AS available_agent_count
+                        FROM pkg_queue_member qm
+                        INNER JOIN pkg_queue q ON q.name = qm.queue_name
+                        WHERE q.id = " . (int) $modelQueue->id;
+                $agi->verbose($sql, 25);
+                $queueAgents = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
+                $agentCount = isset($queueAgents->agent_count) ? (int) $queueAgents->agent_count : 0;
+                $availableAgentCount = isset($queueAgents->available_agent_count)
+                    ? (int) $queueAgents->available_agent_count
+                    : 0;
+                if ($agentCount === 0) {
+                    $agi->verboseEvent('DID', 'DID_QUEUE_NO_AGENTS', 'The Queue selected for the DID has no agents.', 2, [
+                        'did' => $this->did,
+                        'queueId' => $modelQueue->id,
+                        'queueName' => $modelQueue->name,
+                    ]);
+                }
+                $agi->verboseEvent('DID', 'DID_QUEUE_SELECTED', 'A valid Queue was selected for the DID route.', 3, [
+                    'did' => $this->did,
+                    'queueId' => $modelQueue->id,
+                    'queueName' => $modelQueue->name,
+                    'agentCount' => $agentCount,
+                    'availableAgentCount' => $availableAgentCount,
+                ]);
+                if ($agi->debugMode) {
+                    $agi->finishDebug('ready_to_dial', [
+                        'routeType' => 'Queue',
+                        'did' => $this->did,
+                        'queueId' => $modelQueue->id,
+                        'queueName' => $modelQueue->name,
+                        'agentCount' => $agentCount,
+                        'availableAgentCount' => $availableAgentCount,
+                        'callerId' => $MAGNUS->CallerID,
+                    ]);
+                    exit;
+                }
                 $MAGNUS->mode = 'queue';
                 QueueAgi::callQueue($agi, $MAGNUS, $CalcAgi, $this);
                 break;
@@ -369,6 +505,13 @@ class DidAgi
 
             $callcount++;
 
+            $agi->verboseEvent('DID', 'DID_DESTINATION_ATTEMPT', 'Trying a configured DID destination.', 3, [
+                'did' => $this->did,
+                'priority' => $callcount,
+                'typeCode' => $inst_listdestination['voip_call'],
+                'destination' => $inst_listdestination['destination'],
+            ]);
+
             $MAGNUS->agiconfig['cid_enable'] = 0;
             $MAGNUS->accountcode             = $MAGNUS->username             = $MAGNUS->modelUser->username;
             $MAGNUS->id_plan                 = $MAGNUS->modelUser->id_plan;
@@ -423,10 +566,13 @@ class DidAgi
                     $sql = "SELECT * FROM pkg_sip WHERE sip_group = '" . $inst_listdestination['destination'] . "'";
                     $agi->verbose($sql, 25);
                     $modelSip = $agi->query($sql)->fetchAll(PDO::FETCH_OBJ);
-                    $agi->verbose("Call group $group ", 6);
+                    $agi->verbose("Call to SIP group " . $inst_listdestination['destination'], 6);
                     if (! isset($modelSip[0]->id)) {
-                        $answeredtime = 0;
-                        continue;
+                        $agi->verboseEvent('DID', 'DID_SIP_GROUP_EMPTY', 'The selected SIP group has no SIP accounts.', 1, [
+                            'did' => $this->did,
+                            'sipGroup' => $inst_listdestination['destination'],
+                        ]);
+                        $MAGNUS->hangup($agi);
                     }
 
                     $group = '';
@@ -537,9 +683,23 @@ class DidAgi
                     $ips       = explode(',', $inst_listdestination['destination']);
                     $dialToIPs = '';
                     foreach ($ips as $key => $ip) {
+                        $ip = trim($ip);
                         if (filter_var($ip, FILTER_VALIDATE_IP)) {
                             $dialToIPs .= 'PJSIP/' . $this->did . '@' . $ip . '&';
                         }
+                    }
+                    if ($dialToIPs === '') {
+                        $isOnlyDestination = count($this->modelDestination) === 1;
+                        $agi->verboseEvent('DID', 'DID_MULTIPLE_IPS_EMPTY', 'The multiple IP destination has no valid IP addresses.', $isOnlyDestination ? 1 : 2, [
+                            'did' => $this->did,
+                            'destinationId' => $inst_listdestination['id'],
+                            'configuredIPs' => $inst_listdestination['destination'],
+                            'validIPCount' => 0,
+                        ]);
+                        if ($agi->debugMode && $isOnlyDestination) {
+                            $MAGNUS->hangup($agi);
+                        }
+                        continue;
                     }
                     $dialToIPs = substr($dialToIPs, 0, -1);
                     $MAGNUS->run_dial($agi, $dialToIPs);
@@ -549,9 +709,19 @@ class DidAgi
                     $dialstatus   = $dialstatus['data'];
                 } else {
 
-                    $agi->verbose("DID destination type PSTN NUMBER ", 6);
+                    $agi->verbose("DID destination type PSTN NUMBER", 6);
                     /* CHECK IF DESTINATION IS SET*/
                     if (strlen($inst_listdestination['destination']) == 0) {
+                        $isOnlyDestination = count($this->modelDestination) === 1;
+                        $agi->verboseEvent('DID', 'DID_DESTINATION_EMPTY', 'The configured DID destination is empty.', $isOnlyDestination ? 1 : 2, [
+                            'did' => $this->did,
+                            'destinationId' => $inst_listdestination['id'],
+                            'priority' => $callcount,
+                            'typeCode' => $inst_listdestination['voip_call'],
+                        ]);
+                        if ($agi->debugMode && $isOnlyDestination) {
+                            $MAGNUS->hangup($agi);
+                        }
                         continue;
                     }
 
@@ -619,9 +789,9 @@ class DidAgi
 
             $fields = "uniqueid,id_user,calledstation,id_plan,id_trunk,callerid,src,
                         starttime, terminatecauseid,sipiax,id_prefix,hangupcause";
-            $id_trunk = $MAGNUS->id_trunk > 0 ? $MAGNUS->id_trunk : null;
+            $idTrunkSql = $MAGNUS->id_trunk > 0 ? (int) $MAGNUS->id_trunk : 'NULL';
             $values   = "'$MAGNUS->uniqueid', '$MAGNUS->id_user','$this->did','$MAGNUS->id_plan',
-                        '$id_trunk','$MAGNUS->CallerID', 'DID Call',
+                        $idTrunkSql,'$MAGNUS->CallerID', 'DID Call',
                         '" . date('Y-m-d H:i:s') . "', '0','3',$CalcAgi->id_prefix,'0'";
             $sql = "INSERT INTO pkg_cdr_failed ($fields) VALUES ($values) ";
             $agi->verbose($sql, 25);
@@ -648,7 +818,7 @@ class DidAgi
         if (strlen($expression_1) && preg_match('/' . $expression_1 . '/', $MAGNUS->CallerID)) {
 
             if ($block_expression_1 == 1) {
-                $agi->verbose("Call blocked becouse this number match with expression 1, " . $MAGNUS->CallerID . ' FROM did ' . $this->did, 10);
+                $this->reportBlockedCallerId($agi, $MAGNUS, 1, $expression_1);
                 $MAGNUS->hangup($agi);
             } elseif ($send_to_callback_1 == 1) {
                 $agi->verbose('Send to Callback expression 1', 10);
@@ -660,7 +830,7 @@ class DidAgi
         if (strlen($expression_2) && preg_match('/' . $expression_2 . '/', $MAGNUS->CallerID)) {
 
             if ($block_expression_2 == 1) {
-                $agi->verbose("Call blocked becouse this number match with expression 2, " . $MAGNUS->CallerID . ' FROM did ' . $this->did, 10);
+                $this->reportBlockedCallerId($agi, $MAGNUS, 2, $expression_2);
                 $MAGNUS->hangup($agi);
             } elseif ($send_to_callback_2 == 1) {
                 $agi->verbose('Send to Callback expression 2', 10);
@@ -671,8 +841,8 @@ class DidAgi
 
         if (strlen($expression_3) && preg_match('/' . $expression_3 . '/', $MAGNUS->CallerID)) {
 
-            if ($block_expression_2 == 1) {
-                $agi->verbose("Call blocked becouse this number match with expression 3, " . $MAGNUS->CallerID . ' FROM did ' . $this->did, 10);
+            if ($block_expression_3 == 1) {
+                $this->reportBlockedCallerId($agi, $MAGNUS, 3, $expression_3);
                 $MAGNUS->hangup($agi);
             } elseif ($send_to_callback_3 == 1) {
                 $agi->verbose('Send to Callback expression 3', 10);
@@ -680,6 +850,16 @@ class DidAgi
             }
             return;
         }
+    }
+
+    private function reportBlockedCallerId(&$agi, &$MAGNUS, $expressionNumber, $expression)
+    {
+        $agi->verboseEvent('DID', 'DID_CALLERID_BLOCKED', 'The DID blocked the call because the CallerID matched a blocking expression.', 1, [
+            'did' => $this->did,
+            'callerId' => $MAGNUS->CallerID,
+            'expressionNumber' => $expressionNumber,
+            'expression' => $expression,
+        ]);
     }
 
     public function parseDialStatus(&$agi, $dialstatus, $answeredtime)
@@ -725,20 +905,24 @@ class DidAgi
         $agi->verbose(print_r($this->modelDestination[0], true), 25);
         if (strlen($this->modelDid->expression_1) > 0 && preg_match('/' . $this->modelDid->expression_1 . '/', $MAGNUS->CallerID)) {
             $agi->verbose("CallerID Match regular expression 1 " . $MAGNUS->CallerID, 10);
+            $this->matchedExpressionNumber = 1;
             $selling_rate      = $this->modelDid->selling_rate_1;
             $buy_rate          = $this->modelDid->buy_rate_1;
             $agent_client_rate = $this->modelDid->agent_client_rate_1;
         } elseif (strlen($this->modelDid->expression_2) > 0 && preg_match('/' . $this->modelDid->expression_2 . '/', $MAGNUS->CallerID)) {
             $agi->verbose("CallerID Match regular expression 2 " . $MAGNUS->CallerID, 10);
+            $this->matchedExpressionNumber = 2;
             $selling_rate      = $this->modelDid->selling_rate_2;
             $buy_rate          = $this->modelDid->buy_rate_2;
             $agent_client_rate = $this->modelDid->agent_client_rate_2;
         } elseif (strlen($this->modelDid->expression_3) > 0 && preg_match('/' . $this->modelDid->expression_3 . '/', $MAGNUS->CallerID)) {
             $agi->verbose("CallerID Match regular expression 3 " . $MAGNUS->CallerID, 10);
+            $this->matchedExpressionNumber = 3;
             $selling_rate      = $this->modelDid->selling_rate_3;
             $buy_rate          = $this->modelDid->buy_rate_3;
             $agent_client_rate = $this->modelDid->agent_client_rate_3;
         } else {
+            $this->matchedExpressionNumber = 0;
             $selling_rate      = 0;
             $buy_rate          = 0;
             $agent_client_rate = 0;
@@ -759,10 +943,19 @@ class DidAgi
             : $MAGNUS->modelUser->credit;
 
         if ($MAGNUS->modelUser->active != 1) {
-            $agi->verbose("HANGUP BECAUSE USER IS NOT ACTIVE " . $username, 10);
+            $agi->verboseEvent('DID', 'DID_OWNER_INACTIVE', 'The user linked to the DID is inactive.', 1, [
+                'did' => $this->did,
+                'username' => $MAGNUS->modelUser->username,
+                'userStatus' => $MAGNUS->modelUser->active,
+            ]);
             $MAGNUS->hangup($agi);
         } else if ($this->sell_price > 0 && $credit <= 0) {
-            $agi->verbose(" USER NO CREDIT FOR CALL " . $username, 10);
+            $agi->verboseEvent('DID', 'DID_OWNER_NO_CREDIT', 'The user linked to the DID has insufficient credit for the inbound charge.', 1, [
+                'did' => $this->did,
+                'username' => $MAGNUS->modelUser->username,
+                'credit' => $credit,
+                'rate' => $this->sell_price,
+            ]);
             $MAGNUS->hangup($agi);
         }
     }

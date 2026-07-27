@@ -1104,4 +1104,15 @@ Locale.load({
     'to refill': 'recharger',
     'week': 'semaine',
 
+    'Account code': 'Code du compte',
+    'Dial string': 'Route de l’appel',
+    'Dial parameters': 'Paramètres de l’appel',
+    'Timeout': 'Délai maximal',
+    'Hangup cause': 'Cause de raccrochage',
+    'Route summary': 'Résumé de la route',
+    'AGI validation trace': 'Étapes de validation AGI',
+    'SQL queries': 'Requêtes SQL avancées',
+    'Process errors': 'Erreurs du processus',
+    'Ready to dial': 'Prêt à appeler',
+    'Blocked before Dial': 'Arrêté avant l’appel',
 });

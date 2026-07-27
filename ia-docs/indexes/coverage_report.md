@@ -5,6 +5,7 @@
 - System entrypoints
 - Auth/session
 - Outbound call flow and billing
+- Administrator call diagnostics and AGI dry-run safety
 - Inbound DID, queue, IVR
 - Observability and SIP trace
 - Invoices and reports

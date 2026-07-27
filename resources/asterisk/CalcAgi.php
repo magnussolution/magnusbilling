@@ -95,7 +95,7 @@ class CalcAgi
         $this->freetimetocall_left[0] = 0;
         $this->freecall[0]            = false;
         $this->offerToApply[0]        = null;
-
+        $agi->verbose("package_offer= $package_offer $MAGNUS->id_offer", 25);
         if ($package_offer == 1 && $MAGNUS->id_offer > 0) {
             $sql = "SELECT * FROM pkg_offer_use WHERE id_offer = $MAGNUS->id_offer
                                 AND id_user = $MAGNUS->id_user AND status = 1 AND releasedate = '0000-00-00 00:00:00' LIMIT 1";
@@ -120,6 +120,7 @@ class CalcAgi
                         $package_selected      = true;
                         $this->offerToApply[0] = [
                             "id"                  => $id_offer,
+                            "name"                => $modelOffer->label,
                             "label"               => "Unlimited calls",
                             "type"                => $packagetype,
                             "billingblock"        => $modelOffer->billingblock,
@@ -138,6 +139,7 @@ class CalcAgi
                                 $package_selected      = true;
                                 $this->offerToApply[0] = [
                                     "id"                  => $id_offer,
+                                    "name"                => $modelOffer->label,
                                     "label"               => "Number of Free calls",
                                     "type"                => $packagetype,
                                     "billingblock"        => $modelOffer->billingblock,
@@ -161,6 +163,7 @@ class CalcAgi
                                 $package_selected      = true;
                                 $this->offerToApply[0] = [
                                     "id"                  => $id_offer,
+                                    "name"                => $modelOffer->label,
                                     "label"               => "Free minutes",
                                     "type"                => $packagetype,
                                     "billingblock"        => $modelOffer->billingblock,
@@ -614,6 +617,9 @@ class CalcAgi
         }
 
         if (! isset($modelTrunks[0]->id)) {
+            $agi->verboseEvent('Trunk', 'TRUNK_GROUP_EMPTY', 'The selected trunk group has no configured trunks.', 1, [
+                'trunkGroup' => $this->tariffObj[0]['id_trunk_group'],
+            ]);
             $MAGNUS->hangup($agi, 34);
             return;
         }
@@ -673,12 +679,19 @@ class CalcAgi
             }
 
             if ($modelTrunk->credit_control == 1 && $provider_credit <= 0) {
-                $agi->verbose("Provider not have credit", 3);
+                $agi->verboseEvent('Trunk', 'PROVIDER_NO_CREDIT', 'Trunk skipped because provider credit is exhausted.', 2, [
+                    'trunk' => $trunkcode,
+                    'provider' => $modelTrunk->id_provider,
+                    'trunkGroup' => $this->tariffObj[0]['id_trunk_group'],
+                ]);
                 continue;
             }
 
             if ($status == 0) {
-                $agi->verbose("Trunk is inactive", 3);
+                $agi->verboseEvent('Trunk', 'TRUNK_INACTIVE', 'Trunk skipped because it is inactive.', 2, [
+                    'trunk' => $trunkcode,
+                    'trunkGroup' => $this->tariffObj[0]['id_trunk_group'],
+                ]);
                 continue;
             }
 
@@ -768,7 +781,16 @@ class CalcAgi
             $destination = substr($destination, strlen($removeprefix));
         }
 
-        $dialstr = "$tech/$prefix$destination@$ipaddress";
+        $numberToTrunk = $prefix . $destination;
+        $dialstr = "$tech/$numberToTrunk@$ipaddress";
+
+        $agi->verboseEvent('Trunk', 'TRUNK_SELECTED', 'An eligible trunk was selected for the call.', 3, [
+            'trunk' => $ipaddress,
+            'trunkGroup' => $this->tariffObj[0]['id_trunk_group'],
+            'trunkGroupName' => isset($this->tariffObj[0]['trunk_group_name']) ? $this->tariffObj[0]['trunk_group_name'] : '',
+            'numberToTrunk' => $numberToTrunk,
+            'dialString' => $dialstr,
+        ]);
 
 
         $dialedpeername       = $agi->get_variable("SIPTRANSFER");

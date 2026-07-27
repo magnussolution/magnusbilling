@@ -23,6 +23,7 @@
     }
 
     error_reporting(E_ALL ^ (E_NOTICE | E_WARNING | E_DEPRECATED));
+    chdir(__DIR__);
 
     require_once 'AGI.Class.php';
     require_once 'AGI_AsteriskManager.Class.php';
@@ -43,15 +44,59 @@
     require_once 'Magnus.php';
     require_once '/var/www/html/mbilling/protected/components/AsteriskAccess.php';
 
-    $agi     = new AGI();
+    $debugContext = null;
+    if (PHP_SAPI === 'cli' && isset($argv[1]) && $argv[1] === 'debug') {
+        $debugTimezone = getenv('TZ');
+        if (! is_string($debugTimezone) || ! in_array($debugTimezone, timezone_identifiers_list(), true)) {
+            $debugTimezone = is_readable('/etc/timezone') ? trim((string) file_get_contents('/etc/timezone')) : '';
+        }
+        if (! in_array($debugTimezone, timezone_identifiers_list(), true)) {
+            $localtimeTarget = @readlink('/etc/localtime');
+            $debugTimezone = is_string($localtimeTarget) && preg_match('~/zoneinfo/(.+)$~', $localtimeTarget, $timezoneMatch)
+                ? $timezoneMatch[1]
+                : '';
+        }
+        if (in_array($debugTimezone, timezone_identifiers_list(), true)) {
+            date_default_timezone_set($debugTimezone);
+        }
+        $number = isset($argv[2]) ? trim($argv[2]) : '';
+        $mbAcc = isset($argv[3]) ? trim($argv[3]) : '';
+        $callerId = isset($argv[4]) ? trim($argv[4]) : '';
+        $sipAccount = isset($argv[5]) ? trim($argv[5]) : $mbAcc;
+        if (! preg_match('/^[0-9*#+]{2,40}$/', $number)
+            || ! preg_match('/^[A-Za-z0-9_.-]{1,80}$/', $mbAcc)
+            || ! preg_match('/^[A-Za-z0-9_.-]{1,80}$/', $sipAccount)
+            || strlen($callerId) > 80
+        ) {
+            fwrite(STDERR, "Invalid debug arguments.\n");
+            exit(2);
+        }
+        $debugContext = [
+            'variables' => ['MB_ACC' => $mbAcc],
+            'request' => [
+                'agi_extension' => $number,
+                'agi_callerid' => $callerId,
+                'agi_calleridname' => $callerId,
+                'agi_channel' => 'PJSIP/' . $sipAccount . '-debug',
+                'agi_uniqueid' => 'debug-' . getmypid(),
+                'agi_enhanced' => '0.0',
+                'agi_lastapp' => '',
+            ],
+        ];
+    }
+
+    $agi     = new AGI($debugContext);
     $MAGNUS  = new Magnus();
     $CalcAgi = new CalcAgi();
     //$agi->verboseLevel = 1;
 
-    $agi->verbose("Start MBilling AGI", 6);
-
     $MAGNUS->load_conf($agi, null, 0, 1);
     $MAGNUS->get_agi_request_parameter($agi);
+    $agi->verboseEvent('Call', 'AGI_STARTED', 'Call processing started.', 4, [
+        'destination' => $MAGNUS->dnid,
+        'account' => $MAGNUS->accountcode,
+        'callerid' => $MAGNUS->CallerID,
+    ]);
 
     $MAGNUS->init();
     $CalcAgi->init();
@@ -67,7 +112,7 @@
             $agi->verboseLevel = 1;
         }
     }
-    $agi->verbose("Start MBilling AGI", 6);
+    $agi->verboseEvent('Call', 'CONFIG_LOADED', 'MagnusBilling configuration loaded.', 4);
     if ($MAGNUS->dnid == 'failed') {
         $agi->verbose("Hangup becouse dnid is OutgoingSpoolFailed", 25);
         $MAGNUS->hangup($agi);

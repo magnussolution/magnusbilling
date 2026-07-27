@@ -78,9 +78,19 @@ class AGI extends PDO
     private $user;
     private $pass;
     public $verboseLevel;
+    public $debugMode = false;
+    private $debugVariables = [];
+    private $debugMessages = [];
+    private $debugEvents = [];
+    private $debugFinished = false;
 
-    public function __construct()
+    public function __construct($debugContext = null)
     {
+        $this->debugMode = is_array($debugContext);
+        if ($this->debugMode) {
+            $this->debugVariables = isset($debugContext['variables']) ? $debugContext['variables'] : [];
+            $this->request = isset($debugContext['request']) ? $debugContext['request'] : [];
+        }
 
         $configFile = '/etc/asterisk/res_config_mysql.conf';
         $array      = parse_ini_file($configFile);
@@ -137,11 +147,13 @@ class AGI extends PDO
         // make sure temp folder exists
         $this->make_folder($this->config['phpagi']['tempdir']);
 
-        // read the request
-        $str = fgets($this->in);
-        while ($str != "\n") {
-            $this->request[substr($str, 0, strpos($str, ':'))] = trim(substr($str, strpos($str, ':') + 1));
-            $str                                               = fgets($this->in);
+        // read the request only when invoked by Asterisk.
+        if (! $this->debugMode) {
+            $str = fgets($this->in);
+            while ($str != "\n") {
+                $this->request[substr($str, 0, strpos($str, ':'))] = trim(substr($str, strpos($str, ':') + 1));
+                $str                                               = fgets($this->in);
+            }
         }
 
         // open audio if eagi detected
@@ -162,6 +174,13 @@ class AGI extends PDO
         }
 
         parent::__construct($dns, $this->user, $this->pass);
+        if ($this->debugMode) {
+            $this->beginTransaction();
+            $agi = $this;
+            register_shutdown_function(function () use ($agi) {
+                $agi->finishDebug('blocked');
+            });
+        }
     }
 
     public function answer()
@@ -337,9 +356,72 @@ class AGI extends PDO
         }
 
         foreach (explode("\n", str_replace("\r\n", "\n", print_r($message, true))) as $msg) {
+            if ($this->debugMode) {
+                $this->debugMessages[] = ['level' => (int) $level, 'message' => $msg];
+                echo 'MBILLING_DEBUG ' . json_encode(
+                    ['type' => 'verbose', 'level' => (int) $level, 'message' => $msg],
+                    JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+                ) . PHP_EOL;
+                continue;
+            }
             $ret = $this->evaluate("VERBOSE \"$msg\" $level");
         }
-        return $ret;
+        return isset($ret) ? $ret : ['code' => 200, 'result' => 1, 'data' => ''];
+    }
+
+    /**
+     * Logs a routing decision using a stable, human-readable format.
+     *
+     * Levels: 1=blocking error, 2=warning/skipped candidate,
+     * 3=routing decision, 4=operational detail. SQL remains at level 25.
+     */
+    public function verboseEvent($component, $code, $message, $level = 4, array $context = [])
+    {
+        $level = min(4, max(1, (int) $level));
+        $component = preg_replace('/[^A-Za-z0-9_-]/', '', (string) $component);
+        $code = preg_replace('/[^A-Z0-9_]/', '', strtoupper((string) $code));
+        $safeContext = [];
+        foreach ($context as $key => $value) {
+            if (is_scalar($value) || $value === null) {
+                $safeContext[preg_replace('/[^A-Za-z0-9_-]/', '', (string) $key)] = $value;
+            }
+        }
+        $line = '[MBilling][' . $component . '][' . $code . '] ' . trim((string) $message);
+        if ($safeContext) {
+            $pairs = [];
+            foreach ($safeContext as $key => $value) {
+                $pairs[] = $key . '=' . str_replace(["\r", "\n", '|'], ' ', (string) $value);
+            }
+            $line .= ' | ' . implode(' ', $pairs);
+        }
+        if ($this->debugMode) {
+            $this->debugEvents[] = [
+                'component' => $component,
+                'code' => $code,
+                'level' => $level,
+                'message' => trim((string) $message),
+                'context' => $safeContext,
+            ];
+        }
+        return $this->verbose($line, $level);
+    }
+
+    public function finishDebug($status, array $context = [])
+    {
+        if (! $this->debugMode || $this->debugFinished) {
+            return;
+        }
+        $this->debugFinished = true;
+        if ($this->inTransaction()) {
+            $this->rollBack();
+        }
+        echo 'MBILLING_RESULT ' . json_encode([
+            'success' => $status === 'ready_to_dial',
+            'status' => $status,
+            'context' => $context,
+            'messages' => $this->debugMessages,
+            'events' => $this->debugEvents,
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL;
     }
 
     public function which($cmd, $checkpath = null)
@@ -363,6 +445,17 @@ class AGI extends PDO
 
     public function evaluate($command)
     {
+        if ($this->debugMode) {
+            if (preg_match('/^GET VARIABLE (.+)$/', trim($command), $match)) {
+                $name = $match[1];
+                $value = isset($this->debugVariables[$name]) ? $this->debugVariables[$name] : '';
+                return ['code' => 200, 'result' => $value === '' ? 0 : 1, 'data' => $value];
+            }
+            if (preg_match('/^SET VARIABLE ([^ ]+) \"(.*)\"$/', trim($command), $match)) {
+                $this->debugVariables[$match[1]] = stripcslashes($match[2]);
+            }
+            return ['code' => 200, 'result' => 1, 'data' => ''];
+        }
         $broken = ['code' => 500, 'result' => -1, 'data' => ''];
 
         // write command
