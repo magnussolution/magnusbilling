@@ -71,10 +71,15 @@ Ext.define('MBilling.view.magnusSentinel.List', {
             align: 'right'
         }, {
             text: t('Last detection'),
-            dataIndex: 'last_seen',
+            dataIndex: 'last_seen_display',
             flex: 3,
-            renderer: function (value) {
-                return Ext.util.Format.htmlEncode(me.formatDate(value));
+            renderer: function (value, metadata, record) {
+                var timezone = record.get('display_timezone');
+                return Ext.util.Format.htmlEncode(
+                    value ?
+                        value + (timezone ? ' ' + timezone : '') :
+                        me.formatDate(record.get('last_seen'))
+                );
             }
         }];
         me.dockedItems = [{
