@@ -1025,6 +1025,22 @@ systemctl restart asterisk
 
 
 
+if command -v journalctl >/dev/null 2>&1; then
+    install -d -m 0755 /etc/systemd/journald.conf.d
+
+    printf '%s\n' \
+        '[Journal]' \
+        'SystemMaxUse=200M' \
+        'RuntimeMaxUse=200M' \
+        'SystemMaxFileSize=20M' \
+        > /etc/systemd/journald.conf.d/magnusbilling.conf
+
+    systemctl restart systemd-journald
+    journalctl --rotate
+    journalctl --vacuum-size=200M
+fi
+
+
 echo
 echo
 echo ===============================================================
