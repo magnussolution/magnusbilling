@@ -52,7 +52,9 @@ Ext.define('MBilling.view.magnusSentinel.List', {
             flex: 4,
             renderer: function (value, metadata, record) {
                 return Ext.util.Format.htmlEncode(
-                    me.entityLabel(record.get('entity_kind')) + ' ' + value
+                    record.get('entity_kind') === 'fleet' ?
+                        t('Fleet') :
+                        me.entityLabel(record.get('entity_kind')) + ' ' + value
                 );
             }
         }, {
@@ -127,7 +129,8 @@ Ext.define('MBilling.view.magnusSentinel.List', {
                     ['', t('All')],
                     ['trunk', t('Trunks')],
                     ['server', t('Servers')],
-                    ['proxy', t('Proxies')]
+                    ['proxy', t('Proxies')],
+                    ['fleet', t('Fleets')]
                 ],
                 listeners: {
                     change: 'onFilterChange'
