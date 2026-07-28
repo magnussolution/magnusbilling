@@ -12,7 +12,12 @@ Ext.define('MBilling.view.magnusSentinel.Health', {
         fields: [
             'component', 'server_name', 'health_status', 'heartbeat_at',
             'heartbeat_age_seconds', 'pending_events', 'ingest_lag_seconds',
-            'health_reasons', 'last_error_at', 'last_error_message'
+            'health_reasons', 'last_error_at', 'last_error_code',
+            'last_error_message', 'filesystem_status', 'filesystem_reason',
+            'filesystem_path', 'filesystem_used_percent',
+            'filesystem_available_bytes',
+            'filesystem_inode_used_percent',
+            'filesystem_available_inodes', 'filesystem_checked_at'
         ],
         data: []
     },
@@ -81,6 +86,32 @@ Ext.define('MBilling.view.magnusSentinel.Health', {
                 return Ext.util.Format.htmlEncode(me.formatAge(value || 0));
             }
         }, {
+            text: t('Filesystem'),
+            dataIndex: 'filesystem_path',
+            flex: 2,
+            minWidth: 180,
+            renderer: function(value, metadata, record) {
+                return Ext.util.Format.htmlEncode(
+                    me.formatFilesystem(record)
+                );
+            }
+        }, {
+            text: t('Inodes'),
+            dataIndex: 'filesystem_inode_used_percent',
+            width: 155,
+            renderer: function(value, metadata, record) {
+                if (!Ext.isNumber(value)) {
+                    return Ext.util.Format.htmlEncode(t('Not monitored'));
+                }
+                return Ext.util.Format.htmlEncode(
+                    Ext.String.format(
+                        t('{0}% used; {1} available'),
+                        value,
+                        record.get('filesystem_available_inodes')
+                    )
+                );
+            }
+        }, {
             text: t('Reason'),
             dataIndex: 'health_reasons',
             flex: 3,
@@ -100,10 +131,16 @@ Ext.define('MBilling.view.magnusSentinel.Health', {
                 if (!value) {
                     return Ext.util.Format.htmlEncode(t('None'));
                 }
+                var code = record.get('last_error_code');
+                var translated = me.reasonLabel(code);
                 return Ext.util.Format.htmlEncode(
                     me.formatDate(value) +
-                    (record.get('last_error_message') ?
-                        ' — ' + record.get('last_error_message') : '')
+                    (code ?
+                        ' — ' + (
+                            translated !== code ?
+                                translated :
+                                record.get('last_error_message') || code
+                        ) : '')
                 );
             }
         }];
@@ -158,8 +195,40 @@ Ext.define('MBilling.view.magnusSentinel.Health', {
             asterisk_log_unavailable: t('Asterisk event log is unavailable'),
             collector_cycle_failed: t('Collector cycle failed'),
             analysis_partial: t('Analyzer cycle was incomplete'),
-            analyzer_failed: t('Analyzer cycle failed')
+            analyzer_failed: t('Analyzer cycle failed'),
+            filesystem_space_low: t('Filesystem space is low'),
+            filesystem_space_critical: t('Filesystem space is critical'),
+            filesystem_inodes_low: t('Filesystem inodes are low'),
+            filesystem_inodes_critical: t('Filesystem inodes are critical'),
+            filesystem_check_failed: t('Filesystem check failed'),
+            filesystem_no_space: t('Filesystem has no space available'),
+            filesystem_quota_exceeded: t('Filesystem quota was exceeded'),
+            filesystem_read_only: t('Filesystem is read-only'),
+            local_state_write_failed: t('Sentinel local state write failed')
         }[value] || value;
+    },
+    formatFilesystem: function(record) {
+        var used = record.get('filesystem_used_percent');
+        var path = record.get('filesystem_path');
+        if (!Ext.isNumber(used) || !path) {
+            return t('Not monitored');
+        }
+        return path + ' · ' + Ext.String.format(
+            t('{0}% used; {1} available'),
+            used,
+            this.formatBytes(record.get('filesystem_available_bytes'))
+        );
+    },
+    formatBytes: function(value) {
+        var gibibyte = 1024 * 1024 * 1024;
+        var mebibyte = 1024 * 1024;
+        if (!Ext.isNumber(value)) {
+            return t('Not informed');
+        }
+        if (value >= gibibyte) {
+            return (value / gibibyte).toFixed(1) + ' GB';
+        }
+        return Math.round(value / mebibyte) + ' MB';
     },
     formatAge: function(value) {
         if (!Ext.isNumber(value)) {

@@ -90,6 +90,14 @@ function healthRow($component, $idServer, $heartbeatAge, $lastCommit = null)
         'last_error_message' => null,
         'stale_after_seconds' => $component === 'analyzer' ? 1200 : 180,
         'version' => 'test',
+        'filesystem_status' => null,
+        'filesystem_reason' => null,
+        'filesystem_path' => null,
+        'filesystem_used_percent' => null,
+        'filesystem_available_bytes' => null,
+        'filesystem_inode_used_percent' => null,
+        'filesystem_available_inodes' => null,
+        'filesystem_checked_at' => null,
         'server_name' => $idServer ? 'Worker ' . $idServer : null,
         'heartbeat_age_seconds' => $heartbeatAge,
         'ingest_lag_seconds' => 0,
@@ -123,5 +131,75 @@ $healthyDb->healthRows = [
 ];
 $healthy = MagnusSentinelIncidentApiV1::getHealth($healthyDb);
 assertSameValue('HEALTHY', $healthy['health_status'], 'healthy pipeline');
+
+$diskDb = new SentinelHealthFakeDb;
+$diskCollector = healthRow(
+    'collector',
+    9,
+    60,
+    '2026-07-25 17:58:00.000000'
+);
+$diskCollector['filesystem_status'] = 'UNHEALTHY';
+$diskCollector['filesystem_reason'] = 'filesystem_space_critical';
+$diskCollector['filesystem_path'] = '/';
+$diskCollector['filesystem_used_percent'] = '98.00';
+$diskCollector['filesystem_available_bytes'] = 470810624;
+$diskCollector['filesystem_inode_used_percent'] = '12.50';
+$diskCollector['filesystem_available_inodes'] = 100000;
+$diskCollector['filesystem_checked_at'] = '2026-07-25 17:59:00.000000';
+$diskDb->healthRows = [
+    healthRow('collector', 0, 60, '2026-07-25 17:58:00.000000'),
+    healthRow('analyzer', 0, 60),
+    $diskCollector,
+];
+$diskDb->serverRows = [['id' => 9, 'name' => 'Worker 5']];
+$disk = MagnusSentinelIncidentApiV1::getHealth($diskDb);
+assertSameValue(
+    'UNHEALTHY',
+    $disk['health_status'],
+    'critical filesystem controls aggregate'
+);
+$diskRows = array_values(array_filter(
+    $disk['components'],
+    function ($component) {
+        return $component['id_server'] === 9;
+    }
+));
+assertSameValue(
+    'filesystem_space_critical',
+    $diskRows[0]['health_reasons'][0],
+    'filesystem reason'
+);
+assertSameValue(
+    98.0,
+    $diskRows[0]['filesystem_used_percent'],
+    'filesystem percentage'
+);
+assertSameValue(
+    470810624,
+    $diskRows[0]['filesystem_available_bytes'],
+    'filesystem available bytes'
+);
+
+$oldSnapshotDb = new SentinelHealthFakeDb;
+$oldSnapshot = healthRow(
+    'collector',
+    0,
+    60,
+    '2026-07-25 17:58:00.000000'
+);
+$oldSnapshot['filesystem_status'] = 'UNHEALTHY';
+$oldSnapshot['filesystem_reason'] = 'filesystem_space_critical';
+$oldSnapshot['filesystem_checked_at'] = '2026-07-25 16:00:00.000000';
+$oldSnapshotDb->healthRows = [
+    $oldSnapshot,
+    healthRow('analyzer', 0, 60),
+];
+$oldResult = MagnusSentinelIncidentApiV1::getHealth($oldSnapshotDb);
+assertSameValue(
+    'HEALTHY',
+    $oldResult['health_status'],
+    'snapshot before process start must be ignored'
+);
 
 echo "MagnusSentinelHealthApiTest OK\n";
