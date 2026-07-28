@@ -1380,4 +1380,7 @@ return array(
     'PJSIP' => 'PJSIP',
     '0800 Callback' => 'Callback 0800',
     'Unknown' => 'Desconhecido',
+    'Only cdrFailedId is accepted.' => 'Somente cdrFailedId é aceito.',
+    'Failed CDR was not found.' => 'O CDR failed não foi encontrado.',
+    'This legacy call detail action is disabled. Use Diagnose call.' => 'Esta ação antiga está desativada. Use Diagnosticar chamada.',
 );

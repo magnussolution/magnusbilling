@@ -422,139 +422,15 @@
 
         public function actionCallInfo()
         {
-            header('Content-Type: text/html; charset=utf-8');
-        ?>
-
-<style type="text/css">
-
-#border {
-border: 5px solid #1C6EA4;
-border-radius: 9px;
-}
-
-table.blueTable {
-  border: 1px solid #1C6EA4;
-
-  width: 100%;
-  text-align: left;
-  border-collapse: collapse;
-}
-table.blueTable td, table.blueTable th {
-  border: 1px solid #AAAAAA;
-  padding: 3px 2px;
-}
-table.blueTable tbody td {
-  font-size: 13px;
-}
-table.blueTable tr:nth-child(even) {
-  background: #D0E4F5;
-}
-table.blueTable thead {
-  background: #1C6EA4;
-  background: -moz-linear-gradient(top, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
-  background: -webkit-linear-gradient(top, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
-  background: linear-gradient(to bottom, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
-  border-bottom: 2px solid #444444;
-}
-table.blueTable thead th {
-  font-size: 15px;
-  font-weight: bold;
-  color: #FFFFFF;
-  border-left: 2px solid #D0E4F5;
-}
-table.blueTable thead th:first-child {
-  border-left: none;
-}
-
-table.blueTable tfoot {
-  font-size: 14px;
-  font-weight: bold;
-  color: #FFFFFF;
-  background: #D0E4F5;
-  background: -moz-linear-gradient(top, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
-  background: -webkit-linear-gradient(top, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
-  background: linear-gradient(to bottom, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
-  border-top: 2px solid #444444;
-}
-table.blueTable tfoot td {
-  font-size: 14px;
-}
-table.blueTable tfoot .links {
-  text-align: right;
-}
-table.blueTable tfoot .links a{
-  display: inline-block;
-  background: #1C6EA4;
-  color: #FFFFFF;
-  padding: 2px 8px;
-  border-radius: 5px;
-}
-
-</style>
-
-
-    <?php
-        $model = CallFailed::model()->findByPk((int) $_GET['id']);
-
-                if ( ! isset($model->idServer->id) || $model->idServer->type == 'mbilling') {
-
-                    $log_file       = '/var/log/asterisk/magnus';
-                    $called_station = $model->calledstation;
-
-                    // Read the log file
-                    $lines = file($log_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
-                    //$lines = htmlentities($lines[0]);
-
-                    // Filter lines that contain the $called_station value
-                    $matched_lines = array_filter($lines, function ($line) use ($called_station) {
-                        return strpos($line, $called_station) !== false;
-                    });
-
-                    if ( ! count($matched_lines)) {
-                        echo "Log not found";
-                        exit;
-                    }
-
-                    echo '<br>';
-                    echo '<table class="blueTable" width=100%><tr>';
-                    echo '<tr>';
-                    echo '<th  colspan=4>Below data is the last SIP sinalization from trunk to the number ' . $model->calledstation . ' ' . $model->starttime . '</th>';
-
-                    echo '</tr>';
-                    echo '<th>Date</th>';
-                    echo '<th>To tag</th>';
-                    echo '<th>Sip Code</th>';
-                    echo '<th>Reason</th>';
-                    foreach ($matched_lines as $key => $value) {
-
-                        $value = htmlentities($value);
-
-                        $line = explode('|', $value);
-                        if ( ! isset($line[1])) {
-                            continue;
-                        }
-                        $data = explode('] ', $line[0]);
-                        echo '<tr>';
-                        echo '<td>' . substr($data[0], 1) . '</td>';
-                        echo '<td>' . $line[1] . '</td>';
-                        echo '<td>' . $line[2] . '</td>';
-                        echo '<td>' . $line[3] . '</td>';
-                        echo '</tr>';
-
-                    }
-                    echo '</tr></table>';
-
-                } else {
-
-                    if (filter_var($model->idServer->host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
-                        $ip = $model->idServer->host;
-                    } else {
-                        $ip = $model->idServer->public_ip;
-                    }
-                    header('Location: http://' . $ip . '/mbilling?id=' . $model->id);
-
-                }
-                Yii::app()->end();
-            }
+            header('Content-Type: application/json; charset=utf-8');
+            http_response_code(410);
+            echo json_encode([
+                'success' => false,
+                'msg' => Yii::t(
+                    'zii',
+                    'This legacy call detail action is disabled. Use Diagnose call.'
+                ),
+            ]);
+            Yii::app()->end();
+        }
     }

@@ -492,4 +492,7 @@ return array(
     'Context' => 'Kontekst',
     'Multiples IPs' => 'Wiele adresów IP',
     'Unknown' => 'Nieznany',
+    'Only cdrFailedId is accepted.' => 'Akceptowane jest tylko cdrFailedId.',
+    'Failed CDR was not found.' => 'Nie znaleziono nieudanego CDR.',
+    'This legacy call detail action is disabled. Use Diagnose call.' => 'Ta starsza akcja jest wyłączona. Użyj Diagnozuj połączenie.',
 );
