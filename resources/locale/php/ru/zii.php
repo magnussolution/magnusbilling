@@ -21,6 +21,9 @@
  * Edit /resources/locale/ru.js
           */
 return array(
+    'Yes' => 'Да',
+    'No' => 'Нет',
+    'CallerID' => 'CallerID',
             'ALOC all calls' => 'ACD',
     'Out work audio' => 'OUT WOOK AUDIO',
     'P2P CustomerSiteID' => 'P2P CombersentityID',
@@ -322,4 +325,5 @@ return array(
     'Only cdrFailedId is accepted.' => 'Допускается только cdrFailedId.',
     'Failed CDR was not found.' => 'Не удалось найти CDR неудачного вызова.',
     'This legacy call detail action is disabled. Use Diagnose call.' => 'Устаревшее действие отключено. Используйте диагностику вызова.',
-) + require dirname(__DIR__) . '/call_diagnostic_failures.php';
+) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
+  + (require dirname(__DIR__) . '/call_diagnostic_sip_auth.php');

@@ -1,5 +1,7 @@
 <?php
 return array(
+    'Yes' => 'Tak',
+    'No' => 'Nie',
     'Activation DID'                                   => 'Aktywacja DID',
     'Active'                                           => 'Aktywny',
     'Address'                                          => 'Adres',
@@ -495,4 +497,5 @@ return array(
     'Only cdrFailedId is accepted.' => 'Akceptowane jest tylko cdrFailedId.',
     'Failed CDR was not found.' => 'Nie znaleziono nieudanego CDR.',
     'This legacy call detail action is disabled. Use Diagnose call.' => 'Ta starsza akcja jest wyłączona. Użyj Diagnozuj połączenie.',
-) + require dirname(__DIR__) . '/call_diagnostic_failures.php';
+) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
+  + (require dirname(__DIR__) . '/call_diagnostic_sip_auth.php');

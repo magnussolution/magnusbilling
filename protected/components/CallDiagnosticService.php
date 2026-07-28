@@ -14,12 +14,20 @@ class CallDiagnosticService
     private $db;
     private $deadline;
     private $isAdmin;
+    private $sipIpAuthenticationProbe;
 
-    public function __construct($db, $isAdmin, $sessionUserId, $timeoutSeconds = 8)
+    public function __construct(
+        $db,
+        $isAdmin,
+        $sessionUserId,
+        $timeoutSeconds = 8,
+        $sipIpAuthenticationProbe = null
+    )
     {
         $this->db = $db;
         $this->isAdmin = (bool) $isAdmin;
         $this->deadline = microtime(true) + min(15, max(1, (int) $timeoutSeconds));
+        $this->sipIpAuthenticationProbe = $sipIpAuthenticationProbe;
     }
 
     public static function catalog()
@@ -146,7 +154,7 @@ class CallDiagnosticService
     public function outbound($sipId, $number, $callerId = null, $at = null)
     {
         $sip = $this->row(
-            'SELECT s.name,s.callerid,u.username
+            'SELECT s.name,s.callerid,s.host,s.insecure,u.username
              FROM pkg_sip s
              JOIN pkg_user u ON u.id=s.id_user
              WHERE s.id=:id LIMIT 1',
@@ -156,13 +164,28 @@ class CallDiagnosticService
             return $this->failure('outbound', 'USER_NOT_FOUND');
         }
 
-        return $this->executeAgi(
+        $sipAuthenticationStep = $this->sipIpAuthenticationProbe !== null
+            ? $this->sipIpAuthenticationProbe->inspect($sip)
+            : null;
+        $result = $this->executeAgi(
             'outbound',
             (string) $number,
             (string) $sip['username'],
             $callerId !== null && $callerId !== '' ? (string) $callerId : (string) $sip['callerid'],
             (string) $sip['name']
         );
+        if ($sipAuthenticationStep !== null) {
+            array_unshift($result['steps'], $sipAuthenticationStep);
+            if ($sipAuthenticationStep['status'] === 'warning' && $result['status'] === 'passed') {
+                $result['status'] = 'warning';
+                $result['summary'] = Yii::t(
+                    'zii',
+                    'A fixed-IP SIP authentication risk was found before the route check.'
+                );
+                $result['resultCode'] = 'SIP_IP_AUTH_SOURCE_PORT_RISK';
+            }
+        }
+        return $result;
     }
 
     public function inbound($didId, $callerId = null, $at = null)
