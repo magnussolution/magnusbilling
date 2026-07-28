@@ -4,8 +4,8 @@
  * Builds a deterministic diagnostic for one persisted failed CDR.
  *
  * This service is read-only. It correlates the originating channel uniqueid
- * with the compact Sentinel event table and never reads Asterisk logs or
- * contacts another server.
+ * and CDR server with the compact Sentinel event table and never reads
+ * Asterisk logs or contacts another server.
  */
 class FailedCallDiagnosticService
 {
@@ -58,6 +58,13 @@ class FailedCallDiagnosticService
             );
         }
 
+        $eventParams = [':uniqueid' => (string) $cdr['uniqueid']];
+        if ($cdr['id_server'] === null) {
+            $serverCondition = 'e.id_server IS NULL';
+        } else {
+            $serverCondition = 'e.id_server=:id_server';
+            $eventParams[':id_server'] = (int) $cdr['id_server'];
+        }
         $rows = $this->queryAll(
             "
             SELECT e.id,e.event_time,e.id_trunk,e.id_server,
@@ -67,10 +74,11 @@ class FailedCallDiagnosticService
             LEFT JOIN pkg_trunk t ON t.id=e.id_trunk
             LEFT JOIN pkg_servers s ON s.id=e.id_server
             WHERE e.uniqueid=:uniqueid
+              AND " . $serverCondition . "
             ORDER BY e.event_time ASC,e.id ASC
             LIMIT 51
             ",
-            [':uniqueid' => (string) $cdr['uniqueid']]
+            $eventParams
         );
         $truncated = count($rows) > self::EVENT_LIMIT;
         if ($truncated) {
@@ -125,6 +133,18 @@ class FailedCallDiagnosticService
                 'classification' => $classification,
             ];
         }
+        $trunkAlerts = $this->activeTrunkAlerts($attempts);
+        foreach ($attempts as $index => $attempt) {
+            $idTrunk = $attempt['trunk']['id'];
+            $attempts[$index]['sentinelAlerts'] = (
+                $idTrunk !== null
+                && isset($trunkAlerts['byTrunk'][(string) $idTrunk])
+                ? $trunkAlerts['byTrunk'][(string) $idTrunk]
+                : []
+            );
+        }
+        unset($trunkAlerts['byTrunk']);
+        $history = $this->buildHistory($cdr, $attempts);
 
         $last = $attempts[count($attempts) - 1];
         $classification = $last['classification'];
@@ -168,7 +188,9 @@ class FailedCallDiagnosticService
             'status' => $status,
             'summary' => $classification['summary'],
             'call' => $this->call($cdr),
+            'history' => $history,
             'attempts' => $attempts,
+            'trunkAlerts' => $trunkAlerts,
             'lastObservedResult' => [
                 'sequence' => $last['sequence'],
                 'raw' => $last['raw'],
@@ -176,8 +198,8 @@ class FailedCallDiagnosticService
             ],
             'facts' => [
                 [
-                    'key' => 'exact_uniqueid_match',
-                    'text' => 'The events have the same uniqueid as the failed CDR.',
+                    'key' => 'exact_uniqueid_server_match',
+                    'text' => 'The events have the same uniqueid and server as the failed CDR.',
                 ],
                 [
                     'key' => 'observed_attempt_count',
@@ -195,7 +217,7 @@ class FailedCallDiagnosticService
             'limitations' => $limitations,
             'evidence' => [
                 'sentinelAvailable' => true,
-                'correlation' => 'exact_uniqueid',
+                'correlation' => 'exact_uniqueid_server',
                 'pipeline' => $health,
                 'retention' => [
                     'earliestEventAt' => (
@@ -221,6 +243,11 @@ class FailedCallDiagnosticService
                     : null
                 ),
                 'rawUniqueid' => (string) $cdr['uniqueid'],
+                'correlationServerId' => (
+                    $cdr['id_server'] !== null
+                    ? (int) $cdr['id_server']
+                    : null
+                ),
                 'catalog' => self::CATALOG,
                 'queryOrder' => ['event_time', 'id'],
             ],
@@ -479,7 +506,15 @@ class FailedCallDiagnosticService
             'status' => 'inconclusive',
             'summary' => $message,
             'call' => $this->call($cdr),
+            'history' => $this->buildHistory($cdr, []),
             'attempts' => [],
+            'trunkAlerts' => [
+                'available' => false,
+                'scope' => 'active_now',
+                'checkedAt' => null,
+                'trunks' => [],
+                'truncated' => false,
+            ],
             'lastObservedResult' => null,
             'facts' => [],
             'probableCause' => [
@@ -524,6 +559,11 @@ class FailedCallDiagnosticService
                     : null
                 ),
                 'rawUniqueid' => (string) $cdr['uniqueid'],
+                'correlationServerId' => (
+                    $cdr['id_server'] !== null
+                    ? (int) $cdr['id_server']
+                    : null
+                ),
                 'catalog' => self::CATALOG,
                 'queryOrder' => ['event_time', 'id'],
             ],
@@ -543,8 +583,184 @@ class FailedCallDiagnosticService
             'plan' => $this->entity($cdr['id_plan'], $cdr['plan_name']),
             'prefix' => $this->entity($cdr['id_prefix'], $cdr['prefix_name']),
             'cdrTrunk' => $this->entity($cdr['id_trunk'], $cdr['trunk_name']),
-            'server' => $this->entity($cdr['id_server'], $cdr['server_name']),
+            'server' => $this->entity(
+                $cdr['id_server'],
+                $cdr['server_name'] !== null
+                    ? $cdr['server_name']
+                    : ($cdr['id_server'] === null ? 'MASTER' : null)
+            ),
         ];
+    }
+
+    private function buildHistory(array $cdr, array $attempts)
+    {
+        $inviteAt = $this->inviteTime(
+            (string) $cdr['uniqueid'],
+            (string) $cdr['starttime']
+        );
+        $server = $this->entity(
+            $cdr['id_server'],
+            $cdr['server_name'] !== null
+                ? $cdr['server_name']
+                : ($cdr['id_server'] === null ? 'MASTER' : null)
+        );
+        $entries = [];
+        $previousAt = $inviteAt['at'];
+        $previousTrunkId = null;
+        foreach ($attempts as $attempt) {
+            $entries[] = [
+                'sequence' => $attempt['sequence'],
+                'eventTime' => $attempt['eventTime'],
+                'secondsAfterInvite' => $this->secondsBetween(
+                    $inviteAt['at'],
+                    $attempt['eventTime']
+                ),
+                'secondsAfterPrevious' => $this->secondsBetween(
+                    $previousAt,
+                    $attempt['eventTime']
+                ),
+                'isNextTrunk' => (
+                    $previousTrunkId !== null
+                    && $attempt['trunk']['id'] !== $previousTrunkId
+                ),
+                'trunk' => $attempt['trunk'],
+                'server' => $attempt['server'],
+                'raw' => $attempt['raw'],
+                'classification' => $attempt['classification'],
+                'sentinelAlerts' => $attempt['sentinelAlerts'],
+            ];
+            $previousAt = $attempt['eventTime'];
+            $previousTrunkId = $attempt['trunk']['id'];
+        }
+        return [
+            'invite' => [
+                'at' => $inviteAt['at'],
+                'unixTimestamp' => $inviteAt['unixTimestamp'],
+                'uniqueid' => (string) $cdr['uniqueid'],
+                'server' => $server,
+                'source' => $inviteAt['source'],
+            ],
+            'entries' => $entries,
+        ];
+    }
+
+    private function inviteTime($uniqueid, $fallback)
+    {
+        $parts = explode('.', $uniqueid, 2);
+        $epoch = isset($parts[0]) && preg_match('/^[0-9]{9,12}$/', $parts[0])
+            ? (int) $parts[0]
+            : null;
+        if ($epoch === null) {
+            return [
+                'at' => $fallback,
+                'unixTimestamp' => null,
+                'source' => 'cdr_starttime',
+            ];
+        }
+        $date = new DateTime('@' . $epoch);
+        $date->setTimezone(new DateTimeZone(date_default_timezone_get()));
+        return [
+            'at' => $date->format('Y-m-d H:i:s'),
+            'unixTimestamp' => $epoch,
+            'source' => 'uniqueid_epoch',
+        ];
+    }
+
+    private function secondsBetween($from, $to)
+    {
+        $fromTimestamp = strtotime((string) $from);
+        $toTimestamp = strtotime((string) $to);
+        if ($fromTimestamp === false || $toTimestamp === false) {
+            return null;
+        }
+        $difference = $toTimestamp - $fromTimestamp;
+        return $difference >= 0 ? $difference : null;
+    }
+
+    private function activeTrunkAlerts(array $attempts)
+    {
+        $result = [
+            'available' => false,
+            'scope' => 'active_now',
+            'checkedAt' => null,
+            'trunks' => [],
+            'truncated' => false,
+            'byTrunk' => [],
+        ];
+        if (! $this->tableExists('pkg_magnus_sentinel_incident')) {
+            return $result;
+        }
+        $trunks = [];
+        foreach ($attempts as $attempt) {
+            if ($attempt['trunk']['id'] !== null) {
+                $trunks[(string) $attempt['trunk']['id']] =
+                    $attempt['trunk'];
+            }
+        }
+        if (! $trunks) {
+            $result['available'] = true;
+            return $result;
+        }
+        $params = [];
+        $placeholders = [];
+        foreach (array_keys($trunks) as $index => $idTrunk) {
+            $key = ':trunk' . $index;
+            $params[$key] = (int) $idTrunk;
+            $placeholders[] = $key;
+        }
+        $rows = $this->queryAll(
+            "
+            SELECT id,incident_type,state,severity,entity_id,
+                   first_seen,last_seen,occurrence_count,incident_json
+            FROM pkg_magnus_sentinel_incident FORCE INDEX (ix_incident_entity)
+            WHERE entity_kind='trunk'
+              AND entity_id IN (" . implode(',', $placeholders) . ")
+              AND state IN ('new','acknowledged')
+            ORDER BY severity DESC,last_seen DESC,id DESC
+            LIMIT 51
+            ",
+            $params
+        );
+        if (count($rows) > self::EVENT_LIMIT) {
+            $rows = array_slice($rows, 0, self::EVENT_LIMIT);
+            $result['truncated'] = true;
+        }
+        foreach ($trunks as $idTrunk => $trunk) {
+            $result['byTrunk'][$idTrunk] = [];
+        }
+        foreach ($rows as $row) {
+            $idTrunk = (string) (int) $row['entity_id'];
+            if (! isset($result['byTrunk'][$idTrunk])) {
+                continue;
+            }
+            $contract = json_decode((string) $row['incident_json'], true);
+            $result['byTrunk'][$idTrunk][] = [
+                'id' => (int) $row['id'],
+                'type' => (string) $row['incident_type'],
+                'state' => (string) $row['state'],
+                'severity' => (string) $row['severity'],
+                'firstSeen' => (string) $row['first_seen'],
+                'lastSeen' => (string) $row['last_seen'],
+                'occurrenceCount' => (int) $row['occurrence_count'],
+                'summary' => (
+                    is_array($contract) && isset($contract['summary'])
+                    ? (string) $contract['summary']
+                    : null
+                ),
+            ];
+        }
+        foreach ($trunks as $idTrunk => $trunk) {
+            $result['trunks'][] = [
+                'trunk' => $trunk,
+                'activeAlerts' => $result['byTrunk'][$idTrunk],
+            ];
+        }
+        $result['available'] = true;
+        $result['checkedAt'] = $this->queryScalar(
+            'SELECT UTC_TIMESTAMP(6)',
+            []
+        );
+        return $result;
     }
 
     private function entity($id, $name)

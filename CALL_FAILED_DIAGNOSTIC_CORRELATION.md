@@ -7,19 +7,22 @@ schema, `app_mbilling`, Asterisk, formato do evento, serviços ou dados do pilot
 
 ## Decisão
 
-A versão inicial pode correlacionar `pkg_cdr_failed.uniqueid` com
-`pkg_magnus_sentinel_trunk_event.uniqueid`.
+A versão inicial pode correlacionar os registros pela combinação
+`(uniqueid, id_server)`. O `uniqueid` sozinho não é suficiente em uma frota:
+foi comprovado no piloto que o mesmo valor pode existir em servidores
+diferentes e representar chamadas distintas.
 
 O identificador é o `uniqueid` do **canal de origem da chamada**. Ele não é o
 identificador do canal de saída e não identifica isoladamente uma tentativa de
 trunk. Todas as tentativas realizadas pela mesma execução da chamada recebem o
 mesmo valor; `id_trunk`, `event_time` e `id` distinguem e ordenam os eventos.
 
-Não é necessário introduzir `linkedid` ou `correlation_id` nesta versão. O
-backend deve preservar o `uniqueid` bruto e consultar a tabela de eventos pelo
-índice `ix_uniqueid`. A conclusão vale para o fluxo e a amostra verificados;
-chamadas sem correspondência exata continuam inconclusivas e nunca podem ser
-associadas silenciosamente por número e horário.
+Não é necessário introduzir `linkedid` ou `correlation_id` nesta versão porque
+o CDR failed também persiste `id_server`. O backend deve preservar o
+`uniqueid` bruto, consultar pelo índice `ix_uniqueid` e restringir o resultado
+ao servidor do CDR. Chamadas sem correspondência exata nos dois campos
+continuam inconclusivas e nunca podem ser associadas silenciosamente por
+número e horário.
 
 ## Fontes verificadas
 
@@ -51,9 +54,9 @@ checkout acima.
 | Campo/conceito | Significado comprovado | Persistido |
 |---|---|---|
 | `pkg_cdr_failed.uniqueid` | `agi_uniqueid` do canal de origem | sim |
-| `pkg_magnus_sentinel_trunk_event.uniqueid` | mesmo `uniqueid` do canal de origem, passado a cada tentativa | sim |
+| `pkg_magnus_sentinel_trunk_event.uniqueid` | mesmo `uniqueid` do canal de origem naquele servidor, passado a cada tentativa | sim |
 | canal de saída | canal tecnológico criado pelo Dial para o trunk | não |
-| tentativa de trunk | um evento identificado pela combinação da chamada, trunk e ordem temporal | parcialmente; não há ID próprio |
+| tentativa de trunk | evento identificado por servidor, chamada, trunk e ordem temporal | parcialmente; não há ID próprio |
 | `linkedid` | identificador Asterisk da árvore da chamada | não |
 | `correlation_id` | identificador de correlação dedicado | não existe |
 | `pkg_cdr_failed.sessionid` | coluna disponível, mas não alimentada no fluxo do piloto | 5.000/5.000 nulos na amostra |
@@ -85,15 +88,35 @@ eventos.
 | 2026-07-27 | 1.000 | 999 | 1 | 702 | 297 | 297 |
 | **Total** | **5.000** | **4.993 (99,86%)** | **7 (0,14%)** | **1.905** | **3.088** | **3.088** |
 
-Em todos os 4.993 casos correlacionados houve ao menos um evento no mesmo
-servidor do CDR. Em 4.991 houve ao menos um evento no mesmo trunk registrado no
-CDR. Os dois casos restantes ainda possuem igualdade exata do identificador,
-mas a divergência de trunk deve aparecer como limitação técnica, não ser
-ocultada.
+Os 4.993 casos da coluna “Com evento exato” possuem igualdade de `uniqueid` e
+ao menos um evento no mesmo servidor do CDR, correspondendo a **99,86%** da
+amostra. Em 4.991 houve também ao menos um evento no mesmo trunk registrado no
+CDR. Os dois casos restantes ainda possuem igualdade exata de chamada e
+servidor, mas a divergência de trunk deve aparecer como limitação técnica.
 
 O máximo observado foi de três eventos por CDR e dois trunks distintos. A
 ordem correta é `event_time ASC, id ASC`; `event_time` sozinho não desempata
 eventos no mesmo instante.
+
+### Colisão comprovada entre servidores
+
+O exemplo `1784910159.159421` demonstrou por que `uniqueid` não pode ser usado
+sozinho. A consulta exata retornou eventos nos servidores 7 e 8:
+
+| Servidor | Horário | Trunk | Resposta |
+|---:|---|---:|---|
+| 8 | 2026-07-24 13:22:43 | 277 | `617 Unknown` |
+| 7 | 2026-07-24 13:22:44 | 277 | `615 Unknown` |
+| 7 | 2026-07-24 13:22:48 | 256 | `615 Unknown` |
+| 8 | 2026-07-24 13:22:50 | 256 | `617 Unknown` |
+
+Uma narrativa que misturasse essas quatro linhas seria falsa. Para um CDR do
+servidor 7, a história correta contém somente 13:22:44 e 13:22:48; para um CDR
+do servidor 8, somente 13:22:43 e 13:22:50.
+
+A parte inteira `1784910159` é o Unix timestamp do momento em que o INVITE
+originou o canal (`2026-07-24 13:22:39` em America/Sao_Paulo). A parte após o
+ponto é uma sequência do Asterisk, não uma fração de segundo.
 
 ### Interpretação dos sete registros sem evento
 
@@ -136,7 +159,8 @@ Fluxo proposto, sem mudança de schema:
    backend;
 3. verificar a existência das tabelas Sentinel por metadados;
 4. buscar eventos com
-   `WHERE uniqueid = :uniqueid ORDER BY event_time ASC, id ASC LIMIT :limit`;
+   `WHERE uniqueid = :uniqueid AND id_server = :id_server
+   ORDER BY event_time ASC, id ASC LIMIT :limit`;
 5. usar `ix_uniqueid`; o plano verificado no piloto foi `ref`, estimativa de
    uma linha;
 6. obter saúde apenas da pequena
@@ -178,6 +202,27 @@ Resposta proposta:
     "cdrTrunk": {"id": 255, "name": "Trunk A"},
     "server": {"id": 5, "name": "Servidor 1"}
   },
+  "history": {
+    "invite": {
+      "at": "2026-07-27 18:45:14",
+      "unixTimestamp": 1785188714,
+      "uniqueid": "1785188714.1274726",
+      "server": {"id": 5, "name": "Servidor 1"},
+      "source": "uniqueid_epoch"
+    },
+    "entries": [
+      {
+        "sequence": 1,
+        "eventTime": "2026-07-27 18:45:20",
+        "secondsAfterInvite": 6,
+        "secondsAfterPrevious": 6,
+        "isNextTrunk": false,
+        "trunk": {"id": 255, "name": "Trunk A"},
+        "raw": {"code": 486, "reason": "Busy Here"},
+        "sentinelAlerts": []
+      }
+    ]
+  },
   "attempts": [
     {
       "sequence": 1,
@@ -186,6 +231,7 @@ Resposta proposta:
       "trunk": {"id": 255, "name": "Trunk A"},
       "server": {"id": 5, "name": "Servidor 1"},
       "raw": {"code": 486, "reason": "Busy Here"},
+      "sentinelAlerts": [],
       "classification": {
         "key": "busy",
         "label": "Destino ocupado",
@@ -194,6 +240,18 @@ Resposta proposta:
       }
     }
   ],
+  "trunkAlerts": {
+    "available": true,
+    "scope": "active_now",
+    "checkedAt": "2026-07-27 22:30:00.000000",
+    "trunks": [
+      {
+        "trunk": {"id": 255, "name": "Trunk A"},
+        "activeAlerts": []
+      }
+    ],
+    "truncated": false
+  },
   "lastObservedResult": {
     "sequence": 1,
     "raw": {"code": 486, "reason": "Busy Here"},
@@ -201,8 +259,8 @@ Resposta proposta:
   },
   "facts": [
     {
-      "key": "exact_uniqueid_match",
-      "text": "O evento possui o mesmo identificador do CDR failed."
+      "key": "exact_uniqueid_server_match",
+      "text": "O evento possui o mesmo identificador e servidor do CDR failed."
     }
   ],
   "probableCause": {
@@ -221,7 +279,7 @@ Resposta proposta:
   "limitations": [],
   "evidence": {
     "sentinelAvailable": true,
-    "correlation": "exact_uniqueid",
+    "correlation": "exact_uniqueid_server",
     "pipeline": {
       "status": "HEALTHY",
       "checkedAt": "2026-07-27T22:30:00Z"
@@ -238,6 +296,7 @@ Resposta proposta:
     "cdrTerminateCauseId": 2,
     "cdrHangupCause": 486,
     "rawUniqueid": "1785188714.1274726",
+    "correlationServerId": 5,
     "queryOrder": ["event_time", "id"]
   }
 }
@@ -321,11 +380,16 @@ Implementado:
 - `POST index.php/callDiagnostic/cdrFailed`, exclusivo para administrador e
   com `cdrFailedId` como único dado de negócio aceito;
 - `FailedCallDiagnosticService`, determinístico, local e versionado;
-- consulta exata por `ix_uniqueid`, ordenada e limitada;
+- consulta exata por `uniqueid + id_server`, usando `ix_uniqueid`, ordenada e
+  limitada;
 - estados de ausência, expiração, saúde da pipeline e truncamento;
 - catálogo explícito sem regra genérica para códigos `>=500`;
 - códigos internos 612–618 preservados como `internal_unknown`;
 - ExtJS Window com conclusão e ação primeiro;
+- história cronológica visível com chegada do INVITE, respostas de cada trunk
+  e intervalos entre tentativas;
+- alertas atualmente ativos do Magnus Sentinel por trunk tentado, sempre
+  rotulados como estado no momento do diagnóstico e nunca como prova causal;
 - evidências, limitações e detalhes técnicos recolhidos;
 - `window.open`, leitura do log e redirecionamento para IP removidos;
 - `actionCallInfo` legado desativado com HTTP 410;
