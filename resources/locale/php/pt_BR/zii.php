@@ -22,6 +22,8 @@
  * Edit /resources/locale/pt_BR.js
  */
 return array(
+        'Only cdrFailedId is accepted.' => 'Somente cdrFailedId é aceito.',
+        'Failed CDR was not found.' => 'O CDR com falha não foi encontrado.',
         'ALERT => Do you really active this service?' => 'ALERTA => Você realmente quer ativar este serviço?',
         'ALERT => Do you really want cancel this service to this user?' => 'ALERTA => Você realmente quer cancelar este serviço para este usuário?',
         'ALERT => This action was to return the balance, referring to the days not used. Do you confirm?' => 'ALERTA => Esta opção vai devolver o crédito referente aos dias não usado. Você confirma isso?',
@@ -1436,4 +1438,29 @@ return array(
         'The diagnostic stopped because of an application error.' => 'O diagnóstico foi interrompido por um erro da aplicação.',
         'MagnusBilling caught an unexpected code error before the diagnostic could finish.' => 'O MagnusBilling capturou um erro inesperado de código antes que o diagnóstico pudesse terminar.',
         'Send the diagnostic ID and the application error shown below to support.' => 'Envie o ID do diagnóstico e o erro da aplicação exibido abaixo ao suporte.',
-) + require dirname(__DIR__) . '/call_diagnostic_failures.php';
+        'PJSIP IP authentication' => 'Autenticação PJSIP por IP',
+        'The PJSIP endpoint could not be checked safely for this account.' => 'Não foi possível verificar com segurança o endpoint PJSIP desta conta.',
+        'Verify the SIP account name and run Call Check again.' => 'Verifique o nome da conta SIP e execute o Call Check novamente.',
+        'Not determined' => 'Não determinado',
+        'Asterisk did not provide enough information to check PJSIP authentication for this fixed-IP account.' => 'O Asterisk não forneceu informações suficientes para verificar a autenticação PJSIP desta conta de IP fixo.',
+        'Verify that Asterisk Manager is available, then run Call Check again.' => 'Verifique se o Asterisk Manager está disponível e execute o Call Check novamente.',
+        'The fixed-IP PJSIP endpoint is not loaded in Asterisk.' => 'O endpoint PJSIP de IP fixo não está carregado no Asterisk.',
+        'Regenerate and reload the PJSIP configuration, then run Call Check again.' => 'Gere novamente e recarregue a configuração PJSIP e depois execute o Call Check outra vez.',
+        'Not loaded' => 'Não carregado',
+        'The PJSIP endpoint is loaded, but its Identify does not match the configured IP. Asterisk may not recognize the INVITE as belonging to this account.' => 'O endpoint PJSIP está carregado, mas o Identify não corresponde ao IP configurado. O Asterisk pode não reconhecer que o INVITE pertence a esta conta.',
+        'Regenerate and reload the PJSIP configuration, then confirm that Identify matches the trusted source IP.' => 'Gere novamente e recarregue a configuração PJSIP e confirme se o Identify corresponde ao IP de origem confiável.',
+        'Not configured' => 'Não configurado',
+        'The PJSIP Identify match includes a source port. An INVITE from the same IP using a different source port will not match this endpoint and may receive 401.' => 'O match do Identify PJSIP inclui uma porta de origem. Um INVITE do mesmo IP usando outra porta não corresponderá a este endpoint e poderá receber 401.',
+        'After confirming the trusted source IP, remove the port restriction from the Identify match and reload PJSIP.' => 'Após confirmar o IP de origem confiável, remova a restrição de porta do match do Identify e recarregue o PJSIP.',
+        'The endpoint matches the configured IP, but inbound authentication is also enabled. Asterisk will request credentials with 401 even after identifying the endpoint by IP.' => 'O endpoint corresponde ao IP configurado, mas a autenticação de entrada também está habilitada. O Asterisk solicitará credenciais com 401 mesmo depois de identificar o endpoint pelo IP.',
+        'If this trusted account must authenticate only by IP, remove its inbound authentication association and reload PJSIP. Keep authentication enabled if the client must also send credentials.' => 'Se esta conta confiável deve autenticar somente por IP, remova a associação de autenticação de entrada e recarregue o PJSIP. Mantenha a autenticação habilitada se o cliente também precisar enviar credenciais.',
+        'The endpoint is identified by the configured IP without a source-port restriction and does not require inbound credentials.' => 'O endpoint é identificado pelo IP configurado, sem restrição de porta de origem, e não exige credenciais de entrada.',
+        'No authentication change is required. If a real INVITE still receives 401, verify that its source IP is the same IP shown here.' => 'Nenhuma alteração de autenticação é necessária. Se um INVITE real ainda receber 401, verifique se o IP de origem é o mesmo exibido aqui.',
+        'Authentication method' => 'Método de autenticação',
+        'Fixed IP' => 'IP fixo',
+        'Configured host' => 'Host configurado',
+        'PJSIP Identify' => 'Identify do PJSIP',
+        'PJSIP inbound authentication' => 'Autenticação de entrada PJSIP',
+        'A fixed-IP PJSIP authentication risk was found before the route check.' => 'Foi encontrado um risco na autenticação PJSIP por IP antes da verificação da rota.',
+) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
+  + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php');

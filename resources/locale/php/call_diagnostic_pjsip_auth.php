@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'PJSIP IP authentication' => 'PJSIP IP authentication',
+    'The PJSIP endpoint could not be checked safely for this account.' => 'The PJSIP endpoint could not be checked safely for this account.',
+    'Verify the SIP account name and run Call Check again.' => 'Verify the SIP account name and run Call Check again.',
+    'Not determined' => 'Not determined',
+    'Asterisk did not provide enough information to check PJSIP authentication for this fixed-IP account.' => 'Asterisk did not provide enough information to check PJSIP authentication for this fixed-IP account.',
+    'Verify that Asterisk Manager is available, then run Call Check again.' => 'Verify that Asterisk Manager is available, then run Call Check again.',
+    'The fixed-IP PJSIP endpoint is not loaded in Asterisk.' => 'The fixed-IP PJSIP endpoint is not loaded in Asterisk.',
+    'Regenerate and reload the PJSIP configuration, then run Call Check again.' => 'Regenerate and reload the PJSIP configuration, then run Call Check again.',
+    'Not loaded' => 'Not loaded',
+    'The PJSIP endpoint is loaded, but its Identify does not match the configured IP. Asterisk may not recognize the INVITE as belonging to this account.' => 'The PJSIP endpoint is loaded, but its Identify does not match the configured IP. Asterisk may not recognize the INVITE as belonging to this account.',
+    'Regenerate and reload the PJSIP configuration, then confirm that Identify matches the trusted source IP.' => 'Regenerate and reload the PJSIP configuration, then confirm that Identify matches the trusted source IP.',
+    'Not configured' => 'Not configured',
+    'The PJSIP Identify match includes a source port. An INVITE from the same IP using a different source port will not match this endpoint and may receive 401.' => 'The PJSIP Identify match includes a source port. An INVITE from the same IP using a different source port will not match this endpoint and may receive 401.',
+    'After confirming the trusted source IP, remove the port restriction from the Identify match and reload PJSIP.' => 'After confirming the trusted source IP, remove the port restriction from the Identify match and reload PJSIP.',
+    'The endpoint matches the configured IP, but inbound authentication is also enabled. Asterisk will request credentials with 401 even after identifying the endpoint by IP.' => 'The endpoint matches the configured IP, but inbound authentication is also enabled. Asterisk will request credentials with 401 even after identifying the endpoint by IP.',
+    'If this trusted account must authenticate only by IP, remove its inbound authentication association and reload PJSIP. Keep authentication enabled if the client must also send credentials.' => 'If this trusted account must authenticate only by IP, remove its inbound authentication association and reload PJSIP. Keep authentication enabled if the client must also send credentials.',
+    'The endpoint is identified by the configured IP without a source-port restriction and does not require inbound credentials.' => 'The endpoint is identified by the configured IP without a source-port restriction and does not require inbound credentials.',
+    'No authentication change is required. If a real INVITE still receives 401, verify that its source IP is the same IP shown here.' => 'No authentication change is required. If a real INVITE still receives 401, verify that its source IP is the same IP shown here.',
+    'Authentication method' => 'Authentication method',
+    'Fixed IP' => 'Fixed IP',
+    'Configured host' => 'Configured host',
+    'PJSIP Identify' => 'PJSIP Identify',
+    'PJSIP inbound authentication' => 'PJSIP inbound authentication',
+    'A fixed-IP PJSIP authentication risk was found before the route check.' => 'A fixed-IP PJSIP authentication risk was found before the route check.',
+];

@@ -14,12 +14,20 @@ class CallDiagnosticService
     private $db;
     private $deadline;
     private $isAdmin;
+    private $pjsipIpAuthenticationProbe;
 
-    public function __construct($db, $isAdmin, $sessionUserId, $timeoutSeconds = 8)
+    public function __construct(
+        $db,
+        $isAdmin,
+        $sessionUserId,
+        $timeoutSeconds = 8,
+        $pjsipIpAuthenticationProbe = null
+    )
     {
         $this->db = $db;
         $this->isAdmin = (bool) $isAdmin;
         $this->deadline = microtime(true) + min(15, max(1, (int) $timeoutSeconds));
+        $this->pjsipIpAuthenticationProbe = $pjsipIpAuthenticationProbe;
     }
 
     public static function catalog()
@@ -146,7 +154,7 @@ class CallDiagnosticService
     public function outbound($sipId, $number, $callerId = null, $at = null)
     {
         $sip = $this->row(
-            'SELECT s.name,s.callerid,u.username
+            'SELECT s.name,s.callerid,s.host,u.username
              FROM pkg_sip s
              JOIN pkg_user u ON u.id=s.id_user
              WHERE s.id=:id LIMIT 1',
@@ -156,13 +164,28 @@ class CallDiagnosticService
             return $this->failure('outbound', 'USER_NOT_FOUND');
         }
 
-        return $this->executeAgi(
+        $pjsipAuthenticationStep = $this->pjsipIpAuthenticationProbe !== null
+            ? $this->pjsipIpAuthenticationProbe->inspect($sip)
+            : null;
+        $result = $this->executeAgi(
             'outbound',
             (string) $number,
             (string) $sip['username'],
             $callerId !== null && $callerId !== '' ? (string) $callerId : (string) $sip['callerid'],
             (string) $sip['name']
         );
+        if ($pjsipAuthenticationStep !== null) {
+            array_unshift($result['steps'], $pjsipAuthenticationStep);
+            if ($pjsipAuthenticationStep['status'] === 'warning' && $result['status'] === 'passed') {
+                $result['status'] = 'warning';
+                $result['summary'] = Yii::t(
+                    'zii',
+                    'A fixed-IP PJSIP authentication risk was found before the route check.'
+                );
+                $result['resultCode'] = $pjsipAuthenticationStep['resultCode'];
+            }
+        }
+        return $result;
     }
 
     public function inbound($didId, $callerId = null, $at = null)

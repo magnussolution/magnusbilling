@@ -10,6 +10,7 @@ class CallDiagnosticTranslationTest extends TestCase
     {
         $root = dirname(__FILE__) . '/../../..';
         $source = file_get_contents($root . '/protected/components/CallDiagnosticService.php')
+            . file_get_contents($root . '/protected/components/PjsipIpAuthenticationProbe.php')
             . file_get_contents($root . '/protected/controllers/CallDiagnosticController.php');
         foreach (glob($root . '/resources/asterisk/*.php') as $agiFile) {
             $source .= file_get_contents($agiFile);
