@@ -30,8 +30,8 @@ Ext.define('MBilling.view.callFailed.List', {
         me.grupableColumns = false;
         me.allowPrint = false;
         me.extraButtons = [{
-            text: t('Call details'),
-            glyph: icons.info,
+            text: t('Diagnose call'),
+            iconCls: 'x-fa fa-stethoscope',
             handler: 'onCallDetails',
             disabled: false,
             width: App.user.language == 'en' ? 130 : 170,
