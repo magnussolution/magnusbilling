@@ -15,11 +15,17 @@ class FailedCallDiagnosticService
 
     private $db;
     private $healthResolver;
+    private $runtimeProbe;
 
-    public function __construct($db, $healthResolver = null)
+    public function __construct(
+        $db,
+        $healthResolver = null,
+        $runtimeProbe = null
+    )
     {
         $this->db = $db;
         $this->healthResolver = $healthResolver;
+        $this->runtimeProbe = $runtimeProbe;
     }
 
     public function diagnose($cdrFailedId)
@@ -133,6 +139,37 @@ class FailedCallDiagnosticService
                 'classification' => $classification,
             ];
         }
+        $runtimeChecks = $this->runtimeChecks($attempts);
+        $lastAttemptIndex = count($attempts) - 1;
+        foreach ($attempts as $index => $attempt) {
+            $runtimeKey = $this->runtimeKey(
+                $attempt['server']['id'],
+                $attempt['trunk']['id']
+            );
+            $attempts[$index]['currentTrunkStatus'] = isset(
+                $runtimeChecks['byTarget'][$runtimeKey]
+            ) ? $runtimeChecks['byTarget'][$runtimeKey] : $this->runtimeUnknown();
+            $callerIdAvailable = (
+                ! $truncated
+                && $index === $lastAttemptIndex
+                && $cdr['id_trunk'] !== null
+                && $attempt['trunk']['id'] === (int) $cdr['id_trunk']
+                && trim((string) $cdr['callerid']) !== ''
+            );
+            $attempts[$index]['callerIdSent'] = [
+                'available' => $callerIdAvailable,
+                'value' => $callerIdAvailable
+                    ? (string) $cdr['callerid']
+                    : null,
+                'source' => $callerIdAvailable
+                    ? 'pkg_cdr_failed.callerid_final_attempt'
+                    : null,
+                'reason' => $callerIdAvailable
+                    ? null
+                    : 'not_persisted_for_this_attempt',
+            ];
+        }
+        unset($runtimeChecks['byTarget']);
         $trunkAlerts = $this->activeTrunkAlerts($attempts);
         foreach ($attempts as $index => $attempt) {
             $idTrunk = $attempt['trunk']['id'];
@@ -145,6 +182,7 @@ class FailedCallDiagnosticService
         }
         unset($trunkAlerts['byTrunk']);
         $history = $this->buildHistory($cdr, $attempts);
+        $operational = $this->operationalFindings($attempts);
 
         $last = $attempts[count($attempts) - 1];
         $classification = $last['classification'];
@@ -190,6 +228,8 @@ class FailedCallDiagnosticService
             'call' => $this->call($cdr),
             'history' => $history,
             'attempts' => $attempts,
+            'operationalFindings' => $operational['findings'],
+            'runtimeChecks' => $runtimeChecks,
             'trunkAlerts' => $trunkAlerts,
             'lastObservedResult' => [
                 'sequence' => $last['sequence'],
@@ -213,7 +253,10 @@ class FailedCallDiagnosticService
                 'confidence' => $classification['confidence'],
                 'basis' => $classification['basis'],
             ],
-            'recommendedActions' => $classification['actions'],
+            'recommendedActions' => $this->mergeActions(
+                $classification['actions'],
+                $operational['actions']
+            ),
             'limitations' => $limitations,
             'evidence' => [
                 'sentinelAvailable' => true,
@@ -508,6 +551,13 @@ class FailedCallDiagnosticService
             'call' => $this->call($cdr),
             'history' => $this->buildHistory($cdr, []),
             'attempts' => [],
+            'operationalFindings' => [],
+            'runtimeChecks' => [
+                'scope' => 'current',
+                'checkedAt' => null,
+                'items' => [],
+                'truncated' => false,
+            ],
             'trunkAlerts' => [
                 'available' => false,
                 'scope' => 'active_now',
@@ -627,6 +677,8 @@ class FailedCallDiagnosticService
                 'server' => $attempt['server'],
                 'raw' => $attempt['raw'],
                 'classification' => $attempt['classification'],
+                'callerIdSent' => $attempt['callerIdSent'],
+                'currentTrunkStatus' => $attempt['currentTrunkStatus'],
                 'sentinelAlerts' => $attempt['sentinelAlerts'],
             ];
             $previousAt = $attempt['eventTime'];
@@ -675,6 +727,182 @@ class FailedCallDiagnosticService
         }
         $difference = $toTimestamp - $fromTimestamp;
         return $difference >= 0 ? $difference : null;
+    }
+
+    private function runtimeChecks(array $attempts)
+    {
+        $targets = [];
+        $entities = [];
+        foreach ($attempts as $attempt) {
+            if ($attempt['trunk']['id'] === null) {
+                continue;
+            }
+            $key = $this->runtimeKey(
+                $attempt['server']['id'],
+                $attempt['trunk']['id']
+            );
+            if (isset($entities[$key])) {
+                continue;
+            }
+            $targets[] = [
+                'idTrunk' => $attempt['trunk']['id'],
+                'idServer' => $attempt['server']['id'],
+            ];
+            $entities[$key] = [
+                'trunk' => $attempt['trunk'],
+                'server' => $attempt['server'],
+            ];
+        }
+        $resolved = [];
+        if (is_callable($this->runtimeProbe)) {
+            $resolved = call_user_func($this->runtimeProbe, $targets);
+        } elseif (is_object($this->runtimeProbe)
+            && method_exists($this->runtimeProbe, 'probe')
+        ) {
+            $resolved = $this->runtimeProbe->probe($targets);
+        }
+        if (! is_array($resolved)) {
+            $resolved = [];
+        }
+
+        $items = [];
+        $byTarget = [];
+        $checkedAt = null;
+        foreach ($entities as $key => $entity) {
+            $status = isset($resolved[$key])
+                && is_array($resolved[$key])
+                ? $resolved[$key]
+                : $this->runtimeUnknown();
+            $byTarget[$key] = $status;
+            if ($checkedAt === null && ! empty($status['checkedAt'])) {
+                $checkedAt = $status['checkedAt'];
+            }
+            $items[] = [
+                'trunk' => $entity['trunk'],
+                'server' => $entity['server'],
+                'result' => $status,
+            ];
+        }
+        return [
+            'scope' => 'current',
+            'checkedAt' => $checkedAt,
+            'items' => $items,
+            'truncated' => count($targets) > 3,
+            'byTarget' => $byTarget,
+        ];
+    }
+
+    private function runtimeKey($idServer, $idTrunk)
+    {
+        return ($idServer === null ? 'master' : (string) (int) $idServer)
+            . ':' . ($idTrunk !== null ? (int) $idTrunk : 0);
+    }
+
+    private function runtimeUnknown()
+    {
+        return [
+            'checked' => false,
+            'checkedAt' => null,
+            'status' => 'probe_unavailable',
+            'summary' => 'The current trunk status is unavailable.',
+            'source' => null,
+            'technology' => null,
+            'endpoint' => null,
+            'latencyMs' => null,
+            'contactIps' => [],
+            'firewall' => [
+                'checked' => false,
+                'blocked' => null,
+                'checkedIps' => [],
+                'matches' => [],
+                'source' => 'pkg_firewall',
+            ],
+        ];
+    }
+
+    private function operationalFindings(array $attempts)
+    {
+        $findings = [];
+        $actions = [];
+        $seen = [];
+        foreach ($attempts as $attempt) {
+            $key = $this->runtimeKey(
+                $attempt['server']['id'],
+                $attempt['trunk']['id']
+            );
+            if (isset($seen[$key])) {
+                continue;
+            }
+            $seen[$key] = true;
+            $status = $attempt['currentTrunkStatus'];
+            $firewall = isset($status['firewall'])
+                ? $status['firewall']
+                : [];
+            if (isset($firewall['blocked']) && $firewall['blocked'] === true) {
+                $blockedIps = [];
+                foreach ($firewall['matches'] as $match) {
+                    $blockedIps[] = $match['ip'];
+                }
+                $findings[] = [
+                    'key' => 'trunk_ip_blocked',
+                    'severity' => 'critical',
+                    'trunk' => $attempt['trunk'],
+                    'server' => $attempt['server'],
+                    'text' => 'The provider IP is currently listed as blocked in pkg_firewall.',
+                    'details' => [
+                        'ips' => array_values(array_unique($blockedIps)),
+                    ],
+                    'currentState' => true,
+                ];
+                $actions[] = [
+                    'key' => 'review_trunk_firewall_block',
+                    'text' => 'Review the firewall entry and Fail2ban jail for this provider IP; remove the block only after confirming the IP is legitimate.',
+                    'safety' => 'safe',
+                ];
+            }
+            if (in_array(
+                $status['status'],
+                [
+                    'unavailable',
+                    'no_contact',
+                    'not_found',
+                    'configured_inactive',
+                ],
+                true
+            )) {
+                $findings[] = [
+                    'key' => 'trunk_' . $status['status'],
+                    'severity' => $status['status'] === 'unavailable'
+                        ? 'critical'
+                        : 'warning',
+                    'trunk' => $attempt['trunk'],
+                    'server' => $attempt['server'],
+                    'text' => $status['summary'],
+                    'currentState' => true,
+                ];
+                $actions[] = [
+                    'key' => 'review_current_trunk_status',
+                    'text' => 'Check the trunk registration, contact and provider reachability on the affected server before changing the route.',
+                    'safety' => 'safe',
+                ];
+            }
+        }
+        return [
+            'findings' => $findings,
+            'actions' => $actions,
+        ];
+    }
+
+    private function mergeActions(array $catalogActions, array $runtimeActions)
+    {
+        $merged = [];
+        foreach (array_merge($catalogActions, $runtimeActions) as $action) {
+            $key = isset($action['key'])
+                ? (string) $action['key']
+                : md5(json_encode($action));
+            $merged[$key] = $action;
+        }
+        return array_values($merged);
     }
 
     private function activeTrunkAlerts(array $attempts)
