@@ -337,47 +337,13 @@ class CampaignController extends Controller
             return;
         }
 
-        if (! function_exists('exec')) {
-            echo json_encode([
-                $this->nameSuccess => false,
-                $this->nameMsg     => 'The PHP exec function is disabled',
-            ]);
-            return;
-        }
+        Yii::import('application.commands.MassiveCallCommand');
 
-        $phpBinaryCandidates = [
-            defined('PHP_BINARY') ? PHP_BINARY : '',
-            defined('PHP_BINDIR') ? PHP_BINDIR . DIRECTORY_SEPARATOR . 'php' : '',
-            '/usr/bin/php',
-        ];
-        $phpBinary = '';
-
-        foreach ($phpBinaryCandidates as $phpBinaryCandidate) {
-            if ($phpBinaryCandidate !== '' && is_executable($phpBinaryCandidate)) {
-                $phpBinary = $phpBinaryCandidate;
-                break;
-            }
-        }
-
-        if ($phpBinary === '') {
-            echo json_encode([
-                $this->nameSuccess => false,
-                $this->nameMsg     => 'PHP CLI executable not found',
-            ]);
-            return;
-        }
-
-        $command = escapeshellarg($phpBinary)
-            . ' '
-            . escapeshellarg(dirname(__FILE__) . '/../../cron.php')
-            . ' massivecall '
-            . escapeshellarg((string) $idCampaign);
-
-        $output   = [];
-        $exitCode = 0;
-        exec($command . ' 2>&1', $output, $exitCode);
-
-        $message = trim(implode("\n", $output));
+        ob_start();
+        $massiveCall = new MassiveCallCommand('massivecall', new CConsoleCommandRunner());
+        $result      = $massiveCall->run([$idCampaign]);
+        $message     = trim(ob_get_clean());
+        $exitCode    = is_int($result) ? $result : 0;
 
         echo json_encode([
             $this->nameSuccess => $exitCode === 0,

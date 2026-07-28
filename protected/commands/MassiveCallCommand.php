@@ -22,6 +22,16 @@ class MassiveCallCommand extends ConsoleCommand
 {
     public function run($args)
     {
+        $lockPath = sys_get_temp_dir() . '/magnusbilling-massivecall.lock';
+        $lock     = @fopen($lockPath, 'c');
+        if ($lock !== false) {
+            @chmod($lockPath, 0666);
+        }
+        if ($lock === false || ! flock($lock, LOCK_EX | LOCK_NB)) {
+            echo "Massivecall is already running\n";
+            return 1;
+        }
+
         $config         = LoadConfig::getConfig();
         $UNIX_TIMESTAMP = "UNIX_TIMESTAMP(";
         $idCampaign     = isset($args[0]) ? (int) $args[0] : 0;
