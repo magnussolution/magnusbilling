@@ -73,7 +73,7 @@ class FailedCallDiagnosticService
         }
         $rows = $this->queryAll(
             "
-            SELECT e.id,e.event_time,e.id_trunk,e.id_server,
+            SELECT e.id,e.event_time,e.id_trunk,e.id_server,e.callerid,
                    e.response_code,e.response_reason,
                    t.trunkcode trunk_name,s.name server_name
             FROM pkg_magnus_sentinel_trunk_event e FORCE INDEX (ix_uniqueid)
@@ -120,6 +120,9 @@ class FailedCallDiagnosticService
                 (int) $row['response_code'],
                 (string) $row['response_reason']
             );
+            $eventCallerId = isset($row['callerid'])
+                ? trim((string) $row['callerid'])
+                : '';
             $attempts[] = [
                 'sequence' => $index + 1,
                 'eventId' => (int) $row['id'],
@@ -136,11 +139,22 @@ class FailedCallDiagnosticService
                     'code' => (int) $row['response_code'],
                     'reason' => (string) $row['response_reason'],
                 ],
+                'callerIdSent' => [
+                    'available' => $eventCallerId !== '',
+                    'value' => $eventCallerId !== ''
+                        ? $eventCallerId
+                        : null,
+                    'source' => $eventCallerId !== ''
+                        ? 'pkg_magnus_sentinel_trunk_event.callerid'
+                        : null,
+                    'reason' => $eventCallerId !== ''
+                        ? null
+                        : 'event_callerid_empty',
+                ],
                 'classification' => $classification,
             ];
         }
         $runtimeChecks = $this->runtimeChecks($attempts);
-        $lastAttemptIndex = count($attempts) - 1;
         foreach ($attempts as $index => $attempt) {
             $runtimeKey = $this->runtimeKey(
                 $attempt['server']['id'],
@@ -149,25 +163,6 @@ class FailedCallDiagnosticService
             $attempts[$index]['currentTrunkStatus'] = isset(
                 $runtimeChecks['byTarget'][$runtimeKey]
             ) ? $runtimeChecks['byTarget'][$runtimeKey] : $this->runtimeUnknown();
-            $callerIdAvailable = (
-                ! $truncated
-                && $index === $lastAttemptIndex
-                && $cdr['id_trunk'] !== null
-                && $attempt['trunk']['id'] === (int) $cdr['id_trunk']
-                && trim((string) $cdr['callerid']) !== ''
-            );
-            $attempts[$index]['callerIdSent'] = [
-                'available' => $callerIdAvailable,
-                'value' => $callerIdAvailable
-                    ? (string) $cdr['callerid']
-                    : null,
-                'source' => $callerIdAvailable
-                    ? 'pkg_cdr_failed.callerid_final_attempt'
-                    : null,
-                'reason' => $callerIdAvailable
-                    ? null
-                    : 'not_persisted_for_this_attempt',
-            ];
         }
         unset($runtimeChecks['byTarget']);
         $trunkAlerts = $this->activeTrunkAlerts($attempts);
@@ -239,12 +234,15 @@ class FailedCallDiagnosticService
             'facts' => [
                 [
                     'key' => 'exact_uniqueid_server_match',
-                    'text' => 'The events have the same uniqueid and server as the failed CDR.',
+                    'text' => self::translate(
+                        'The events have the same uniqueid and server as the failed CDR.'
+                    ),
                 ],
                 [
                     'key' => 'observed_attempt_count',
-                    'text' => count($attempts)
-                        . ' correlated trunk event(s) were observed.',
+                    'text' => self::translate(count($attempts) === 1
+                        ? 'One correlated trunk event was observed.'
+                        : 'Multiple correlated trunk events were observed.'),
                 ],
             ],
             'probableCause' => [
@@ -512,17 +510,17 @@ class FailedCallDiagnosticService
     ) {
         return [
             'key' => $key,
-            'label' => ucwords(str_replace('_', ' ', $key)),
-            'summary' => $summary,
+            'label' => self::translate(ucwords(str_replace('_', ' ', $key))),
+            'summary' => self::translate($summary),
             'causeKey' => $causeKey,
-            'cause' => $cause,
+            'cause' => self::translate($cause),
             'confidence' => $confidence,
             'basis' => array_values($basis),
             'catalog' => self::CATALOG,
             'actions' => array_map(function ($text) {
                 return [
                     'key' => strtolower(preg_replace('/[^a-z0-9]+/i', '_', trim($text, '.'))),
-                    'text' => $text,
+                    'text' => self::translate($text),
                     'safety' => 'safe',
                 ];
             }, $actions),
@@ -537,6 +535,7 @@ class FailedCallDiagnosticService
         $health = null,
         $earliestEventAt = null
     ) {
+        $message = self::translate($message);
         if ($health === null) {
             $health = [
                 'status' => 'UNKNOWN',
@@ -569,15 +568,19 @@ class FailedCallDiagnosticService
             'facts' => [],
             'probableCause' => [
                 'key' => null,
-                'text' => 'No probable cause can be established from the available evidence.',
+                'text' => self::translate(
+                    'No probable cause can be established from the available evidence.'
+                ),
                 'confidence' => 'none',
                 'basis' => [],
             ],
             'recommendedActions' => [[
                 'key' => 'verify_evidence_availability',
                 'text' => $expired
-                    ? 'Use a more recent call for advanced diagnosis.'
-                    : 'Wait briefly and retry the diagnostic if the call is recent.',
+                    ? self::translate('Use a more recent call for advanced diagnosis.')
+                    : self::translate(
+                        'Wait briefly and retry the diagnostic if the call is recent.'
+                    ),
                 'safety' => 'safe',
             ]],
             'limitations' => [$this->limitation($key, $message)],
@@ -804,7 +807,9 @@ class FailedCallDiagnosticService
             'checked' => false,
             'checkedAt' => null,
             'status' => 'probe_unavailable',
-            'summary' => 'The current trunk status is unavailable.',
+            'summary' => self::translate(
+                'The current trunk status is unavailable.'
+            ),
             'source' => null,
             'technology' => null,
             'endpoint' => null,
@@ -815,7 +820,7 @@ class FailedCallDiagnosticService
                 'blocked' => null,
                 'checkedIps' => [],
                 'matches' => [],
-                'source' => 'pkg_firewall',
+                'source' => 'fail2ban',
             ],
         ];
     }
@@ -848,7 +853,9 @@ class FailedCallDiagnosticService
                     'severity' => 'critical',
                     'trunk' => $attempt['trunk'],
                     'server' => $attempt['server'],
-                    'text' => 'The provider IP is currently listed as blocked in pkg_firewall.',
+                    'text' => self::translate(
+                        'The provider IP is currently blocked by Fail2ban.'
+                    ),
                     'details' => [
                         'ips' => array_values(array_unique($blockedIps)),
                     ],
@@ -856,7 +863,9 @@ class FailedCallDiagnosticService
                 ];
                 $actions[] = [
                     'key' => 'review_trunk_firewall_block',
-                    'text' => 'Review the firewall entry and Fail2ban jail for this provider IP; remove the block only after confirming the IP is legitimate.',
+                    'text' => self::translate(
+                        'Review the Fail2ban block and jail for this provider IP; remove the block only after confirming the IP is legitimate.'
+                    ),
                     'safety' => 'safe',
                 ];
             }
@@ -882,7 +891,9 @@ class FailedCallDiagnosticService
                 ];
                 $actions[] = [
                     'key' => 'review_current_trunk_status',
-                    'text' => 'Check the trunk registration, contact and provider reachability on the affected server before changing the route.',
+                    'text' => self::translate(
+                        'Check the trunk registration, contact and provider reachability on the affected server before changing the route.'
+                    ),
                     'safety' => 'safe',
                 ];
             }
@@ -1040,7 +1051,15 @@ class FailedCallDiagnosticService
 
     private function limitation($key, $text)
     {
-        return ['key' => $key, 'text' => $text];
+        return ['key' => $key, 'text' => self::translate($text)];
+    }
+
+    private static function translate($message, array $params = [])
+    {
+        if (class_exists('Yii', false)) {
+            return Yii::t('zii', $message, $params);
+        }
+        return $params ? strtr($message, $params) : $message;
     }
 
     private function tableExists($table)

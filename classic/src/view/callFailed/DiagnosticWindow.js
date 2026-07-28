@@ -254,8 +254,7 @@ Ext.define('MBilling.view.callFailed.DiagnosticWindow', {
         if (callerId.available) {
             return '<p class="caller-id-sent"><strong>' +
                 me.encode(t('Caller ID sent')) + ':</strong> <code>' +
-                me.encode(callerId.value) + '</code> — ' +
-                me.encode(t('Recorded for the final attempt.')) + '</p>';
+                me.encode(callerId.value) + '</code></p>';
         }
         return '<p class="caller-id-sent unavailable"><strong>' +
             me.encode(t('Caller ID sent')) + ':</strong> ' +
@@ -281,8 +280,8 @@ Ext.define('MBilling.view.callFailed.DiagnosticWindow', {
         }
         if (firewall.blocked === true) {
             html += '<p class="firewall-blocked"><strong>' +
-                me.encode(t('Firewall')) + ':</strong> ' +
-                me.encode(t('The provider IP is currently listed as blocked in pkg_firewall.')) +
+                me.encode(t('Fail2ban')) + ':</strong> ' +
+                me.encode(t('The provider IP is currently blocked by Fail2ban.')) +
                 '</p><ul>';
             Ext.Array.each(matches, function(match) {
                 html += '<li><code>' + me.encode(match.ip) + '</code> — ' +
@@ -291,20 +290,20 @@ Ext.define('MBilling.view.callFailed.DiagnosticWindow', {
             html += '</ul>';
         } else if (firewall.checked && firewall.blocked === false) {
             html += '<p class="firewall-clear"><strong>' +
-                me.encode(t('Firewall')) + ':</strong> ' +
+                me.encode(t('Fail2ban')) + ':</strong> ' +
                 me.formatText(
-                    'No current block was found in pkg_firewall for {0}.',
+                    'No current block was found in Fail2ban for {0}.',
                     [checkedIps.join(', ')]
                 ) + '</p>';
         } else if (checkedIps.length) {
             html += '<p class="firewall-unknown"><strong>' +
-                me.encode(t('Firewall')) + ':</strong> ' +
-                me.encode(t('The firewall check could not be completed safely.')) +
+                me.encode(t('Fail2ban')) + ':</strong> ' +
+                me.encode(t('The Fail2ban check could not be completed safely.')) +
                 '</p>';
         } else {
             html += '<p class="firewall-unknown"><strong>' +
-                me.encode(t('Firewall')) + ':</strong> ' +
-                me.encode(t('No provider IP was available for the firewall check.')) +
+                me.encode(t('Fail2ban')) + ':</strong> ' +
+                me.encode(t('No provider IP was available for the Fail2ban check.')) +
                 '</p>';
         }
         return html + '<p class="current-state-note">' +

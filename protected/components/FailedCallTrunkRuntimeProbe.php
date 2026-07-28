@@ -223,7 +223,9 @@ class FailedCallTrunkRuntimeProbe
         if ((int) $metadata['configured_status'] !== 1) {
             $base['checked'] = true;
             $base['status'] = 'configured_inactive';
-            $base['summary'] = 'The trunk is currently disabled in MagnusBilling.';
+            $base['summary'] = self::translate(
+                'The trunk is currently disabled in MagnusBilling.'
+            );
             $base['source'] = 'pkg_trunk.status';
             $base['contactIps'] = $this->configuredIps($metadata);
             $base['firewall'] = $this->firewallStatus(
@@ -234,7 +236,9 @@ class FailedCallTrunkRuntimeProbe
         }
 
         if (! preg_match('/^[A-Za-z0-9_.:@-]{1,80}$/', $endpoint)) {
-            $base['summary'] = 'The trunk endpoint name is not safe for an operational check.';
+            $base['summary'] = self::translate(
+                'The trunk endpoint name is not safe for an operational check.'
+            );
             $base['source'] = 'validation';
             $base['firewall'] = $this->firewallStatus(
                 $this->configuredIps($metadata),
@@ -251,7 +255,9 @@ class FailedCallTrunkRuntimeProbe
             $source = 'asterisk_ami_sip_show_peer';
         } else {
             $base['status'] = 'unsupported';
-            $base['summary'] = 'Live reachability is not supported for this trunk technology.';
+            $base['summary'] = self::translate(
+                'Live reachability is not supported for this trunk technology.'
+            );
             $base['source'] = 'technology';
             $base['firewall'] = $this->firewallStatus(
                 $this->configuredIps($metadata),
@@ -263,7 +269,9 @@ class FailedCallTrunkRuntimeProbe
         $output = $this->runCommand($metadata, $command);
         if ($output === false || $output === null) {
             $base['status'] = 'connection_failed';
-            $base['summary'] = 'The current Asterisk status could not be obtained safely.';
+            $base['summary'] = self::translate(
+                'The current Asterisk status could not be obtained safely.'
+            );
             $base['source'] = $source;
             $base['firewall'] = $this->firewallStatus(
                 $this->configuredIps($metadata),
@@ -358,7 +366,7 @@ class FailedCallTrunkRuntimeProbe
             'blocked' => null,
             'checkedIps' => array_values($ips),
             'matches' => [],
-            'source' => 'pkg_firewall',
+            'source' => 'fail2ban',
         ];
         if (! $ips) {
             return $result;
@@ -507,7 +515,7 @@ class FailedCallTrunkRuntimeProbe
     {
         return [
             'status' => $status,
-            'summary' => $summary,
+            'summary' => self::translate($summary),
             'latencyMs' => $latency,
             'contactIps' => $ips,
         ];
@@ -519,7 +527,7 @@ class FailedCallTrunkRuntimeProbe
             'checked' => false,
             'checkedAt' => $this->now(),
             'status' => $status,
-            'summary' => $summary,
+            'summary' => self::translate($summary),
             'source' => null,
             'technology' => null,
             'endpoint' => null,
@@ -530,9 +538,17 @@ class FailedCallTrunkRuntimeProbe
                 'blocked' => null,
                 'checkedIps' => [],
                 'matches' => [],
-                'source' => 'pkg_firewall',
+                'source' => 'fail2ban',
             ],
         ];
+    }
+
+    private static function translate($message, array $params = [])
+    {
+        if (class_exists('Yii', false)) {
+            return Yii::t('zii', $message, $params);
+        }
+        return $params ? strtr($message, $params) : $message;
     }
 
     private function now()
