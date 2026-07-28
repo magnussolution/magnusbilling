@@ -136,6 +136,9 @@ Ext.define('MBilling.view.callDiagnostic.Window', {
             colors = {passed: '#2e7d32', failed: '#c62828', warning: '#ef6c00', inconclusive: '#616161'},
             html = '<h2 style="color:' + colors[result.status] + '">' + Ext.htmlEncode(result.summary) + '</h2>' +
                 '<div>' + Ext.htmlEncode(t('Diagnostic ID')) + ': <code>' + Ext.htmlEncode(result.diagnosticId || '') + '</code></div><hr>';
+        if (result.failureCause) {
+            html += me.renderFailureCause(result.failureCause);
+        }
         Ext.Array.each(result.steps || [], function(step) {
             html += '<div style="border-left:4px solid ' + (colors[step.status] || colors.inconclusive) + ';padding:8px;margin:8px 0">' +
                 '<b>' + Ext.htmlEncode(step.label) + '</b> — ' + Ext.htmlEncode(step.status) +
@@ -162,13 +165,23 @@ Ext.define('MBilling.view.callDiagnostic.Window', {
         me.renderSelectableHtml(html);
     },
 
+    renderFailureCause: function(cause) {
+        return '<section class="failure-cause"><h3>' +
+            Ext.htmlEncode(t('Cause identified')) + '</h3><div><code>' +
+            Ext.htmlEncode(cause.code || '') + '</code></div><p><strong>' +
+            Ext.htmlEncode(t(cause.title || '')) + '</strong></p><p>' +
+            Ext.htmlEncode(t(cause.explanation || '')) + '</p><p><strong>' +
+            Ext.htmlEncode(t('What to do')) + ':</strong> ' +
+            Ext.htmlEncode(t(cause.action || '')) + '</p></section>';
+    },
+
     renderTechnicalDetails: function(details) {
         var context = details.context || {},
             trace = details.trace || [],
             events = details.events || [],
             validations = [],
             queries = [],
-            rows = [
+            routeRows = [
                 [t('Status'), details.status === 'ready_to_dial' ? t('Ready to dial') :
                     (details.status === 'blocked' ? t('Blocked before Dial') : details.status)],
                 [t('Destination number'), context.destination],
@@ -180,16 +193,50 @@ Ext.define('MBilling.view.callDiagnostic.Window', {
                 [t('Timeout'), Ext.isNumber(context.timeout) ? context.timeout + 's' : context.timeout],
                 [t('Hangup cause'), context.hangupCause]
             ],
+            executionRows = [
+                [t('Failure code'), details.reason],
+                [t('PHP CLI'), details.phpCli || details.phpBinary],
+                [t('AGI script'), details.script],
+                [t('Process exit code'), details.exitCode],
+                [t('Result marker found'), details.resultMarkerFound === true ? t('Yes') :
+                    (details.resultMarkerFound === false ? t('No') : null)],
+                [t('JSON error'), details.jsonError],
+                [t('Script file exists'), details.isFile === true ? t('Yes') :
+                    (details.isFile === false ? t('No') : null)],
+                [t('Script is readable'), details.isReadable === true ? t('Yes') :
+                    (details.isReadable === false ? t('No') : null)],
+                [t('Script directory is accessible'), details.directoryAccessible === true ? t('Yes') :
+                    (details.directoryAccessible === false ? t('No') : null)],
+                [t('Application error type'), details.errorType],
+                [t('Application error message'), details.errorMessage],
+                [t('Application error file'), details.errorFile],
+                [t('Application error line'), details.errorLine]
+            ],
+            routeRowsHtml = '',
+            executionRowsHtml = '',
             html = '<details><summary>' + Ext.htmlEncode(t('Technical details')) + '</summary>' +
-                '<div class="technical-content"><h3>' + Ext.htmlEncode(t('Route summary')) + '</h3><table>';
+                '<div class="technical-content">';
 
-        Ext.Array.each(rows, function(row) {
+        Ext.Array.each(routeRows, function(row) {
             if (row[1] !== undefined && row[1] !== null && row[1] !== '') {
-                html += '<tr><th>' + Ext.htmlEncode(row[0]) + '</th><td><code>' +
+                routeRowsHtml += '<tr><th>' + Ext.htmlEncode(row[0]) + '</th><td><code>' +
                     Ext.htmlEncode(String(row[1])) + '</code></td></tr>';
             }
         });
-        html += '</table>';
+        Ext.Array.each(executionRows, function(row) {
+            if (row[1] !== undefined && row[1] !== null && row[1] !== '') {
+                executionRowsHtml += '<tr><th>' + Ext.htmlEncode(row[0]) + '</th><td><code>' +
+                    Ext.htmlEncode(String(row[1])) + '</code></td></tr>';
+            }
+        });
+        if (executionRowsHtml) {
+            html += '<h3>' + Ext.htmlEncode(t('Diagnostic execution')) +
+                '</h3><table>' + executionRowsHtml + '</table>';
+        }
+        if (routeRowsHtml) {
+            html += '<h3>' + Ext.htmlEncode(t('Route summary')) +
+                '</h3><table>' + routeRowsHtml + '</table>';
+        }
 
         Ext.Array.each(events, function(item) {
             var message = String(item.message || '').trim(),
@@ -216,6 +263,10 @@ Ext.define('MBilling.view.callDiagnostic.Window', {
         if (details.stderr) {
             html += '<details class="advanced error"><summary>' + Ext.htmlEncode(t('Process errors')) +
                 '</summary><pre>' + Ext.htmlEncode(details.stderr) + '</pre></details>';
+        }
+        if (details.stdout) {
+            html += '<details class="advanced"><summary>' + Ext.htmlEncode(t('Process output')) +
+                '</summary><pre>' + Ext.htmlEncode(details.stdout) + '</pre></details>';
         }
         return html + '</div></details>';
     },
@@ -244,6 +295,8 @@ Ext.define('MBilling.view.callDiagnostic.Window', {
             '.technical-content code{word-break:break-all}.trace{margin:6px 0;padding-left:24px}' +
             '.step-details{border-collapse:collapse;margin-top:7px}.step-details th{text-align:left;background:#f5f5f5}' +
             '.step-details th,.step-details td{border:1px solid #ddd;padding:5px 8px}' +
+            '.failure-cause{background:#fff4f4;border:1px solid #ef9a9a;border-left:5px solid #c62828;' +
+            'margin:12px 0;padding:10px 12px}.failure-cause h3{color:#b71c1c;margin:0 0 8px}' +
             '.trace li{border-bottom:1px solid #eee;padding:5px 2px}.advanced{margin-top:12px}' +
             '.advanced pre{background:#f7f7f7;border:1px solid #ddd;padding:10px}' +
             '.error summary{color:#c62828}</style></head><body>' + html + '</body></html>';

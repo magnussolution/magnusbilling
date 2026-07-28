@@ -1338,4 +1338,4 @@ return array(
         'PJSIP' => 'PJSIP',
         '0800 Callback' => 'Callback 0800',
         'Unknown' => 'Desconocido',
-);
+) + require dirname(__DIR__) . '/call_diagnostic_failures.php';

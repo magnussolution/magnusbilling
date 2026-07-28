@@ -2,6 +2,8 @@
 
 use PHPUnit\Framework\TestCase;
 
+require_once dirname(__FILE__) . '/../../components/CallDiagnosticService.php';
+
 class CallDiagnosticTranslationTest extends TestCase
 {
     public function testEveryBackendDiagnosticMessageExistsInEveryLocale()
@@ -19,6 +21,10 @@ class CallDiagnosticTranslationTest extends TestCase
 
         preg_match_all("/=> \\['(?:passed|failed|warning|inconclusive)', '([^']*)', '([^']*)'\\]/", $source, $matches);
         $keys = array_merge($keys, $matches[1], $matches[2]);
+
+        foreach (CallDiagnosticService::failureCatalog() as $failure) {
+            $keys = array_merge($keys, $failure);
+        }
 
         preg_match_all("/\\\$this->pass\\(\\\$result,\\s*'([^']+)',\\s*'([^']+)'/", $source, $matches);
         $keys = array_merge($keys, $matches[2]);

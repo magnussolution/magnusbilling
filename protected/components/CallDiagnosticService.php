@@ -60,6 +60,89 @@ class CallDiagnosticService
         ];
     }
 
+    public static function failureCatalog()
+    {
+        return [
+            'AGI_SCRIPT_NOT_ACCESSIBLE' => [
+                'The AGI script is not accessible.',
+                'The diagnostic process could not read the AGI script or access its directory.',
+                'Verify the MagnusBilling installation path and the file permissions shown below.',
+            ],
+            'PHP_CLI_NOT_FOUND' => [
+                'PHP CLI was not found.',
+                'The diagnostic requires an executable PHP command-line binary on the MagnusBilling server.',
+                'Install or configure PHP CLI and run the diagnostic again.',
+            ],
+            'AGI_PROCESS_START_FAILED' => [
+                'The AGI diagnostic process could not be started.',
+                'The operating system rejected the attempt to start the isolated AGI diagnostic process.',
+                'Verify that proc_open is enabled and that the web server user can execute PHP CLI.',
+            ],
+            'AGI_PROCESS_TIMEOUT' => [
+                'The AGI diagnostic exceeded the safe time limit.',
+                'The AGI did not finish within the diagnostic timeout.',
+                'Review the process errors below and any slow external routing checks, then try again.',
+            ],
+            'AGI_OUTPUT_LIMIT_EXCEEDED' => [
+                'The AGI produced more output than the diagnostic safety limit.',
+                'The process was stopped because its output exceeded the maximum size accepted by the diagnostic.',
+                'Review the process output below for a repeated error or excessive debug logging.',
+            ],
+            'AGI_DEBUG_ARGUMENTS_INVALID' => [
+                'The AGI rejected the diagnostic input.',
+                'One of the values sent to the AGI does not match the safe debug format.',
+                'Review the destination, account and CallerID values shown in the diagnostic form.',
+            ],
+            'AGI_PHP_FATAL_ERROR' => [
+                'The AGI stopped because of a PHP error.',
+                'PHP terminated the AGI before it could return the required diagnostic result.',
+                'Use the process error shown below to correct the code, dependency or configuration.',
+            ],
+            'AGI_PROCESS_EXITED_WITH_ERROR' => [
+                'The AGI process exited with an error.',
+                'The process returned a non-zero exit code before producing a diagnostic result.',
+                'Use the exit code and process output shown below to identify the failing dependency.',
+            ],
+            'AGI_RESULT_JSON_INVALID' => [
+                'The AGI generated invalid JSON.',
+                'The result marker was produced, but its JSON could not be decoded. Invalid text encoding is a common cause.',
+                'Use the JSON error and process output shown below to correct the data or code that generated the result.',
+            ],
+            'MBILLING_RESULT_NOT_FOUND' => [
+                'The AGI ended without returning a diagnostic result.',
+                'The process did not produce the required MBILLING_RESULT marker.',
+                'Use the process output shown below to identify where the AGI stopped.',
+            ],
+            'AGI_FAILURE_UNCLASSIFIED' => [
+                'The AGI diagnostic failed before routing was evaluated.',
+                'The diagnostic process did not provide enough structured information to classify the failure.',
+                'Send the diagnostic ID and the technical evidence shown below to support.',
+            ],
+            'DIAGNOSTIC_CODE_ERROR' => [
+                'The diagnostic stopped because of an application error.',
+                'MagnusBilling caught an unexpected code error before the diagnostic could finish.',
+                'Send the diagnostic ID and the application error shown below to support.',
+            ],
+        ];
+    }
+
+    public function unexpectedFailure($type, $error)
+    {
+        return $this->failure($type, 'AGI_INVALID_OUTPUT', [
+            'reason' => 'DIAGNOSTIC_CODE_ERROR',
+            'errorType' => is_object($error) ? get_class($error) : 'Unknown',
+            'errorMessage' => is_object($error) && method_exists($error, 'getMessage')
+                ? $this->limit($error->getMessage())
+                : null,
+            'errorFile' => is_object($error) && method_exists($error, 'getFile')
+                ? $error->getFile()
+                : null,
+            'errorLine' => is_object($error) && method_exists($error, 'getLine')
+                ? $error->getLine()
+                : null,
+        ]);
+    }
+
     public function outbound($sipId, $number, $callerId = null, $at = null)
     {
         $sip = $this->row(
@@ -146,9 +229,26 @@ class CallDiagnosticService
             1 => ['pipe', 'w'],
             2 => ['pipe', 'w'],
         ];
-        $process = proc_open($command, $descriptors, $pipes, dirname($script));
+        try {
+            $process = proc_open(
+                $command,
+                $descriptors,
+                $pipes,
+                dirname($script)
+            );
+        } catch (Throwable $error) {
+            return $this->failure($type, 'AGI_INVALID_OUTPUT', [
+                'reason' => 'AGI_PROCESS_START_FAILED',
+                'phpCli' => $phpCli,
+                'errorType' => get_class($error),
+                'errorMessage' => $this->limit($error->getMessage()),
+            ]);
+        }
         if (! is_resource($process)) {
-            return $this->failure($type, 'AGI_INVALID_OUTPUT');
+            return $this->failure($type, 'AGI_INVALID_OUTPUT', [
+                'reason' => 'AGI_PROCESS_START_FAILED',
+                'phpCli' => $phpCli,
+            ]);
         }
 
         fclose($pipes[0]);
@@ -157,6 +257,8 @@ class CallDiagnosticService
         $stdout = '';
         $stderr = '';
         $timedOut = false;
+        $outputLimitExceeded = false;
+        $lastProcessStatus = null;
 
         do {
             $stdout .= stream_get_contents($pipes[1]);
@@ -164,9 +266,11 @@ class CallDiagnosticService
             if (strlen($stdout) + strlen($stderr) > self::MAX_OUTPUT_BYTES) {
                 proc_terminate($process, 9);
                 $timedOut = true;
+                $outputLimitExceeded = true;
                 break;
             }
             $status = proc_get_status($process);
+            $lastProcessStatus = $status;
             if (! $status['running']) {
                 break;
             }
@@ -182,25 +286,54 @@ class CallDiagnosticService
         $stderr .= stream_get_contents($pipes[2]);
         fclose($pipes[1]);
         fclose($pipes[2]);
-        proc_close($process);
+        $closeExitCode = proc_close($process);
+        $exitCode = is_array($lastProcessStatus)
+            && isset($lastProcessStatus['exitcode'])
+            && (int) $lastProcessStatus['exitcode'] >= 0
+            ? (int) $lastProcessStatus['exitcode']
+            : ($closeExitCode >= 0 ? (int) $closeExitCode : null);
 
         if ($timedOut) {
-            return $this->failure($type, 'AGI_TIMEOUT', ['stderr' => $this->limit($stderr)]);
+            return $this->failure($type, 'AGI_TIMEOUT', [
+                'reason' => $outputLimitExceeded
+                    ? 'AGI_OUTPUT_LIMIT_EXCEEDED'
+                    : 'AGI_PROCESS_TIMEOUT',
+                'exitCode' => $exitCode,
+                'stdout' => $this->limit($stdout),
+                'stderr' => $this->limit($stderr),
+            ]);
         }
 
         $agiResult = null;
+        $resultMarkerFound = false;
+        $jsonError = null;
         foreach (preg_split('/\R/', $stdout) as $line) {
-            if (strpos($line, 'MBILLING_RESULT ') === 0) {
-                $decoded = json_decode(substr($line, 16), true);
+            $normalizedLine = ltrim($line, "\xEF\xBB\xBF \t");
+            if (strpos($normalizedLine, 'MBILLING_RESULT ') === 0) {
+                $resultMarkerFound = true;
+                $decoded = json_decode(substr($normalizedLine, 16), true);
                 if (is_array($decoded)) {
                     $agiResult = $decoded;
+                    $jsonError = null;
+                } else {
+                    $jsonError = function_exists('json_last_error_msg')
+                        ? json_last_error_msg()
+                        : (string) json_last_error();
                 }
             }
         }
         if (! $agiResult) {
+            $reason = self::classifyInvalidOutputFailure(
+                $resultMarkerFound,
+                $stderr . "\n" . $stdout,
+                $exitCode
+            );
             return $this->failure($type, 'AGI_INVALID_OUTPUT', [
-                'reason' => 'MBILLING_RESULT_NOT_FOUND',
+                'reason' => $reason,
                 'phpCli' => $phpCli,
+                'exitCode' => $exitCode,
+                'resultMarkerFound' => $resultMarkerFound,
+                'jsonError' => $jsonError,
                 'stdout' => $this->limit($stdout),
                 'stderr' => $this->limit($stderr),
             ]);
@@ -582,22 +715,95 @@ class CallDiagnosticService
     private function failure($type, $code, array $details = [])
     {
         $item = self::catalog()[$code];
+        $diagnosticId = $this->uuid();
+        $failureCause = $this->failureCause($code, $details);
+        if ($failureCause !== null) {
+            $logDetails = $details;
+            $logDetails['stdoutBytes'] = isset($details['stdout'])
+                ? strlen((string) $details['stdout'])
+                : 0;
+            $logDetails['stderrBytes'] = isset($details['stderr'])
+                ? strlen((string) $details['stderr'])
+                : 0;
+            unset($logDetails['stdout'], $logDetails['stderr']);
+            Yii::log(
+                'Call diagnostic ID=' . $diagnosticId
+                    . ' result=' . $code
+                    . ' details=' . json_encode(
+                        $logDetails,
+                        JSON_UNESCAPED_UNICODE
+                            | JSON_UNESCAPED_SLASHES
+                            | JSON_INVALID_UTF8_SUBSTITUTE
+                    ),
+                CLogger::LEVEL_ERROR,
+                'callDiagnostic'
+            );
+        }
         return [
-            'diagnosticId' => $this->uuid(),
+            'diagnosticId' => $diagnosticId,
             'type' => $type,
             'status' => $item[0],
             'summary' => Yii::t('zii', $item[1]),
             'resultCode' => $code,
+            'failureCause' => $failureCause,
             'steps' => [[
                 'code' => strtolower($code),
                 'resultCode' => $code,
                 'label' => Yii::t('zii', ucwords(str_replace('_', ' ', strtolower($code)))),
                 'status' => $item[0],
                 'message' => Yii::t('zii', $item[1]),
-                'resolution' => ['message' => Yii::t('zii', $item[2])],
+                'resolution' => [
+                    'message' => $failureCause !== null
+                        ? $failureCause['action']
+                        : Yii::t('zii', $item[2]),
+                ],
             ]],
             'warnings' => [],
             'technicalDetails' => $this->isAdmin ? $details : [],
+        ];
+    }
+
+    public static function classifyInvalidOutputFailure(
+        $resultMarkerFound,
+        $stderr,
+        $exitCode
+    )
+    {
+        if ($resultMarkerFound) {
+            return 'AGI_RESULT_JSON_INVALID';
+        }
+        if (stripos((string) $stderr, 'Invalid debug arguments.') !== false) {
+            return 'AGI_DEBUG_ARGUMENTS_INVALID';
+        }
+        if (preg_match(
+            '/(?:PHP\\s+)?(?:Fatal|Parse) error|Uncaught\\s+(?:Error|Exception)/i',
+            (string) $stderr
+        )) {
+            return 'AGI_PHP_FATAL_ERROR';
+        }
+        if ($exitCode !== null && (int) $exitCode !== 0) {
+            return 'AGI_PROCESS_EXITED_WITH_ERROR';
+        }
+        return 'MBILLING_RESULT_NOT_FOUND';
+    }
+
+    private function failureCause($code, array $details)
+    {
+        if (! in_array($code, ['AGI_INVALID_OUTPUT', 'AGI_TIMEOUT'], true)) {
+            return null;
+        }
+        $reason = isset($details['reason'])
+            ? (string) $details['reason']
+            : 'AGI_FAILURE_UNCLASSIFIED';
+        $causes = self::failureCatalog();
+        $cause = isset($causes[$reason])
+            ? $causes[$reason]
+            : $causes['AGI_FAILURE_UNCLASSIFIED'];
+        return [
+            'code' => $reason,
+            'title' => Yii::t('zii', $cause[0]),
+            'explanation' => Yii::t('zii', $cause[1]),
+            'action' => Yii::t('zii', $cause[2]),
         ];
     }
 

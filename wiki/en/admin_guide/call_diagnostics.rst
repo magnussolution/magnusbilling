@@ -83,6 +83,16 @@ Displayed monetary values use the session currency. Technical details are
 available only to administrators and are formatted for readability without
 exposing credentials.
 
+If the isolated AGI process itself fails, the result identifies the failure
+before showing any route summary. The administrator sees a stable failure
+code, a plain-language explanation, the recommended action, the process exit
+code, JSON parsing errors, permission checks and bounded process output. Empty
+route details are not displayed when routing was never evaluated.
+
+The diagnostic ID is logged with the classified failure and safe execution
+metadata. The administrator can send the ID together with the selectable
+technical evidence to support without requiring direct server access.
+
 AGI logging
 -----------
 

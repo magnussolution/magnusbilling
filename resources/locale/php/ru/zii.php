@@ -322,4 +322,4 @@ return array(
     'Only cdrFailedId is accepted.' => 'Допускается только cdrFailedId.',
     'Failed CDR was not found.' => 'Не удалось найти CDR неудачного вызова.',
     'This legacy call detail action is disabled. Use Diagnose call.' => 'Устаревшее действие отключено. Используйте диагностику вызова.',
-);
+) + require dirname(__DIR__) . '/call_diagnostic_failures.php';

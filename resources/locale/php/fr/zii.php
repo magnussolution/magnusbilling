@@ -759,4 +759,4 @@ return array(
     'Only cdrFailedId is accepted.' => 'Seul cdrFailedId est accepté.',
     'Failed CDR was not found.' => 'Le CDR en échec est introuvable.',
     'This legacy call detail action is disabled. Use Diagnose call.' => 'Cette ancienne action est désactivée. Utilisez Diagnostiquer l’appel.',
-);
+) + require dirname(__DIR__) . '/call_diagnostic_failures.php';
