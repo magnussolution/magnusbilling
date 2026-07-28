@@ -252,6 +252,12 @@ class MagnusSentinelIncidentApiV1
                    h.consecutive_database_failures,h.last_error_at,
                    h.last_error_code,h.last_error_message,
                    h.stale_after_seconds,h.version,
+                   h.filesystem_status,h.filesystem_reason,
+                   h.filesystem_path,h.filesystem_used_percent,
+                   h.filesystem_available_bytes,
+                   h.filesystem_inode_used_percent,
+                   h.filesystem_available_inodes,
+                   h.filesystem_checked_at,
                    COALESCE(NULLIF(s.name,''),NULLIF(s.public_ip,'')) server_name,
                    TIMESTAMPDIFF(
                        SECOND,h.heartbeat_at,UTC_TIMESTAMP(6)
@@ -448,6 +454,14 @@ class MagnusSentinelIncidentApiV1
             'last_error_message' => null,
             'stale_after_seconds' => (int) $staleAfter,
             'version' => null,
+            'filesystem_status' => null,
+            'filesystem_reason' => null,
+            'filesystem_path' => null,
+            'filesystem_used_percent' => null,
+            'filesystem_available_bytes' => null,
+            'filesystem_inode_used_percent' => null,
+            'filesystem_available_inodes' => null,
+            'filesystem_checked_at' => null,
             'heartbeat_age_seconds' => null,
             'ingest_lag_seconds' => 0,
             'health_status' => 'UNKNOWN',
@@ -463,6 +477,22 @@ class MagnusSentinelIncidentApiV1
         $heartbeatAge = max(0, (int) $row['heartbeat_age_seconds']);
         $lag = max(0, (int) $row['ingest_lag_seconds']);
         $staleAfter = (int) $row['stale_after_seconds'];
+        $filesystemStatus = strtoupper(
+            (string) $row['filesystem_status']
+        );
+        $filesystemCurrent = (
+            in_array(
+                $filesystemStatus,
+                ['HEALTHY', 'DEGRADED', 'UNHEALTHY'],
+                true
+            )
+            && $row['filesystem_checked_at'] !== null
+            && (
+                $row['process_started_at'] === null
+                || $row['filesystem_checked_at']
+                    >= $row['process_started_at']
+            )
+        );
         $reasons = [];
         if ($heartbeatAge > $staleAfter) {
             $status = 'STALE';
@@ -484,13 +514,36 @@ class MagnusSentinelIncidentApiV1
         } elseif ($failures >= 3) {
             $status = 'UNHEALTHY';
             $reasons[] = 'repeated_database_failures';
-        } elseif ($failures > 0 || $pending > 0) {
+        } elseif (
+            $filesystemCurrent
+            && $filesystemStatus === 'UNHEALTHY'
+        ) {
+            $status = 'UNHEALTHY';
+            $reasons[] = (
+                $row['filesystem_reason'] ?: 'filesystem_unhealthy'
+            );
+        } elseif (
+            $failures > 0
+            || $pending > 0
+            || (
+                $filesystemCurrent
+                && $filesystemStatus === 'DEGRADED'
+            )
+        ) {
             $status = 'DEGRADED';
             if ($failures > 0) {
                 $reasons[] = 'recoverable_database_failures';
             }
             if ($pending > 0) {
                 $reasons[] = 'pending_events';
+            }
+            if (
+                $filesystemCurrent
+                && $filesystemStatus === 'DEGRADED'
+            ) {
+                $reasons[] = (
+                    $row['filesystem_reason'] ?: 'filesystem_degraded'
+                );
             }
         } elseif (
             $row['component'] === 'collector'
@@ -530,6 +583,49 @@ class MagnusSentinelIncidentApiV1
             ),
             'stale_after_seconds' => $staleAfter,
             'version' => $row['version'],
+            'filesystem_status' => (
+                $filesystemCurrent ? $filesystemStatus : null
+            ),
+            'filesystem_reason' => (
+                $filesystemCurrent
+                ? $row['filesystem_reason']
+                : null
+            ),
+            'filesystem_path' => (
+                $filesystemCurrent
+                && $row['filesystem_path'] !== null
+                ? self::boundedText($row['filesystem_path'], 255)
+                : null
+            ),
+            'filesystem_used_percent' => (
+                $filesystemCurrent
+                && $row['filesystem_used_percent'] !== null
+                ? (float) $row['filesystem_used_percent']
+                : null
+            ),
+            'filesystem_available_bytes' => (
+                $filesystemCurrent
+                && $row['filesystem_available_bytes'] !== null
+                ? (int) $row['filesystem_available_bytes']
+                : null
+            ),
+            'filesystem_inode_used_percent' => (
+                $filesystemCurrent
+                && $row['filesystem_inode_used_percent'] !== null
+                ? (float) $row['filesystem_inode_used_percent']
+                : null
+            ),
+            'filesystem_available_inodes' => (
+                $filesystemCurrent
+                && $row['filesystem_available_inodes'] !== null
+                ? (int) $row['filesystem_available_inodes']
+                : null
+            ),
+            'filesystem_checked_at' => (
+                $filesystemCurrent
+                ? $row['filesystem_checked_at']
+                : null
+            ),
             'heartbeat_age_seconds' => $heartbeatAge,
             'ingest_lag_seconds' => $lag,
             'health_status' => $status,
