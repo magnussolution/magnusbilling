@@ -1,5 +1,7 @@
 <?php
 return array(
+    'Yes' => 'Tak',
+    'No' => 'Nie',
     'Activation DID'                                   => 'Aktywacja DID',
     'Active'                                           => 'Aktywny',
     'Address'                                          => 'Adres',
@@ -514,4 +516,5 @@ return array(
     'The campaign was processed successfully.' => 'Kampania została pomyślnie przetworzona.',
     'The campaign could not be processed. Review its settings and try again.' => 'Nie udało się przetworzyć kampanii. Sprawdź jej ustawienia i spróbuj ponownie.',
     'This legacy call detail action is disabled. Use Diagnose call.' => 'Ta starsza akcja jest wyłączona. Użyj Diagnozuj połączenie.',
-) + require dirname(__DIR__) . '/call_diagnostic_failures.php';
+) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
+  + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php');

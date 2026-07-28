@@ -21,6 +21,9 @@
  * Edit /resources/locale/ru.js
           */
 return array(
+    'Yes' => 'Да',
+    'No' => 'Нет',
+    'CallerID' => 'CallerID',
             'ALOC all calls' => 'ACD',
     'Out work audio' => 'OUT WOOK AUDIO',
     'P2P CustomerSiteID' => 'P2P CombersentityID',
@@ -341,4 +344,5 @@ return array(
     'The campaign was processed successfully.' => 'Кампания успешно обработана.',
     'The campaign could not be processed. Review its settings and try again.' => 'Не удалось обработать кампанию. Проверьте её настройки и повторите попытку.',
     'This legacy call detail action is disabled. Use Diagnose call.' => 'Устаревшее действие отключено. Используйте диагностику вызова.',
-) + require dirname(__DIR__) . '/call_diagnostic_failures.php';
+) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
+  + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php');
