@@ -23,16 +23,11 @@ Ext.define('MBilling.view.campaign.List', {
     alias: 'widget.campaignlist',
     store: 'Campaign',
     fieldSearch: 'name',
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         me.buttonCsv = false;
         me.allowPrint = false;
-        me.extraButtons = [{
-            text: t('Check campaign'),
-            iconCls: 'call',
-            handler: 'onTestCampaign',
-            disabled: false
-        }];
+
         me.columns = [{
             header: t('ID'),
             dataIndex: 'id',

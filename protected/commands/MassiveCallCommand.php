@@ -24,6 +24,7 @@ class MassiveCallCommand extends ConsoleCommand
     {
         $config         = LoadConfig::getConfig();
         $UNIX_TIMESTAMP = "UNIX_TIMESTAMP(";
+        $idCampaign     = isset($args[0]) ? (int) $args[0] : 0;
 
         $tab_day  = [1 => 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
         $num_day  = date('N');
@@ -38,11 +39,21 @@ class MassiveCallCommand extends ConsoleCommand
             ':key2' => date('H:i:s'),
         ];
 
+        if ($idCampaign > 0) {
+            $filter                .= ' AND id = :id_campaign';
+            $params[':id_campaign'] = $idCampaign;
+        }
+
         $modelCampaign = Campaign::model()->findAll([
             'condition' => $filter,
             'params'    => $params,
             'order'     => 'RAND()',
         ]);
+
+        if ($idCampaign > 0 && ! isset($modelCampaign[0])) {
+            echo "Campaign is not active in the current schedule\n";
+            return 1;
+        }
 
         if ($this->debug >= 1) {
             echo "\nFound " . count($modelCampaign) . " Campaign\n\n";

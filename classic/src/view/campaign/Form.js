@@ -23,11 +23,19 @@ Ext.define('MBilling.view.campaign.Form', {
     alias: 'widget.campaignform',
     bodyPadding: 0,
     fileUpload: true,
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         if (App.user.isAdmin) {
             me.fieldsHideUpdateLot = ['id_user', 'name', 'audio', 'audio_2', 'id_phonebook'];
         }
+
+        me.extraButtonsForm = [{
+            text: t('Check campaign'),
+            iconCls: 'call',
+            handler: 'onTestCampaign',
+            disabled: false
+        }];
+
         me.items = [{
             xtype: 'tabpanel',
             defaults: {
@@ -305,7 +313,7 @@ Ext.define('MBilling.view.campaign.Form', {
                     allowBlank: true,
                     maxLength: 300,
                     listeners: {
-                        'change': function(field) {
+                        'change': function (field) {
                             text = field.getFieldLabel().split('(');
                             field.setFieldLabel(text[0] + ' (<font color=blue>' + field.getValue().length + '</font>)');
                         }

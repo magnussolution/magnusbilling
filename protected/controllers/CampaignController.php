@@ -163,6 +163,9 @@ class CampaignController extends Controller
                 if ($type == 'ivr' || $type == 'queue' || $type == 'pjsip') {
                     $attributes[$i]['id_' . $type . '_0'] = $itemOption[1];
                     $modelType                            = ucfirst($type);
+                    if ($modelType == 'Pjsip') {
+                        $modelType = 'Sip';
+                    }
                     $model                                = $modelType::model()->findByPk((int) $itemOption[1]);
                     if (isset($model->name)) {
                         $attributes[$i]['id_' . $type . '_0' . '_name'] = $model->name;
@@ -323,211 +326,64 @@ class CampaignController extends Controller
 
     public function actionTestCampaign()
     {
+        $idCampaign = isset($_POST['id']) ? (int) $_POST['id'] : 0;
+        $campaign   = $idCampaign > 0 ? $this->abstractModel->findByPk($idCampaign) : null;
 
-        if (isset($_POST['id']) && $_POST['id'] > 0) {
-            $id_campaign = json_decode($_POST['id']);
-        } else {
+        if (! isset($campaign->id)) {
             echo json_encode([
                 $this->nameSuccess => false,
                 $this->nameMsg     => 'Please Select one campaign',
             ]);
-            exit;
+            return;
         }
 
-        $tab_day  = [1 => 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-        $num_day  = date('N');
-        $name_day = $tab_day[$num_day];
-
-        $nbpage = 10;
-
-        $campaignResult = Campaign::model()->checkCampaignActive($id_campaign, $nbpage, $name_day);
-
-        $modelCampaign = $this->abstractModel->findByPk((int) $id_campaign);
-
-        if (! isset($campaignResult->id)) {
-
-            if ($modelCampaign->status == 0) {
-                echo json_encode([
-                    $this->nameSuccess => false,
-                    $this->nameMsg     => 'Please active this campaign',
-                ]);
-                exit;
-            }
-
-            if ($modelCampaign->idUser->credit < 1) {
-                echo json_encode([
-                    $this->nameSuccess => false,
-                    $this->nameMsg     => 'The user not have enough credit',
-                ]);
-                exit;
-            }
-
-            if ($modelCampaign->startingdate > date('Y-m-d H:i:s')) {
-                echo json_encode([
-                    $this->nameSuccess => false,
-                    $this->nameMsg     => 'The startdate is in the future',
-                ]);
-                exit;
-            }
-
-            if ($modelCampaign->expirationdate < date('Y-m-d H:i:s')) {
-                echo json_encode([
-                    $this->nameSuccess => false,
-                    $this->nameMsg     => 'The expirationdate is in the past',
-                ]);
-                exit;
-            }
-
-            if ($modelCampaign->daily_start_time > date('H:i:s')) {
-                echo json_encode([
-                    $this->nameSuccess => false,
-                    $this->nameMsg     => 'The start time is out of the hour of work',
-                ]);
-                exit;
-            }
-
-            if ($modelCampaign->daily_stop_time < date('H:i:s')) {
-                echo json_encode([
-                    $this->nameSuccess => false,
-                    $this->nameMsg     => 'The stop time is out of the hour of work',
-                ]);
-                exit;
-            }
-
-            if ($modelCampaign->{$name_day} == 0) {
-                echo json_encode([
-                    $this->nameSuccess => false,
-                    $this->nameMsg     => 'Campaign is not active to start in ' . $name_day,
-                ]);
-                exit;
-            }
-
-            //get campaingphonebookes
-            $modelCampaignPhonebook = CampaignPhonebook::model()->findAll(
-                'id_campaign = :key',
-                [':key' => $id_campaign]
-            );
-
-            if (! isset($modelCampaignPhonebook[0]->id_phonebook)) {
-                echo json_encode([
-                    $this->nameSuccess => false,
-                    $this->nameMsg     => 'Please select one o more phonebook',
-                ]);
-                exit;
-            }
-
-            $ids_phone_books = [];
-            foreach ($modelCampaignPhonebook as $key => $phonebook) {
-                $ids_phone_books[] = $phonebook->id_phonebook;
-            }
-
-            //find active numbers in phonebooks
-            $criteria = new CDbCriteria();
-            $criteria->addInCondition('id', $ids_phone_books);
-            $modelPhoneBook = PhoneBook::model()->findAll($criteria);
-
-            if (! isset($modelPhoneBook[0])) {
-                echo json_encode([
-                    $this->nameSuccess => false,
-                    $this->nameMsg     => 'Campaign Not have phonebook',
-                ]);
-                exit;
-            }
-            //find only active phonebook
-            $criteria = new CDbCriteria();
-            $criteria->addInCondition('id', $ids_phone_books);
-            $criteria->addCondition('status = :key');
-            $criteria->params[':key'] = 1;
-            $modelPhoneBook           = PhoneBook::model()->findAll($criteria);
-
-            if (! isset($modelPhoneBook[0])) {
-                echo json_encode([
-                    $this->nameSuccess => false,
-                    $this->nameMsg     => 'Campaign Not have phonebook',
-                ]);
-                exit;
-            }
-
-            //find active numbers in phonebooks
-            $criteria = new CDbCriteria();
-            $criteria->addInCondition('id_phonebook', $ids_phone_books);
-            $criteria->addCondition('status = :key');
-            $criteria->params[':key'] = 1;
-            $modelPhoneNumber         = PhoneNumber::model()->findAll($criteria);
-
-            if (! isset($modelPhoneNumber[0])) {
-                echo json_encode([
-                    $this->nameSuccess => false,
-                    $this->nameMsg     => 'The phonebook not have numbers or not have active numbers',
-                ]);
-                exit;
-            } else {
-
-                $criteria = new CDbCriteria();
-                $criteria->addInCondition('id_phonebook', $ids_phone_books);
-                $criteria->addCondition('status = :key AND creationdate < :key1');
-                $criteria->params[':key']  = 1;
-                $criteria->params[':key1'] = date('Y-m-d H:i:s');
-                $modelPhoneNumber          = PhoneNumber::model()->find($criteria);
-
-                if (! isset($modelPhoneNumber->id)) {
-                    echo json_encode([
-                        $this->nameSuccess => false,
-                        $this->nameMsg     => 'There are active numbers but the start time is in the future',
-                    ]);
-                    exit;
-                }
-            }
-
-            //tem erro mais nao foi identificado
-
+        if (! function_exists('exec')) {
             echo json_encode([
                 $this->nameSuccess => false,
-                $this->nameMsg     => 'error',
+                $this->nameMsg     => 'The PHP exec function is disabled',
             ]);
-            exit;
+            return;
         }
 
-        if ($modelCampaign->type == 0) {
+        $phpBinaryCandidates = [
+            defined('PHP_BINARY') ? PHP_BINARY : '',
+            defined('PHP_BINDIR') ? PHP_BINDIR . DIRECTORY_SEPARATOR . 'php' : '',
+            '/usr/bin/php',
+        ];
+        $phpBinary = '';
 
-            $criteria = new CDbCriteria([
-                'condition' => 'id_plan = :key',
-                'params'    => [':key' => $modelCampaign->idUser->id_plan],
-                'with'      => [
-                    'idPrefix' => [
-                        'condition' => "idPrefix.prefix LIKE '999%'",
-                    ],
-                ],
-            ]);
-
-            if ($modelCampaign->idUser->id_user > 1) {
-                $modelRate = RateAgent::model()->find($criteria);
-            } else {
-                $modelRate = Rate::model()->find($criteria);
-            }
-
-            if (! isset($modelRate->id)) {
-                echo json_encode([
-                    $this->nameSuccess => false,
-                    $this->nameMsg     => 'Not existe the prefix 999 to send SMS',
-                ]);
-                exit;
-            }
-        } else {
-            //verificar se exite audio
-            Yii::log($this->uploaddir . 'idCampaign_' . $id_campaign . '.wav', 'info');
-            if (! file_exists($this->uploaddir . 'idCampaign_' . $id_campaign . '.wav') && ! file_exists($this->uploaddir . 'idCampaign_' . $id_campaign . '.gsm')) {
-                echo json_encode([
-                    $this->nameSuccess => false,
-                    $this->nameMsg     => 'Not existe audio to this Campaign',
-                ]);
-                exit;
+        foreach ($phpBinaryCandidates as $phpBinaryCandidate) {
+            if ($phpBinaryCandidate !== '' && is_executable($phpBinaryCandidate)) {
+                $phpBinary = $phpBinaryCandidate;
+                break;
             }
         }
+
+        if ($phpBinary === '') {
+            echo json_encode([
+                $this->nameSuccess => false,
+                $this->nameMsg     => 'PHP CLI executable not found',
+            ]);
+            return;
+        }
+
+        $command = escapeshellarg($phpBinary)
+            . ' '
+            . escapeshellarg(dirname(__FILE__) . '/../../cron.php')
+            . ' massivecall '
+            . escapeshellarg((string) $idCampaign);
+
+        $output   = [];
+        $exitCode = 0;
+        exec($command . ' 2>&1', $output, $exitCode);
+
+        $message = trim(implode("\n", $output));
 
         echo json_encode([
-            $this->nameSuccess => true,
-            $this->nameMsg     => 'Campaign is ok',
+            $this->nameSuccess => $exitCode === 0,
+            $this->nameMsg     => $exitCode === 0
+            ? ($message !== '' ? $message : 'Campaign processed by massivecall')
+            : ($message !== '' ? $message : 'Error processing campaign'),
         ]);
     }
 }
