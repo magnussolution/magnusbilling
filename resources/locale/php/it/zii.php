@@ -21,8 +21,6 @@
  * Edit /resources/locale/it.js
           */
 return array(
-    'No' => 'No',
-    'CallerID' => 'CallerID',
             'ALOC all calls' => 'ACD',
     'Fake Ring' => 'Anello falso',
     'Offer CDR' => 'Offrire cdr',
@@ -786,5 +784,4 @@ return array(
     'The campaign was processed successfully.' => 'La campagna è stata elaborata correttamente.',
     'The campaign could not be processed. Review its settings and try again.' => 'Impossibile elaborare la campagna. Controlla le impostazioni e riprova.',
     'This legacy call detail action is disabled. Use Diagnose call.' => 'Questa azione precedente è disabilitata. Usa Diagnostica chiamata.',
-) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
-  + (require dirname(__DIR__) . '/call_diagnostic_sip_auth.php');
+) + require dirname(__DIR__) . '/call_diagnostic_failures.php';

@@ -22,8 +22,6 @@
  * Edit /resources/locale/es.js
  */
 return array(
-        'Only cdrFailedId is accepted.' => 'Solo se acepta cdrFailedId.',
-        'Failed CDR was not found.' => 'No se encontró el CDR fallido.',
         'ALERT => Do you really active this service?' => 'ALERTA => Usted realmente desea activar este servicio?',
         'ALERT => Do you really want cancel this service to this user?' => 'ALERTA => Usted realmente desea cancelar este servicio para este usuario?',
         'ALERT => This action was to return the balance, referring to the days not used. Do you confirm?' => 'ALERTA => Esta opción va devolver el crédito referente a los dias no usado. Confirmar esto?',
@@ -1359,5 +1357,4 @@ return array(
         'The campaign was processed successfully.' => 'La campaña fue procesada correctamente.',
         'The campaign could not be processed. Review its settings and try again.' => 'No se pudo procesar la campaña. Revise su configuración e inténtelo de nuevo.',
         'Unknown' => 'Desconocido',
-) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
-  + (require dirname(__DIR__) . '/call_diagnostic_sip_auth.php');
+) + require dirname(__DIR__) . '/call_diagnostic_failures.php';

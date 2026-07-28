@@ -1,7 +1,5 @@
 <?php
 return array(
-    'Yes' => 'Yes',
-    'No' => 'No',
     'Activation DID'                                   => '',
     'Active'                                           => '',
     'Address'                                          => '',
@@ -558,5 +556,4 @@ return array(
     'The campaign was processed successfully.' => 'The campaign was processed successfully.',
     'The campaign could not be processed. Review its settings and try again.' => 'The campaign could not be processed. Review its settings and try again.',
     'Send the diagnostic ID and the application error shown below to support.' => 'Send the diagnostic ID and the application error shown below to support.',
-) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
-  + (require dirname(__DIR__) . '/call_diagnostic_sip_auth.php');
+) + require dirname(__DIR__) . '/call_diagnostic_failures.php';
