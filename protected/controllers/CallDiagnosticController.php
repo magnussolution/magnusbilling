@@ -168,9 +168,20 @@ class CallDiagnosticController extends Controller
                 (int) $entityId
             ));
             $this->respond(true, $result);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             Yii::log('Call diagnostic failed: ' . $e->getMessage(), CLogger::LEVEL_ERROR, 'callDiagnostic');
-            $this->respond(false, null, Yii::t('zii', 'The diagnostic could not be completed safely.'), 500);
+            if (isset($service) && $service instanceof CallDiagnosticService) {
+                return $this->respond(
+                    true,
+                    $service->unexpectedFailure($type, $e)
+                );
+            }
+            return $this->respond(
+                false,
+                null,
+                Yii::t('zii', 'The diagnostic could not be completed safely.'),
+                500
+            );
         }
     }
 
@@ -222,7 +233,16 @@ class CallDiagnosticController extends Controller
     private function respond($success, $result = null, $message = null, $status = 200)
     {
         http_response_code($status);
-        echo json_encode(['success' => (bool) $success, 'result' => $result, 'msg' => $message], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        echo json_encode(
+            [
+                'success' => (bool) $success,
+                'result' => $result,
+                'msg' => $message,
+            ],
+            JSON_UNESCAPED_UNICODE
+                | JSON_UNESCAPED_SLASHES
+                | JSON_INVALID_UTF8_SUBSTITUTE
+        );
         Yii::app()->end();
     }
 }

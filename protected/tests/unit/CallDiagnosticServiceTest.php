@@ -39,4 +39,63 @@ class CallDiagnosticServiceTest extends TestCase
             $this->assertStringNotContainsString($secret, $json);
         }
     }
+
+    public function testInvalidOutputFailureIsClassifiedFromProcessEvidence()
+    {
+        $this->assertSame(
+            'AGI_RESULT_JSON_INVALID',
+            CallDiagnosticService::classifyInvalidOutputFailure(
+                true,
+                '',
+                0
+            )
+        );
+        $this->assertSame(
+            'AGI_DEBUG_ARGUMENTS_INVALID',
+            CallDiagnosticService::classifyInvalidOutputFailure(
+                false,
+                'Invalid debug arguments.',
+                2
+            )
+        );
+        $this->assertSame(
+            'AGI_PHP_FATAL_ERROR',
+            CallDiagnosticService::classifyInvalidOutputFailure(
+                false,
+                'PHP Fatal error: Uncaught Error',
+                255
+            )
+        );
+        $this->assertSame(
+            'AGI_PROCESS_EXITED_WITH_ERROR',
+            CallDiagnosticService::classifyInvalidOutputFailure(
+                false,
+                '',
+                1
+            )
+        );
+        $this->assertSame(
+            'MBILLING_RESULT_NOT_FOUND',
+            CallDiagnosticService::classifyInvalidOutputFailure(
+                false,
+                '',
+                0
+            )
+        );
+    }
+
+    public function testDiagnosticIdIsLoggedWithAgiFailureEvidence()
+    {
+        $source = file_get_contents(
+            dirname(__FILE__) . '/../../components/CallDiagnosticService.php'
+        );
+        $this->assertStringContainsString(
+            "'Call diagnostic ID=' . \$diagnosticId",
+            $source
+        );
+        $this->assertStringContainsString("'failureCause' => \$failureCause", $source);
+        $this->assertStringContainsString("'exitCode' => \$exitCode", $source);
+        $this->assertStringContainsString("'jsonError' => \$jsonError", $source);
+        $this->assertStringContainsString('JSON_INVALID_UTF8_SUBSTITUTE', $source);
+    }
 }

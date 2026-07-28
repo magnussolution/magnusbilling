@@ -110,6 +110,12 @@ or free-form text.
 - Never expose SIP/trunk passwords, API keys, DSNs, or provider credentials.
 - Diagnostic result text must remain selectable so administrators can copy any
   portion of it.
+- AGI execution failures must be self-contained in the result. Show a stable
+  failure code, plain-language cause, safe action, process exit code, JSON
+  error and bounded stdout/stderr. Do not show an empty route summary when the
+  route was never evaluated.
+- Log the diagnostic ID with the classified failure and safe metadata, but do
+  not duplicate raw stdout/stderr in the application log.
 
 ## Database and Documentation Placement
 
