@@ -68,6 +68,21 @@ var historyHtml = windowDefinition.renderHistory({
         isNextTrunk: false,
         trunk: {id: 277, name: 'sdsdsd'},
         raw: {code: 615, reason: '<img src=x onerror=alert(1)>'},
+        callerIdSent: {available: false},
+        currentTrunkStatus: {
+            status: 'unavailable',
+            summary: 'Asterisk currently reports the trunk contact as unavailable.',
+            latencyMs: null,
+            firewall: {
+                checked: true,
+                blocked: true,
+                checkedIps: ['198.51.100.20'],
+                matches: [{
+                    ip: '198.51.100.20',
+                    jail: '<img src=x onerror=alert(2)>'
+                }]
+            }
+        },
         sentinelAlerts: []
     }, {
         sequence: 2,
@@ -77,6 +92,21 @@ var historyHtml = windowDefinition.renderHistory({
         isNextTrunk: true,
         trunk: {id: 256, name: 'provider3'},
         raw: {code: 615, reason: 'Unknown'},
+        callerIdSent: {
+            available: true,
+            value: '<script>alert(3)</script>'
+        },
+        currentTrunkStatus: {
+            status: 'available',
+            summary: 'Asterisk currently reports the trunk contact as available.',
+            latencyMs: 18.4,
+            firewall: {
+                checked: true,
+                blocked: false,
+                checkedIps: ['203.0.113.30'],
+                matches: []
+            }
+        },
         sentinelAlerts: [{
             severity: 'warning',
             type: 'trunk_response_degradation',
@@ -103,6 +133,17 @@ assert.strictEqual(
     -1,
     'malicious Sentinel summary must not render as markup'
 );
+assert.strictEqual(
+    historyHtml.indexOf('<script>alert(3)</script>'),
+    -1,
+    'caller ID must not render as markup'
+);
+assert.ok(
+    historyHtml.indexOf('Caller ID sent') !== -1 &&
+        historyHtml.indexOf('Current trunk status') !== -1 &&
+        historyHtml.indexOf('pkg_firewall') !== -1,
+    'history must show caller ID, current trunk state and firewall result'
+);
 assert.ok(
     historyHtml.indexOf('does not prove that it caused this call') !== -1,
     'active Sentinel alert must not be presented as causal proof'
@@ -111,6 +152,20 @@ assert.ok(
 var controllerSource = fs.readFileSync(
     __dirname + '/../src/view/callFailed/Controller.js',
     'utf8'
+);
+var windowSource = fs.readFileSync(
+    __dirname + '/../src/view/callFailed/DiagnosticWindow.js',
+    'utf8'
+);
+assert.strictEqual(
+    windowSource.indexOf("t('Technical details')"),
+    -1,
+    'technical details section must be removed from the operator window'
+);
+assert.strictEqual(
+    windowSource.indexOf("t('Diagnostic limitations')"),
+    -1,
+    'diagnostic limitations section must be removed from the operator window'
 );
 assert.strictEqual(
     controllerSource.indexOf('window.open'),

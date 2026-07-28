@@ -60,6 +60,8 @@ checkout acima.
 | `linkedid` | identificador Asterisk da árvore da chamada | não |
 | `correlation_id` | identificador de correlação dedicado | não existe |
 | `pkg_cdr_failed.sessionid` | coluna disponível, mas não alimentada no fluxo do piloto | 5.000/5.000 nulos na amostra |
+| `pkg_cdr_failed.callerid` | Caller ID persistido após a última tentativa que gerou o CDR failed | sim, somente para a tentativa final |
+| Caller ID das tentativas anteriores | pode ser reescrito por trunk e não existe no evento Sentinel | não |
 
 O identificador comum é, portanto, de chamada de origem. Uma tentativa deve ser
 exposta com um identificador derivado apenas para o contrato, por exemplo
@@ -169,6 +171,35 @@ Fluxo proposto, sem mudança de schema:
 O limite inicial proposto é 50 eventos. O backend deve solicitar 51 linhas para
 calcular `truncated` e retornar no máximo 50.
 
+## Verificações operacionais atuais
+
+Após autorização adicional, o diagnóstico também consulta o estado **atual**
+dos trunks comprovadamente observados. Essa informação ajuda o operador, mas
+não é apresentada como causa histórica da chamada.
+
+- PJSIP: `pjsip show endpoint <trunkcode>`;
+- chan_sip: `sip show peer <trunkcode>`;
+- transporte: AMI já configurado no MagnusBilling;
+- MASTER e slaves: conexão direta ao Asterisk correspondente por AMI;
+- nenhum acesso por HTTP, SSH ou shell;
+- no máximo três trunks distintos por diagnóstico;
+- o nome do endpoint vem exclusivamente do banco e passa por allowlist antes
+  de compor um dos dois comandos fixos;
+- a resposta bruta do AMI não é retornada ao navegador.
+
+O resultado diferencia `available`, `unavailable`, `no_contact`, `not_found`,
+`not_monitored`, trunk desativado e falha da própria verificação. IPs
+comprovados na configuração ou na saída do endpoint são consultados em
+`pkg_firewall`, no mesmo servidor, considerando como bloqueios atuais somente
+ações `0` e `1`. Entradas CIDR também são verificadas de forma limitada.
+
+O Caller ID é mostrado como comprovado apenas na tentativa final quando o trunk
+do último evento corresponde ao `id_trunk` do CDR e a lista de eventos não foi
+truncada. Nas tentativas anteriores o contrato retorna
+`not_persisted_for_this_attempt`; repetir o Caller ID final em todos os trunks
+seria uma inferência incorreta porque `cid_remove`, `cid_add`, CNL e hooks podem
+reescrevê-lo.
+
 ## Contrato proposto
 
 Media type lógico: `magnusbilling.call-diagnostic/v1`.
@@ -219,6 +250,28 @@ Resposta proposta:
         "isNextTrunk": false,
         "trunk": {"id": 255, "name": "Trunk A"},
         "raw": {"code": 486, "reason": "Busy Here"},
+        "callerIdSent": {
+          "available": true,
+          "value": "5511999999999",
+          "source": "pkg_cdr_failed.callerid_final_attempt",
+          "reason": null
+        },
+        "currentTrunkStatus": {
+          "checked": true,
+          "status": "available",
+          "source": "asterisk_ami_pjsip_show_endpoint",
+          "technology": "pjsip",
+          "endpoint": "Trunk A",
+          "latencyMs": 18.4,
+          "contactIps": ["198.51.100.10"],
+          "firewall": {
+            "checked": true,
+            "blocked": false,
+            "checkedIps": ["198.51.100.10"],
+            "matches": [],
+            "source": "pkg_firewall"
+          }
+        },
         "sentinelAlerts": []
       }
     ]
@@ -231,6 +284,23 @@ Resposta proposta:
       "trunk": {"id": 255, "name": "Trunk A"},
       "server": {"id": 5, "name": "Servidor 1"},
       "raw": {"code": 486, "reason": "Busy Here"},
+      "callerIdSent": {
+        "available": true,
+        "value": "5511999999999",
+        "source": "pkg_cdr_failed.callerid_final_attempt",
+        "reason": null
+      },
+      "currentTrunkStatus": {
+        "checked": true,
+        "status": "available",
+        "source": "asterisk_ami_pjsip_show_endpoint",
+        "firewall": {
+          "checked": true,
+          "blocked": false,
+          "checkedIps": ["198.51.100.10"],
+          "matches": []
+        }
+      },
       "sentinelAlerts": [],
       "classification": {
         "key": "busy",
@@ -240,6 +310,13 @@ Resposta proposta:
       }
     }
   ],
+  "operationalFindings": [],
+  "runtimeChecks": {
+    "scope": "current",
+    "checkedAt": "2026-07-28 12:00:00",
+    "items": [],
+    "truncated": false
+  },
   "trunkAlerts": {
     "available": true,
     "scope": "active_now",
@@ -390,7 +467,14 @@ Implementado:
   e intervalos entre tentativas;
 - alertas atualmente ativos do Magnus Sentinel por trunk tentado, sempre
   rotulados como estado no momento do diagnóstico e nunca como prova causal;
+- estado atual de cada trunk via AMI, com comando fixo e limitado;
+- bloqueio atual do IP do provedor em `pkg_firewall`, restrito ao servidor da
+  tentativa;
+- Caller ID comprovado na tentativa final e indisponibilidade explícita nas
+  tentativas em que o valor não foi persistido;
 - evidências, limitações e detalhes técnicos recolhidos;
+- seções “Detalhes técnicos” e “Limitações do diagnóstico” removidas da Window
+  para priorizar a narrativa operacional;
 - `window.open`, leitura do log e redirecionamento para IP removidos;
 - `actionCallInfo` legado desativado com HTTP 410;
 - testes dos 17 cenários mínimos e escaping de dados não confiáveis.

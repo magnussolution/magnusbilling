@@ -113,7 +113,11 @@ class CallDiagnosticController extends Controller
         }
 
         try {
-            $service = new FailedCallDiagnosticService(Yii::app()->db);
+            $service = new FailedCallDiagnosticService(
+                Yii::app()->db,
+                null,
+                new FailedCallTrunkRuntimeProbe(Yii::app()->db)
+            );
             $result = $service->diagnose((int) $cdrFailedId);
             if ($result === null) {
                 $this->respond(

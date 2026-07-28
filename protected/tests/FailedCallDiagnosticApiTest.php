@@ -157,7 +157,42 @@ function failedDiagnosticIncident($overrides = [])
     ], $overrides);
 }
 
-function failedDiagnosticService($db, $status = 'HEALTHY')
+function failedDiagnosticRuntimeStatus($status = 'available', $blocked = false)
+{
+    return [
+        'checked' => true,
+        'checkedAt' => '2026-07-28 12:00:00',
+        'status' => $status,
+        'summary' => $status === 'available'
+            ? 'Asterisk currently reports the trunk contact as available.'
+            : 'Asterisk currently reports the trunk contact as unavailable.',
+        'source' => 'asterisk_ami_pjsip_show_endpoint',
+        'technology' => 'pjsip',
+        'endpoint' => 'Trunk A',
+        'latencyMs' => 18.4,
+        'contactIps' => ['198.51.100.10'],
+        'firewall' => [
+            'checked' => true,
+            'blocked' => $blocked,
+            'checkedIps' => ['198.51.100.10'],
+            'matches' => $blocked ? [[
+                'id' => 9001,
+                'ip' => '198.51.100.10',
+                'action' => 1,
+                'date' => '2026-07-28 11:50:00',
+                'jail' => 'asterisk-iptables',
+                'serverId' => 5,
+            ]] : [],
+            'source' => 'pkg_firewall',
+        ],
+    ];
+}
+
+function failedDiagnosticService(
+    $db,
+    $status = 'HEALTHY',
+    $runtimeProbe = null
+)
 {
     return new FailedCallDiagnosticService($db, function () use ($status) {
         return [
@@ -165,7 +200,7 @@ function failedDiagnosticService($db, $status = 'HEALTHY')
             'checkedAt' => '2026-07-27 22:30:00',
             'reasons' => $status === 'HEALTHY' ? [] : ['test_state'],
         ];
-    });
+    }, $runtimeProbe);
 }
 
 function assertClassification($code, $reason, $expected)
@@ -196,7 +231,13 @@ $singleDb = new FailedCallDiagnosticFakeDb;
 $singleDb->cdr = failedDiagnosticCdr();
 $singleDb->events = [failedDiagnosticEvent(486, 'Busy Here')];
 $singleDb->incidents = [failedDiagnosticIncident()];
-$single = failedDiagnosticService($singleDb)->diagnose(123);
+$single = failedDiagnosticService(
+    $singleDb,
+    'HEALTHY',
+    function ($targets) {
+        return ['5:255' => failedDiagnosticRuntimeStatus('available')];
+    }
+)->diagnose(123);
 failedDiagnosticAssert($single['status'] === 'confirmed', 'single event status');
 failedDiagnosticAssert(count($single['attempts']) === 1, 'single event count');
 failedDiagnosticAssert(
@@ -223,6 +264,14 @@ failedDiagnosticAssert(
     $single['trunkAlerts']['scope'] === 'active_now',
     'alerts must be explicitly current, not historical causality'
 );
+failedDiagnosticAssert(
+    $single['attempts'][0]['callerIdSent']['value'] === '5511999999999',
+    'final failed CDR caller ID is attached to the final observed attempt'
+);
+failedDiagnosticAssert(
+    $single['attempts'][0]['currentTrunkStatus']['status'] === 'available',
+    'current trunk status'
+);
 
 $multipleDb = new FailedCallDiagnosticFakeDb;
 $multipleDb->cdr = failedDiagnosticCdr(['id_trunk' => 276]);
@@ -235,7 +284,16 @@ $multipleDb->events = [
         'trunk_name' => 'Trunk B',
     ]),
 ];
-$multiple = failedDiagnosticService($multipleDb)->diagnose(123);
+$multiple = failedDiagnosticService(
+    $multipleDb,
+    'HEALTHY',
+    function ($targets) {
+        return [
+            '5:255' => failedDiagnosticRuntimeStatus('unavailable', true),
+            '5:276' => failedDiagnosticRuntimeStatus('available'),
+        ];
+    }
+)->diagnose(123);
 failedDiagnosticAssert(count($multiple['attempts']) === 2, 'multiple attempts');
 failedDiagnosticAssert(
     $multiple['attempts'][1]['trunk']['id'] === 276,
@@ -252,6 +310,22 @@ failedDiagnosticAssert(
 failedDiagnosticAssert(
     $multiple['history']['entries'][1]['isNextTrunk'] === true,
     'next observed trunk'
+);
+failedDiagnosticAssert(
+    $multiple['attempts'][0]['callerIdSent']['available'] === false,
+    'caller ID must not be invented for an earlier attempt'
+);
+failedDiagnosticAssert(
+    $multiple['attempts'][1]['callerIdSent']['available'] === true,
+    'caller ID is proven for the final CDR trunk'
+);
+failedDiagnosticAssert(
+    count($multiple['operationalFindings']) === 2,
+    'blocked and unavailable trunk are prominent operator findings'
+);
+failedDiagnosticAssert(
+    $multiple['operationalFindings'][0]['key'] === 'trunk_ip_blocked',
+    'firewall block finding'
 );
 
 $collisionDb = new FailedCallDiagnosticFakeDb;
