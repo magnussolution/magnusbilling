@@ -1,7 +1,5 @@
 <?php
 return array(
-    'Yes' => 'Yes',
-    'No' => 'No',
     'Activation DID'                                   => '',
     'Active'                                           => '',
     'Address'                                          => '',
@@ -539,5 +537,4 @@ return array(
     'The diagnostic stopped because of an application error.' => 'The diagnostic stopped because of an application error.',
     'MagnusBilling caught an unexpected code error before the diagnostic could finish.' => 'MagnusBilling caught an unexpected code error before the diagnostic could finish.',
     'Send the diagnostic ID and the application error shown below to support.' => 'Send the diagnostic ID and the application error shown below to support.',
-) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
-  + (require dirname(__DIR__) . '/call_diagnostic_sip_auth.php');
+) + require dirname(__DIR__) . '/call_diagnostic_failures.php';

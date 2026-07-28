@@ -22,8 +22,6 @@
  * Edit /resources/locale/pt_BR.js
  */
 return array(
-        'Only cdrFailedId is accepted.' => 'Somente cdrFailedId é aceito.',
-        'Failed CDR was not found.' => 'O CDR com falha não foi encontrado.',
         'ALERT => Do you really active this service?' => 'ALERTA => Você realmente quer ativar este serviço?',
         'ALERT => Do you really want cancel this service to this user?' => 'ALERTA => Você realmente quer cancelar este serviço para este usuário?',
         'ALERT => This action was to return the balance, referring to the days not used. Do you confirm?' => 'ALERTA => Esta opção vai devolver o crédito referente aos dias não usado. Você confirma isso?',
@@ -1419,30 +1417,4 @@ return array(
         'The diagnostic stopped because of an application error.' => 'O diagnóstico foi interrompido por um erro da aplicação.',
         'MagnusBilling caught an unexpected code error before the diagnostic could finish.' => 'O MagnusBilling capturou um erro inesperado de código antes que o diagnóstico pudesse terminar.',
         'Send the diagnostic ID and the application error shown below to support.' => 'Envie o ID do diagnóstico e o erro da aplicação exibido abaixo ao suporte.',
-        'SIP IP authentication' => 'Autenticação SIP por IP',
-        'The SIP driver could not be checked safely for this account.' => 'Não foi possível verificar com segurança o driver SIP desta conta.',
-        'Verify the SIP account name and run Call Check again.' => 'Verifique o nome da conta SIP e execute o Call Check novamente.',
-        'Not determined' => 'Não determinado',
-        'This fixed-IP account is loaded by PJSIP, which identifies the endpoint by IP without using the chan_sip insecure option.' => 'Esta conta de IP fixo está carregada pelo PJSIP, que identifica o endpoint pelo IP sem usar a opção insecure do chan_sip.',
-        'No insecure change is required. If the endpoint still receives a 401 response, verify its PJSIP identify match and the source IP of the INVITE.' => 'Nenhuma alteração em insecure é necessária. Se o endpoint ainda receber resposta 401, verifique o match do identify no PJSIP e o IP de origem do INVITE.',
-        'Not applicable' => 'Não se aplica',
-        'The fixed-IP account appears in both chan_sip and PJSIP, so Call Check cannot determine which driver received the INVITE.' => 'A conta de IP fixo aparece no chan_sip e no PJSIP; por isso, o Call Check não consegue determinar qual driver recebeu o INVITE.',
-        'Confirm the SIP driver and listening port used by the client before changing insecure.' => 'Confirme o driver SIP e a porta de escuta usada pelo cliente antes de alterar insecure.',
-        'Multiple drivers' => 'Vários drivers',
-        'The account uses a fixed IP, but Call Check could not confirm whether it is loaded by chan_sip or PJSIP.' => 'A conta usa IP fixo, mas o Call Check não conseguiu confirmar se ela está carregada pelo chan_sip ou pelo PJSIP.',
-        'Reload the SIP configuration and run Call Check again. Do not change insecure until the active SIP driver is confirmed.' => 'Recarregue a configuração SIP e execute o Call Check novamente. Não altere insecure até confirmar o driver SIP ativo.',
-        'This fixed-IP chan_sip account accepts INVITEs from a different source port without requesting digest authentication.' => 'Esta conta chan_sip de IP fixo aceita INVITEs vindos de outra porta de origem sem solicitar autenticação digest.',
-        'No insecure change is required.' => 'Nenhuma alteração em insecure é necessária.',
-        'This fixed-IP chan_sip account may answer with 401 when an INVITE arrives from the configured IP but uses a different source port.' => 'Esta conta chan_sip de IP fixo pode responder 401 quando um INVITE chega do IP configurado, mas usa uma porta de origem diferente.',
-        'After confirming that the configured IP belongs to this trusted client or provider, set insecure to port,invite and reload the SIP configuration.' => 'Após confirmar que o IP configurado pertence a este cliente ou provedor confiável, defina insecure como port,invite e recarregue a configuração SIP.',
-        'Not configured' => 'Não configurado',
-        'The account uses a fixed IP, but Asterisk did not provide enough information to check its authentication behavior.' => 'A conta usa IP fixo, mas o Asterisk não forneceu informações suficientes para verificar o comportamento da autenticação.',
-        'Verify that Asterisk Manager is available, then run Call Check again. Do not change insecure without confirming the active SIP driver.' => 'Verifique se o Asterisk Manager está disponível e execute o Call Check novamente. Não altere insecure sem confirmar o driver SIP ativo.',
-        'Authentication method' => 'Método de autenticação',
-        'Fixed IP' => 'IP fixo',
-        'Configured host' => 'Host configurado',
-        'Active SIP driver' => 'Driver SIP ativo',
-        'Loaded insecure value' => 'Valor de insecure carregado',
-        'A fixed-IP SIP authentication risk was found before the route check.' => 'Foi encontrado um risco na autenticação SIP por IP antes da verificação da rota.',
-) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
-  + (require dirname(__DIR__) . '/call_diagnostic_sip_auth.php');
+) + require dirname(__DIR__) . '/call_diagnostic_failures.php';

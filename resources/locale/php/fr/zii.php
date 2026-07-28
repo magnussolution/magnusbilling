@@ -21,8 +21,6 @@
  * Edit /resources/locale/fr.js
           */
 return array(
-    'No' => 'Non',
-    'CallerID' => 'CallerID',
             'ALOC all calls' => 'ACD',
     'Fake Ring' => 'Sonner faux',
     'Offer CDR' => 'Offrir CDR',
@@ -761,5 +759,4 @@ return array(
     'Only cdrFailedId is accepted.' => 'Seul cdrFailedId est accepté.',
     'Failed CDR was not found.' => 'Le CDR en échec est introuvable.',
     'This legacy call detail action is disabled. Use Diagnose call.' => 'Cette ancienne action est désactivée. Utilisez Diagnostiquer l’appel.',
-) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
-  + (require dirname(__DIR__) . '/call_diagnostic_sip_auth.php');
+) + require dirname(__DIR__) . '/call_diagnostic_failures.php';
