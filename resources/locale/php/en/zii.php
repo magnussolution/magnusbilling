@@ -388,7 +388,7 @@ return array(
     'MagnusBilling configuration loaded.' => 'MagnusBilling configuration loaded.',
     'The DID routing type was selected.' => 'The DID routing type was selected.',
     'Trying a configured DID destination.' => 'Trying a configured DID destination.',
-    'Number after prefix_local' => 'Number after prefix_local',
+    'Number after prefix_local' => 'Number after prefix rule',
     'Plan used' => 'Plan used',
     'Rate per minute' => 'Rate per minute',
     'Connection charge' => 'Connection charge',
