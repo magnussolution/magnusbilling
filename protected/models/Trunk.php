@@ -72,6 +72,7 @@ class Trunk extends Model
             ['port', 'length', 'max' => 5],
             ['register_string', 'length', 'max' => 300],
             ['sip_config', 'length', 'max' => 500],
+            ['trunkcode', 'match', 'pattern' => '/^[a-zA-Z0-9-]+$/', 'message' => Yii::t('zii', 'The trunk name must contain only letters, numbers and hyphens.')],
             ['trunkcode', 'checkTrunkCode'],
             ['trunkcode', 'uniquePeerName'],
         ];
@@ -83,6 +84,15 @@ class Trunk extends Model
         if ($this->host == 'dynamic' && $this->trunkcode != $this->user) {
             $this->addError($attribute, Yii::t('zii', 'When host =dynamic the trunk name and username need be equal.'));
         }
+    }
+
+    public function beforeValidate()
+    {
+        if (isset($this->trunkcode)) {
+            $this->trunkcode = preg_replace('/ /', '-', $this->trunkcode);
+        }
+
+        return parent::beforeValidate();
     }
 
     /**

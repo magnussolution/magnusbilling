@@ -81,10 +81,6 @@ class TrunkController extends Controller
             $values['failover_trunk'] = $values['failover_trunk'] === 0 ? null : $values['failover_trunk'];
         }
 
-        if (isset($values['trunkcode'])) {
-            $values['trunkcode'] = preg_replace("/ /", "-", $values['trunkcode']);
-        }
-
         if (isset($values['allow'])) {
             $values['allow'] = preg_replace("/,0/", "", $values['allow']);
             $values['allow'] = preg_replace("/0,/", "", $values['allow']);
