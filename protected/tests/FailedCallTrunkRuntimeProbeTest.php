@@ -158,14 +158,15 @@ runtimeProbeAssert(
 );
 runtimeProbeAssert(
     $status['firewall']['blocked'] === true
-        && $status['firewall']['matches'][0]['ip'] === '198.51.100.0/24',
-    'CIDR firewall block'
+        && $status['firewall']['matches'][0]['ip'] === '198.51.100.0/24'
+        && $status['firewall']['source'] === 'fail2ban',
+    'CIDR Fail2ban block'
 );
 $allSql = implode("\n", $db->sql);
 runtimeProbeAssert(
     strpos($allSql, 'action IN (0,1)') !== false
         && strpos($allSql, 'id_server=:id_server') !== false,
-    'firewall query is scoped to active blocks and server'
+    'Fail2ban query is scoped to active blocks and server'
 );
 
 $unsafeDb = new FailedCallRuntimeProbeFakeDb;
@@ -220,6 +221,10 @@ runtimeProbeAssert(
         && strpos($source, 'http://') === false
         && strpos($source, 'ssh ') === false,
     'runtime probe must not use shell, HTTP or SSH'
+);
+runtimeProbeAssert(
+    strpos($source, "Yii::t('zii',") !== false,
+    'runtime diagnostic strings must pass through Yii::t'
 );
 
 echo "FailedCallTrunkRuntimeProbeTest OK\n";

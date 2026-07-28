@@ -68,7 +68,11 @@ var historyHtml = windowDefinition.renderHistory({
         isNextTrunk: false,
         trunk: {id: 277, name: 'sdsdsd'},
         raw: {code: 615, reason: '<img src=x onerror=alert(1)>'},
-        callerIdSent: {available: false},
+        callerIdSent: {
+            available: true,
+            value: '5511777777777',
+            source: 'pkg_magnus_sentinel_trunk_event.callerid'
+        },
         currentTrunkStatus: {
             status: 'unavailable',
             summary: 'Asterisk currently reports the trunk contact as unavailable.',
@@ -140,9 +144,16 @@ assert.strictEqual(
 );
 assert.ok(
     historyHtml.indexOf('Caller ID sent') !== -1 &&
+        historyHtml.indexOf('5511777777777') !== -1 &&
         historyHtml.indexOf('Current trunk status') !== -1 &&
-        historyHtml.indexOf('pkg_firewall') !== -1,
-    'history must show caller ID, current trunk state and firewall result'
+        historyHtml.indexOf('Fail2ban') !== -1 &&
+        historyHtml.indexOf('pkg_firewall') === -1,
+    'history must show caller ID, current trunk state and Fail2ban result'
+);
+assert.ok(
+    windowDefinition.renderCallerIdSent({available: false})
+        .indexOf('Not recorded for this attempt.') !== -1,
+    'empty event caller ID must be reported as unavailable'
 );
 assert.ok(
     historyHtml.indexOf('does not prove that it caused this call') !== -1,

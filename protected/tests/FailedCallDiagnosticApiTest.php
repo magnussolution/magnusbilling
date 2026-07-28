@@ -133,6 +133,7 @@ function failedDiagnosticEvent($code, $reason, $overrides = [])
         'event_time' => '2026-07-27 18:45:20',
         'id_trunk' => 255,
         'id_server' => 5,
+        'callerid' => '5511777777777',
         'response_code' => $code,
         'response_reason' => $reason,
         'trunk_name' => 'Trunk A',
@@ -183,7 +184,7 @@ function failedDiagnosticRuntimeStatus($status = 'available', $blocked = false)
                 'jail' => 'asterisk-iptables',
                 'serverId' => 5,
             ]] : [],
-            'source' => 'pkg_firewall',
+            'source' => 'fail2ban',
         ],
     ];
 }
@@ -265,8 +266,17 @@ failedDiagnosticAssert(
     'alerts must be explicitly current, not historical causality'
 );
 failedDiagnosticAssert(
-    $single['attempts'][0]['callerIdSent']['value'] === '5511999999999',
-    'final failed CDR caller ID is attached to the final observed attempt'
+    $single['attempts'][0]['callerIdSent']['value'] === '5511777777777',
+    'caller ID must come from the correlated trunk event'
+);
+failedDiagnosticAssert(
+    $single['attempts'][0]['callerIdSent']['source']
+        === 'pkg_magnus_sentinel_trunk_event.callerid',
+    'caller ID event source'
+);
+failedDiagnosticAssert(
+    strpos(implode(' ', $singleDb->sql), 'e.callerid') !== false,
+    'event query must select the per-attempt caller ID'
 );
 failedDiagnosticAssert(
     $single['attempts'][0]['currentTrunkStatus']['status'] === 'available',
@@ -282,6 +292,7 @@ $multipleDb->events = [
         'event_time' => '2026-07-27 18:45:21',
         'id_trunk' => 276,
         'trunk_name' => 'Trunk B',
+        'callerid' => '5511666666666',
     ]),
 ];
 $multiple = failedDiagnosticService(
@@ -312,12 +323,12 @@ failedDiagnosticAssert(
     'next observed trunk'
 );
 failedDiagnosticAssert(
-    $multiple['attempts'][0]['callerIdSent']['available'] === false,
-    'caller ID must not be invented for an earlier attempt'
+    $multiple['attempts'][0]['callerIdSent']['value'] === '5511777777777',
+    'first trunk attempt caller ID'
 );
 failedDiagnosticAssert(
-    $multiple['attempts'][1]['callerIdSent']['available'] === true,
-    'caller ID is proven for the final CDR trunk'
+    $multiple['attempts'][1]['callerIdSent']['value'] === '5511666666666',
+    'second trunk attempt may have a different caller ID'
 );
 failedDiagnosticAssert(
     count($multiple['operationalFindings']) === 2,
@@ -325,7 +336,7 @@ failedDiagnosticAssert(
 );
 failedDiagnosticAssert(
     $multiple['operationalFindings'][0]['key'] === 'trunk_ip_blocked',
-    'firewall block finding'
+    'Fail2ban block finding'
 );
 
 $collisionDb = new FailedCallDiagnosticFakeDb;
@@ -366,6 +377,14 @@ failedDiagnosticAssert(
 failedDiagnosticAssert(
     stripos(json_encode($noEvent), 'trunk was not') === false,
     'must not claim trunk was not called'
+);
+
+$serviceSource = file_get_contents(
+    dirname(__DIR__) . '/components/FailedCallDiagnosticService.php'
+);
+failedDiagnosticAssert(
+    strpos($serviceSource, "Yii::t('zii',") !== false,
+    'backend diagnostic strings must pass through Yii::t'
 );
 
 $expiredDb = new FailedCallDiagnosticFakeDb;

@@ -60,8 +60,8 @@ checkout acima.
 | `linkedid` | identificador Asterisk da árvore da chamada | não |
 | `correlation_id` | identificador de correlação dedicado | não existe |
 | `pkg_cdr_failed.sessionid` | coluna disponível, mas não alimentada no fluxo do piloto | 5.000/5.000 nulos na amostra |
-| `pkg_cdr_failed.callerid` | Caller ID persistido após a última tentativa que gerou o CDR failed | sim, somente para a tentativa final |
-| Caller ID das tentativas anteriores | pode ser reescrito por trunk e não existe no evento Sentinel | não |
+| `pkg_cdr_failed.callerid` | Caller ID final persistido no CDR failed | sim |
+| `pkg_magnus_sentinel_trunk_event.callerid` | Caller ID efetivamente registrado para cada tentativa de trunk | sim, por evento |
 
 O identificador comum é, portanto, de chamada de origem. Uma tentativa deve ser
 exposta com um identificador derivado apenas para o contrato, por exemplo
@@ -189,16 +189,16 @@ não é apresentada como causa histórica da chamada.
 
 O resultado diferencia `available`, `unavailable`, `no_contact`, `not_found`,
 `not_monitored`, trunk desativado e falha da própria verificação. IPs
-comprovados na configuração ou na saída do endpoint são consultados em
-`pkg_firewall`, no mesmo servidor, considerando como bloqueios atuais somente
-ações `0` e `1`. Entradas CIDR também são verificadas de forma limitada.
+comprovados na configuração ou na saída do endpoint são verificados no
+Fail2ban, usando internamente `pkg_firewall` no mesmo servidor e considerando
+como bloqueios atuais somente ações `0` e `1`. Entradas CIDR também são
+verificadas de forma limitada.
 
-O Caller ID é mostrado como comprovado apenas na tentativa final quando o trunk
-do último evento corresponde ao `id_trunk` do CDR e a lista de eventos não foi
-truncada. Nas tentativas anteriores o contrato retorna
-`not_persisted_for_this_attempt`; repetir o Caller ID final em todos os trunks
-seria uma inferência incorreta porque `cid_remove`, `cid_add`, CNL e hooks podem
-reescrevê-lo.
+O Caller ID é carregado diretamente de
+`pkg_magnus_sentinel_trunk_event.callerid` para cada tentativa. Isso permite
+mostrar valores diferentes por trunk depois de reescritas como `cid_remove`,
+`cid_add`, CNL ou hooks, sem reutilizar silenciosamente o Caller ID final do
+CDR. Um evento com o campo vazio retorna `event_callerid_empty`.
 
 ## Contrato proposto
 
@@ -253,7 +253,7 @@ Resposta proposta:
         "callerIdSent": {
           "available": true,
           "value": "5511999999999",
-          "source": "pkg_cdr_failed.callerid_final_attempt",
+          "source": "pkg_magnus_sentinel_trunk_event.callerid",
           "reason": null
         },
         "currentTrunkStatus": {
@@ -269,7 +269,7 @@ Resposta proposta:
             "blocked": false,
             "checkedIps": ["198.51.100.10"],
             "matches": [],
-            "source": "pkg_firewall"
+            "source": "fail2ban"
           }
         },
         "sentinelAlerts": []
@@ -287,7 +287,7 @@ Resposta proposta:
       "callerIdSent": {
         "available": true,
         "value": "5511999999999",
-        "source": "pkg_cdr_failed.callerid_final_attempt",
+        "source": "pkg_magnus_sentinel_trunk_event.callerid",
         "reason": null
       },
       "currentTrunkStatus": {
@@ -468,10 +468,9 @@ Implementado:
 - alertas atualmente ativos do Magnus Sentinel por trunk tentado, sempre
   rotulados como estado no momento do diagnóstico e nunca como prova causal;
 - estado atual de cada trunk via AMI, com comando fixo e limitado;
-- bloqueio atual do IP do provedor em `pkg_firewall`, restrito ao servidor da
+- bloqueio atual do IP do provedor no Fail2ban, restrito ao servidor da
   tentativa;
-- Caller ID comprovado na tentativa final e indisponibilidade explícita nas
-  tentativas em que o valor não foi persistido;
+- Caller ID comprovado por tentativa a partir do próprio evento correlacionado;
 - evidências, limitações e detalhes técnicos recolhidos;
 - seções “Detalhes técnicos” e “Limitações do diagnóstico” removidas da Window
   para priorizar a narrativa operacional;
