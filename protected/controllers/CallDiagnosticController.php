@@ -158,7 +158,8 @@ class CallDiagnosticController extends Controller
                 Yii::app()->db,
                 !empty(Yii::app()->session['isAdmin']),
                 (int) Yii::app()->session['id_user'],
-                8
+                8,
+                new SipIpAuthenticationProbe()
             );
             $result = call_user_func($callback, $service);
             MagnusLog::insertLOG(1, sprintf(
