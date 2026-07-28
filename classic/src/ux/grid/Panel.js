@@ -40,6 +40,7 @@ Ext.define('Ext.ux.grid.Panel', {
     filterableColumns: true,
     remoteFilter: true,
     extraButtons: [],
+    extraButtonsForm: [],
     labelPicture: t('Picture'),
     labelLandscape: t('Landscape'),
     buttonUpdateLot: true,

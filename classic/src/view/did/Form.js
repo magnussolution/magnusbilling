@@ -25,7 +25,7 @@ Ext.define('MBilling.view.did.Form', {
     initComponent: function () {
         var me = this;
 
-        me.extraButtons = [{
+        me.extraButtonsForm = [{
             xtype: 'button',
             text: t('Check DID'),
             iconCls: 'x-fa fa-stethoscope',

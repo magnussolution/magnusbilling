@@ -167,6 +167,9 @@ Ext.define('Ext.ux.form.Panel', {
         if (me.extraButtons && me.extraButtons.length && window.isTablet === false) {
             itemsTbar = Ext.Array.merge(me.extraButtons, itemsTbar);
         };
+        if (me.extraButtonsForm && me.extraButtonsForm.length) {
+            itemsTbar = Ext.Array.merge(me.extraButtonsForm, itemsTbar);
+        };
         me.hideTbar = Ext.isDefined(me.hideTbar) ? me.hideTbar : !me.allowCreate;
         me.hideBbar = me.dockedItems = [{
             xtype: 'toolbar',

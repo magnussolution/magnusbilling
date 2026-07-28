@@ -31,7 +31,7 @@ Ext.define('MBilling.view.sip.Form', {
             if (item.text == "t('Services')") haveServiceMenu = true;
         });
 
-        me.extraButtons = [{
+        me.extraButtonsForm = [{
             text: t('Check User'),
             iconCls: 'x-fa fa-stethoscope',
             handler: 'onCheckUser',
