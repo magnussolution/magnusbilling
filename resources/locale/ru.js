@@ -1206,4 +1206,8 @@ Locale.load({
     'Application error message': '',
     'Application error file': '',
     'Application error line': '',
+    'Confirm filter': 'Подтвердить фильтр',
+    'Send anyway': 'Всё равно отправить',
+    'Back': 'Назад',
+    'The Contains filter searches for the number in any position and cannot use the database index efficiently. In a large call history, this may require scanning many records, take longer, and increase the load on the server. Whenever possible, use Starting with or, preferably, Equal to. Choose Send anyway to run this filter, or Back to review your search.': 'Фильтр «Содержит» ищет номер в любой позиции и не может эффективно использовать индекс базы данных. При большом объёме истории звонков может потребоваться просмотр множества записей, что увеличит время поиска и нагрузку на сервер. По возможности используйте «Начинается с», а лучше — «Равно». Выберите «Всё равно отправить», чтобы применить фильтр, или «Назад», чтобы изменить параметры поиска.',
 });

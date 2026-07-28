@@ -1709,4 +1709,7 @@ br Português': '',
     'Application error message': '',
     'Application error file': '',
     'Application error line': '',
+    'Confirm filter': 'Confirm filter',
+    'Send anyway': 'Send anyway',
+    'The Contains filter searches for the number in any position and cannot use the database index efficiently. In a large call history, this may require scanning many records, take longer, and increase the load on the server. Whenever possible, use Starting with or, preferably, Equal to. Choose Send anyway to run this filter, or Back to review your search.': 'The Contains filter searches for the number in any position and cannot use the database index efficiently. In a large call history, this may require scanning many records, take longer, and increase the load on the server. Whenever possible, use Starting with or, preferably, Equal to. Choose Send anyway to run this filter, or Back to review your search.',
 });

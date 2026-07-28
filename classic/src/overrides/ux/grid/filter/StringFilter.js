@@ -75,13 +75,35 @@ Ext.define('Overrides.ux.grid.filter.StringFilter', {
             e.stopEvent();
             return;
         }
-        type.setChecked(true);
+        type.setChecked(true, me.warnContains && field.itemId === 'contains');
         if (type == me.fields.equal) {
             me.fields.starting.setChecked(false, true);
             me.fields.ends.setChecked(false, true);
             me.fields.contains.setChecked(false, true);
         } else {
             me.fields.equal.setChecked(false, true);
+        }
+        if (me.warnContains && field.itemId === 'contains') {
+            Ext.Msg.show({
+                title: t('Confirm filter'),
+                message: t('The Contains filter searches for the number in any position and cannot use the database index efficiently. In a large call history, this may require scanning many records, take longer, and increase the load on the server. Whenever possible, use Starting with or, preferably, Equal to. Choose Send anyway to run this filter, or Back to review your search.'),
+                buttons: Ext.Msg.OKCANCEL,
+                buttonText: {
+                    ok: t('Send anyway'),
+                    cancel: t('Back')
+                },
+                icon: Ext.Msg.WARNING,
+                fn: function(buttonId) {
+                    if (buttonId !== 'ok') {
+                        type.setChecked(false, true);
+                        field.setValue('');
+                        me.setActive(me.isActivatable(), true);
+                        return;
+                    }
+                    me.onCheckChange();
+                }
+            });
+            return;
         }
         this.fireEvent('update', this);
     },

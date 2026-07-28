@@ -61,6 +61,10 @@ Ext.define('MBilling.view.callFailed.List', {
         }, {
             header: t('Number'),
             dataIndex: 'calledstation',
+            filter: {
+                type: 'string',
+                warnContains: true
+            },
             flex: 3
         }, {
             header: t('Destination'),

@@ -1198,4 +1198,8 @@ Locale.load({
     'Application error message': '',
     'Application error file': '',
     'Application error line': '',
+    'Confirm filter': 'Confirmar filtro',
+    'Send anyway': 'Enviar de todos modos',
+    'Back': 'Volver',
+    'The Contains filter searches for the number in any position and cannot use the database index efficiently. In a large call history, this may require scanning many records, take longer, and increase the load on the server. Whenever possible, use Starting with or, preferably, Equal to. Choose Send anyway to run this filter, or Back to review your search.': 'El filtro Contiene busca el número en cualquier posición y no puede utilizar eficientemente el índice de la base de datos. En un historial con muchas llamadas, esto puede requerir revisar numerosos registros, aumentar el tiempo de búsqueda y generar más carga en el servidor. Siempre que sea posible, utilice Empieza por o, preferiblemente, Igual a. Seleccione Enviar de todos modos para ejecutar este filtro o Volver para revisar la búsqueda.',
 });

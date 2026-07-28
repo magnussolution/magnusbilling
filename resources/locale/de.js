@@ -1137,4 +1137,8 @@ Locale.load({
     'Process errors': 'Prozessfehler',
     'Ready to dial': 'Bereit zum Wählen',
     'Blocked before Dial': 'Vor dem Wählen gestoppt',
+    'Confirm filter': 'Filter bestätigen',
+    'Send anyway': 'Trotzdem senden',
+    'Back': 'Zurück',
+    'The Contains filter searches for the number in any position and cannot use the database index efficiently. In a large call history, this may require scanning many records, take longer, and increase the load on the server. Whenever possible, use Starting with or, preferably, Equal to. Choose Send anyway to run this filter, or Back to review your search.': 'Der Filter Enthält sucht die Nummer an einer beliebigen Position und kann den Datenbankindex nicht effizient verwenden. Bei einem umfangreichen Anrufverlauf müssen möglicherweise viele Datensätze durchsucht werden. Dadurch kann die Suche länger dauern und die Serverlast steigen. Verwenden Sie nach Möglichkeit Beginnt mit oder vorzugsweise Gleich. Wählen Sie Trotzdem senden, um den Filter auszuführen, oder Zurück, um die Suche zu überarbeiten.',
 });
