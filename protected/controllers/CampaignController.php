@@ -332,58 +332,27 @@ class CampaignController extends Controller
         if (! isset($campaign->id)) {
             echo json_encode([
                 $this->nameSuccess => false,
-                $this->nameMsg     => 'Please Select one campaign',
+                $this->nameMsg     => Yii::t('zii', 'Select a saved campaign before starting the dispatch.'),
             ]);
             return;
         }
 
-        if (! function_exists('exec')) {
-            echo json_encode([
-                $this->nameSuccess => false,
-                $this->nameMsg     => 'The PHP exec function is disabled',
-            ]);
-            return;
-        }
+        $isSms = (int) $campaign->type === 0;
+        Yii::import($isSms ? 'application.commands.SmsCommand' : 'application.commands.MassiveCallCommand');
 
-        $phpBinaryCandidates = [
-            defined('PHP_BINARY') ? PHP_BINARY : '',
-            defined('PHP_BINDIR') ? PHP_BINDIR . DIRECTORY_SEPARATOR . 'php' : '',
-            '/usr/bin/php',
-        ];
-        $phpBinary = '';
-
-        foreach ($phpBinaryCandidates as $phpBinaryCandidate) {
-            if ($phpBinaryCandidate !== '' && is_executable($phpBinaryCandidate)) {
-                $phpBinary = $phpBinaryCandidate;
-                break;
-            }
-        }
-
-        if ($phpBinary === '') {
-            echo json_encode([
-                $this->nameSuccess => false,
-                $this->nameMsg     => 'PHP CLI executable not found',
-            ]);
-            return;
-        }
-
-        $command = escapeshellarg($phpBinary)
-            . ' '
-            . escapeshellarg(dirname(__FILE__) . '/../../cron.php')
-            . ' massivecall '
-            . escapeshellarg((string) $idCampaign);
-
-        $output   = [];
-        $exitCode = 0;
-        exec($command . ' 2>&1', $output, $exitCode);
-
-        $message = trim(implode("\n", $output));
+        ob_start();
+        $campaignCommand = $isSms
+            ? new SmsCommand('sms', new CConsoleCommandRunner())
+            : new MassiveCallCommand('massivecall', new CConsoleCommandRunner());
+        $result           = $campaignCommand->run([$idCampaign]);
+        $message          = trim(ob_get_clean());
+        $exitCode         = is_int($result) ? $result : 0;
 
         echo json_encode([
             $this->nameSuccess => $exitCode === 0,
             $this->nameMsg     => $exitCode === 0
-            ? ($message !== '' ? $message : 'Campaign processed by massivecall')
-            : ($message !== '' ? $message : 'Error processing campaign'),
+            ? ($message !== '' ? $message : Yii::t('zii', 'The campaign was processed successfully.'))
+            : ($message !== '' ? $message : Yii::t('zii', 'The campaign could not be processed. Review its settings and try again.')),
         ]);
     }
 }

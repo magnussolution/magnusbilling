@@ -22,6 +22,16 @@ class MassiveCallCommand extends ConsoleCommand
 {
     public function run($args)
     {
+        $lockPath = sys_get_temp_dir() . '/magnusbilling-campaign-dispatch.lock';
+        $lock     = @fopen($lockPath, 'c');
+        if ($lock !== false) {
+            @chmod($lockPath, 0666);
+        }
+        if ($lock === false || ! flock($lock, LOCK_EX | LOCK_NB)) {
+            echo Yii::t('zii', 'Another campaign dispatch is already in progress. Wait a moment and try again.') . "\n";
+            return 1;
+        }
+
         $config         = LoadConfig::getConfig();
         $UNIX_TIMESTAMP = "UNIX_TIMESTAMP(";
         $idCampaign     = isset($args[0]) ? (int) $args[0] : 0;
@@ -51,7 +61,59 @@ class MassiveCallCommand extends ConsoleCommand
         ]);
 
         if ($idCampaign > 0 && ! isset($modelCampaign[0])) {
-            echo "Campaign is not active in the current schedule\n";
+            $campaign = Campaign::model()->findByPk($idCampaign);
+            $reasons  = [];
+
+            if (! isset($campaign->id)) {
+                $reasons[] = Yii::t('zii', 'The selected campaign no longer exists. Refresh the list and select another campaign.');
+            } else {
+                if ((int) $campaign->status !== 1) {
+                    $reasons[] = Yii::t('zii', 'Activate the campaign in the Status field.');
+                }
+                if ((int) $campaign->type !== 1) {
+                    $reasons[] = Yii::t('zii', 'Change the campaign Type to Voice.');
+                }
+                if ((int) $campaign->frequency <= 0) {
+                    $reasons[] = Yii::t('zii', 'Set the campaign Frequency to a value greater than zero.');
+                }
+                if ((int) $campaign->{$name_day} !== 1) {
+                    $reasons[] = Yii::t(
+                        'zii',
+                        'Enable {day} in the campaign schedule.',
+                        ['{day}' => Yii::t('zii', ucfirst($name_day))]
+                    );
+                }
+                if ($campaign->startingdate > date('Y-m-d H:i:s')) {
+                    $reasons[] = Yii::t(
+                        'zii',
+                        'The campaign starts on {date}. Wait until this date or change the Start date.',
+                        ['{date}' => $campaign->startingdate]
+                    );
+                }
+                if ($campaign->expirationdate <= date('Y-m-d H:i:s')) {
+                    $reasons[] = Yii::t(
+                        'zii',
+                        'The campaign expired on {date}. Change the Expiration date.',
+                        ['{date}' => $campaign->expirationdate]
+                    );
+                }
+                if ($campaign->daily_start_time > date('H:i:s')) {
+                    $reasons[] = Yii::t(
+                        'zii',
+                        'Calling starts at {time}. Wait until this time or change the Daily start time.',
+                        ['{time}' => $campaign->daily_start_time]
+                    );
+                }
+                if ($campaign->daily_stop_time <= date('H:i:s')) {
+                    $reasons[] = Yii::t(
+                        'zii',
+                        'Calling ended at {time}. Change the Daily stop time to a later time.',
+                        ['{time}' => $campaign->daily_stop_time]
+                    );
+                }
+            }
+
+            echo implode("\n", $reasons) . "\n";
             return 1;
         }
 
@@ -132,9 +194,10 @@ class MassiveCallCommand extends ConsoleCommand
                 $sleep = $campaign->frequency / 60;
             }
 
-            $i         = 0;
-            $ids       = [];
-            $sleepNext = 1;
+            $i           = 0;
+            $callsQueued = 0;
+            $ids         = [];
+            $sleepNext   = 1;
 
             foreach ($modelPhoneNumber as $phone) {
                 $ids[] = $phone->id;
@@ -277,6 +340,7 @@ class MassiveCallCommand extends ConsoleCommand
                 $reportValues .= '(' . $campaign->id . ', ' . $phone->id . ', ' . $id_user . ', ' . $idTrunk . ' , ' . time() . '),';
 
                 AsteriskAccess::generateCallFile($call, $sleepNext);
+                $callsQueued++;
 
                 if ($campaign->frequency <= 60) {
                     $sleepNext += $sleep;
@@ -291,7 +355,14 @@ class MassiveCallCommand extends ConsoleCommand
             if (strlen($reportValues)) {
                 CampaignReport::insertReport(substr($reportValues, 0, -1));
             }
-            echo "Campain " . $campaign->name . " sent " . $i . " calls \n\n";
+            echo Yii::t(
+                'zii',
+                'Campaign "{campaign}" was processed. Calls queued: {count}.',
+                [
+                    '{campaign}' => $campaign->name,
+                    '{count}'    => $callsQueued,
+                ]
+            ) . "\n\n";
         }
     }
 }

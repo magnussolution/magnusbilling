@@ -160,7 +160,7 @@ Ext.define('MBilling.view.campaign.Controller', {
                         Ext.ux.Alert.alert(me.titleSuccess, response[me.nameMsgRequest], 'success');
                     } else {
                         var errors = Helper.Util.convertErrorsJsonToString(response[me.nameMsgRequest]);
-                        Ext.ux.Alert.alert(me.titleSuccess, errors, 'error');
+                        Ext.ux.Alert.alert(me.titleError, errors, 'error');
                     }
                 }
             });
