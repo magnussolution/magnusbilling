@@ -81,6 +81,72 @@ class CallDiagnosticController extends Controller
         });
     }
 
+    public function actionCdrFailed()
+    {
+        $this->requirePost();
+        $keys = array_keys($_POST);
+        $csrfTokenName = Yii::app()->request->csrfTokenName;
+        if ($csrfTokenName !== null && $csrfTokenName !== '') {
+            $keys = array_values(array_diff($keys, [$csrfTokenName]));
+        }
+        sort($keys);
+        if ($keys !== ['cdrFailedId']) {
+            $this->respond(
+                false,
+                null,
+                Yii::t('zii', 'Only cdrFailedId is accepted.'),
+                422
+            );
+        }
+        $cdrFailedId = filter_var(
+            Yii::app()->request->getPost('cdrFailedId'),
+            FILTER_VALIDATE_INT,
+            ['options' => ['min_range' => 1]]
+        );
+        if ($cdrFailedId === false) {
+            $this->respond(
+                false,
+                null,
+                Yii::t('zii', 'Invalid diagnostic input.'),
+                422
+            );
+        }
+
+        try {
+            $service = new FailedCallDiagnosticService(Yii::app()->db);
+            $result = $service->diagnose((int) $cdrFailedId);
+            if ($result === null) {
+                $this->respond(
+                    false,
+                    null,
+                    Yii::t('zii', 'Failed CDR was not found.'),
+                    404
+                );
+            }
+            MagnusLog::insertLOG(1, sprintf(
+                'Failed CDR diagnostic admin=%d cdr_failed=%d',
+                (int) Yii::app()->session['id_user'],
+                (int) $cdrFailedId
+            ));
+            $this->respond(true, $result);
+        } catch (Exception $e) {
+            Yii::log(
+                'Failed CDR diagnostic failed: ' . $e->getMessage(),
+                CLogger::LEVEL_ERROR,
+                'callDiagnostic'
+            );
+            $this->respond(
+                false,
+                null,
+                Yii::t(
+                    'zii',
+                    'The diagnostic could not be completed safely.'
+                ),
+                500
+            );
+        }
+    }
+
     private function runDiagnostic($type, $entityId, $callback)
     {
         try {

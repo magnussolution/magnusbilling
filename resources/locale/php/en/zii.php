@@ -498,4 +498,7 @@ return array(
     'Context' => 'Context',
     'Multiples IPs' => 'Multiples IPs',
     'Unknown' => 'Unknown',
+    'Only cdrFailedId is accepted.' => 'Only cdrFailedId is accepted.',
+    'Failed CDR was not found.' => 'Failed CDR was not found.',
+    'This legacy call detail action is disabled. Use Diagnose call.' => 'This legacy call detail action is disabled. Use Diagnose call.',
 );

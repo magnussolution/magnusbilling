@@ -319,4 +319,7 @@ return array(
     'Context' => 'Контекст',
     'Multiples IPs' => 'Несколько IP',
     'Unknown' => 'Неизвестно',
+    'Only cdrFailedId is accepted.' => 'Допускается только cdrFailedId.',
+    'Failed CDR was not found.' => 'Не удалось найти CDR неудачного вызова.',
+    'This legacy call detail action is disabled. Use Diagnose call.' => 'Устаревшее действие отключено. Используйте диагностику вызова.',
 );
