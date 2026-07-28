@@ -31,7 +31,22 @@ class FailedCallDiagnosticFakeCommand
     public function queryAll()
     {
         if (strpos($this->sql, 'FROM pkg_magnus_sentinel_trunk_event e') !== false) {
-            return $this->db->events;
+            return array_values(array_filter(
+                $this->db->events,
+                function ($event) {
+                    if (isset($this->params[':id_server'])) {
+                        return (int) $event['id_server']
+                            === (int) $this->params[':id_server'];
+                    }
+                    if (strpos($this->sql, 'e.id_server IS NULL') !== false) {
+                        return $event['id_server'] === null;
+                    }
+                    return true;
+                }
+            ));
+        }
+        if (strpos($this->sql, 'FROM pkg_magnus_sentinel_incident') !== false) {
+            return $this->db->incidents;
         }
         return [];
     }
@@ -48,9 +63,15 @@ class FailedCallDiagnosticFakeCommand
             if ($table === 'pkg_magnus_sentinel_component_health') {
                 return $this->db->healthAvailable ? 1 : 0;
             }
+            if ($table === 'pkg_magnus_sentinel_incident') {
+                return $this->db->incidentAvailable ? 1 : 0;
+            }
         }
         if (strpos($this->sql, 'MIN(event_time)') !== false) {
             return $this->db->earliestEventAt;
+        }
+        if (strpos($this->sql, 'UTC_TIMESTAMP(6)') !== false) {
+            return $this->db->utcNow;
         }
         return false;
     }
@@ -60,9 +81,12 @@ class FailedCallDiagnosticFakeDb
 {
     public $cdr;
     public $events = [];
+    public $incidents = [];
     public $sentinelAvailable = true;
     public $healthAvailable = true;
+    public $incidentAvailable = true;
     public $earliestEventAt = '2026-07-23 12:00:00';
+    public $utcNow = '2026-07-28 12:00:00.000000';
     public $sql = [];
 
     public function createCommand($sql)
@@ -116,6 +140,23 @@ function failedDiagnosticEvent($code, $reason, $overrides = [])
     ], $overrides);
 }
 
+function failedDiagnosticIncident($overrides = [])
+{
+    return array_merge([
+        'id' => 7001,
+        'incident_type' => 'trunk_response_degradation',
+        'state' => 'new',
+        'severity' => 'warning',
+        'entity_id' => 255,
+        'first_seen' => '2026-07-28 11:45:00.000000',
+        'last_seen' => '2026-07-28 11:59:00.000000',
+        'occurrence_count' => 4,
+        'incident_json' => json_encode([
+            'summary' => 'Increase in unknown trunk responses.',
+        ]),
+    ], $overrides);
+}
+
 function failedDiagnosticService($db, $status = 'HEALTHY')
 {
     return new FailedCallDiagnosticService($db, function () use ($status) {
@@ -149,15 +190,38 @@ assertClassification(504, 'Gateway Timeout', 'timeout');
 assertClassification(617, 'Unknown', 'internal_unknown');
 assertClassification(701, 'Unexpected', 'unknown');
 
+date_default_timezone_set('America/Sao_Paulo');
+
 $singleDb = new FailedCallDiagnosticFakeDb;
 $singleDb->cdr = failedDiagnosticCdr();
 $singleDb->events = [failedDiagnosticEvent(486, 'Busy Here')];
+$singleDb->incidents = [failedDiagnosticIncident()];
 $single = failedDiagnosticService($singleDb)->diagnose(123);
 failedDiagnosticAssert($single['status'] === 'confirmed', 'single event status');
 failedDiagnosticAssert(count($single['attempts']) === 1, 'single event count');
 failedDiagnosticAssert(
     $single['lastObservedResult']['classificationKey'] === 'busy',
     'single event classification'
+);
+failedDiagnosticAssert(
+    $single['history']['invite']['source'] === 'uniqueid_epoch',
+    'invite must come from the uniqueid epoch'
+);
+failedDiagnosticAssert(
+    $single['history']['invite']['unixTimestamp'] === 1785188714,
+    'uniqueid integer part is the invite Unix timestamp'
+);
+failedDiagnosticAssert(
+    $single['history']['entries'][0]['secondsAfterInvite'] === 6,
+    'first response interval from INVITE'
+);
+failedDiagnosticAssert(
+    count($single['history']['entries'][0]['sentinelAlerts']) === 1,
+    'active Sentinel alert is attached to the attempted trunk'
+);
+failedDiagnosticAssert(
+    $single['trunkAlerts']['scope'] === 'active_now',
+    'alerts must be explicitly current, not historical causality'
 );
 
 $multipleDb = new FailedCallDiagnosticFakeDb;
@@ -180,6 +244,34 @@ failedDiagnosticAssert(
 failedDiagnosticAssert(
     $multiple['lastObservedResult']['classificationKey'] === 'busy',
     'ordered last result'
+);
+failedDiagnosticAssert(
+    $multiple['history']['entries'][1]['secondsAfterPrevious'] === 1,
+    'interval between attempts'
+);
+failedDiagnosticAssert(
+    $multiple['history']['entries'][1]['isNextTrunk'] === true,
+    'next observed trunk'
+);
+
+$collisionDb = new FailedCallDiagnosticFakeDb;
+$collisionDb->cdr = failedDiagnosticCdr(['id_server' => 5]);
+$collisionDb->events = [
+    failedDiagnosticEvent(486, 'Busy Here'),
+    failedDiagnosticEvent(617, 'Unknown', [
+        'id' => 5000002,
+        'id_server' => 6,
+        'server_name' => 'Server 2',
+    ]),
+];
+$collision = failedDiagnosticService($collisionDb)->diagnose(123);
+failedDiagnosticAssert(
+    count($collision['attempts']) === 1,
+    'same uniqueid from another server must not enter the call history'
+);
+failedDiagnosticAssert(
+    $collision['evidence']['correlation'] === 'exact_uniqueid_server',
+    'correlation includes the CDR server'
 );
 
 $missingDb = new FailedCallDiagnosticFakeDb;
@@ -250,8 +342,16 @@ failedDiagnosticAssert(
     'indexed correlation'
 );
 failedDiagnosticAssert(
+    strpos($allSql, 'AND e.id_server=:id_server') !== false,
+    'correlation must be constrained to the CDR server'
+);
+failedDiagnosticAssert(
     strpos($allSql, 'ORDER BY e.event_time ASC,e.id ASC LIMIT 51') !== false,
     'bounded deterministic order'
+);
+failedDiagnosticAssert(
+    strpos($allSql, 'FORCE INDEX (ix_incident_entity)') !== false,
+    'active trunk alerts use the entity index'
 );
 
 $malicious = '<img src=x onerror=alert(1)>';

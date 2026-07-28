@@ -11,6 +11,11 @@ global.t = function(value) {
     return value;
 };
 global.Ext = {
+    Array: {
+        each: function(items, callback) {
+            (items || []).forEach(callback);
+        }
+    },
     define: function(name, value) {
         if (name === 'MBilling.view.callFailed.DiagnosticWindow') {
             windowDefinition = value;
@@ -47,6 +52,60 @@ assert.strictEqual(
     windowDefinition.encode('<img src=x onerror=alert(1)>'),
     '&lt;img src=x onerror=alert(1)&gt;',
     'provider reason must be HTML encoded'
+);
+var historyHtml = windowDefinition.renderHistory({
+    invite: {
+        at: '2026-07-24 13:22:39',
+        unixTimestamp: 1784910159,
+        uniqueid: '1784910159.159421',
+        server: {id: 1, name: 'MASTER'}
+    },
+    entries: [{
+        sequence: 1,
+        eventTime: '2026-07-24 13:22:44',
+        secondsAfterInvite: 5,
+        secondsAfterPrevious: 5,
+        isNextTrunk: false,
+        trunk: {id: 277, name: 'sdsdsd'},
+        raw: {code: 615, reason: '<img src=x onerror=alert(1)>'},
+        sentinelAlerts: []
+    }, {
+        sequence: 2,
+        eventTime: '2026-07-24 13:22:48',
+        secondsAfterInvite: 9,
+        secondsAfterPrevious: 4,
+        isNextTrunk: true,
+        trunk: {id: 256, name: 'provider3'},
+        raw: {code: 615, reason: 'Unknown'},
+        sentinelAlerts: [{
+            severity: 'warning',
+            type: 'trunk_response_degradation',
+            summary: '<script>alert(1)</script>'
+        }]
+    }]
+}, {available: true});
+assert.ok(
+    historyHtml.indexOf('1784910159.159421') < historyHtml.indexOf('sdsdsd') &&
+        historyHtml.indexOf('sdsdsd') < historyHtml.indexOf('provider3'),
+    'history must render INVITE and trunk attempts chronologically'
+);
+assert.ok(
+    historyHtml.indexOf('4 seconds after the previous attempt') !== -1,
+    'history must explain elapsed time between attempts'
+);
+assert.strictEqual(
+    historyHtml.indexOf('<img src=x'),
+    -1,
+    'malicious provider reason must not render as markup'
+);
+assert.strictEqual(
+    historyHtml.indexOf('<script>alert(1)</script>'),
+    -1,
+    'malicious Sentinel summary must not render as markup'
+);
+assert.ok(
+    historyHtml.indexOf('does not prove that it caused this call') !== -1,
+    'active Sentinel alert must not be presented as causal proof'
 );
 
 var controllerSource = fs.readFileSync(

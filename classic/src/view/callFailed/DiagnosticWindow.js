@@ -82,6 +82,7 @@ Ext.define('MBilling.view.callFailed.DiagnosticWindow', {
             limitations = result.limitations || [],
             probable = result.probableCause || {},
             technical = result.technicalDetails || {},
+            history = result.history || {},
             html = '<section class="conclusion status-box status-' + me.safeClass(status) + '">' +
                 '<div class="status-label">' + me.encode(me.statusLabel(status)) + '</div>' +
                 '<h2>' + me.encode(result.summary || '') + '</h2>';
@@ -94,6 +95,8 @@ Ext.define('MBilling.view.callFailed.DiagnosticWindow', {
             html += '</ol>';
         }
         html += '</section>';
+
+        html += me.renderHistory(history, result.trunkAlerts || {});
 
         html += '<section><h3>' + me.encode(t('Call data')) + '</h3><table>' +
             me.row(t('Date'), call.startedAt) +
@@ -166,6 +169,113 @@ Ext.define('MBilling.view.callFailed.DiagnosticWindow', {
         me.renderSelectableHtml(html);
     },
 
+    renderHistory: function(history, trunkAlerts) {
+        var me = this,
+            invite = history.invite || {},
+            entries = history.entries || [],
+            serverName = invite.server && invite.server.name,
+            html = '<section class="call-history"><h3>' +
+                me.encode(t('Call history')) + '</h3><ol class="timeline">';
+
+        if (invite.at) {
+            html += '<li class="timeline-item invite"><div class="timeline-time">' +
+                me.encode(invite.at) + '</div><div class="timeline-card"><strong>' +
+                me.encode(t('INVITE received')) + '</strong><p>' +
+                me.formatText(
+                    'The call arrived at server {0}.',
+                    [serverName || t('Unknown')]
+                ) + '</p><p class="metadata">' + me.encode(t('Uniqueid')) + ': <code>' +
+                me.encode(invite.uniqueid) + '</code>';
+            if (invite.unixTimestamp !== null && invite.unixTimestamp !== undefined) {
+                html += ' · ' + me.encode(t('Unix timestamp')) + ': <code>' +
+                    me.encode(invite.unixTimestamp) + '</code>';
+            }
+            html += '</p></div></li>';
+        }
+
+        Ext.Array.each(entries, function(entry) {
+            var raw = entry.raw || {},
+                trunk = entry.trunk || {},
+                alerts = entry.sentinelAlerts || [],
+                interval = entry.secondsAfterPrevious,
+                intervalKey = 'seconds after the previous attempt';
+
+            if (entry.sequence === 1) {
+                interval = entry.secondsAfterInvite;
+                intervalKey = 'seconds after the INVITE';
+            }
+            html += '<li class="timeline-item attempt"><div class="timeline-time">' +
+                me.encode(entry.eventTime) + '</div><div class="timeline-card"><strong>' +
+                me.formatText('Attempt {0}: trunk {1}', [
+                    entry.sequence,
+                    trunk.name || ('#' + trunk.id)
+                ]) + '</strong>';
+            if (interval !== null && interval !== undefined) {
+                html += '<p class="elapsed">' + me.encode(interval) + ' ' +
+                    me.encode(t(intervalKey)) + '.</p>';
+            }
+            if (entry.isNextTrunk) {
+                html += '<p>' +
+                    me.encode(t('MagnusBilling then tried the next observed trunk.')) +
+                    '</p>';
+            }
+            html += '<p>' + me.formatText('The trunk returned {0} {1}.', [
+                raw.code,
+                raw.reason || t('Unknown')
+            ]) + '</p>' + me.renderTrunkAlertStatus(
+                alerts,
+                trunkAlerts.available
+            ) + '</div></li>';
+        });
+
+        if (!invite.at && !entries.length) {
+            html += '<li>' + me.encode(t('No correlated event was found.')) + '</li>';
+        }
+        return html + '</ol></section>';
+    },
+
+    renderTrunkAlertStatus: function(alerts, available) {
+        var me = this,
+            html;
+
+        if (!available) {
+            return '<p class="sentinel-alert unavailable">' +
+                me.encode(t('Sentinel alert status is unavailable.')) + '</p>';
+        }
+        if (!alerts.length) {
+            return '<p class="sentinel-alert none">' +
+                me.encode(t('At the time of this diagnostic, Magnus Sentinel has no active alert for this trunk.')) +
+                '</p>';
+        }
+        html = '<div class="sentinel-alert active"><p>' +
+            me.formatText(
+                'At the time of this diagnostic, Magnus Sentinel has {0} active alert(s) for this trunk.',
+                [alerts.length]
+            ) + '</p><ul>';
+        Ext.Array.each(alerts, function(alert) {
+            html += '<li><strong>' + me.encode(alert.severity || '') + '</strong> — ' +
+                me.encode(alert.type || '');
+            if (alert.summary) {
+                html += ': ' + me.encode(alert.summary);
+            }
+            html += '</li>';
+        });
+        return html + '</ul><p class="causality-warning">' +
+            me.encode(t('An active alert does not prove that it caused this call.')) +
+            '</p></div>';
+    },
+
+    formatText: function(template, values) {
+        var translated = String(t(template));
+        Ext.Array.each(values || [], function(value, index) {
+            translated = translated.replace(
+                new RegExp('\\{' + index + '\\}', 'g'),
+                String(value === undefined || value === null ? '' : value)
+            );
+        });
+        return this.encode(translated);
+    },
+
     statusLabel: function(status) {
         if (status === 'confirmed') return t('Confirmed');
         if (status === 'partial') return t('Partial');
@@ -207,6 +317,18 @@ Ext.define('MBilling.view.callFailed.DiagnosticWindow', {
             '.status-inconclusive{border-color:#616161;background:#f5f5f5}' +
             '.status-label{text-transform:uppercase;font-size:11px;font-weight:bold;letter-spacing:.08em}' +
             '.actions{font-weight:bold}.confidence{color:#666}' +
+            '.call-history{margin:18px 0}.timeline{list-style:none;margin:0;padding:0 0 0 18px;' +
+            'border-left:3px solid #d7dce2}.timeline-item{position:relative;margin:0 0 14px 0;padding-left:18px}' +
+            '.timeline-item:before{content:"";position:absolute;left:-25px;top:4px;width:11px;height:11px;' +
+            'border-radius:50%;background:#1976d2;border:3px solid #fff;box-shadow:0 0 0 1px #1976d2}' +
+            '.timeline-item.attempt:before{background:#ef6c00;box-shadow:0 0 0 1px #ef6c00}' +
+            '.timeline-time{color:#555;font-size:12px;font-weight:bold;margin-bottom:4px}' +
+            '.timeline-card{background:#f8fafc;border:1px solid #dfe4ea;border-radius:4px;padding:10px 12px}' +
+            '.timeline-card p{margin:6px 0}.metadata,.elapsed{color:#555;font-size:12px}' +
+            '.sentinel-alert{border-left:3px solid #78909c;padding:6px 9px;margin-top:9px!important;' +
+            'background:#eef3f5}.sentinel-alert.active{border-color:#ef6c00;background:#fff4e5}' +
+            '.sentinel-alert.none{border-color:#2e7d32;background:#edf7ee}' +
+            '.sentinel-alert ul{margin:5px 0;padding-left:20px}.causality-warning{font-size:12px;color:#6d4c41}' +
             'table{border-collapse:collapse;width:100%;margin:7px 0}' +
             'th,td{border:1px solid #ddd;padding:7px;text-align:left;vertical-align:top}' +
             'th{background:#f5f5f5}details{border-top:1px solid #ddd;padding:10px 0}' +
