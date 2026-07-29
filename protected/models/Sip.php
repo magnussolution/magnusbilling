@@ -135,6 +135,12 @@ class Sip extends Model
         }
         if ($this->host == 'dynamic') {
             $this->insecure = 'no';
+        } else {
+            $this->insecure = PjsipAuthenticationMode::normalizedInsecure(
+                $this->host,
+                $this->secret,
+                $this->insecure
+            );
         }
 
         $this->name        = trim($this->name);

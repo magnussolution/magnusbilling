@@ -220,6 +220,27 @@ class UpdateMysqlCommand extends CConsoleCommand
             $version = '8.0.0.5';
             $this->update($version);
         }
+
+        //2026-07-29
+        if ($version == '8.0.0.5') {
+            $this->logMessage('Applying database migration 8.0.0.5 -> 8.0.0.6.');
+            $affected = $this->executeDB(
+                "UPDATE pkg_sip
+                 SET insecure = 'port,invite'
+                 WHERE LOWER(TRIM(COALESCE(host, ''))) NOT IN ('', 'dynamic')
+                   AND TRIM(COALESCE(secret, '')) = ''
+                   AND LOWER(COALESCE(insecure, '')) NOT LIKE '%invite%'"
+            );
+            $this->logMessage(
+                'Normalized ' . (int) $affected
+                    . ' fixed-IP SIP account(s) for IP-only PJSIP authentication.'
+            );
+            $version = '8.0.0.6';
+            $this->update($version);
+
+            $this->logMessage('Regenerating PJSIP users after authentication migration.');
+            AsteriskAccess::instance()->generateSipPeers();
+        }
     }
 
     private function columnExists($table, $column)

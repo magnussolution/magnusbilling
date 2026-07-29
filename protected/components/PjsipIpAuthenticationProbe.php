@@ -62,6 +62,11 @@ class PjsipIpAuthenticationProbe
 
         $identify = $this->identify($output, $hostData['ip']);
         $inboundAuth = $this->inboundAuth($output);
+        $expectsIpOnly = PjsipAuthenticationMode::isIpOnly([
+            'host' => $host,
+            'insecure' => isset($sip['insecure']) ? $sip['insecure'] : '',
+            'secret' => ! empty($sip['hasSecret']) ? '__configured__' : '',
+        ]);
 
         if (! $identify['present'] || ! $identify['matchesIp']) {
             return $this->step(
@@ -87,15 +92,39 @@ class PjsipIpAuthenticationProbe
             );
         }
 
-        if ($inboundAuth !== null) {
+        if ($inboundAuth !== null && $expectsIpOnly) {
             return $this->step(
                 'PJSIP_IP_INBOUND_AUTH_ENABLED',
                 'warning',
                 'The endpoint matches the configured IP, but inbound authentication is also enabled. Asterisk will request credentials with 401 even after identifying the endpoint by IP.',
-                'If this trusted account must authenticate only by IP, remove its inbound authentication association and reload PJSIP. Keep authentication enabled if the client must also send credentials.',
+                'Regenerate the MagnusBilling PJSIP configuration so this IP-only account is loaded without inbound authentication.',
                 $host,
                 $identify['value'],
                 $inboundAuth
+            );
+        }
+
+        if ($inboundAuth !== null) {
+            return $this->step(
+                'PJSIP_IP_AUTH_WITH_CREDENTIALS',
+                'passed',
+                'The endpoint is identified by IP and is intentionally configured to require inbound credentials.',
+                'No authentication change is required.',
+                $host,
+                $identify['value'],
+                $inboundAuth
+            );
+        }
+
+        if (! $expectsIpOnly) {
+            return $this->step(
+                'PJSIP_IP_INBOUND_AUTH_MISSING',
+                'warning',
+                'The fixed-IP endpoint is configured to require credentials, but Asterisk has no inbound authentication loaded for it.',
+                'Regenerate the MagnusBilling PJSIP configuration and verify that the account password is valid.',
+                $host,
+                $identify['value'],
+                Yii::t('zii', 'Not configured')
             );
         }
 

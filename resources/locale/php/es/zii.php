@@ -1358,6 +1358,13 @@ return array(
         'Select a saved campaign before starting the dispatch.' => 'Seleccione una campaña guardada antes de iniciar las llamadas.',
         'The campaign was processed successfully.' => 'La campaña fue procesada correctamente.',
         'The campaign could not be processed. Review its settings and try again.' => 'No se pudo procesar la campaña. Revise su configuración e inténtelo de nuevo.',
-        'Unknown' => 'Desconocido',
+    'Unknown' => 'Desconocido',
+    'The AGI diagnostic result could not be serialized.' => 'No se pudo serializar el resultado del diagnóstico del AGI.',
+    'Review the diagnostic data encoding and run the test again.' => 'Revise la codificación de los datos del diagnóstico y ejecute la prueba nuevamente.',
+    'Regenerate the MagnusBilling PJSIP configuration so this IP-only account is loaded without inbound authentication.' => 'Regenerar la configuración PJSIP desde MagnusBilling para cargar esta cuenta autenticada solo por IP sin autenticación entrante.',
+    'The endpoint is identified by IP and is intentionally configured to require inbound credentials.' => 'El endpoint se identifica por IP y está configurado intencionalmente para exigir credenciales entrantes.',
+    'No authentication change is required.' => 'No se requiere ningún cambio de autenticación.',
+    'The fixed-IP endpoint is configured to require credentials, but Asterisk has no inbound authentication loaded for it.' => 'El endpoint de IP fija está configurado para exigir credenciales, pero Asterisk no tiene cargada autenticación entrante para él.',
+    'Regenerate the MagnusBilling PJSIP configuration and verify that the account password is valid.' => 'Regenerar la configuración PJSIP desde MagnusBilling y verificar que la contraseña de la cuenta sea válida.',
 ) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
   + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php');

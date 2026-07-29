@@ -261,6 +261,13 @@ Call diagnostics
 * Missing optional media or Queue agents may be warnings when the production
   flow can continue. Missing required routing objects or an empty selected
   destination is a blocking error.
+* Fixed-IP SIP accounts are IP-only when ``insecure`` contains ``invite`` or
+  no password is stored. Their generated endpoint uses ``identify_by=ip`` and
+  has no inbound ``auth=``. Dynamic and explicitly credentialed accounts retain
+  username/password authentication.
+* AGI result serialization must produce exactly one ``MBILLING_RESULT`` line,
+  substitute invalid UTF-8, and return a minimal valid JSON error contract if
+  normal encoding fails.
 * Technical details exposed by the web diagnostic are administrator-only and
   must never contain SIP passwords, trunk credentials, API keys, DSNs, or
   other secrets.

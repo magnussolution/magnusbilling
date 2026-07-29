@@ -18,6 +18,12 @@ The database update from ``8.0.0.4`` to ``8.0.0.5`` in
 ``callDiagnostic`` module and grants read access to the default administrator
 group. No separate SQL script is required.
 
+The database update from ``8.0.0.5`` to ``8.0.0.6`` normalizes existing
+fixed-IP accounts without a password and regenerates the PJSIP user
+configuration. Accounts configured for authentication exclusively by IP use
+``identify/match`` with ``identify_by=ip`` and do not receive an inbound
+``auth=`` association. No manual edit of the generated PJSIP file is required.
+
 Check User
 ----------
 
@@ -122,6 +128,13 @@ authenticated administrator session. The web service starts the AGI process
 with validated arguments, an execution timeout and an output-size limit.
 Every user-facing backend message uses ``Yii::t('zii', ...)`` and its
 translation keys are maintained in ``resources/locale/php/LANG/zii.php``.
+
+The AGI emits exactly one line prefixed by ``MBILLING_RESULT``. Result
+serialization substitutes invalid UTF-8 safely and falls back to a minimal
+valid error contract if JSON encoding still fails. The web parser records
+bounded, credential-redacted evidence for malformed payloads, including byte
+length, JSON error, invalid-byte detection, extra output and construction
+stage.
 
 The main implementation files are:
 

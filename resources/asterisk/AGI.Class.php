@@ -358,10 +358,11 @@ class AGI extends PDO
         foreach (explode("\n", str_replace("\r\n", "\n", print_r($message, true))) as $msg) {
             if ($this->debugMode) {
                 $this->debugMessages[] = ['level' => (int) $level, 'message' => $msg];
-                echo 'MBILLING_DEBUG ' . json_encode(
-                    ['type' => 'verbose', 'level' => (int) $level, 'message' => $msg],
-                    JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-                ) . PHP_EOL;
+                echo 'MBILLING_DEBUG ' . self::encodeJsonSafely([
+                    'type' => 'verbose',
+                    'level' => (int) $level,
+                    'message' => $msg,
+                ]) . PHP_EOL;
                 continue;
             }
             $ret = $this->evaluate("VERBOSE \"$msg\" $level");
@@ -415,13 +416,64 @@ class AGI extends PDO
         if ($this->inTransaction()) {
             $this->rollBack();
         }
-        echo 'MBILLING_RESULT ' . json_encode([
+        if (! isset($context['resultStage'])) {
+            $context['resultStage'] = 'finishDebug';
+        }
+        echo 'MBILLING_RESULT ' . self::encodeDebugResult([
             'success' => $status === 'ready_to_dial',
             'status' => $status,
             'context' => $context,
             'messages' => $this->debugMessages,
             'events' => $this->debugEvents,
-        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL;
+        ]) . PHP_EOL;
+    }
+
+    public static function encodeDebugResult(array $payload)
+    {
+        $json = self::encodeJsonSafely($payload, false);
+        if ($json !== null) {
+            return $json;
+        }
+
+        $error = function_exists('json_last_error_msg')
+            ? json_last_error_msg()
+            : (string) json_last_error();
+        $fallback = [
+            'success' => false,
+            'status' => 'serialization_error',
+            'context' => [
+                'resultStage' => 'finishDebug.serialization',
+                'jsonError' => $error,
+            ],
+            'messages' => [],
+            'events' => [[
+                'component' => 'AGI',
+                'code' => 'AGI_RESULT_SERIALIZATION_FAILED',
+                'level' => 1,
+                'message' => 'The AGI diagnostic result could not be serialized.',
+                'context' => ['resultStage' => 'finishDebug.serialization'],
+            ]],
+        ];
+        $json = self::encodeJsonSafely($fallback, false);
+        return $json !== null
+            ? $json
+            : '{"success":false,"status":"serialization_error","context":{"resultStage":"finishDebug.serialization"},"messages":[],"events":[]}';
+    }
+
+    private static function encodeJsonSafely(array $payload, $useFallback = true)
+    {
+        $flags = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
+        if (defined('JSON_INVALID_UTF8_SUBSTITUTE')) {
+            $flags |= JSON_INVALID_UTF8_SUBSTITUTE;
+        }
+        $json = json_encode($payload, $flags);
+        if ($json !== false) {
+            return $json;
+        }
+        if (! $useFallback) {
+            return null;
+        }
+        return '{"type":"verbose","level":1,"message":"Diagnostic text contained invalid bytes and was safely replaced."}';
     }
 
     public function which($cmd, $checkpath = null)

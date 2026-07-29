@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 
 require_once dirname(__FILE__) . '/../../../yii/framework/yii.php';
+require_once dirname(__FILE__) . '/../../components/PjsipAuthenticationMode.php';
 require_once dirname(__FILE__) . '/../../components/PjsipIpAuthenticationProbe.php';
 
 class PjsipIpAuthenticationProbeTest extends TestCase
@@ -16,11 +17,55 @@ class PjsipIpAuthenticationProbeTest extends TestCase
                 . "Match: 149.34.49.47/32\n";
         });
 
-        $step = $probe->inspect(['name' => 'account-ip', 'host' => '149.34.49.47']);
+        $step = $probe->inspect([
+            'name' => 'account-ip',
+            'host' => '149.34.49.47',
+            'insecure' => 'port,invite',
+            'hasSecret' => 1,
+        ]);
 
         $this->assertSame('PJSIP_IP_INBOUND_AUTH_ENABLED', $step['resultCode']);
         $this->assertSame('warning', $step['status']);
         $this->assertStringContainsString('401', $step['message']);
+    }
+
+    public function testFixedIpCredentialAuthenticationIsNotReportedAsRisk()
+    {
+        $probe = new PjsipIpAuthenticationProbe(function ($name) {
+            return "Endpoint: {$name}/{$name}\n"
+                . "InAuth: {$name}_auth/{$name}\n"
+                . "Identify: {$name}_identify/{$name}\n"
+                . "Match: 149.34.49.47/32\n";
+        });
+
+        $step = $probe->inspect([
+            'name' => 'account-ip',
+            'host' => '149.34.49.47',
+            'insecure' => 'no',
+            'hasSecret' => 1,
+        ]);
+
+        $this->assertSame('PJSIP_IP_AUTH_WITH_CREDENTIALS', $step['resultCode']);
+        $this->assertSame('passed', $step['status']);
+    }
+
+    public function testMissingExpectedCredentialAuthenticationIsReported()
+    {
+        $probe = new PjsipIpAuthenticationProbe(function ($name) {
+            return "Endpoint: {$name}/{$name}\n"
+                . "Identify: {$name}_identify/{$name}\n"
+                . "Match: 149.34.49.47/32\n";
+        });
+
+        $step = $probe->inspect([
+            'name' => 'account-ip',
+            'host' => '149.34.49.47',
+            'insecure' => 'no',
+            'hasSecret' => 1,
+        ]);
+
+        $this->assertSame('PJSIP_IP_INBOUND_AUTH_MISSING', $step['resultCode']);
+        $this->assertSame('warning', $step['status']);
     }
 
     public function testDetectsIdentifyRestrictedToSourcePort()

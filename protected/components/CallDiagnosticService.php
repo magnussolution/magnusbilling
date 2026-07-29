@@ -62,6 +62,7 @@ class CallDiagnosticService
             'AGI_BLOCKED' => ['failed', 'The AGI stopped the call before Dial.', 'Review the last AGI validation message.'],
             'AGI_TIMEOUT' => ['failed', 'The AGI diagnostic timed out.', 'Review external routing checks and try again.'],
             'AGI_INVALID_OUTPUT' => ['failed', 'The AGI returned an invalid diagnostic result.', 'Review the AGI diagnostic log.'],
+            'AGI_RESULT_SERIALIZATION_FAILED' => ['failed', 'The AGI diagnostic result could not be serialized.', 'Review the diagnostic data encoding and run the test again.'],
             'OUTBOUND_READY' => ['passed', 'MagnusBilling can send this call to a trunk.', 'No configuration change is required.'],
             'DID_READY' => ['passed', 'The internal DID routing configuration is valid.', 'No configuration change is required.'],
             'ROUTING_LOOP_DETECTED' => ['failed', 'A routing loop was detected.', 'Remove the circular destination or forward.'],
@@ -154,7 +155,9 @@ class CallDiagnosticService
     public function outbound($sipId, $number, $callerId = null, $at = null)
     {
         $sip = $this->row(
-            'SELECT s.name,s.callerid,s.host,u.username
+            'SELECT s.name,s.callerid,s.host,s.insecure,
+                    CASE WHEN s.secret IS NULL OR s.secret = "" THEN 0 ELSE 1 END AS hasSecret,
+                    u.username
              FROM pkg_sip s
              JOIN pkg_user u ON u.id=s.id_user
              WHERE s.id=:id LIMIT 1',
@@ -327,24 +330,10 @@ class CallDiagnosticService
             ]);
         }
 
-        $agiResult = null;
-        $resultMarkerFound = false;
-        $jsonError = null;
-        foreach (preg_split('/\R/', $stdout) as $line) {
-            $normalizedLine = ltrim($line, "\xEF\xBB\xBF \t");
-            if (strpos($normalizedLine, 'MBILLING_RESULT ') === 0) {
-                $resultMarkerFound = true;
-                $decoded = json_decode(substr($normalizedLine, 16), true);
-                if (is_array($decoded)) {
-                    $agiResult = $decoded;
-                    $jsonError = null;
-                } else {
-                    $jsonError = function_exists('json_last_error_msg')
-                        ? json_last_error_msg()
-                        : (string) json_last_error();
-                }
-            }
-        }
+        $parsedOutput = self::parseAgiResultOutput($stdout, $stderr);
+        $agiResult = $parsedOutput['result'];
+        $resultMarkerFound = $parsedOutput['resultMarkerFound'];
+        $jsonError = $parsedOutput['jsonError'];
         if (! $agiResult) {
             $reason = self::classifyInvalidOutputFailure(
                 $resultMarkerFound,
@@ -357,12 +346,84 @@ class CallDiagnosticService
                 'exitCode' => $exitCode,
                 'resultMarkerFound' => $resultMarkerFound,
                 'jsonError' => $jsonError,
-                'stdout' => $this->limit($stdout),
-                'stderr' => $this->limit($stderr),
+                'rawPayloadBytes' => $parsedOutput['rawPayloadBytes'],
+                'rawPayload' => $this->safeRawPayload($parsedOutput['rawPayload']),
+                'invalidUtf8' => $parsedOutput['invalidUtf8'],
+                'additionalOutputAfterMarker' => $parsedOutput['additionalOutputAfterMarker'],
+                'warningOrErrorOutputDetected' => $parsedOutput['warningOrErrorOutputDetected'],
+                'payloadTruncated' => $outputLimitExceeded,
+                'resultStage' => $parsedOutput['resultStage'],
+                'stdoutBytes' => strlen($stdout),
+                'stderrBytes' => strlen($stderr),
+                'stdout' => $this->safeDiagnosticOutput($stdout),
+                'stderr' => $this->safeDiagnosticOutput($stderr),
             ]);
         }
 
         return $this->formatAgiResult($type, $agiResult, $stderr);
+    }
+
+    public static function parseAgiResultOutput($stdout, $stderr = '')
+    {
+        $lines = preg_split('/\\r\\n|\\n|\\r/', (string) $stdout);
+        $result = null;
+        $rawPayload = '';
+        $jsonError = null;
+        $markerFound = false;
+        $markerLine = -1;
+        foreach ($lines as $lineNumber => $line) {
+            $normalizedLine = ltrim($line, "\xEF\xBB\xBF \t");
+            if (strpos($normalizedLine, 'MBILLING_RESULT ') !== 0) {
+                continue;
+            }
+            $markerFound = true;
+            $markerLine = $lineNumber;
+            $rawPayload = substr($normalizedLine, 16);
+            $decoded = json_decode($rawPayload, true);
+            if (is_array($decoded)) {
+                $result = $decoded;
+                $jsonError = null;
+            } else {
+                $result = null;
+                $jsonError = function_exists('json_last_error_msg')
+                    ? json_last_error_msg()
+                    : (string) json_last_error();
+            }
+        }
+
+        $additional = [];
+        if ($markerLine >= 0) {
+            foreach (array_slice($lines, $markerLine + 1) as $line) {
+                if (trim($line) !== '') {
+                    $additional[] = $line;
+                }
+            }
+        }
+        $nonPayloadLines = [];
+        foreach ($lines as $line) {
+            $normalizedLine = ltrim($line, "\xEF\xBB\xBF \t");
+            if (strpos($normalizedLine, 'MBILLING_RESULT ') !== 0 && trim($line) !== '') {
+                $nonPayloadLines[] = $line;
+            }
+        }
+        $combinedOutput = (string) $stderr . "\n" . implode("\n", $nonPayloadLines);
+        return [
+            'result' => $result,
+            'resultMarkerFound' => $markerFound,
+            'rawPayload' => $rawPayload,
+            'rawPayloadBytes' => strlen($rawPayload),
+            'jsonError' => $jsonError,
+            'invalidUtf8' => $rawPayload !== '' && preg_match('//u', $rawPayload) !== 1,
+            'additionalOutputAfterMarker' => count($additional) > 0,
+            'warningOrErrorOutputDetected' => preg_match(
+                '/\\b(?:PHP\\s+)?(?:warning|notice|deprecated|fatal|parse)\\b/i',
+                $combinedOutput
+            ) === 1,
+            'resultStage' => is_array($result)
+                && isset($result['context']['resultStage'])
+                ? (string) $result['context']['resultStage']
+                : 'MBILLING_RESULT.decode',
+        ];
     }
 
     private function formatAgiResult($type, array $agiResult, $stderr)
@@ -742,12 +803,16 @@ class CallDiagnosticService
         $failureCause = $this->failureCause($code, $details);
         if ($failureCause !== null) {
             $logDetails = $details;
-            $logDetails['stdoutBytes'] = isset($details['stdout'])
+            $logDetails['stdoutBytes'] = isset($details['stdoutBytes'])
+                ? (int) $details['stdoutBytes']
+                : (isset($details['stdout'])
                 ? strlen((string) $details['stdout'])
-                : 0;
-            $logDetails['stderrBytes'] = isset($details['stderr'])
+                : 0);
+            $logDetails['stderrBytes'] = isset($details['stderrBytes'])
+                ? (int) $details['stderrBytes']
+                : (isset($details['stderr'])
                 ? strlen((string) $details['stderr'])
-                : 0;
+                : 0);
             unset($logDetails['stdout'], $logDetails['stderr']);
             Yii::log(
                 'Call diagnostic ID=' . $diagnosticId
@@ -833,6 +898,46 @@ class CallDiagnosticService
     private function limit($value)
     {
         return substr((string) $value, 0, 8192);
+    }
+
+    private function safeRawPayload($value)
+    {
+        return '<MBILLING_RESULT_PAYLOAD>'
+            . $this->safeDiagnosticOutput($value)
+            . '</MBILLING_RESULT_PAYLOAD>';
+    }
+
+    private function safeDiagnosticOutput($value)
+    {
+        $value = $this->limit($value);
+        $value = preg_replace(
+            '/\\b(password|passwd|secret|token|authorization|api[_-]?key|dsn)\\b'
+                . '(\\s*["\\\']?\\s*[:=]\\s*["\\\']?)[^\\s,"\\\'}]+/i',
+            '$1$2[REDACTED]',
+            $value
+        );
+        $value = preg_replace(
+            '~(\\b(?:mysql|pgsql|postgres|mongodb|redis)://[^:/\\s]+:)[^@\\s]+@~i',
+            '$1[REDACTED]@',
+            $value
+        );
+
+        $safe = '';
+        for ($index = 0, $length = strlen($value); $index < $length; $index++) {
+            $ord = ord($value[$index]);
+            if ($ord >= 32 && $ord <= 126) {
+                $safe .= $value[$index];
+            } elseif ($value[$index] === "\n") {
+                $safe .= '\\n';
+            } elseif ($value[$index] === "\r") {
+                $safe .= '\\r';
+            } elseif ($value[$index] === "\t") {
+                $safe .= '\\t';
+            } else {
+                $safe .= sprintf('\\x%02X', $ord);
+            }
+        }
+        return $safe;
     }
 
     private function resolvePhpCli()

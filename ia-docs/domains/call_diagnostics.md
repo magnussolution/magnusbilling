@@ -117,6 +117,34 @@ or free-form text.
 - Log the diagnostic ID with the classified failure and safe metadata, but do
   not duplicate raw stdout/stderr in the application log.
 
+## Fixed-IP PJSIP Authentication
+
+- `protected/components/PjsipAuthenticationMode.php` is the single decision
+  point for generated inbound authentication.
+- Dynamic accounts retain username/password authentication.
+- A fixed-IP account is IP-only when `insecure` contains `invite` (the MB7
+  chan_sip convention) or when its password is empty.
+- IP-only endpoints use `identify_by=ip`, an `identify/match` section, and no
+  auth section or endpoint `auth=`.
+- Fixed-IP accounts with a password and `insecure=no` intentionally retain
+  inbound credentials.
+- `Sip::beforeSave()` normalizes fixed-IP accounts without a password to
+  `port,invite`.
+- Update `8.0.0.5 -> 8.0.0.6` normalizes existing rows and calls
+  `AsteriskAccess::generateSipPeers()`. Administrators must not edit generated
+  PJSIP files manually.
+
+## JSON Result Contract
+
+- `AGI::finishDebug()` emits exactly one `MBILLING_RESULT` line.
+- `AGI::encodeDebugResult()` uses invalid-UTF-8 substitution and has a minimal
+  valid JSON fallback with `resultStage=finishDebug.serialization`.
+- `CallDiagnosticService::parseAgiResultOutput()` records marker presence,
+  raw payload byte length, exact JSON error, invalid UTF-8, extra output after
+  the marker, warning/error output, and result construction stage.
+- Raw failure evidence is bounded, non-printable bytes are escaped, and
+  credential-like values are redacted before logging or display.
+
 ## Database and Documentation Placement
 
 - Schema/update logic belongs in

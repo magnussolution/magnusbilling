@@ -1028,13 +1028,13 @@ class AsteriskAccess
                     $authUsername = strlen($sip->defaultuser) > 0 ? $sip->defaultuser : $sip->name;
 
                     // -------- AUTH --------
-                    $line  = "\n\n[" . $authName . "]\n";
-                    $line .= "type=auth\n";
-                    $line .= "auth_type=userpass\n";
-                    $line .= "username=" . $authUsername . "\n";
-                    if (strlen($sip->secret) > 0) {
-                        $line .= "password=" . $sip->secret . "\n";
-                    }
+                    // Fixed-IP accounts configured for IP-only authentication
+                    // are identified by identify/match and must not have auth=.
+                    $line = PjsipAuthenticationMode::authSection(
+                        $sip,
+                        $authName,
+                        $authUsername
+                    );
 
                     // -------- AOR --------
                     $line .= "\n[" . $aorName . "]\n";
@@ -1060,7 +1060,9 @@ class AsteriskAccess
                     $line .= "\n[" . $endpointName . "]\n";
                     $line .= "type=endpoint\n";
                     $line .= "transport=transport-udp\n";
-                    $line .= "identify_by=username,auth_username,ip\n";
+                    $line .= "identify_by="
+                        . PjsipAuthenticationMode::endpointIdentifyBy($sip)
+                        . "\n";
 
                     // accountcode -> set_var
                     $line .= "set_var=MB_ACC=" . $sip->idUser->username . "\n";
@@ -1130,7 +1132,7 @@ class AsteriskAccess
                     $line .= "callerid=" . $sip->callerid  . "\n";
 
                     // amarra auth/aor
-                    $line .= "auth=" . $authName . "\n";
+                    $line .= PjsipAuthenticationMode::endpointAuthLine($sip, $authName);
                     $line .= "aors=" . $aorName . "\n";
 
                     // -------- IDENTIFY (host fixo ou permit de host único) --------
