@@ -30,11 +30,44 @@ Options:
 This script supports Debian only. It installs Asterisk 20 with PJSIP and
 creates a clean MagnusBilling-compatible configuration. It never imports a
 MagnusBilling 7 /etc/asterisk directory.
+
+IMPORTANT - MIGRATION RESPONSIBILITY
+This script is provided as-is, without warranty. You are solely responsible
+for creating and verifying backups, validating compatibility, and reviewing
+the result of the migration. MagnusSolution and the MagnusBilling team are not
+responsible for data loss, service interruption, configuration problems, or
+any other damage resulting from an update performed with this script.
+
+If you prefer the migration to be planned and performed by the MagnusBilling
+team, contact MagnusSolution to purchase professional migration support:
+https://magnussolution.com | info@magnussolution.com
 EOF
 }
 
 die() { echo "ERROR: $*" >&2; exit 1; }
 log() { echo "[install_asterisk20] $*"; }
+
+show_migration_notice() {
+    cat >&2 <<'EOF'
+
+===============================================================================
+ IMPORTANT - READ BEFORE MIGRATING MAGNUSBILLING 7 TO MAGNUSBILLING 8
+===============================================================================
+ This script is provided as-is, without warranty. You are solely responsible
+ for creating and verifying backups, validating compatibility, and reviewing
+ the migration result.
+
+ MagnusSolution and the MagnusBilling team are not responsible for data loss,
+ service interruption, configuration problems, or any other damage resulting
+ from an update performed with this script.
+
+ If you want the MagnusBilling team to plan and perform the migration, paid
+ professional support is available:
+ https://magnussolution.com | info@magnussolution.com
+===============================================================================
+
+EOF
+}
 
 require_root() {
     [[ ${EUID} -eq 0 ]] || die "Run this installer as root."
@@ -420,6 +453,7 @@ fix_codec_execstack()
 
 main() {
     parse_args "$@"
+    show_migration_notice
     require_root
     install_dependencies
     prepare_user_and_directories

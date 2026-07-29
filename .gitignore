@@ -18,7 +18,12 @@ ck.pem
 Mbilling_7.sublime-workspace
 Mbilling_7.sublime-project
 resources/reports/*.log
-.github
+.github/*
+!.github/ISSUE_TEMPLATE/
+!.github/ISSUE_TEMPLATE/**
+!.github/PULL_REQUEST_TEMPLATE.md
+!.github/workflows/
+!.github/workflows/**
 /modern
 yellow-triton.jsonp
 yellow-triton.json
@@ -86,3 +91,7 @@ wiki/generate.php
 script/install_18.sh
 script/test.sql
 classic/src/Application.js
+sass/example
+sass/example/*
+bootstrap.css
+bootstrap.js
