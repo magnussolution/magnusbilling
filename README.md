@@ -1,78 +1,178 @@
 # MagnusBilling 8
 
-MagnusBilling 8 is the actively developed MagnusBilling release for Asterisk
-20 and PJSIP.
+Open-source billing, routing, and management platform for VoIP providers,
+call shops, and telephony services.
+
+MagnusBilling 8 combines a web administration panel, a billing engine, and
+Asterisk integration. New installations use **Asterisk 20** and **PJSIP**.
 
 > [!IMPORTANT]
-> MagnusBilling 7 entered maintenance mode on July 18, 2026. It receives
-> critical bug, security, and compatibility fixes through December 31, 2026,
-> but no new features. See the
-> [MagnusBilling 7 lifecycle policy](wiki/en/lifecycle.rst) and the
-> [MagnusBilling 7 to 8 migration guide](wiki/en/get_started/migrate_from_mb7.rst).
+> MagnusBilling 8 must be installed on a clean, dedicated server. Migrating
+> from MagnusBilling 7 is a side-by-side migration, not an in-place upgrade.
 
-Do you like this software? Star the project and become a
-[stargazer](https://github.com/magnussolution/magnusbilling8/stargazers).
+## What MagnusBilling provides
 
-## Getting Started
+- prepaid and postpaid customer billing;
+- rates, rate plans, trunks, providers, and call routing;
+- SIP/PJSIP accounts, DIDs, IVRs, queues, callbacks, and calling cards;
+- call detail records, reports, invoices, refills, and vouchers;
+- campaigns, call-shop operation, and reseller administration;
+- payment, messaging, and external-system integrations;
+- a web API and scheduled background processing.
 
-Video:
+The exact modules available depend on the installation, configuration, and
+licensed extensions.
 
-* [How to install MagnusBilling](https://www.youtube.com/watch?v=X3cj-dZPZHU)
-* [How to set-up basic configuration and make your first call](https://www.youtube.com/watch?v=7r1XCJnfdZA&t=73s)
+## Supported platform
 
-### Prerequisites
+The installer currently recognizes:
 
-Use a new server with a minimal Debian installation. Do not install
-MagnusBilling 8 over an existing MagnusBilling 7 server.
+- Debian 11, 12, and 13;
+- Ubuntu LTS 22.04, 24.04, and 26.04.
 
-Ubuntu support is planned but is not currently part of the supported
-installation path.
+The runtime includes PHP, MariaDB, Apache, Asterisk 20, PJSIP, Fail2ban, and
+host firewall configuration. A fresh virtual machine or dedicated server is
+strongly recommended.
 
+## Install
 
-### Installing
-```
+Connect to the new server as `root`, then run:
 
+```bash
 curl -O https://raw.githubusercontent.com/magnussolution/magnusbilling8/source/script/install.sh
 bash install.sh
-
 ```
 
-Existing MagnusBilling 7 installations must follow the
-[migration guide](wiki/en/get_started/migrate_from_mb7.rst). This is a
-side-by-side migration to a new server, not an in-place upgrade.
+The server may restart when installation finishes. Open `http://SERVER_IP` and
+sign in with the initial credentials shown by the installer. A standard new
+installation starts with:
 
+```text
+Username: root
+Password: magnus
+```
 
-## Built With
+Change this password immediately and limit panel and SSH access to trusted
+networks.
 
-* [YiiFramework](http://www.yiiframework.com) - The BackEnd framework used
-* [EXTJS6](https://www.sencha.com/products/extjs) - The FrontEnd framework used
-* [Asterisk](https://www.asterisk.org) - Telephony framework
+For validation steps and troubleshooting, read the
+[installation guide](wiki/en/get_started/quick_install.rst).
+
+## Migrating from MagnusBilling 7
+
+Do not install version 8 over a version 7 server. Provision a new supported
+server, take verified backups, migrate the database, and review every trunk and
+endpoint after conversion from `chan_sip` to PJSIP.
+
+Follow the complete
+[MagnusBilling 7 to 8 migration guide](wiki/en/get_started/migrate_from_mb7.rst)
+and review the [release lifecycle](wiki/en/lifecycle.rst) before scheduling
+production downtime.
+
+## Architecture
+
+```text
+Browser / API clients
+        |
+Apache + PHP
+        |
+Yii 1 web application ---- MariaDB
+        |                     |
+        +---- AMI / AGI ------+
+                 |
+          Asterisk 20 / PJSIP
+                 |
+       carriers and SIP devices
+```
+
+The administration interface is built with Ext JS 6. The PHP backend uses
+Yii 1, reads its database connection from
+`/etc/asterisk/res_config_mysql.conf`, and communicates with Asterisk through
+AMI, AGI, and generated configuration.
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for component boundaries and important
+entry points.
+
+## Repository map
+
+| Path | Purpose |
+| --- | --- |
+| `app/`, `classic/`, `modern/` | Ext JS application, views, and themes |
+| `protected/controllers/` | HTTP and API controllers |
+| `protected/models/` | Yii models and domain persistence |
+| `protected/components/` | Billing, telephony, integration, and shared services |
+| `protected/commands/` | Scheduled and administrative console commands |
+| `resources/asterisk/` | AGI runtime and Asterisk integration |
+| `resources/locale/` | User-interface translations |
+| `script/` | installer, database schema, migration, and system configuration |
+| `protected/tests/` | PHP test suites |
+| `wiki/` | source for the project documentation and GitHub wiki |
+
+## Development
+
+This is a system-level application whose full runtime depends on Asterisk,
+MariaDB, Apache, and Linux configuration. Use an isolated development
+environment; never test installer or telephony changes on a production server.
+
+The Ext JS application is built with Sencha Cmd 6.2:
+
+```bash
+sencha app build development
+sencha app build production
+```
+
+PHP unit tests use PHPUnit. When PHPUnit is available, run an individual suite
+from the repository root, for example:
+
+```bash
+phpunit protected/tests/unit/PjsipIpAuthenticationProbeTest.php
+```
+
+Test files under `protected/tests/` also include focused executable regression
+suites. Run the tests relevant to the code you change and describe any
+environment-dependent checks in the pull request.
+
+Detailed contributor setup, standards, and the pull-request checklist are in
+[CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Documentation
+
+- [Project definition and roadmap](PROJECT.md)
+- [Architecture](ARCHITECTURE.md)
+- [User and administrator wiki](wiki/en/index.rst)
+- [What's new in MB8](wiki/en/whats_new_mb8.rst)
+- [Support](SUPPORT.md)
+- [Security policy](SECURITY.md)
+- [Changelog](CHANGELOG.md)
+
+## Community and support
+
+Use [GitHub Issues](https://github.com/magnussolution/magnusbilling8/issues) for
+reproducible bugs and feature proposals. Use the channels listed in
+[SUPPORT.md](SUPPORT.md) for installation and configuration questions.
+
+Please follow the [Code of Conduct](CODE_OF_CONDUCT.md). Security
+vulnerabilities must be reported privately as described in
+[SECURITY.md](SECURITY.md), not in a public issue.
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://github.com/magnussolution/magnusbilling8/blob/source/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Contributions are welcome. Before opening a pull request:
 
-## Versioning
-
-MagnusBilling uses the 8.x version series.
-
-## Authors
-
-* **Adilson Magnus** - *Initial work* - [MagnusSolution](https://magnussolution.com)
-
-See also the list of [contributors](https://github.com/magnussolution/magnusbilling8/contributors) who participated in this project.
+1. read [CONTRIBUTING.md](CONTRIBUTING.md);
+2. search existing issues and pull requests;
+3. keep changes focused and include tests or a verification procedure;
+4. update English documentation for user-visible behavior.
 
 ## License
 
-This project is licensed under the GPL3 License
+MagnusBilling is distributed under the
+[GNU Lesser General Public License v3.0](LICENSE).
 
-Free Support
---------------------------------------
-We provide several avenues for you to get your system up and running on your own and learn the basics of the system.
+## Maintainer and acknowledgements
 
-1. [Youtube Channel](https://www.youtube.com/channel/UCish_6Lxfkh29n4CLVEd90Q)
-2. [MagnusBilling 8 GitHub Wiki](https://github.com/magnussolution/magnusbilling8/wiki)
-3. [MagnusBilling website](https://magnusbilling.org) — open the Documentation menu
-4. [Telegram Group(English)](https://t.me/joinchat/NXwoZRPGpG6rPqp3yssLzQ)
-5. [Telegram Grupo(Spanish)](https://t.me/joinchat/NXwoZRXQbjokWrliVGObkQ)
-6. [Telegram Grupo(Português)](https://t.me/joinchat/NXwoZQtJRKN-5e03uY6_XQ)
+MagnusBilling was created by
+[Adilson Magnus](https://github.com/magnussolution) / MagnusSolution.
+See the repository
+[contributors](https://github.com/magnussolution/magnusbilling8/contributors)
+for everyone who has helped improve the project.
