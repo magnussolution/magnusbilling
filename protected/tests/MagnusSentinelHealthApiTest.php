@@ -104,6 +104,16 @@ function healthRow($component, $idServer, $heartbeatAge, $lastCommit = null)
     ];
 }
 
+function healthComponentKeys($health)
+{
+    return array_map(
+        function ($component) {
+            return $component['component'] . ':' . $component['id_server'];
+        },
+        $health['components']
+    );
+}
+
 $emptyDb = new SentinelHealthFakeDb;
 $empty = MagnusSentinelIncidentApiV1::getHealth($emptyDb);
 assertSameValue('UNKNOWN', $empty['health_status'], 'empty install');
@@ -200,6 +210,130 @@ assertSameValue(
     'HEALTHY',
     $oldResult['health_status'],
     'snapshot before process start must be ignored'
+);
+
+$currentMasterDb = new SentinelHealthFakeDb;
+$oldAnalyzer = healthRow('analyzer', 1, 300000);
+$oldAnalyzer['process_started_at'] = '2026-07-22 17:00:00.000000';
+$oldCollector = healthRow(
+    'collector',
+    1,
+    300000,
+    '2026-07-22 17:58:00.000000'
+);
+$oldCollector['process_started_at'] = '2026-07-22 17:00:00.000000';
+$currentMasterDb->healthRows = [
+    healthRow('collector', 0, 60, '2026-07-25 17:58:00.000000'),
+    healthRow('analyzer', 0, 60),
+    $oldAnalyzer,
+    $oldCollector,
+    healthRow('collector', 5, 60, '2026-07-25 17:58:00.000000'),
+];
+$currentMasterDb->serverRows = [
+    ['id' => 1, 'name' => 'Legacy master row'],
+    ['id' => 5, 'name' => 'Worker 1'],
+];
+$currentMaster = MagnusSentinelIncidentApiV1::getHealth($currentMasterDb);
+assertSameValue(
+    'HEALTHY',
+    $currentMaster['health_status'],
+    'historical master identity must not control aggregate'
+);
+assertSameValue(
+    ['analyzer:0', 'collector:0', 'collector:5'],
+    healthComponentKeys($currentMaster),
+    'only current master and active topology are exposed'
+);
+
+$legacyMasterDb = new SentinelHealthFakeDb;
+$legacyMasterDb->healthRows = [
+    healthRow('collector', 1, 60, '2026-07-25 17:58:00.000000'),
+    healthRow('analyzer', 1, 60),
+];
+$legacyMasterDb->serverRows = [['id' => 1, 'name' => 'Master']];
+$legacyMaster = MagnusSentinelIncidentApiV1::getHealth($legacyMasterDb);
+assertSameValue(
+    'HEALTHY',
+    $legacyMaster['health_status'],
+    'legacy master identity remains supported'
+);
+assertSameValue(
+    ['analyzer:1', 'collector:1'],
+    healthComponentKeys($legacyMaster),
+    'legacy master records remain current when they are the active identity'
+);
+assertSameValue(
+    'MASTER',
+    $legacyMaster['components'][0]['server_name'],
+    'selected legacy master is labeled as master'
+);
+
+$rollbackDb = new SentinelHealthFakeDb;
+$historicalExplicitAnalyzer = healthRow('analyzer', 0, 300000);
+$historicalExplicitAnalyzer['process_started_at'] =
+    '2026-07-22 17:00:00.000000';
+$historicalExplicitCollector = healthRow(
+    'collector',
+    0,
+    300000,
+    '2026-07-22 17:58:00.000000'
+);
+$historicalExplicitCollector['process_started_at'] =
+    '2026-07-22 17:00:00.000000';
+$rollbackDb->healthRows = [
+    $historicalExplicitAnalyzer,
+    $historicalExplicitCollector,
+    healthRow('analyzer', 1, 60),
+    healthRow('collector', 1, 60, '2026-07-25 17:58:00.000000'),
+];
+$rollbackDb->serverRows = [['id' => 1, 'name' => 'Master']];
+$rollback = MagnusSentinelIncidentApiV1::getHealth($rollbackDb);
+assertSameValue(
+    'HEALTHY',
+    $rollback['health_status'],
+    'newly started legacy identity wins after rollback'
+);
+assertSameValue(
+    ['analyzer:1', 'collector:1'],
+    healthComponentKeys($rollback),
+    'rollback excludes the older explicit identity'
+);
+
+$decommissionedDb = new SentinelHealthFakeDb;
+$decommissionedDb->healthRows = [
+    healthRow('collector', 0, 60, '2026-07-25 17:58:00.000000'),
+    healthRow('analyzer', 0, 60),
+    healthRow('collector', 11, 300000, '2026-07-22 17:58:00.000000'),
+];
+$decommissioned = MagnusSentinelIncidentApiV1::getHealth($decommissionedDb);
+assertSameValue(
+    'HEALTHY',
+    $decommissioned['health_status'],
+    'decommissioned server history must not control aggregate'
+);
+assertSameValue(
+    ['analyzer:0', 'collector:0'],
+    healthComponentKeys($decommissioned),
+    'decommissioned server is not exposed as current'
+);
+
+$currentStaleDb = new SentinelHealthFakeDb;
+$currentStaleDb->healthRows = [
+    healthRow('collector', 0, 60, '2026-07-25 17:58:00.000000'),
+    healthRow('analyzer', 0, 60),
+    healthRow('collector', 5, 300000, '2026-07-22 17:58:00.000000'),
+];
+$currentStaleDb->serverRows = [['id' => 5, 'name' => 'Worker 1']];
+$currentStale = MagnusSentinelIncidentApiV1::getHealth($currentStaleDb);
+assertSameValue(
+    'STALE',
+    $currentStale['health_status'],
+    'stale server in current topology must control aggregate'
+);
+assertSameValue(
+    ['analyzer:0', 'collector:0', 'collector:5'],
+    healthComponentKeys($currentStale),
+    'current stale server remains exposed'
 );
 
 echo "MagnusSentinelHealthApiTest OK\n";

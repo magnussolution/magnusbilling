@@ -299,26 +299,19 @@ class MagnusSentinelIncidentApiV1
             $record = self::projectHealthRow($row, $evaluatedAt);
             $key = $record['component'] . ':' . $record['id_server'];
             $records[$key] = $record;
-            if ($record['server_name'] !== '') {
-                $serverNames[$record['id_server']] = $record['server_name'];
-            }
         }
 
-        $masterId = 0;
-        foreach ($records as $record) {
-            if ($record['component'] === 'analyzer') {
-                $masterId = $record['id_server'];
-                break;
-            }
-        }
-        if ($masterId === 0 && isset($serverNames[1])) {
-            $masterId = isset($records['collector:0']) ? 0 : 1;
-        }
+        $masterId = self::selectHealthMasterId($records, $serverNames);
+        $records = self::currentHealthRecords(
+            $records,
+            $serverRows,
+            $masterId
+        );
         self::ensureHealthRecord(
             $records,
             'analyzer',
             $masterId,
-            isset($serverNames[$masterId]) ? $serverNames[$masterId] : 'MASTER',
+            'MASTER',
             1200,
             $evaluatedAt
         );
@@ -326,7 +319,7 @@ class MagnusSentinelIncidentApiV1
             $records,
             'collector',
             $masterId,
-            isset($serverNames[$masterId]) ? $serverNames[$masterId] : 'MASTER',
+            'MASTER',
             180,
             $evaluatedAt
         );
@@ -423,6 +416,97 @@ class MagnusSentinelIncidentApiV1
             'components' => $components,
             'servers' => array_values($servers),
         ];
+    }
+
+    private static function selectHealthMasterId($records, $serverNames)
+    {
+        $candidate = null;
+        foreach ($records as $record) {
+            if ($record['component'] !== 'analyzer') {
+                continue;
+            }
+            if (
+                $candidate === null
+                || self::healthRecordIsNewer($record, $candidate)
+            ) {
+                $candidate = $record;
+            }
+        }
+        if ($candidate !== null) {
+            return (int) $candidate['id_server'];
+        }
+
+        foreach ([0, 1] as $candidateId) {
+            $key = 'collector:' . $candidateId;
+            if (! isset($records[$key])) {
+                continue;
+            }
+            if (
+                $candidate === null
+                || self::healthRecordIsNewer($records[$key], $candidate)
+            ) {
+                $candidate = $records[$key];
+            }
+        }
+        if ($candidate !== null) {
+            return (int) $candidate['id_server'];
+        }
+
+        return isset($serverNames[1]) ? 1 : 0;
+    }
+
+    private static function healthRecordIsNewer($left, $right)
+    {
+        foreach (['process_started_at', 'heartbeat_at'] as $field) {
+            $leftValue = (
+                $left[$field] !== null ? (string) $left[$field] : ''
+            );
+            $rightValue = (
+                $right[$field] !== null ? (string) $right[$field] : ''
+            );
+            if ($leftValue === $rightValue) {
+                continue;
+            }
+            return strcmp($leftValue, $rightValue) > 0;
+        }
+        return (int) $left['id_server'] < (int) $right['id_server'];
+    }
+
+    private static function currentHealthRecords(
+        $records,
+        $serverRows,
+        $masterId
+    ) {
+        $collectorIds = [(int) $masterId => true];
+        foreach ($serverRows as $serverRow) {
+            $idServer = (int) $serverRow['id'];
+            if ($idServer === 1 && $masterId !== 1) {
+                continue;
+            }
+            $collectorIds[$idServer] = true;
+        }
+
+        $current = [];
+        foreach ($records as $key => $record) {
+            $idServer = (int) $record['id_server'];
+            if (
+                $record['component'] === 'analyzer'
+                && $idServer !== (int) $masterId
+            ) {
+                continue;
+            }
+            if (
+                $record['component'] === 'collector'
+                && ! isset($collectorIds[$idServer])
+            ) {
+                continue;
+            }
+            if ($idServer === (int) $masterId) {
+                $record['server_name'] = 'MASTER';
+            }
+            $current[$key] = $record;
+        }
+        return $current;
     }
 
     private static function ensureHealthRecord(
