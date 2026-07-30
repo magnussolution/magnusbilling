@@ -506,6 +506,17 @@ return array(
     'MariaDB local_infile is disabled. Enable local_infile=1 in the server configuration and restart MariaDB.' => 'local_infile de MariaDB est désactivé. Activez local_infile=1 dans la configuration du serveur et redémarrez MariaDB.',
     'The CSV file does not contain tariff rows.' => 'Le fichier CSV ne contient aucune ligne de tarif.',
     'CSV contains {count} invalid row(s). Row/prefix examples: {examples}' => 'Le CSV contient {count} ligne(s) non valide(s). Exemples ligne/préfixe : {examples}',
+    'Tariff import failed.' => 'Échec de l’importation des tarifs.',
+    'The CSV contains {count} invalid row(s). Correct the following examples and import the file again:' => 'Le CSV contient {count} ligne(s) non valide(s). Corrigez les exemples suivants, puis importez à nouveau le fichier :',
+    'The CSV has an invalid row. Correct this error and import the file again:' => 'Le CSV contient une ligne non valide. Corrigez cette erreur, puis importez à nouveau le fichier :',
+    'Line {line}, prefix {prefix}: field {field} has invalid value {value}; expected {expected}.' => 'Ligne {line}, préfixe {prefix} : le champ {field} contient la valeur non valide {value} ; valeur attendue : {expected}.',
+    'Only the first {count} errors are displayed.' => 'Seules les {count} premières erreurs sont affichées.',
+    '1 to 18 digits' => 'de 1 à 18 chiffres',
+    'up to 60 characters' => 'jusqu’à 60 caractères',
+    'a positive number with a dot and up to 6 decimal places' => 'un nombre positif avec un point et jusqu’à 6 décimales',
+    'a whole number from 0 to 2147483647' => 'un nombre entier compris entre 0 et 2147483647',
+    'a positive number with a dot and up to 5 decimal places' => 'un nombre positif avec un point et jusqu’à 5 décimales',
+    '0 or 1' => '0 ou 1',
 
     // Call diagnostics
     'A routing loop was detected.' => 'A routing loop was detected.',

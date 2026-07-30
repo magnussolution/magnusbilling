@@ -293,7 +293,8 @@ class RateController extends Controller
             } catch (Exception $e) {
                 echo json_encode([
                     $this->nameSuccess => false,
-                    'errors'           => Yii::t('zii', 'MYSQL message.') . "\n\n" . print_r($e, true),
+                    'errors'           => Yii::t('zii', 'Tariff import failed.') . "</br></br>" .
+                        $e->getMessage(),
                 ]);
                 exit;
             }
@@ -315,8 +316,7 @@ class RateController extends Controller
         $delimiter,
         $hasHeader = false,
         $lineTerminator = "\n"
-    )
-    {
+    ) {
         $idPlan       = isset($values['id_plan']) ? (int) $values['id_plan'] : 0;
         $idTrunkGroup = isset($values['id_trunk_group']) ? (int) $values['id_trunk_group'] : 0;
 
@@ -400,20 +400,74 @@ class RateController extends Controller
                 OR disconnectcharge NOT REGEXP '^[0-9]{1,10}([.][0-9]{1,5})?$'
                 OR package_offer NOT IN ('0', '1')";
 
-            $invalidRows = (int) $db->createCommand(
-                "SELECT COUNT(*) FROM tmp_rate_import WHERE $invalidCondition"
-            )->queryScalar();
+            $invalidField = "CASE
+                WHEN prefix NOT REGEXP '^[0-9]{1,18}$' THEN 'prefix'
+                WHEN CHAR_LENGTH(destination) > 60 THEN 'destination'
+                WHEN rateinitial NOT REGEXP '^[0-9]{1,9}([.][0-9]{1,6})?$' THEN 'rateinitial'
+                WHEN initblock NOT REGEXP '^[0-9]{1,10}$'
+                     OR CAST(initblock AS UNSIGNED) > 2147483647 THEN 'initblock'
+                WHEN billingblock NOT REGEXP '^[0-9]{1,10}$'
+                     OR CAST(billingblock AS UNSIGNED) > 2147483647 THEN 'billingblock'
+                WHEN minimal_time_charge NOT REGEXP '^[0-9]{1,10}$'
+                     OR CAST(minimal_time_charge AS UNSIGNED) > 2147483647 THEN 'minimal_time_charge'
+                WHEN connectcharge NOT REGEXP '^[0-9]{1,10}([.][0-9]{1,5})?$' THEN 'connectcharge'
+                WHEN disconnectcharge NOT REGEXP '^[0-9]{1,10}([.][0-9]{1,5})?$' THEN 'disconnectcharge'
+                WHEN package_offer NOT IN ('0', '1') THEN 'package_offer'
+            END";
+            $invalidValue = "CASE
+                WHEN prefix NOT REGEXP '^[0-9]{1,18}$' THEN prefix
+                WHEN CHAR_LENGTH(destination) > 60 THEN destination
+                WHEN rateinitial NOT REGEXP '^[0-9]{1,9}([.][0-9]{1,6})?$' THEN rateinitial
+                WHEN initblock NOT REGEXP '^[0-9]{1,10}$'
+                     OR CAST(initblock AS UNSIGNED) > 2147483647 THEN initblock
+                WHEN billingblock NOT REGEXP '^[0-9]{1,10}$'
+                     OR CAST(billingblock AS UNSIGNED) > 2147483647 THEN billingblock
+                WHEN minimal_time_charge NOT REGEXP '^[0-9]{1,10}$'
+                     OR CAST(minimal_time_charge AS UNSIGNED) > 2147483647 THEN minimal_time_charge
+                WHEN connectcharge NOT REGEXP '^[0-9]{1,10}([.][0-9]{1,5})?$' THEN connectcharge
+                WHEN disconnectcharge NOT REGEXP '^[0-9]{1,10}([.][0-9]{1,5})?$' THEN disconnectcharge
+                WHEN package_offer NOT IN ('0', '1') THEN package_offer
+            END";
+            $invalidRow = $db->createCommand(
+                "SELECT row_id, prefix, $invalidField AS invalid_field,
+                        LEFT($invalidValue, 80) AS invalid_value
+                 FROM tmp_rate_import
+                 WHERE $invalidCondition
+                 ORDER BY row_id
+                 LIMIT 1"
+            )->queryRow();
 
-            if ($invalidRows > 0) {
-                $examples = $db->createCommand(
-                    "SELECT row_id, prefix FROM tmp_rate_import WHERE $invalidCondition ORDER BY row_id LIMIT 20"
-                )->queryAll();
-                $exampleRows = [];
-                foreach ($examples as $example) {
-                    $exampleRows[] = $example['row_id'] . ':' . $example['prefix'];
-                }
+            if ($invalidRow !== false) {
+                $expectedFormats = [
+                    'prefix'               => '1 to 18 digits',
+                    'destination'          => 'up to 60 characters',
+                    'rateinitial'          => 'a positive number with a dot and up to 6 decimal places',
+                    'initblock'            => 'a whole number from 0 to 2147483647',
+                    'billingblock'         => 'a whole number from 0 to 2147483647',
+                    'minimal_time_charge'  => 'a whole number from 0 to 2147483647',
+                    'connectcharge'        => 'a positive number with a dot and up to 5 decimal places',
+                    'disconnectcharge'     => 'a positive number with a dot and up to 5 decimal places',
+                    'package_offer'        => '0 or 1',
+                ];
+                $csvLine = (int) $invalidRow['row_id'] + ($hasHeader ? 1 : 0);
+                $value = json_encode(
+                    $invalidRow['invalid_value'],
+                    JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+                );
+                $detail = Yii::t(
+                    'zii',
+                    'Line {line}, prefix {prefix}: field {field} has invalid value {value}; expected {expected}.',
+                    [
+                        '{line}'     => $csvLine,
+                        '{prefix}'   => $invalidRow['prefix'] === '' ? '(empty)' : $invalidRow['prefix'],
+                        '{field}'    => $invalidRow['invalid_field'],
+                        '{value}'    => $value,
+                        '{expected}' => Yii::t('zii', $expectedFormats[$invalidRow['invalid_field']]),
+                    ]
+                );
                 throw new Exception(
-                    'CSV contains ' . $invalidRows . ' invalid row(s). Row/prefix examples: ' . implode(', ', $exampleRows)
+                    Yii::t('zii', 'The CSV has an invalid row. Correct this error and import the file again:') .
+                    "</br></br>- " . $detail
                 );
             }
 
