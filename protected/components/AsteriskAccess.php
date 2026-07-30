@@ -317,6 +317,10 @@ class AsteriskAccess
 
             fclose($fd);
 
+            if ($head_field == 'trunkcode' && $file == '/etc/asterisk/sip_magnus.conf') {
+                PjsipConfiguration::writeTrunks($model);
+            }
+
             if (preg_match("/sip/", $file)) {
                 AsteriskAccess::instance()->sipReload();
             } elseif (preg_match("/iax/", $file)) {
@@ -828,6 +832,10 @@ class AsteriskAccess
         ini_set('memory_limit', '-1');
 
         $modelSip = Sip::model()->findAll();
+
+        // Keep producing chan_sip for this V7 master and additionally produce
+        // PJSIP for slaves already migrated to V8/Asterisk 20.
+        PjsipConfiguration::writeUsers($modelSip);
 
         $buddyfile = '/etc/asterisk/sip_magnus_user.conf';
 
