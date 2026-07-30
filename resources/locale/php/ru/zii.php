@@ -68,6 +68,17 @@ return array(
     'MariaDB local_infile is disabled. Enable local_infile=1 in the server configuration and restart MariaDB.' => 'Параметр local_infile MariaDB отключен. Включите local_infile=1 в конфигурации сервера и перезапустите MariaDB.',
     'The CSV file does not contain tariff rows.' => 'CSV-файл не содержит строк тарифов.',
     'CSV contains {count} invalid row(s). Row/prefix examples: {examples}' => 'CSV содержит недопустимые строки: {count}. Примеры строк/префиксов: {examples}',
+    'Tariff import failed.' => 'Не удалось импортировать тарифы.',
+    'The CSV contains {count} invalid row(s). Correct the following examples and import the file again:' => 'CSV содержит недопустимые строки: {count}. Исправьте следующие примеры и импортируйте файл повторно:',
+    'The CSV has an invalid row. Correct this error and import the file again:' => 'CSV содержит недопустимую строку. Исправьте эту ошибку и импортируйте файл повторно:',
+    'Line {line}, prefix {prefix}: field {field} has invalid value {value}; expected {expected}.' => 'Строка {line}, префикс {prefix}: поле {field} содержит недопустимое значение {value}; ожидается: {expected}.',
+    'Only the first {count} errors are displayed.' => 'Показаны только первые {count} ошибок.',
+    '1 to 18 digits' => 'от 1 до 18 цифр',
+    'up to 60 characters' => 'не более 60 символов',
+    'a positive number with a dot and up to 6 decimal places' => 'положительное число с точкой и не более 6 знаков после неё',
+    'a whole number from 0 to 2147483647' => 'целое число от 0 до 2147483647',
+    'a positive number with a dot and up to 5 decimal places' => 'положительное число с точкой и не более 5 знаков после неё',
+    '0 or 1' => '0 или 1',
 
     // Call diagnostics
     'A routing loop was detected.' => 'A routing loop was detected.',
