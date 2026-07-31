@@ -242,6 +242,17 @@ return array(
     'MariaDB local_infile is disabled. Enable local_infile=1 in the server configuration and restart MariaDB.' => 'Opcja local_infile MariaDB jest wyłączona. Włącz local_infile=1 w konfiguracji serwera i uruchom ponownie MariaDB.',
     'The CSV file does not contain tariff rows.' => 'Plik CSV nie zawiera wierszy taryf.',
     'CSV contains {count} invalid row(s). Row/prefix examples: {examples}' => 'Plik CSV zawiera {count} nieprawidłowych wierszy. Przykłady wiersz/prefiks: {examples}',
+    'Tariff import failed.' => 'Import taryf nie powiódł się.',
+    'The CSV contains {count} invalid row(s). Correct the following examples and import the file again:' => 'Plik CSV zawiera {count} nieprawidłowych wierszy. Popraw poniższe przykłady i ponownie zaimportuj plik:',
+    'The CSV has an invalid row. Correct this error and import the file again:' => 'Plik CSV zawiera nieprawidłowy wiersz. Popraw ten błąd i ponownie zaimportuj plik:',
+    'Line {line}, prefix {prefix}: field {field} has invalid value {value}; expected {expected}.' => 'Wiersz {line}, prefiks {prefix}: pole {field} zawiera nieprawidłową wartość {value}; oczekiwano: {expected}.',
+    'Only the first {count} errors are displayed.' => 'Wyświetlono tylko pierwsze {count} błędów.',
+    '1 to 18 digits' => 'od 1 do 18 cyfr',
+    'up to 60 characters' => 'maksymalnie 60 znaków',
+    'a positive number with a dot and up to 6 decimal places' => 'liczba dodatnia z kropką i maksymalnie 6 miejscami po przecinku',
+    'a whole number from 0 to 2147483647' => 'liczba całkowita od 0 do 2147483647',
+    'a positive number with a dot and up to 5 decimal places' => 'liczba dodatnia z kropką i maksymalnie 5 miejscami po przecinku',
+    '0 or 1' => '0 lub 1',
 
     // Call diagnostics
     'A routing loop was detected.' => 'A routing loop was detected.',
