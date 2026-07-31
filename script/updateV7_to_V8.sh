@@ -245,6 +245,7 @@ noload => cel_odbc.so
 noload => cel_sqlite3_custom.so
 noload => res_format_attr_celt.so
 noload => chan_sip.so
+noload => res_pjsip_endpoint_identifier_anonymous.so
 " >> /etc/asterisk/modules.conf
 
 echo '[directories](!)

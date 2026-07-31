@@ -24,6 +24,12 @@ configuration. Accounts configured for authentication exclusively by IP use
 ``identify/match`` with ``identify_by=ip`` and do not receive an inbound
 ``auth=`` association. No manual edit of the generated PJSIP file is required.
 
+The system update from ``8.0.0.6`` to ``8.0.0.7`` adds
+``noload => res_pjsip_endpoint_identifier_anonymous.so`` to Asterisk's
+``modules.conf``. This prevents an unidentified INVITE from reaching the
+billing AGI through a ``PJSIP/anonymous-*`` channel. Restart Asterisk after
+the update, at a controlled time, to activate the module change.
+
 Check User
 ----------
 
