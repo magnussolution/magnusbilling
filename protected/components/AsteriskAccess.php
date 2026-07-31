@@ -218,6 +218,10 @@ class AsteriskAccess
     {
         $rows = Util::getColumnsFromModel($model);
 
+        foreach ($rows as $key => $data) {
+            AsteriskConfigValue::assertRecord($data, 'asteriskRecord.' . $key);
+        }
+
         $fd = fopen($file, "w");
         file_put_contents($file, '');
 
@@ -953,6 +957,13 @@ class AsteriskAccess
         ini_set('memory_limit', '-1');
         $modelSip = Sip::model()->findAll();
 
+        foreach ($modelSip as $sip) {
+            AsteriskConfigValue::assertRecord(
+                $sip->attributes,
+                'sip.' . (isset($sip->id) ? $sip->id : 'new')
+            );
+        }
+
         $pjsipFile     = '/etc/asterisk/pjsip_magnus_user.conf';
         $voicemailFile = '/etc/asterisk/voicemail_magnus.conf';
 
@@ -1179,6 +1190,13 @@ class AsteriskAccess
         ini_set('memory_limit', '-1');
 
         $modelSip = Sip::model()->findAll();
+
+        foreach ($modelSip as $sip) {
+            AsteriskConfigValue::assertRecord(
+                $sip->attributes,
+                'sip.' . (isset($sip->id) ? $sip->id : 'new')
+            );
+        }
 
         $buddyfile = '/etc/asterisk/pjsip_magnus_user.conf';
 

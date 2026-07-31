@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__FILE__) . '/AsteriskConfigValue.php';
+
 /**
  * Centralizes the persisted SIP-account rules used to generate PJSIP
  * authentication. Fixed-IP accounts configured with chan_sip's
@@ -43,7 +45,12 @@ class PjsipAuthenticationMode
             return '';
         }
 
-        $secret = (string) self::value($sip, 'secret');
+        $authName = AsteriskConfigValue::assertSingleLine($authName, 'authName');
+        $authUsername = AsteriskConfigValue::assertSingleLine($authUsername, 'authUsername');
+        $secret = AsteriskConfigValue::assertSingleLine(
+            self::value($sip, 'secret'),
+            'secret'
+        );
         $line  = "\n\n[" . $authName . "]\n";
         $line .= "type=auth\n";
         $line .= "auth_type=userpass\n";
@@ -56,6 +63,7 @@ class PjsipAuthenticationMode
 
     public static function endpointAuthLine($sip, $authName)
     {
+        $authName = AsteriskConfigValue::assertSingleLine($authName, 'authName');
         return self::requiresInboundAuth($sip)
             ? "auth=" . $authName . "\n"
             : '';
