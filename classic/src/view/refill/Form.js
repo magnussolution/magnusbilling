@@ -23,7 +23,7 @@ Ext.define('MBilling.view.refill.Form', {
     alias: 'widget.refillform',
     fieldsHideUpdateLot: ['id_user'],
     fileUpload: true,
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         me.items = [{
             xtype: 'userlookup',
@@ -68,7 +68,7 @@ Ext.define('MBilling.view.refill.Form', {
             extAllowed: ['png', 'jpeg', 'jpg'],
             hidden: !App.user.isAdmin,
             listeners: {
-                afterrender: function(cmp) {
+                afterrender: function (cmp) {
                     cmp.fileInputEl.set({
                         accept: 'image/*' // or w/e type
                     });

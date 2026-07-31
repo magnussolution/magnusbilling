@@ -95,3 +95,5 @@ sass/example
 sass/example/*
 bootstrap.css
 bootstrap.js
+protected/tests
+protected/runtime/application.log

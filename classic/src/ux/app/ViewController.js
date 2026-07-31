@@ -39,12 +39,12 @@ Ext.define('Ext.ux.app.ViewController', {
     msgDeleteAll: 'Confirm delete all',
     nameSuccessRequest: 'success',
     nameMsgRequest: 'msg',
-    init: function() {
+    init: function () {
         var me = this;
         me.titleReport = me.titleReport || t('Report of') + ' ' + me.type;
         me.callParent(arguments);
     },
-    onRenderModule: function() {
+    onRenderModule: function () {
         var me = this,
             idProperty,
             arrayIdProperty;
@@ -63,17 +63,17 @@ Ext.define('Ext.ux.app.ViewController', {
         me.formPanel.on('aftersave', me.onAfterSave, me);
         me.configureMobileFormPanel();
     },
-    onDestroyModule: function() {
+    onDestroyModule: function () {
         var me = this;
         me.store.un('write', me.onWriteStore, me);
         me.store.getProxy().un('exception', me.onErrorAction, me);
         me.list.un('afterdestroy', me.onAfterDestroy, me);
         me.formPanel.un('aftersave', me.onAfterSave, me);
     },
-    isMobileLayout: function() {
+    isMobileLayout: function () {
         return window.isMobileLayout || window.isTablet || window.isTablets;
     },
-    configureMobileFormPanel: function() {
+    configureMobileFormPanel: function () {
         var me = this,
             formPanel = me.formPanel;
         if (!me.isMobileLayout() || !formPanel || formPanel.mbMobileFormConfigured) {
@@ -82,17 +82,17 @@ Ext.define('Ext.ux.app.ViewController', {
         formPanel.mbMobileFormConfigured = true;
         formPanel.mbOriginalExpand = formPanel.expand;
         formPanel.mbOriginalCollapse = formPanel.collapse;
-        formPanel.expand = function() {
+        formPanel.expand = function () {
             me.showMobileForm();
             return this;
         };
-        formPanel.collapse = function() {
+        formPanel.collapse = function () {
             me.hideMobileForm();
             return this;
         };
         me.hideMobileForm();
     },
-    showMobileForm: function() {
+    showMobileForm: function () {
         var me = this,
             view = me.getView && me.getView();
         if (!me.isMobileLayout() || !me.list || !me.formPanel) {
@@ -104,7 +104,7 @@ Ext.define('Ext.ux.app.ViewController', {
         me.formPanel.fireEvent('expand', me.formPanel);
         return true;
     },
-    hideMobileForm: function() {
+    hideMobileForm: function () {
         var me = this,
             view = me.getView && me.getView();
         if (!me.isMobileLayout() || !me.list || !me.formPanel) {
@@ -115,7 +115,7 @@ Ext.define('Ext.ux.app.ViewController', {
         view && !view.destroyed && view.updateLayout();
         return true;
     },
-    onNew: function() {
+    onNew: function () {
         var me = this;
         me.setReadOnlyPkComposite(false);
         me.formPanel.getForm().reset();
@@ -127,7 +127,7 @@ Ext.define('Ext.ux.app.ViewController', {
         me.focusFirstField();
         me.formPanel.fireEvent('edit', me.formPanel);
     },
-    onEdit: function() {
+    onEdit: function () {
         var me = this,
             record = me.list.getSelectionModel().getSelection()[0],
             idRecord = [];
@@ -140,7 +140,7 @@ Ext.define('Ext.ux.app.ViewController', {
         if (!Ext.isArray(me.idProperty)) {
             idRecord = record.get(me.idProperty);
         } else {
-            Ext.each(me.idProperty, function(idProp) {
+            Ext.each(me.idProperty, function (idProp) {
                 idRecord.push(record.get(idProp));
             });
         }
@@ -155,7 +155,7 @@ Ext.define('Ext.ux.app.ViewController', {
         me.focusFirstField();
         me.formPanel.fireEvent('edit', me.formPanel);
     },
-    showHideFields: function(type) {
+    showHideFields: function (type) {
         var me = this,
             fieldsHideCreate = me.formPanel.fieldsHideCreate || [],
             fieldsHideEdit = me.formPanel.fieldsHideEdit || [],
@@ -164,7 +164,7 @@ Ext.define('Ext.ux.app.ViewController', {
         if (!fieldsHideCreate.length && !fieldsHideEdit.length && !fieldsHideUpdateLot.length) {
             return;
         }
-        me.formPanel.getForm().getFields().each(function(field) {
+        me.formPanel.getForm().getFields().each(function (field) {
             //mostra todos os campos que estao com fieldsHideUpdateLot
             if (fieldsHideUpdateLot.indexOf(field.name) !== -1) {
                 field.setVisible(true);
@@ -199,7 +199,7 @@ Ext.define('Ext.ux.app.ViewController', {
             }
         });
     },
-    onSave: function() {
+    onSave: function () {
         var me = this,
             form = me.formPanel.getForm(),
             recordStore = form.getRecord() && me.store.findRecord(me.idProperty, form.getRecord().getId(), 0, false, false, true),
@@ -232,7 +232,7 @@ Ext.define('Ext.ux.app.ViewController', {
         me.saveButton.disable();
         me.formPanel.setLoading(me.msgWait);
         if (me.formPanel.isUpdateLot) {
-            Ext.Object.each(values, function(key, value) {
+            Ext.Object.each(values, function (key, value) {
                 if (!Ext.isEmpty(value) && me.formPanel.fieldsHideUpdateLot.indexOf(key) === -1) {
                     panelMoneyLot = me.formPanel.down('#moneyFieldLot' + key);
                     if (panelMoneyLot && (panelMoneyLot.down('#add').pressed || panelMoneyLot.down('#remove').pressed || panelMoneyLot.down('#percent').pressed)) {
@@ -270,7 +270,7 @@ Ext.define('Ext.ux.app.ViewController', {
                     filter: filters
                 });
             } else {
-                Ext.each(me.list.getSelectionModel().getSelection(), function(rec) {
+                Ext.each(me.list.getSelectionModel().getSelection(), function (rec) {
                     ids.push(rec.get(me.idProperty));
                 });
                 valuesLot[me.idProperty] = ids;
@@ -282,7 +282,7 @@ Ext.define('Ext.ux.app.ViewController', {
                 url: me.store.getProxy().api.update,
                 params: paramsLot,
                 scope: me,
-                success: function(response) {
+                success: function (response) {
                     response = Ext.decode(response.responseText);
                     if (response.success) {
                         Ext.ux.Alert.alert(me.titleSuccess, t(response.msg), 'success');
@@ -295,7 +295,7 @@ Ext.define('Ext.ux.app.ViewController', {
                     me.updateLotButton.toggle(false);
                     me.store.load();
                 },
-                failure: function(response) {
+                failure: function (response) {
                     response = Ext.decode(response.responseText);
                     Ext.ux.Alert.alert(me.titleError, t(response.msg), 'error');
                     me.formPanel.setLoading(false);
@@ -330,7 +330,7 @@ Ext.define('Ext.ux.app.ViewController', {
         }
         me.store.sync();
     },
-    submitForm: function(values) {
+    submitForm: function (values) {
         var me = this,
             store = me.store,
             params = [];
@@ -344,7 +344,7 @@ Ext.define('Ext.ux.app.ViewController', {
             url: me.store.getProxy().api.create,
             params: params,
             scope: me,
-            success: function(form, action) {
+            success: function (form, action) {
                 var obj = Ext.decode(action.response.responseText);
                 if (obj.success) {
                     Ext.ux.Alert.alert(me.titleSuccess, t(obj.msg), 'success');
@@ -363,7 +363,7 @@ Ext.define('Ext.ux.app.ViewController', {
                 me.formPanel.setLoading(false);
                 me.saveButton.enable();
             },
-            failure: function(form, action) {
+            failure: function (form, action) {
                 var obj = Ext.decode(action.response.responseText),
                     errors = Helper.Util.convertErrorsJsonToString(obj.errors);
                 if (!Ext.isObject(obj.errors)) {
@@ -377,10 +377,10 @@ Ext.define('Ext.ux.app.ViewController', {
             }
         });
     },
-    onCancel: function() {
+    onCancel: function () {
         this.formPanel.collapse();
     },
-    onSelectionChange: function(selModel, selections) {
+    onSelectionChange: function (selModel, selections) {
         var me = this,
             btnDelete = me.lookupReference('delete'),
             checkItemSelected,
@@ -401,7 +401,7 @@ Ext.define('Ext.ux.app.ViewController', {
             }
         }
     },
-    onDelete: function(btn) {
+    onDelete: function (btn) {
         var me = this,
             records,
             destroyType = btn.menu.down('menucheckitem[checked=true]').value;
@@ -409,7 +409,7 @@ Ext.define('Ext.ux.app.ViewController', {
         if (!me.list.allowDelete) {
             return;
         }
-        Ext.Msg.confirm(me.titleConfirmation, msgConfirmation, function(btn) {
+        Ext.Msg.confirm(me.titleConfirmation, msgConfirmation, function (btn) {
             if (btn === 'yes') {
                 records = me.list.getSelectionModel().getSelection(),
                     idProperty = records.length && records[0].idProperty,
@@ -422,7 +422,7 @@ Ext.define('Ext.ux.app.ViewController', {
                         params: {
                             filter: filters
                         },
-                        success: function(response) {
+                        success: function (response) {
                             response = Ext.decode(response.responseText);
                             if (response.success) {
                                 Ext.ux.Alert.alert(me.titleSuccess, t(response.msg), 'success');
@@ -446,14 +446,14 @@ Ext.define('Ext.ux.app.ViewController', {
             }
         }, me);
     },
-    destroyCompositeKey: function(records) {
+    destroyCompositeKey: function (records) {
         var me = this,
             arrRecords = [],
             objRecord;
         records = Ext.isArray(records) ? records : [records];
-        Ext.each(records, function(record) {
+        Ext.each(records, function (record) {
             objRecord = {};
-            Ext.each(me.idProperty, function(pk) {
+            Ext.each(me.idProperty, function (pk) {
                 objRecord[pk] = record.get(pk);
             });
             arrRecords.push(Ext.clone(objRecord));
@@ -463,7 +463,7 @@ Ext.define('Ext.ux.app.ViewController', {
             params: {
                 rows: Ext.encode(arrRecords)
             },
-            success: function(response) {
+            success: function (response) {
                 response = Ext.decode(response.responseText);
                 if (response.success) {
                     Ext.ux.Alert.alert(me.titleSuccess, t(response.msg), 'success');
@@ -475,10 +475,10 @@ Ext.define('Ext.ux.app.ViewController', {
             }
         });
     },
-    onCheckChangeUpdateLot: function() {
+    onCheckChangeUpdateLot: function () {
         this.updateLotButton.toggle(true);
     },
-    onBulk: function() {
+    onBulk: function () {
         var me = this,
             module = me.getView();
         Ext.widget(module.module + 'bulk', {
@@ -486,7 +486,7 @@ Ext.define('Ext.ux.app.ViewController', {
             list: me.list
         });
     },
-    onSpyCall: function() {
+    onSpyCall: function () {
         var me = this,
             module = me.getView();
         Ext.widget(module.module + 'spycall', {
@@ -494,7 +494,7 @@ Ext.define('Ext.ux.app.ViewController', {
             list: me.list
         });
     },
-    onImportCsv: function() {
+    onImportCsv: function () {
         var me = this,
             module = me.getView();
         Ext.widget(module.module + 'importcsv', {
@@ -502,7 +502,7 @@ Ext.define('Ext.ux.app.ViewController', {
             list: me.list
         });
     },
-    onExportCsv: function() {
+    onExportCsv: function () {
         var me = this,
             sorters = me.store.sorters.items,
             filter = Ext.encode(me.list.filters.getFilterData()),
@@ -513,11 +513,11 @@ Ext.define('Ext.ux.app.ViewController', {
             sort = [],
             columns = [];
         me.list.setLoading();
-        Ext.each(sorters, function(itemSort) {
+        Ext.each(sorters, function (itemSort) {
             sort.push(itemSort.getProperty() + ' ' + (itemSort.getDirection() || 'ASC'));
         });
         group && sort.push(group + ' ' + (groupDir || 'ASC'));
-        Ext.each(gridColumns, function(column) {
+        Ext.each(gridColumns, function (column) {
             if (column.hidden === false && column.isCheckerHd !== true) {
                 if (column.dataIndex === group) {
                     columns.splice(0, 0, {
@@ -555,7 +555,7 @@ Ext.define('Ext.ux.app.ViewController', {
         });
         */
     },
-    onToggleUpdateLot: function(btn, pressed) {
+    onToggleUpdateLot: function (btn, pressed) {
         var me = this,
             fields = me.formPanel.getForm().getFields(),
             indexField,
@@ -566,7 +566,7 @@ Ext.define('Ext.ux.app.ViewController', {
         if (pressed) {
             //active UPDATEALL METHOD
             me.onAfterDestroy();
-            fields.each(function(field) {
+            fields.each(function (field) {
                 if (field.xtype === 'moneyfield' && field.isVisible() && me.formPanel.fieldsHideUpdateLot.indexOf(field.name) === -1) {
                     indexField = me.formPanel.items.indexOf(field);
                     field.setValue();
@@ -596,36 +596,36 @@ Ext.define('Ext.ux.app.ViewController', {
                             text: '+',
                             itemId: 'add',
                             listeners: {
-                                toggle: function(btn, pressed) {
+                                toggle: function (btn, pressed) {
                                     if (!pressed && !btn.up('panel').down('#remove').pressed) {
                                         btn.up('panel').down('#percent').toggle(false, true);
                                     }
                                 }
                             }
                         }, {
-                            toggleGroup: 'addRemove' + field.name,
-                            text: '-',
-                            itemId: 'remove',
-                            listeners: {
-                                toggle: function(btn, pressed) {
-                                    if (!pressed && !btn.up('panel').down('#add').pressed) {
-                                        btn.up('panel').down('#percent').toggle(false, true);
+                                toggleGroup: 'addRemove' + field.name,
+                                text: '-',
+                                itemId: 'remove',
+                                listeners: {
+                                    toggle: function (btn, pressed) {
+                                        if (!pressed && !btn.up('panel').down('#add').pressed) {
+                                            btn.up('panel').down('#percent').toggle(false, true);
+                                        }
                                     }
                                 }
-                            }
-                        }, {
-                            text: '%',
-                            itemId: 'percent',
-                            listeners: {
-                                toggle: function(btn, pressed) {
-                                    if (btn.up('panel').down('#add').pressed || btn.up('panel').down('#remove').pressed) {
-                                        field.setMask(pressed ? '% #9.999.990,000' : App.user.currency + ' #9.999.990,000');
-                                    } else {
-                                        btn.toggle(false, true);
+                            }, {
+                                text: '%',
+                                itemId: 'percent',
+                                listeners: {
+                                    toggle: function (btn, pressed) {
+                                        if (btn.up('panel').down('#add').pressed || btn.up('panel').down('#remove').pressed) {
+                                            field.setMask(pressed ? '% #9.999.990,000' : App.user.currency + ' #9.999.990,000');
+                                        } else {
+                                            btn.toggle(false, true);
+                                        }
                                     }
                                 }
-                            }
-                        }]
+                            }]
                     }
                     me.formPanel.insert(++indexField, panelButtons);
                 }
@@ -639,7 +639,7 @@ Ext.define('Ext.ux.app.ViewController', {
             me.showHideFields();
             me.formPanel.expand();
         } else {
-            fields.each(function(field) {
+            fields.each(function (field) {
                 if (field.changeToLot) {
                     fieldMoneyLot = me.formPanel.down('#moneyFieldLot' + field.name + ' field');
                     if (fieldMoneyLot) {
@@ -651,7 +651,7 @@ Ext.define('Ext.ux.app.ViewController', {
             });
         }
     },
-    onPrint: function(btn) {
+    onPrint: function (btn) {
         btn = btn.isButton ? btn : this.list.down('#btnPrint');
         var me = this,
             desktop = window.isDesktop && App.desktop,
@@ -666,11 +666,11 @@ Ext.define('Ext.ux.app.ViewController', {
             tabOpen,
             sort = [],
             columns = [];
-        Ext.each(sorters, function(itemSort) {
+        Ext.each(sorters, function (itemSort) {
             sort.push(itemSort.getProperty() + ' ' + (itemSort.getDirection() || 'ASC'));
         });
         group && sort.push(group + ' ' + (groupDir || 'ASC'));
-        Ext.each(gridColumns, function(column) {
+        Ext.each(gridColumns, function (column) {
             if (column.hidden === false && column.isCheckerHd !== true) {
                 if (column.dataIndex === group) {
                     columns.splice(0, 0, {
@@ -689,19 +689,19 @@ Ext.define('Ext.ux.app.ViewController', {
         url = 'index.php/' + me.store.proxy.module + '/report/?' + values;
         window.open(url);
     },
-    destroyReport: function() {
+    destroyReport: function () {
         Ext.Ajax.request({
             url: this.store.getProxy().api.destroyReport
         });
     },
-    onAfterDestroy: function(formPanel) {
+    onAfterDestroy: function (formPanel) {
         var me = this;
         formPanel = formPanel || me.formPanel;
         formPanel.getForm().reset();
         formPanel.idRecord = 0;
         me.focusFirstField();
     },
-    onAfterSave: function(formPanel) {
+    onAfterSave: function (formPanel) {
         var me = this;
         formPanel = formPanel || me.formPanel;
         if (!formPanel.idRecord) {
@@ -714,20 +714,20 @@ Ext.define('Ext.ux.app.ViewController', {
         me.formPanel.collapse();
         me.store.load();
     },
-    onExpandForm: function() {
+    onExpandForm: function () {
         this.focusFirstField();
     },
-    focusFirstField: function() {
+    focusFirstField: function () {
         var me = this,
             fieldFocus = me.formPanel.down('field[disabled=false]');
         fieldFocus && fieldFocus.focus(false, 10);
     },
-    onKeyUpField: function(field, evt) {
+    onKeyUpField: function (field, evt) {
         if (evt.getKey() === evt.ENTER && field.xtype !== 'textarea') {
             this.onSave();
         }
     },
-    onErrorAction: function(proxy, response) {
+    onErrorAction: function (proxy, response) {
         var me = this;
         if (response.responseText && response.responseText.substr(0, 1) == '{') {
             obj = Ext.decode(response.responseText);
@@ -745,12 +745,12 @@ Ext.define('Ext.ux.app.ViewController', {
                 sessionStorage.setItem('session', '1');
                 Ext.Ajax.request({
                     url: 'index.php/authentication/logoff',
-                    success: function() {
+                    success: function () {
                         App.user.logged = false;
                     }
                 });
                 Ext.ux.Alert.alert(me.titleError, t(errors), 'error');
-                setTimeout(function() {
+                setTimeout(function () {
                     location.reload()
                 }, 5000);
             }
@@ -760,7 +760,7 @@ Ext.define('Ext.ux.app.ViewController', {
         me.list.setLoading(false);
         me.saveButton.enable();
     },
-    onWriteStore: function(proxy, operation) {
+    onWriteStore: function (proxy, operation) {
         var me = this,
             obj = Ext.decode(operation.getResponse().responseText);
         if (obj.success) {
@@ -783,12 +783,12 @@ Ext.define('Ext.ux.app.ViewController', {
         me.list.setLoading(false);
         me.saveButton.enable();
     },
-    setReadOnlyPkComposite: function(readOnly) {
+    setReadOnlyPkComposite: function (readOnly) {
         var me = this;
         if (!Ext.isArray(me.idProperty)) {
             return;
         }
-        Ext.each(me.idProperty, function(pk) {
+        Ext.each(me.idProperty, function (pk) {
             me.formPanel.getForm().findField(pk).setReadOnly(readOnly);
         });
     }

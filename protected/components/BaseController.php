@@ -554,7 +554,7 @@ class BaseController extends CController
     public function checkActionAccess($values = [], $module, $action)
     {
         if ($action == 'canUpdate' || $action == 'canCreate') {
-            if (isset($values['id']) && ! AccessManager::getInstance($module)->$action()) {
+            if (! AccessManager::getInstance($module)->$action()) {
                 header('HTTP/1.0 401 Unauthorized');
                 die("Access denied to $action in module: $module");
             }
@@ -591,8 +591,8 @@ class BaseController extends CController
         $module = $this->instanceModel->getModule();
 
 
-        $this->isNewRecord =  ! isset($values[$namePk]) || (is_array($values[$namePk]) || $values[$namePk] > 0)
-            ? false : true;
+        $this->isNewRecord = ! isset($values[$namePk])
+            || (! is_array($values[$namePk]) && (int) $values[$namePk] <= 0);
 
         $this->isUpdateAll =  ! $this->isNewRecord
             && isset($values[$namePk])
@@ -644,7 +644,7 @@ class BaseController extends CController
         }
         //end updateAll
 
-        $id    = $values[$namePk];
+        $id    = isset($values[$namePk]) ? $values[$namePk] : null;
 
         $model = $id ? $this->loadModel($id, $this->abstractModel) : $this->instanceModel;
 
