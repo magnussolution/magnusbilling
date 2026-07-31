@@ -92,6 +92,14 @@ class Sip extends Model
             ['host', 'checkHost'],
             ['sip_config', 'length', 'max' => 500],
             ['defaultuser', 'uniquePeerName'],
+            ['name, callerid, context, fromuser, fromdomain, md5secret, secret, fullcontact,
+                regexten, insecure, regserver, vmexten, callingpres, mohsuggest, allowtransfer,
+                amaflags, dtmfmode, qualify, callgroup, pickupgroup, auth, subscribemwi,
+                usereqphone, autoframing, DEFAULTip, ipaddr, nat, host, language, mailbox,
+                addparameter, sip_group, deny, permit, type, url_events, description, disallow,
+                forward, allow, setvar, useragent, block_call_reg, voicemail_email, directmedia,
+                alias, defaultuser, cid_number, outboundproxy, sippasswd, techprefix, cnl,
+                sip_config', 'validateAsteriskConfigValue'],
 
         ];
         return $this->getExtraField($rules);

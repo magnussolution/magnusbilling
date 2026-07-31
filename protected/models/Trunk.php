@@ -76,6 +76,11 @@ class Trunk extends Model
             ['trunkcode', 'unique', 'caseSensitive' => false],
             ['trunkcode', 'checkTrunkCode'],
             ['trunkcode', 'uniquePeerName'],
+            ['secret, nat, trunkcode, sms_res, trunkprefix, providertech, removeprefix,
+                context, insecure, disallow, providerip, user, fromuser, allow, host,
+                fromdomain, addparameter, block_cid, link_sms, dtmfmode, qualify,
+                directmedia, sendrpid, cid_add, cid_remove, type, language, transport,
+                encryption, register_string, sip_config', 'validateAsteriskConfigValue'],
         ];
         return $this->getExtraField($rules);
     }
