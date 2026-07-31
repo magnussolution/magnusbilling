@@ -247,16 +247,28 @@ class SipController extends Controller
                     $con->createCommand($sql)->execute();
                 }
             } elseif ($type == 'save') {
-                if ($this->isNewRecord) {
-                    $modelUser = User::model()->findByPk((int) $values->id_user);
-                    $sql       = "INSERT INTO $dbname.$table (username,domain,ha1,accountcode,trace) VALUES
-                            ('$values->defaultuser','$remoteProxyIP','" . md5($values->defaultuser . ':' . $remoteProxyIP . ':' . $values->secret) . "','" . $modelUser->username . "',$values->trace)";
-                    $con->createCommand($sql)->execute();
-                } else {
-                    $sql = "UPDATE $dbname.$table SET ha1 = '" . md5($values->defaultuser . ':' . $remoteProxyIP . ':' . $values->secret) . "',
-                            username = '$values->defaultuser', trace = $values->trace WHERE username = '$values->defaultuser'";
-                    $con->createCommand($sql)->execute();
-                }
+                $modelUser = User::model()->findByPk((int) $values->id_user);
+                $sql = "INSERT INTO $dbname.$table
+                            (username, domain, password, ha1, accountcode, trace)
+                        VALUES
+                            (:username, :domain, :password, :ha1, :accountcode, :trace)
+                        ON DUPLICATE KEY UPDATE
+                            password = VALUES(password),
+                            ha1 = VALUES(ha1),
+                            accountcode = VALUES(accountcode),
+                            trace = VALUES(trace)";
+                $command = $con->createCommand($sql);
+                $command->bindValue(':username', $values->defaultuser, PDO::PARAM_STR);
+                $command->bindValue(':domain', $remoteProxyIP, PDO::PARAM_STR);
+                $command->bindValue(':password', $values->secret, PDO::PARAM_STR);
+                $command->bindValue(
+                    ':ha1',
+                    md5($values->defaultuser . ':' . $remoteProxyIP . ':' . $values->secret),
+                    PDO::PARAM_STR
+                );
+                $command->bindValue(':accountcode', $modelUser->username, PDO::PARAM_STR);
+                $command->bindValue(':trace', (int) $values->trace, PDO::PARAM_INT);
+                $command->execute();
             }
         }
     }

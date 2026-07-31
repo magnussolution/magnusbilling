@@ -73,6 +73,7 @@ class Trunk extends Model
             ['register_string', 'length', 'max' => 300],
             ['sip_config', 'length', 'max' => 500],
             ['trunkcode', 'match', 'pattern' => '/^[a-zA-Z0-9-]+$/', 'message' => Yii::t('zii', 'The trunk name must contain only letters, numbers and hyphens.')],
+            ['trunkcode', 'unique', 'caseSensitive' => false],
             ['trunkcode', 'checkTrunkCode'],
             ['trunkcode', 'uniquePeerName'],
         ];
