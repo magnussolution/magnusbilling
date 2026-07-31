@@ -241,6 +241,22 @@ class UpdateMysqlCommand extends CConsoleCommand
             $this->logMessage('Regenerating PJSIP users after authentication migration.');
             AsteriskAccess::instance()->generateSipPeers();
         }
+
+        //2026-07-31
+        if ($version == '8.0.0.6') {
+            $this->logMessage('Applying system migration 8.0.0.6 -> 8.0.0.7.');
+            $changed = AsteriskModulesConfig::ensureNoload(
+                '/etc/asterisk/modules.conf',
+                'res_pjsip_endpoint_identifier_anonymous.so'
+            );
+            $this->logMessage(
+                $changed
+                    ? 'Disabled the anonymous PJSIP endpoint identifier in modules.conf. Restart Asterisk to apply this change.'
+                    : 'The anonymous PJSIP endpoint identifier was already disabled in modules.conf.'
+            );
+            $version = '8.0.0.7';
+            $this->update($version);
+        }
     }
 
     private function columnExists($table, $column)

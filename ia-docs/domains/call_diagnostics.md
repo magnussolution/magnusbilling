@@ -133,6 +133,10 @@ or free-form text.
 - Update `8.0.0.5 -> 8.0.0.6` normalizes existing rows and calls
   `AsteriskAccess::generateSipPeers()`. Administrators must not edit generated
   PJSIP files manually.
+- Update `8.0.0.6 -> 8.0.0.7` idempotently adds
+  `noload => res_pjsip_endpoint_identifier_anonymous.so` to `modules.conf`.
+  The update does not restart Asterisk automatically; a controlled restart is
+  required before unidentified INVITEs stop reaching the anonymous endpoint.
 
 ## JSON Result Contract
 

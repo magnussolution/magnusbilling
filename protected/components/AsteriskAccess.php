@@ -984,7 +984,7 @@ class AsteriskAccess
             if ($fd) {
                 $globalConfig  = "[global]\n";
                 $globalConfig .= "type=global\n";
-                $globalConfig .= "endpoint_identifier_order=ip,username,auth_username,anonymous\n";
+                $globalConfig .= "endpoint_identifier_order=ip,username,auth_username\n";
 
                 if (fwrite($fd, $globalConfig) === false) {
                     echo gettext("Impossible to write to the file") . " ($pjsipFile)";
