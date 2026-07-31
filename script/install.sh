@@ -120,10 +120,63 @@ apt_install()
 }
 
 
+configure_pjsip_dns()
+{
+    local resolv_file="/etc/resolv.conf"
+    local resolv_backup
+    local nameserver
+    local dns_failures=0
+
+    if [ ! -r "${resolv_file}" ]; then
+        echo "WARNING: ${resolv_file} is not readable. PJSIP DNS checks were skipped."
+        return
+    fi
+
+    # When no search/domain directive exists, libc may infer a search suffix
+    # from a provider hostname such as host.example.net. PJSIP then performs
+    # unnecessary SRV lookups such as _sip._udp.trunk.net.example.net during
+    # every reload. An explicit root search domain prevents that expansion.
+    if ! grep -Eq '^[[:space:]]*(search|domain)[[:space:]]+' "${resolv_file}"; then
+        resolv_backup="${resolv_file}.magnusbilling.$(date +%Y%m%d-%H%M%S).bak"
+        cp -a -- "${resolv_file}" "${resolv_backup}"
+        if sed -i --follow-symlinks '1i search .' "${resolv_file}"; then
+            echo "Configured root DNS search domain for predictable PJSIP SRV lookups."
+            echo "Resolver backup: ${resolv_backup}"
+        else
+            echo "WARNING: Unable to add 'search .' to ${resolv_file}."
+        fi
+    fi
+
+    echo "Checking configured DNS servers for PJSIP SRV response..."
+    while read -r nameserver; do
+        [ -n "${nameserver}" ] || continue
+
+        # NXDOMAIN is a valid and fast DNS response. dig returns success when
+        # the server answers, regardless of whether this test name exists.
+        if dig +time=1 +tries=1 +short \
+            "@${nameserver}" SRV _sip._udp.magnusbilling-dns-check.invalid \
+            > /dev/null 2>&1; then
+            echo "DNS server ${nameserver}: responding"
+        else
+            echo "WARNING: DNS server ${nameserver} did not answer within 1 second."
+            dns_failures=$((dns_failures + 1))
+        fi
+    done < <(awk '/^[[:space:]]*nameserver[[:space:]]+/ { print $2 }' "${resolv_file}")
+
+    if [ "${dns_failures}" -gt 0 ]; then
+        echo "WARNING: ${dns_failures} configured DNS server(s) may delay PJSIP reloads."
+        echo "Remove or repair non-responsive resolvers before using DNS-based trunks."
+    fi
+}
+
+
+
 if ! apt-get update --allow-releaseinfo-change; then
     echo "Unable to update the APT package lists."
     exit 1
 fi
+
+
 
 apt_install locales
 sed -i 's/^# *en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen || echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
@@ -145,11 +198,13 @@ if ! apt-get -o Acquire::Check-Valid-Until=false update; then
     exit 1
 fi
 
-apt_install apache2
+apt_install apache2 dnsutils
 apt_install autoconf automake devscripts gawk ntpsec g++ curl wget ca-certificates sudo xmlstarlet libjansson-dev git "${ODBC_RUNTIME_PACKAGE}" odbcinst unixodbc unixodbc-dev patchelf
 apt_install php-fpm php php-dev php-common php-cli php-gd php-pear php-sqlite3 php-curl php-mbstring php-xml php-mysql libapache2-mod-php
 apt_install unzip uuid-dev libxml2-dev openssl libcurl4-openssl-dev gettext gcc sqlite3 libsqlite3-dev subversion mpg123
 apt_install libncurses-dev mariadb-server htop sngrep firewalld fail2ban cron rsyslog whiptail libblocksruntime-dev iproute2 iptables
+
+configure_pjsip_dns
 
 mkdir -p /var/www/html/mbilling
 cd /var/www/html/mbilling
