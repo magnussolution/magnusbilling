@@ -174,6 +174,11 @@ class AsteriskAccess
         return @$this->asmanager->Command("cdr show active");
     }
 
+    public function statusShowAll($variables = 'CHANNEL(endpoint)')
+    {
+        return $this->asmanager->StatusList($variables, 'mbilling-callchart-status');
+    }
+
     public function coreShowChannelsVerbose()
     {
         return @$this->asmanager->Command("core show channels verbose");
@@ -764,6 +769,48 @@ class AsteriskAccess
                 }
                 $call['server'] = $server['host'];
                 $channels[]     = $call;
+            }
+        }
+
+        return $channels;
+    }
+
+    /**
+     * Return all active channels from every enabled Asterisk server using one
+     * AMI Status action per server.
+     */
+    public static function getStatusChannels($updateServerStatus = true)
+    {
+        $sql = "SELECT * FROM pkg_servers WHERE type = 'asterisk' AND status IN (1,4) AND host != 'localhost'";
+        $modelServers = Yii::app()->db->createCommand($sql)->queryAll();
+
+        $modelServers[] = [
+            'host'     => 'localhost',
+            'username' => 'magnus',
+            'password' => 'magnussolution',
+        ];
+
+        $channels = [];
+        foreach ($modelServers as $server) {
+            $data = AsteriskAccess::instance(
+                $server['host'],
+                $server['username'],
+                $server['password']
+            )->statusShowAll();
+
+            if (! is_array($data)) {
+                if ($updateServerStatus && isset($server['id'])) {
+                    Servers::model()->updateByPk($server['id'], ['status' => 2]);
+                }
+                continue;
+            }
+
+            foreach ($data as $channel) {
+                if (! isset($channel['Channel'])) {
+                    continue;
+                }
+                $channel['server'] = $server['host'];
+                $channels[] = $channel;
             }
         }
 

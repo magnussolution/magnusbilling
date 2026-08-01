@@ -1312,6 +1312,56 @@ class AGI_AsteriskManager
     }
 
     /**
+     * List the status of every active channel.
+     *
+     * Unlike Status(), this method consumes the Status event list up to
+     * StatusComplete and returns one associative array per active channel.
+     *
+     * @param string|null $variables comma-separated channel variables/functions
+     * @param string|null $actionid message matching variable
+     * @return array|false
+     */
+    public function StatusList($variables = null, $actionid = null)
+    {
+        $this->add_event_handler('status', [$this, 'status_list_catch']);
+        $this->add_event_handler('statuscomplete', [$this, 'status_list_catch']);
+        $this->response_catch = [];
+
+        $parameters = [];
+        if ($variables !== null && $variables !== '') {
+            $parameters['Variables'] = $variables;
+        }
+        if ($actionid) {
+            $parameters['ActionID'] = $actionid;
+        }
+
+        $response = $this->send_request('Status', $parameters);
+        if (! isset($response['Response']) || $response['Response'] !== 'Success') {
+            unset($this->event_handlers['status']);
+            unset($this->event_handlers['statuscomplete']);
+            return false;
+        }
+
+        $this->wait_response(true);
+        stream_set_timeout($this->socket, 30);
+        unset($this->event_handlers['status']);
+        unset($this->event_handlers['statuscomplete']);
+        return $this->response_catch;
+    }
+
+    /**
+     * Catch Status list events.
+     */
+    private function status_list_catch($event, $data, $server, $port)
+    {
+        if ($event === 'statuscomplete') {
+            stream_set_timeout($this->socket, 0, 1);
+            return;
+        }
+        $this->response_catch[] = $data;
+    }
+
+    /**
      * Stop monitoring a channel
      *
      * @link https://wiki.asterisk.org/wiki/display/AST/Asterisk+11+ManagerAction_StopMonitor
@@ -1505,7 +1555,10 @@ class AGI_AsteriskManager
             if (is_callable($handler)) {
                 if (is_array($handler)) {
                     $this->log('Execute handler ' . get_class($handler[0]) . '::' . $handler[1]);
-                    $ret = $handler[0]->$handler[1]($e, $parameters, $this->server, $this->port);
+                    $ret = call_user_func_array(
+                        $handler,
+                        [$e, $parameters, $this->server, $this->port]
+                    );
                 } else {
                     if (is_object($handler)) {
                         $this->log("Execute handler " . get_class($handler));
