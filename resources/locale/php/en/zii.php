@@ -570,5 +570,9 @@ return array(
     'The campaign was processed successfully.' => 'The campaign was processed successfully.',
     'The campaign could not be processed. Review its settings and try again.' => 'The campaign could not be processed. Review its settings and try again.',
     'Send the diagnostic ID and the application error shown below to support.' => 'Send the diagnostic ID and the application error shown below to support.',
+    'The caller cancelled the call before it was answered.' => 'The caller cancelled the call before it was answered.',
+    'The originating user ended the call before it was answered.' => 'The originating user ended the call before it was answered.',
+    'The failed CDR records the call result as Cancel.' => 'The failed CDR records the call result as Cancel.',
+    'No trunk configuration change is indicated. Retry only if the caller did not intend to cancel the call.' => 'No trunk configuration change is indicated. Retry only if the caller did not intend to cancel the call.',
 ) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
   + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php');

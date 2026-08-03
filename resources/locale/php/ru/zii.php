@@ -362,5 +362,9 @@ return array(
     'The campaign was processed successfully.' => 'Кампания успешно обработана.',
     'The campaign could not be processed. Review its settings and try again.' => 'Не удалось обработать кампанию. Проверьте её настройки и повторите попытку.',
     'This legacy call detail action is disabled. Use Diagnose call.' => 'Устаревшее действие отключено. Используйте диагностику вызова.',
+    'The caller cancelled the call before it was answered.' => 'Пользователь отменил вызов до ответа.',
+    'The originating user ended the call before it was answered.' => 'Инициировавший вызов пользователь завершил его до ответа.',
+    'The failed CDR records the call result as Cancel.' => 'CDR неудачного вызова содержит результат «Отменён».',
+    'No trunk configuration change is indicated. Retry only if the caller did not intend to cancel the call.' => 'Изменение настроек транка не требуется. Повторите вызов, только если пользователь не намеревался его отменять.',
 ) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
   + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php');
