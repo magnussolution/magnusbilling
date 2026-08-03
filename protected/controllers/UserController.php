@@ -412,10 +412,47 @@ class UserController extends Controller
             exit;
         }
 
-        $modelUser = $this->abstractModel->findByPk((int) $_POST['id']);
+        $modelUser = $this->findAuthorizedCreditUser((int) ($_POST['id'] ?? 0));
+        if (! isset($modelUser->id)) {
+            header('HTTP/1.0 404 Not Found');
+            echo json_encode([
+                $this->nameSuccess => false,
+                $this->nameMsg     => $this->msgRecordNotFound,
+            ]);
+            return;
+        }
+
         $credit    = ['rows' => ['credit' => $modelUser->credit]];
 
         echo json_encode($credit);
+    }
+
+    protected function findAuthorizedCreditUser($idUser)
+    {
+        $condition = 't.id = :creditUserId';
+        $params    = [':creditUserId' => $idUser];
+
+        if (Yii::app()->session['isClient']) {
+            $condition .= ' AND t.id = :authenticatedUser';
+            $params[':authenticatedUser'] = (int) Yii::app()->session['id_user'];
+        } elseif (Yii::app()->session['isAgent']) {
+            $condition .= ' AND (t.id = :authenticatedAgent OR t.id_user = :authenticatedAgent)';
+            $params[':authenticatedAgent'] = (int) Yii::app()->session['id_user'];
+        } elseif (Yii::app()->session['isAdmin']) {
+            if (Yii::app()->session['adminLimitUsers'] == true) {
+                $condition .= ' AND t.id_group IN ('
+                    . 'SELECT gug.id_group FROM pkg_group_user_group gug '
+                    . 'WHERE gug.id_group_user = :authenticatedGroup)';
+                $params[':authenticatedGroup'] = (int) Yii::app()->session['id_group'];
+            }
+        } else {
+            $condition .= ' AND 1 = 0';
+        }
+
+        return $this->abstractModel->find([
+            'condition' => $condition,
+            'params'    => $params,
+        ]);
     }
 
     public function extraFilterCustomClient($filter)
