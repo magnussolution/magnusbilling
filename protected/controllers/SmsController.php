@@ -33,6 +33,19 @@ class SmsController extends Controller
         parent::init();
     }
 
+    public function authorizedNoSession($value = false)
+    {
+        return $this->isPublicSmsPath(Yii::app()->getRequest()->getPathInfo());
+    }
+
+    protected function isPublicSmsPath($pathInfo)
+    {
+        $uri = explode('/', trim($pathInfo, '/'));
+        $action = isset($uri[1]) ? strtolower($uri[1]) : '';
+
+        return count($uri) === 2 && strtolower($uri[0]) === 'sms' && $action === 'send';
+    }
+
     public function actionRead($asJson = true, $condition = null)
     {
         if (isset($_POST['referencia']) && Yii::app()->session['username'] == $_POST['username']) {
@@ -94,6 +107,8 @@ class SmsController extends Controller
          */
 
         SqlInject::sanitize($_POST);
+        $this->checkActionAccess([], $this->instanceModel->getModule(), 'canCreate');
+
         if ( ! isset($_POST['number']) || ! isset($_POST['text']) || ! isset($_POST['username'])) {
             exit('invalid data');
         } else if (strlen($_POST['text']) > 200) {
@@ -102,7 +117,9 @@ class SmsController extends Controller
             exit('invalid user');
         }
 
-        $modelUser = User::model()->find('username = :key', [':key' => $_POST['username']]);
+        $modelUser = $this->findAuthorizedSmsUser('t.username = :username', [
+            ':username' => $_POST['username'],
+        ]);
         if ( ! isset($modelUser->id)) {
             exit('invalid data');
         }
@@ -128,14 +145,49 @@ class SmsController extends Controller
     {
         $values = $this->getAttributesRequest();
 
+        $this->checkActionAccess([], $this->instanceModel->getModule(), 'canCreate');
+
         if (Yii::app()->session['isClient']) {
             $values['id_user'] = Yii::app()->session['id_user'];
         }
 
-        $modelUser = User::model()->findByPk((int) $values['id_user']);
+        $idUser = isset($values['id_user']) ? (int) $values['id_user'] : 0;
+        $modelUser = $this->findAuthorizedSmsUser('t.id = :idUser', [':idUser' => $idUser]);
+
+        if (! isset($modelUser->id)) {
+            echo json_encode([
+                $this->nameSuccess => false,
+                $this->nameMsg     => $this->msgRecordNotFound,
+            ]);
+            return;
+        }
 
         $res = SmsSend::send($modelUser, $values['telephone'], $values['sms'], 0, $values['sms_from']);
 
         echo json_encode($res);
+    }
+
+    protected function findAuthorizedSmsUser($condition, $params)
+    {
+        if (Yii::app()->session['isClient']) {
+            $condition .= ' AND t.id = :authenticatedUser';
+            $params[':authenticatedUser'] = (int) Yii::app()->session['id_user'];
+        } elseif (Yii::app()->session['isAgent']) {
+            $condition .= ' AND t.id_user = :authenticatedAgent';
+            $params[':authenticatedAgent'] = (int) Yii::app()->session['id_user'];
+        } elseif (
+            Yii::app()->session['isAdmin']
+            && Yii::app()->session['adminLimitUsers'] == true
+        ) {
+            $condition .= ' AND t.id_group IN ('
+                . 'SELECT gug.id_group FROM pkg_group_user_group gug '
+                . 'WHERE gug.id_group_user = :authenticatedGroup)';
+            $params[':authenticatedGroup'] = (int) Yii::app()->session['id_group'];
+        }
+
+        return User::model()->find([
+            'condition' => $condition,
+            'params'    => $params,
+        ]);
     }
 }
