@@ -533,6 +533,9 @@ class AuthenticationController extends Controller
 
     public function actionImportLogo()
     {
+        if (Yii::app()->session['logged'] == false || Yii::app()->session['isClient']) {
+            return;
+        }
         if (isset($_FILES['logo']['tmp_name']) && strlen($_FILES['logo']['tmp_name']) > 3) {
 
             $uploaddir = "resources/images/";
@@ -555,6 +558,11 @@ class AuthenticationController extends Controller
 
     public function actionImportWallpapers()
     {
+
+        if (Yii::app()->session['logged'] == false || !Yii::app()->session['isAdmin']) {
+            return;
+        }
+
         if (isset($_FILES['wallpaper']['tmp_name']) && strlen($_FILES['wallpaper']['tmp_name']) > 3) {
 
             $uploaddir = "resources/images/wallpapers/";
@@ -581,6 +589,10 @@ class AuthenticationController extends Controller
 
     public function actionImportLoginBackground()
     {
+        if (Yii::app()->session['logged'] == false || !Yii::app()->session['isAdmin']) {
+            return;
+        }
+
         $success = false;
         $msg     = 'error';
 

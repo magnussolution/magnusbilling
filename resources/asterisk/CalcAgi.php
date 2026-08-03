@@ -967,6 +967,10 @@ class CalcAgi
                     }
                 }
                 $code   = strlen($TECHSTRING) ? substr($agi->get_variable('HANGUPCAUSE(' . $TECHSTRING . ',tech)', true), 4, 3) : 0;
+
+                if ($terminatecauseid == "CANCEL") {
+                    $code = 487;
+                }
                 $fields = "uniqueid,id_user,calledstation,id_plan,id_trunk,callerid,src,
                         starttime, terminatecauseid,sipiax,id_prefix,hangupcause";
 

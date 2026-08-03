@@ -46,7 +46,42 @@ class ServicesUseController extends Controller
 
     public function actionCancelService()
     {
-        ServicesProcess::release((int) $_REQUEST['id']);
+        $module = $this->instanceModel->getModule();
+        $this->checkActionAccess([], $module, 'canUpdate');
+
+        $id = isset($_REQUEST['id']) ? (int) $_REQUEST['id'] : 0;
+        if ($id < 1) {
+            $this->sendCancelServiceNotFound();
+            return;
+        }
+
+        $this->filter       = 't.id = :serviceId';
+        $this->paramsFilter = [':serviceId' => $id];
+        $this->filter       = $this->extraFilter($this->filter);
+        $this->applyFilterToLimitedAdmin();
+
+        $criteria = new CDbCriteria([
+            'condition' => $this->filter,
+            'params'    => $this->paramsFilter,
+            'with'      => $this->relationFilter,
+        ]);
+
+        $modelServicesUse = $this->abstractModel->find($criteria);
+        if (! isset($modelServicesUse->id)) {
+            $this->sendCancelServiceNotFound();
+            return;
+        }
+
+        ServicesProcess::release((int) $modelServicesUse->id);
+    }
+
+    private function sendCancelServiceNotFound()
+    {
+        header('HTTP/1.0 404 Not Found');
+        echo json_encode([
+            $this->nameSuccess => false,
+            $this->nameMsg     => $this->msgRecordNotFound,
+        ]);
     }
 
 }

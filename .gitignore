@@ -83,7 +83,7 @@ classic.json
 classic.jsonp
 build/index.html
 wiki/en/_build
-doc
+doc/
 wiki/pt_BR/_build
 build/ApplicationBuild.js
 build/ApplicationPUBLIC.js
