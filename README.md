@@ -39,7 +39,7 @@ strongly recommended.
 Connect to the new server as `root`, then run:
 
 ```bash
-curl -O https://raw.githubusercontent.com/magnussolution/magnusbilling8/source/script/install.sh
+curl -O https://raw.githubusercontent.com/magnussolution/magnusbilling/source/script/install.sh
 bash install.sh
 ```
 

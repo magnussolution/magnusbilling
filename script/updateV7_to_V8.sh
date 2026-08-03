@@ -150,7 +150,7 @@ build_asterisk() {
     cd /usr/src
     rm -rf asterisk*
     clear
-    wget https://raw.githubusercontent.com/magnussolution/magnusbilling8/source/script/asterisk-20.9.2.tar.gz
+    wget https://raw.githubusercontent.com/magnussolution/magnusbilling/source/script/asterisk-20.9.2.tar.gz
     tar xzvf asterisk-20.9.2.tar.gz
     rm -rf asterisk-20.9.2.tar.gz
     cd asterisk-*

@@ -13,7 +13,7 @@ installation script:
 
 ::
 
-   wget https://raw.githubusercontent.com/magnussolution/magnusbilling8/source/script/install.sh
+   wget https://raw.githubusercontent.com/magnussolution/magnusbilling/source/script/install.sh
    bash install.sh
 
 The installer prepares MagnusBilling and its main dependencies, including

@@ -187,7 +187,7 @@ mv opensips.cfg opensips.cfg_old
 if [ -f "$SCRIPT_DIR/opensips-3.1.cfg" ]; then
   cp "$SCRIPT_DIR/opensips-3.1.cfg" opensips.cfg
 else
-  wget -O opensips.cfg https://raw.githubusercontent.com/magnussolution/magnusbilling8/source/script/opensips-3.1.cfg
+  wget -O opensips.cfg https://raw.githubusercontent.com/magnussolution/magnusbilling/source/script/opensips-3.1.cfg
 fi
 sed -i "s/MYSQLUSER:MYSQLPASS/root:$password/g" /etc/opensips/opensips.cfg
 sed -i "s/MYIP/$proxyip/g" /etc/opensips/opensips.cfg

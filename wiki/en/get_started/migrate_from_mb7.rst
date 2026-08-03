@@ -63,7 +63,7 @@ Install MagnusBilling 8 on a new minimal Debian server:
 
 ::
 
-   curl -O https://raw.githubusercontent.com/magnussolution/magnusbilling8/source/script/install.sh
+   curl -O https://raw.githubusercontent.com/magnussolution/magnusbilling/source/script/install.sh
    bash install.sh
 
 For a staged migration, the repository also includes
@@ -75,7 +75,7 @@ installer to create:
 
 ::
 
-   curl -O https://raw.githubusercontent.com/magnussolution/magnusbilling8/source/script/updateV7_to_V8.sh
+   curl -O https://raw.githubusercontent.com/magnussolution/magnusbilling/source/script/updateV7_to_V8.sh
    chmod 750 updateV7_to_V8.sh
    sudo ./updateV7_to_V8.sh --configure-firewall
 
