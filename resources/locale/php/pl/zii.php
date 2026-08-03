@@ -534,5 +534,9 @@ return array(
     'The campaign was processed successfully.' => 'Kampania została pomyślnie przetworzona.',
     'The campaign could not be processed. Review its settings and try again.' => 'Nie udało się przetworzyć kampanii. Sprawdź jej ustawienia i spróbuj ponownie.',
     'This legacy call detail action is disabled. Use Diagnose call.' => 'Ta starsza akcja jest wyłączona. Użyj Diagnozuj połączenie.',
+    'The caller cancelled the call before it was answered.' => 'Użytkownik anulował połączenie przed jego odebraniem.',
+    'The originating user ended the call before it was answered.' => 'Użytkownik inicjujący zakończył połączenie przed jego odebraniem.',
+    'The failed CDR records the call result as Cancel.' => 'CDR nieudanego połączenia zapisuje wynik jako Anulowane.',
+    'No trunk configuration change is indicated. Retry only if the caller did not intend to cancel the call.' => 'Zmiana konfiguracji trunku nie jest wskazana. Spróbuj ponownie tylko wtedy, gdy użytkownik nie zamierzał anulować połączenia.',
 ) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
   + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php');

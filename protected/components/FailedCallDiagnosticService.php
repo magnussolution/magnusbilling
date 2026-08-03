@@ -536,6 +536,7 @@ class FailedCallDiagnosticService
         $earliestEventAt = null
     ) {
         $message = self::translate($message);
+        $cdrOutcome = $this->cdrOutcome($cdr);
         if ($health === null) {
             $health = [
                 'status' => 'UNKNOWN',
@@ -545,8 +546,10 @@ class FailedCallDiagnosticService
         }
         return [
             'contract' => self::CONTRACT,
-            'status' => 'inconclusive',
-            'summary' => $message,
+            'status' => $cdrOutcome ? 'partial' : 'inconclusive',
+            'summary' => $cdrOutcome
+                ? $cdrOutcome['summary']
+                : $message,
             'call' => $this->call($cdr),
             'history' => $this->buildHistory($cdr, []),
             'attempts' => [],
@@ -565,8 +568,16 @@ class FailedCallDiagnosticService
                 'truncated' => false,
             ],
             'lastObservedResult' => null,
-            'facts' => [],
-            'probableCause' => [
+            'facts' => $cdrOutcome ? [[
+                'key' => $cdrOutcome['key'],
+                'text' => $cdrOutcome['fact'],
+            ]] : [],
+            'probableCause' => $cdrOutcome ? [
+                'key' => $cdrOutcome['causeKey'],
+                'text' => $cdrOutcome['cause'],
+                'confidence' => $cdrOutcome['confidence'],
+                'basis' => $cdrOutcome['basis'],
+            ] : [
                 'key' => null,
                 'text' => self::translate(
                     'No probable cause can be established from the available evidence.'
@@ -574,7 +585,11 @@ class FailedCallDiagnosticService
                 'confidence' => 'none',
                 'basis' => [],
             ],
-            'recommendedActions' => [[
+            'recommendedActions' => $cdrOutcome ? [[
+                'key' => $cdrOutcome['actionKey'],
+                'text' => $cdrOutcome['action'],
+                'safety' => 'safe',
+            ]] : [[
                 'key' => 'verify_evidence_availability',
                 'text' => $expired
                     ? self::translate('Use a more recent call for advanced diagnosis.')
@@ -625,6 +640,7 @@ class FailedCallDiagnosticService
 
     private function call(array $cdr)
     {
+        $cdrOutcome = $this->cdrOutcome($cdr);
         return [
             'cdrFailedId' => (int) $cdr['id'],
             'uniqueid' => (string) $cdr['uniqueid'],
@@ -632,6 +648,11 @@ class FailedCallDiagnosticService
             'source' => (string) $cdr['src'],
             'callerId' => (string) $cdr['callerid'],
             'calledNumber' => (string) $cdr['calledstation'],
+            'cdrResult' => $cdrOutcome ? [
+                'key' => $cdrOutcome['key'],
+                'label' => $cdrOutcome['label'],
+                'terminateCauseId' => (int) $cdr['terminatecauseid'],
+            ] : null,
             'user' => $this->entity($cdr['id_user'], $cdr['username']),
             'plan' => $this->entity($cdr['id_plan'], $cdr['plan_name']),
             'prefix' => $this->entity($cdr['id_prefix'], $cdr['prefix_name']),
@@ -657,6 +678,7 @@ class FailedCallDiagnosticService
                 ? $cdr['server_name']
                 : ($cdr['id_server'] === null ? 'MASTER' : null)
         );
+        $cdrOutcome = $this->cdrOutcome($cdr);
         $entries = [];
         $previousAt = $inviteAt['at'];
         $previousTrunkId = null;
@@ -696,6 +718,49 @@ class FailedCallDiagnosticService
                 'source' => $inviteAt['source'],
             ],
             'entries' => $entries,
+            'outcome' => $cdrOutcome ? [
+                'at' => (string) $cdr['starttime'],
+                'secondsAfterInvite' => $this->secondsBetween(
+                    $inviteAt['at'],
+                    (string) $cdr['starttime']
+                ),
+                'key' => $cdrOutcome['key'],
+                'label' => $cdrOutcome['label'],
+                'text' => $cdrOutcome['summary'],
+                'source' => 'pkg_cdr_failed.terminatecauseid',
+            ] : null,
+        ];
+    }
+
+    /**
+     * Classifies only outcomes whose meaning is explicit in pkg_cdr_failed.
+     * This evidence remains available when Sentinel is not installed.
+     */
+    private function cdrOutcome(array $cdr)
+    {
+        if ((int) $cdr['terminatecauseid'] !== 4) {
+            return null;
+        }
+
+        return [
+            'key' => 'caller_cancelled',
+            'label' => self::translate('Cancel'),
+            'summary' => self::translate(
+                'The caller cancelled the call before it was answered.'
+            ),
+            'causeKey' => 'caller_cancelled_before_answer',
+            'cause' => self::translate(
+                'The originating user ended the call before it was answered.'
+            ),
+            'confidence' => 'high',
+            'basis' => ['cdr_terminatecauseid_4'],
+            'fact' => self::translate(
+                'The failed CDR records the call result as Cancel.'
+            ),
+            'actionKey' => 'no_trunk_change_for_caller_cancel',
+            'action' => self::translate(
+                'No trunk configuration change is indicated. Retry only if the caller did not intend to cancel the call.'
+            ),
         ];
     }
 

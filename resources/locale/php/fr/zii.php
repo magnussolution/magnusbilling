@@ -798,5 +798,9 @@ return array(
     'The campaign was processed successfully.' => 'La campagne a été traitée avec succès.',
     'The campaign could not be processed. Review its settings and try again.' => 'La campagne n’a pas pu être traitée. Vérifiez ses paramètres puis réessayez.',
     'This legacy call detail action is disabled. Use Diagnose call.' => 'Cette ancienne action est désactivée. Utilisez Diagnostiquer l’appel.',
+    'The caller cancelled the call before it was answered.' => 'L’utilisateur a annulé l’appel avant qu’il ne soit pris.',
+    'The originating user ended the call before it was answered.' => 'L’utilisateur à l’origine de l’appel a raccroché avant la réponse.',
+    'The failed CDR records the call result as Cancel.' => 'Le CDR en échec enregistre le résultat de l’appel comme Annulé.',
+    'No trunk configuration change is indicated. Retry only if the caller did not intend to cancel the call.' => 'Aucune modification du trunk n’est indiquée. Réessayez uniquement si l’utilisateur ne souhaitait pas annuler l’appel.',
 ) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
   + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php');

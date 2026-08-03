@@ -81,6 +81,7 @@ Ext.define('MBilling.view.callFailed.DiagnosticWindow', {
             facts = result.facts || [],
             probable = result.probableCause || {},
             history = result.history || {},
+            evidenceCount = attempts.length + facts.length,
             operationalFindings = result.operationalFindings || [],
             html = '<section class="conclusion status-box status-' + me.safeClass(status) + '">' +
                 '<div class="status-label">' + me.encode(me.statusLabel(status)) + '</div>' +
@@ -102,6 +103,7 @@ Ext.define('MBilling.view.callFailed.DiagnosticWindow', {
             me.row(t('Date'), call.startedAt) +
             me.row(t('Number'), call.calledNumber) +
             me.row(t('CallerID'), call.callerId) +
+            me.row(t('Status'), call.cdrResult && call.cdrResult.label) +
             me.row(t('Username'), call.user && call.user.name) +
             me.row(t('Plan'), call.plan && call.plan.name) +
             me.row(t('Destination'), call.prefix && call.prefix.name) +
@@ -117,7 +119,7 @@ Ext.define('MBilling.view.callFailed.DiagnosticWindow', {
         }
 
         html += '<details><summary>' + me.encode(t('Evidence')) +
-            ' (' + attempts.length + ')</summary><div class="details-body">';
+            ' (' + evidenceCount + ')</summary><div class="details-body">';
         if (facts.length) {
             html += '<ul>';
             Ext.Array.each(facts, function(fact) {
@@ -185,6 +187,7 @@ Ext.define('MBilling.view.callFailed.DiagnosticWindow', {
         var me = this,
             invite = history.invite || {},
             entries = history.entries || [],
+            outcome = history.outcome || null,
             serverName = invite.server && invite.server.name,
             html = '<section class="call-history"><h3>' +
                 me.encode(t('Call history')) + '</h3><ol class="timeline">';
@@ -242,7 +245,20 @@ Ext.define('MBilling.view.callFailed.DiagnosticWindow', {
                 ) + '</div></li>';
         });
 
-        if (!invite.at && !entries.length) {
+        if (outcome && outcome.text) {
+            html += '<li class="timeline-item outcome"><div class="timeline-time">' +
+                me.encode(outcome.at) + '</div><div class="timeline-card"><strong>' +
+                me.encode(t('Call ended')) + '</strong><p>' +
+                me.encode(t(outcome.text)) + '</p>';
+            if (outcome.secondsAfterInvite !== null &&
+                outcome.secondsAfterInvite !== undefined) {
+                html += '<p class="elapsed">' + me.encode(outcome.secondsAfterInvite) + ' ' +
+                    me.encode(t('seconds after the INVITE')) + '</p>';
+            }
+            html += '</div></li>';
+        }
+
+        if (!invite.at && !entries.length && !outcome) {
             html += '<li>' + me.encode(t('No correlated event was found.')) + '</li>';
         }
         return html + '</ol></section>';
@@ -436,6 +452,7 @@ Ext.define('MBilling.view.callFailed.DiagnosticWindow', {
             '.timeline-item:before{content:"";position:absolute;left:-25px;top:4px;width:11px;height:11px;' +
             'border-radius:50%;background:#1976d2;border:3px solid #fff;box-shadow:0 0 0 1px #1976d2}' +
             '.timeline-item.attempt:before{background:#ef6c00;box-shadow:0 0 0 1px #ef6c00}' +
+            '.timeline-item.outcome:before{background:#c62828;box-shadow:0 0 0 1px #c62828}' +
             '.timeline-time{color:#555;font-size:12px;font-weight:bold;margin-bottom:4px}' +
             '.timeline-card{background:#f8fafc;border:1px solid #dfe4ea;border-radius:4px;padding:10px 12px}' +
             '.timeline-card p{margin:6px 0}.metadata,.elapsed{color:#555;font-size:12px}' +

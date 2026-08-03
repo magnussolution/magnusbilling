@@ -1480,5 +1480,9 @@ return array(
         'PJSIP Identify' => 'Identify do PJSIP',
         'PJSIP inbound authentication' => 'Autenticação de entrada PJSIP',
         'A fixed-IP PJSIP authentication risk was found before the route check.' => 'Foi encontrado um risco na autenticação PJSIP por IP antes da verificação da rota.',
+        'The caller cancelled the call before it was answered.' => 'O usuário cancelou a chamada antes de ela ser atendida.',
+        'The originating user ended the call before it was answered.' => 'O usuário que originou a chamada desligou antes de ela ser atendida.',
+        'The failed CDR records the call result as Cancel.' => 'O CDR de falha registra o resultado da chamada como Cancelada.',
+        'No trunk configuration change is indicated. Retry only if the caller did not intend to cancel the call.' => 'Nenhuma alteração no tronco é indicada. Tente novamente somente se o usuário não pretendia cancelar a chamada.',
 ) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
   + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php');
