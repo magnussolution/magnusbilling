@@ -143,7 +143,22 @@ class CallArchiveController extends Controller
 
         if (isset($_GET['id'])) {
 
-            $modelCall = CallArchive::model()->findByPk((int) $_GET['id']);
+            $this->filter       = 't.id = :recordId';
+            $this->paramsFilter = [':recordId' => (int) $_GET['id']];
+            $this->filter       = $this->extraFilter($this->filter);
+            $this->applyFilterToLimitedAdmin();
+
+            $modelCall = CallArchive::model()->find(new CDbCriteria([
+                'condition' => $this->filter,
+                'params'    => $this->paramsFilter,
+                'with'      => $this->relationFilter,
+            ]));
+
+            if (! isset($modelCall->id)) {
+                echo yii::t('zii', 'Audio no found');
+                exit;
+            }
+
             $day       = $modelCall->starttime;
             $uniqueid  = $modelCall->uniqueid;
             $day       = explode(' ', $day);

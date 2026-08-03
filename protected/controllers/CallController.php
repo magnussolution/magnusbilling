@@ -161,11 +161,16 @@ class CallController extends Controller
 
         if (isset($_GET['id'])) {
 
-            if (Yii::app()->session['isClient']) {
-                $modelCall = Call::model()->find('id = :key AND id_user = :key1', [':key' => $_GET['id'], ':key1' => Yii::app()->session['id_user']]);
-            } else {
-                $modelCall = Call::model()->findByPk((int) $_GET['id']);
-            }
+            $this->filter       = 't.id = :recordId';
+            $this->paramsFilter = [':recordId' => (int) $_GET['id']];
+            $this->filter       = $this->extraFilter($this->filter);
+            $this->applyFilterToLimitedAdmin();
+
+            $modelCall = Call::model()->find(new CDbCriteria([
+                'condition' => $this->filter,
+                'params'    => $this->paramsFilter,
+                'with'      => $this->relationFilter,
+            ]));
 
             if (! isset($modelCall->id)) {
                 echo yii::t('zii', 'Audio no found');
