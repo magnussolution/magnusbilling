@@ -71,7 +71,7 @@ if (!isset($_GET['id'])) {
 
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https://' : 'http://';
 
-    $metadata = array('notification_url' => $protocol . $_SERVER['HTTP_HOST'] . '/mbilling/index.php/efi?id_user=' . $modelUser->id . '&id=' . time() . '&amount=' . $_GET['amount']);
+    $metadata = array('notification_url' => $protocol . $_SERVER['HTTP_HOST'] . '/mbilling/index.php/efi');
 
     $body = [
         'items'    => $items,
@@ -90,7 +90,17 @@ if (!isset($_GET['id'])) {
     }
 
     if (isset($charge['data']['charge_id'])) {
-        //echo "Processando Pagamento ID: ". $charge['data']['charge_id']." .....<br>";
+        $modelRefill                 = new Refill();
+        $modelRefill->id_user        = $modelUser->id;
+        $modelRefill->credit         = intval($amount) / 100;
+        $modelRefill->payment        = 0;
+        $modelRefill->invoice_number = (string) $charge['data']['charge_id'];
+        $modelRefill->description    = 'EFI charge pending, ID:' . $charge['data']['charge_id'];
+
+        if (! $modelRefill->save()) {
+            Yii::log('Unable to persist EFI charge ' . $charge['data']['charge_id'], 'error');
+            exit;
+        }
     } else {
         exit;
     }

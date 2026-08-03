@@ -37,7 +37,7 @@ class PlacetoPayController extends Controller
 
         // --- 2) NOTIFICAÇÃO / CALLBACK VIA JSON (PlacetoPay -> servidor) ---
 
-        $rawBody = file_get_contents('php://input');
+        $rawBody = $this->getCallbackBody();
         $rest    = json_decode($rawBody, true);
 
         // Loga o corpo recebido para auditoria/debug
@@ -108,24 +108,49 @@ class PlacetoPayController extends Controller
 
             $description = 'Recarga PlaceToPay Aprobada. Referencia: ' . $safeReference;
 
-            // Exemplo de lógica específica por país
-            if ((int)$modelRefill->idUser->country === 57 && $modelRefill->credit > 0) {
-                $sql     = "INSERT INTO pkg_invoice (id_user) VALUES (:id_user)";
+            $transaction = Yii::app()->db->beginTransaction();
+
+            try {
+                $sql = 'UPDATE pkg_refill SET payment = 1, description = :description '
+                    . 'WHERE id = :id AND payment = 0';
+                $command = Yii::app()->db->createCommand($sql);
+                $command->bindValue(':description', $description, PDO::PARAM_STR);
+                $command->bindValue(':id', $modelRefill->id, PDO::PARAM_INT);
+
+                if ($command->execute() !== 1) {
+                    $transaction->rollBack();
+                    return;
+                }
+
+                // Exemplo de lógica específica por país
+                if ((int)$modelRefill->idUser->country === 57 && $modelRefill->credit > 0) {
+                    $sql     = "INSERT INTO pkg_invoice (id_user) VALUES (:id_user)";
+                    $command = Yii::app()->db->createCommand($sql);
+                    $command->bindValue(":id_user", $modelRefill->id_user, PDO::PARAM_INT);
+                    $command->execute();
+
+                    $sql = 'UPDATE pkg_refill SET invoice_number = :invoice_number WHERE id = :id';
+                    $command = Yii::app()->db->createCommand($sql);
+                    $command->bindValue(':invoice_number', Yii::app()->db->lastInsertID, PDO::PARAM_STR);
+                    $command->bindValue(':id', $modelRefill->id, PDO::PARAM_INT);
+                    $command->execute();
+                }
+
+                $sql     = "UPDATE pkg_user SET credit = credit + :credit WHERE id = :id_user";
                 $command = Yii::app()->db->createCommand($sql);
                 $command->bindValue(":id_user", $modelRefill->id_user, PDO::PARAM_INT);
+                $command->bindValue(":credit", $modelRefill->credit, PDO::PARAM_STR);
                 $command->execute();
-                $modelRefill->invoice_number = Yii::app()->db->lastInsertID;
+
+                $transaction->commit();
+            } catch (Exception $e) {
+                if ($transaction->active) {
+                    $transaction->rollBack();
+                }
+                Yii::log('PlacetoPay callback failed: ' . $e->getMessage(), 'error');
+                echo 'ERROR';
+                return;
             }
-
-            $modelRefill->payment     = 1;
-            $modelRefill->description = $description;
-            $modelRefill->save();
-
-            $sql     = "UPDATE pkg_user SET credit = credit + :credit WHERE id = :id_user";
-            $command = Yii::app()->db->createCommand($sql);
-            $command->bindValue(":id_user", $modelRefill->id_user, PDO::PARAM_INT);
-            $command->bindValue(":credit", $modelRefill->credit, PDO::PARAM_STR);
-            $command->execute();
 
             $mail = new Mail(Mail::$TYPE_REFILL, $modelRefill->id_user);
             $mail->replaceInEmail(Mail::$ITEM_ID_KEY, $modelRefill->id);
@@ -138,9 +163,16 @@ class PlacetoPayController extends Controller
 
             Yii::log($description, 'error');
 
-            $modelRefill->payment     = 0;
-            $modelRefill->description = $description;
-            $modelRefill->save();
+            $sql = 'UPDATE pkg_refill SET description = :description WHERE id = :id AND payment = 0';
+            $command = Yii::app()->db->createCommand($sql);
+            $command->bindValue(':description', $description, PDO::PARAM_STR);
+            $command->bindValue(':id', $modelRefill->id, PDO::PARAM_INT);
+            $command->execute();
         }
+    }
+
+    protected function getCallbackBody()
+    {
+        return file_get_contents('php://input');
     }
 }
