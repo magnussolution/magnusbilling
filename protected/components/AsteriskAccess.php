@@ -89,11 +89,48 @@ class AsteriskAccess
             ]
         );
 
-        if (count($model)) {
-            AsteriskAccess::instance()->writeAsteriskFile($model, '/etc/asterisk/queues_magnus.conf', 'name');
-        }
+        $file =  '/etc/asterisk/queues_magnus.conf';
 
+        $rows = Util::getColumnsFromModel($model);
+
+        $fd = fopen($file, "w");
+        file_put_contents($file, '');
+
+        if (! $fd) {
+            echo "</br><center><b><font color=red>" . gettext("Could not open buddy file") . $file . "</font></b></center>";
+        } else {
+            foreach ($rows as $key => $data) {
+                $line         = "\n\n[" . $data['name'] . "]\n";
+                $registerLine = '';
+                foreach ($data as $key => $option) {
+                    if ($key == 'name') {
+                        continue;
+                    } else {
+                        $line .= $key . '=' . $option . "\n";
+                    }
+
+                    //to queues member
+                    if ($key == 'setqueueentryvar') {
+                        $line .= "\n";
+                        $modelMember = QueueMember::model()->findAll([
+                            'condition' => 'queue_name = :key AND paused = 0',
+                            'params'    => [':key' => $data['name']],
+                            'order'     => 'id ASC',
+                        ]);
+                        foreach ($modelMember as $member) {
+                            $line .= 'member=' . $member['interface'] . "\n";
+                        }
+                    }
+                }
+
+                if (fwrite($fd, $line) === false) {
+                    echo "Impossible to write to the file ($buddyfile)";
+                    break;
+                }
+            }
+        }
         AsteriskAccess::instance()->mohReload();
+        AsteriskAccess::instance()->queueReload();
     }
 
     public function mohReload()
@@ -387,8 +424,6 @@ class AsteriskAccess
                 AsteriskAccess::instance()->pjsipReload();
             } elseif (preg_match("/iax/", $file)) {
                 AsteriskAccess::instance()->iaxReload();
-            } else {
-                AsteriskAccess::instance()->queueReload();
             }
         }
     }
@@ -402,8 +437,15 @@ class AsteriskAccess
     public static function buildCallFile($directives, $variables = [])
     {
         $allowedDirectives = [
-            'Channel', 'Callerid', 'Account', 'MaxRetries',
-            'RetryTime', 'WaitTime', 'Context', 'Extension', 'Priority',
+            'Channel',
+            'Callerid',
+            'Account',
+            'MaxRetries',
+            'RetryTime',
+            'WaitTime',
+            'Context',
+            'Extension',
+            'Priority',
             'Archive',
         ];
         $callFile = '';
@@ -469,8 +511,15 @@ class AsteriskAccess
 
         $singleDirectives = [];
         $allowedDirectives = [
-            'Channel', 'Callerid', 'Account', 'MaxRetries',
-            'RetryTime', 'WaitTime', 'Context', 'Extension', 'Priority',
+            'Channel',
+            'Callerid',
+            'Account',
+            'MaxRetries',
+            'RetryTime',
+            'WaitTime',
+            'Context',
+            'Extension',
+            'Priority',
             'Archive',
         ];
 
