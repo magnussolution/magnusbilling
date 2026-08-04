@@ -54,27 +54,14 @@ class VoucherController extends Controller
         if (Yii::app()->session['isClient']) {
             $values = $this->getAttributesRequest();
 
-            $modelVoucher = $this->abstractModel->find('id_user IS NULL AND voucher= :voucher AND used = 0 AND usedate = :key1',
-                [
-                    ':voucher' => $values['voucher'],
-                    ':key1'    => '0000-00-00 00:00:00',
-                ]);
+            $modelVoucher = $this->redeemVoucherAtomically(
+                $values['voucher'],
+                (int) Yii::app()->session['id_user']
+            );
 
             if (isset($modelVoucher->id)) {
-                $modelVoucher->id_user = Yii::app()->session['id_user'];
-                $modelVoucher->used    = 1;
-                $modelVoucher->usedate = date('Y-m-d H:i:s');
-                try {
-                    $modelVoucher->save();
-                } catch (Exception $e) {
-                    print_r($e);
-                }
-
                 $this->success = true;
                 $this->msg     = $this->msgSuccess;
-
-                UserCreditManager::releaseUserCredit(Yii::app()->session['id_user'], $modelVoucher->credit, 'Voucher ' . $values['voucher']);
-
             } else {
                 $this->success = false;
                 $this->msg     = Yii::t('zii', 'Voucher inexistente or already used');
@@ -87,6 +74,8 @@ class VoucherController extends Controller
                 $this->nameMsg     => $this->msg,
             ]);
         } else {
+
+            $this->checkActionAccess([], $this->instanceModel->getModule(), 'canCreate');
 
             $values = $this->getAttributesRequest();
             for ($i = 0; $i < $values['quantity']; $i++) {
@@ -120,6 +109,56 @@ class VoucherController extends Controller
             ]);
             exit;
 
+        }
+    }
+
+    protected function redeemVoucherAtomically($voucher, $idUser)
+    {
+        $transaction = Yii::app()->db->beginTransaction();
+
+        try {
+            $usedAt = date('Y-m-d H:i:s');
+            $sql    = 'UPDATE pkg_voucher SET id_user = :idUser, used = 1, usedate = :usedAt '
+                . 'WHERE id_user IS NULL AND voucher = :voucher AND used = 0 '
+                . 'AND usedate = :unusedAt';
+            $command = Yii::app()->db->createCommand($sql);
+            $command->bindValue(':idUser', (int) $idUser, PDO::PARAM_INT);
+            $command->bindValue(':usedAt', $usedAt, PDO::PARAM_STR);
+            $command->bindValue(':voucher', $voucher, PDO::PARAM_STR);
+            $command->bindValue(':unusedAt', '0000-00-00 00:00:00', PDO::PARAM_STR);
+
+            if ($command->execute() !== 1) {
+                $transaction->rollBack();
+                return null;
+            }
+
+            $modelVoucher = $this->abstractModel->find(
+                'voucher = :voucher AND id_user = :idUser AND used = 1 AND usedate = :usedAt',
+                [
+                    ':voucher' => $voucher,
+                    ':idUser'  => (int) $idUser,
+                    ':usedAt'  => $usedAt,
+                ]
+            );
+
+            if (! isset($modelVoucher->id)) {
+                throw new RuntimeException('Claimed voucher could not be loaded');
+            }
+
+            UserCreditManager::releaseUserCredit(
+                (int) $idUser,
+                $modelVoucher->credit,
+                'Voucher ' . $voucher
+            );
+
+            $transaction->commit();
+            return $modelVoucher;
+        } catch (Exception $e) {
+            if ($transaction->active) {
+                $transaction->rollBack();
+            }
+            Yii::log('Voucher redemption failed: ' . $e->getMessage(), 'error');
+            return null;
         }
     }
 
