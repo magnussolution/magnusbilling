@@ -12,6 +12,7 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
         me.store.on('load', me.onStoreLoad, me);
         me.store.getProxy().on('exception', me.onProxyException, me);
         me.loadIncidents();
+        me.loadResources();
     },
     onDestroyModule: function() {
         var me = this;
@@ -40,6 +41,24 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
     },
     onRefresh: function() {
         this.loadIncidents();
+        this.loadResources();
+    },
+    loadResources: function() {
+        var me = this;
+        if (me.resourceRequest) { Ext.Ajax.abort(me.resourceRequest); }
+        me.resourceRequest = Ext.Ajax.request({
+            url: 'index.php/magnusSentinelIncident/resources', method: 'GET', timeout: 15000,
+            callback: function(options, success, response) {
+                var payload;
+                if (!success) { return; }
+                try {
+                    payload = Ext.decode(response.responseText);
+                    if (payload && payload.success === true) {
+                        me.getView().down('magnussentinelresources').setResources(payload.data);
+                    }
+                } catch (ignore) {}
+            }
+        });
     },
     loadIncidents: function() {
         var me = this;

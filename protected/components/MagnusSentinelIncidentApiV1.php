@@ -418,6 +418,153 @@ class MagnusSentinelIncidentApiV1
         ];
     }
 
+    /** Última fotografia por servidor e tendências limitadas a 24 horas. */
+    public static function getResources($db, $input = [])
+    {
+        $serverId = self::optionalInteger($input, 'id_server', 0, 4294967295);
+        $params = [];
+        $serverWhere = '';
+        if ($serverId !== null) {
+            $serverWhere = ' WHERE s.id_server=:id_server';
+            $params[':id_server'] = $serverId;
+        }
+        $rows = self::queryAll($db, "
+            SELECT s.id,s.id_server,COALESCE(v.name,'MASTER') server_name,
+                   s.collected_at,s.cpu_percent,s.cpu_user_percent,
+                   s.cpu_system_percent,s.iowait_percent,s.load_1,s.load_5,
+                   s.load_15,s.cpu_count,s.memory_total_bytes,
+                   s.memory_available_bytes,s.memory_used_bytes,
+                   s.swap_total_bytes,s.swap_used_bytes,s.disk_max_percent,
+                   s.inode_max_percent,s.severity,s.affected_resources,
+                   s.metrics_json
+            FROM pkg_magnus_sentinel_resource_snapshot s
+            LEFT JOIN pkg_servers v ON v.id=s.id_server
+            INNER JOIN (
+                SELECT id_server,MAX(collected_at) collected_at
+                FROM pkg_magnus_sentinel_resource_snapshot
+                GROUP BY id_server
+            ) latest ON latest.id_server=s.id_server
+                    AND latest.collected_at=s.collected_at
+            {$serverWhere}
+            ORDER BY FIELD(s.severity,'emergency','critical','attention','normal'),
+                     s.id_server
+            LIMIT 100
+        ", $params);
+        $diagnosticRows = self::queryAll($db, "
+            SELECT d.id,d.id_server,d.state,d.severity,d.resource,
+                   d.first_seen,d.last_seen,d.occurrence_count,
+                   d.diagnostic_json
+            FROM pkg_magnus_sentinel_resource_diagnostic d
+            INNER JOIN (
+                SELECT id_server,MAX(last_seen) last_seen
+                FROM pkg_magnus_sentinel_resource_diagnostic
+                WHERE state='active'
+                GROUP BY id_server
+            ) latest ON latest.id_server=d.id_server
+                    AND latest.last_seen=d.last_seen
+            WHERE d.state='active'
+            ORDER BY d.id DESC
+            LIMIT 100
+        ", []);
+        $diagnostics = [];
+        foreach ($diagnosticRows as $diagnosticRow) {
+            $decoded = json_decode($diagnosticRow['diagnostic_json'], true);
+            unset($diagnosticRow['diagnostic_json']);
+            $diagnosticRow['id'] = (int) $diagnosticRow['id'];
+            $diagnosticRow['id_server'] = (int) $diagnosticRow['id_server'];
+            $diagnosticRow['occurrence_count'] = (int) $diagnosticRow['occurrence_count'];
+            $diagnosticRow['diagnostic'] = is_array($decoded) ? $decoded : [];
+            if (! isset($diagnostics[$diagnosticRow['id_server']])) {
+                $diagnostics[$diagnosticRow['id_server']] = $diagnosticRow;
+            }
+        }
+        $items = [];
+        foreach ($rows as $row) {
+            $metrics = json_decode($row['metrics_json'], true);
+            if (! is_array($metrics)) {
+                $metrics = [];
+            }
+            unset($row['metrics_json']);
+            foreach (['cpu_percent','cpu_user_percent','cpu_system_percent',
+                      'iowait_percent','load_1','load_5','load_15',
+                      'disk_max_percent','inode_max_percent'] as $key) {
+                $row[$key] = $row[$key] === null ? null : (float) $row[$key];
+            }
+            foreach (['id','id_server','cpu_count','memory_total_bytes',
+                      'memory_available_bytes','memory_used_bytes',
+                      'swap_total_bytes','swap_used_bytes'] as $key) {
+                $row[$key] = (int) $row[$key];
+            }
+            $row['affected_resources'] = $row['affected_resources'] === ''
+                ? [] : explode(',', $row['affected_resources']);
+            $row['details'] = $metrics;
+            $row['active_diagnostic'] = isset($diagnostics[$row['id_server']])
+                ? $diagnostics[$row['id_server']] : null;
+            $row['trends'] = self::resourceTrends($db, $row['id_server']);
+            $row['baseline'] = self::resourceBaseline(
+                $db, $row['id_server'], $row['collected_at']
+            );
+            $items[] = $row;
+        }
+        return ['items' => $items, 'evaluated_at' => (string) self::queryScalar(
+            $db, 'SELECT UTC_TIMESTAMP(6)', [])];
+    }
+
+    private static function resourceTrends($db, $serverId)
+    {
+        $result = [];
+        foreach ([15 => '15m', 60 => '1h', 1440 => '24h'] as $minutes => $label) {
+            $row = self::queryRow($db, "
+                SELECT MIN(memory_used_bytes) memory_min,
+                       MAX(memory_used_bytes) memory_max,
+                       AVG(cpu_percent) cpu_average,
+                       MAX(cpu_percent) cpu_peak,
+                       COUNT(*) samples
+                FROM pkg_magnus_sentinel_resource_snapshot
+                WHERE id_server=:id_server
+                  AND collected_at>=UTC_TIMESTAMP()-INTERVAL {$minutes} MINUTE
+            ", [':id_server' => $serverId]);
+            $result[$label] = [
+                'memory_growth_bytes' => (int) $row['memory_max'] - (int) $row['memory_min'],
+                'cpu_average_percent' => round((float) $row['cpu_average'], 2),
+                'cpu_peak_percent' => round((float) $row['cpu_peak'], 2),
+                'samples' => (int) $row['samples'],
+            ];
+        }
+        return $result;
+    }
+
+    private static function resourceBaseline($db, $serverId, $collectedAt)
+    {
+        $row = self::queryRow($db, "
+            SELECT AVG(cpu_percent) cpu_percent,
+                   AVG(memory_available_bytes) memory_available_bytes,
+                   AVG(swap_used_bytes) swap_used_bytes,
+                   AVG(disk_max_percent) disk_max_percent,
+                   COUNT(*) samples
+            FROM pkg_magnus_sentinel_resource_snapshot
+            WHERE id_server=:id_server
+              AND collected_at<:collected_at
+              AND collected_at>=DATE_SUB(:baseline_start, INTERVAL 14 DAY)
+              AND DAYOFWEEK(collected_at)=DAYOFWEEK(:baseline_day)
+              AND HOUR(collected_at)=HOUR(:baseline_hour)
+        ", [
+            ':id_server' => $serverId,
+            ':collected_at' => $collectedAt,
+            ':baseline_start' => $collectedAt,
+            ':baseline_day' => $collectedAt,
+            ':baseline_hour' => $collectedAt,
+        ]);
+        return [
+            'same_weekday_hour' => true,
+            'cpu_percent' => round((float) $row['cpu_percent'], 2),
+            'memory_available_bytes' => (int) $row['memory_available_bytes'],
+            'swap_used_bytes' => (int) $row['swap_used_bytes'],
+            'disk_max_percent' => round((float) $row['disk_max_percent'], 2),
+            'samples' => (int) $row['samples'],
+        ];
+    }
+
     private static function selectHealthMasterId($records, $serverNames)
     {
         $candidate = null;
