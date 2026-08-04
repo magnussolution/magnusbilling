@@ -438,15 +438,21 @@ class CallController extends Controller
         }
         $columns = json_decode($_GET['columns'], true);
 
-
-
-
-        if (json_last_error() !== 0) {
-            exit;
+        if (json_last_error() !== 0 || ! is_array($columns)) {
+            header('HTTP/1.0 400 Bad Request');
+            return;
         }
 
         $columns = $this->repaceColumns($columns);
         $columns = $this->removeColumns($columns);
+        if (! $this->hasOnlyAllowedCdrColumns($columns)) {
+            header('HTTP/1.0 400 Bad Request');
+            echo json_encode([
+                $this->nameSuccess => false,
+                $this->nameMsg     => 'Invalid CDR export column',
+            ]);
+            return;
+        }
         $this->setLimit($_GET);
         $this->setStart($_GET);
         $this->setSort();
@@ -518,6 +524,38 @@ class CallController extends Controller
                 break;
             }
         }
+    }
+
+    protected function hasOnlyAllowedCdrColumns($columns)
+    {
+        if (! is_array($columns) || count($columns) === 0) {
+            return false;
+        }
+
+        $tableSchema = $this->abstractModel->getTableSchema();
+        if (! isset($tableSchema->columns) || ! is_array($tableSchema->columns)) {
+            return false;
+        }
+
+        $allowedColumns = array_fill_keys(array_keys($tableSchema->columns), true);
+
+        foreach ($columns as $column) {
+            if (! is_array($column) || ! isset($column['dataIndex']) || ! is_string($column['dataIndex'])) {
+                return false;
+            }
+
+            $fieldName = trim($column['dataIndex']);
+            if (strpos($fieldName, 't.') === 0) {
+                $fieldName = substr($fieldName, 2);
+            }
+
+            if (! preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $fieldName)
+                || ! isset($allowedColumns[$fieldName])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function createCondition($filter)
