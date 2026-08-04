@@ -45,6 +45,8 @@ class CampaignRestrictPhoneController extends Controller
 
     public function actionImportFromCsv()
     {
+        $this->checkActionAccess([], $this->instanceModel->getModule(), 'canCreate');
+
         if (! Yii::app()->session['id_user'] || Yii::app()->session['isClient'] == true) {
             exit();
         }
@@ -77,7 +79,7 @@ class CampaignRestrictPhoneController extends Controller
     public function importNumbers($handle, $values)
     {
         $sqlNumbersInsert = [];
-        $sqlNumbersDelete = '';
+        $numbersToDelete  = [];
         while (($row = fgetcsv($handle, 32768, $values['delimiter'])) !== false) {
 
             if (isset($row[1])) {
@@ -97,7 +99,7 @@ class CampaignRestrictPhoneController extends Controller
                     $sqlNumbersInsert[] = "('$number')";
                 }
                 if ($row[2] == 'desbloqueado') {
-                    $sqlNumbersDelete .= "'$number', ";
+                    $numbersToDelete[] = $number;
                 }
             }
         }
@@ -117,17 +119,15 @@ class CampaignRestrictPhoneController extends Controller
             }
         }
 
-        if (count($sqlNumbersDelete) > 0) {
-            if (strlen($sqlNumbersDelete) > 1) {
-                $result = CampaignRestrictPhone::model()->deleteNumbers($sqlNumbersDelete);
+        if (count($numbersToDelete) > 0) {
+            $result = CampaignRestrictPhone::model()->deleteNumbers(array_values(array_unique($numbersToDelete)));
 
-                if (isset($result->errorInfo)) {
-                    echo json_encode([
-                        $this->nameSuccess => false,
-                        'errors'           => $this->getErrorMySql($result),
-                    ]);
-                    exit;
-                }
+            if (isset($result->errorInfo)) {
+                echo json_encode([
+                    $this->nameSuccess => false,
+                    'errors'           => $this->getErrorMySql($result),
+                ]);
+                exit;
             }
         }
     }

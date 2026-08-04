@@ -161,16 +161,51 @@ class RateController extends Controller
     public function actionImportFromCsv()
     {
 
+        $this->checkActionAccess([], $this->instanceModel->getModule(), 'canCreate');
+
         if (! Yii::app()->session['id_user'] || Yii::app()->session['isClient'] == true) {
             exit();
         }
         $values = $this->getAttributesRequest();
+
+        $idPlan    = isset($values['id_plan']) ? (int) $values['id_plan'] : 0;
+        $modelPlan = $idPlan > 0 ? $this->findAuthorizedPlanForRateImport($idPlan) : null;
+
+        if (! isset($modelPlan->id)) {
+            header('HTTP/1.0 404 Not Found');
+            echo json_encode([
+                $this->nameSuccess => false,
+                $this->nameMsg     => $this->msgRecordNotFound,
+            ]);
+            return;
+        }
+
+        // Never pass a request-controlled plan identifier to the import SQL.
+        $values['id_plan'] = (int) $modelPlan->id;
 
         $this->importRates($values);
 
         echo json_encode([
             $this->nameSuccess => true,
             'msg'              => $this->msgSuccess,
+        ]);
+    }
+
+    protected function findAuthorizedPlanForRateImport($idPlan)
+    {
+        $condition = 't.id = :rateImportPlanId';
+        $params    = [':rateImportPlanId' => (int) $idPlan];
+
+        if (Yii::app()->session['isAgent']) {
+            $condition .= ' AND t.id_user = :authenticatedAgent';
+            $params[':authenticatedAgent'] = (int) Yii::app()->session['id_user'];
+        } elseif (! Yii::app()->session['isAdmin']) {
+            $condition .= ' AND 1 = 0';
+        }
+
+        return Plan::model()->find([
+            'condition' => $condition,
+            'params'    => $params,
         ]);
     }
 

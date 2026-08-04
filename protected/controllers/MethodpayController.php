@@ -101,4 +101,21 @@ class MethodpayController extends Controller
         }
         return $filter;
     }
+
+    public function setAttributesModels($attributes, $models)
+    {
+        foreach ($attributes as $key => $attribute) {
+            if (strtolower((string) $attribute['payment_method']) !== 'paghiper') {
+                continue;
+            }
+
+            $showFields = array_filter(explode(',', (string) $attribute['showFields']));
+            if (! in_array('client_id', $showFields, true)) {
+                $showFields[] = 'client_id';
+            }
+            $attributes[$key]['showFields'] = implode(',', $showFields);
+        }
+
+        return $attributes;
+    }
 }

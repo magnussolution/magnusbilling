@@ -174,16 +174,52 @@ class DiddestinationController extends Controller
 
     public function actionbulkdestinatintion()
     {
+        $module = $this->instanceModel->getModule();
+        $this->checkActionAccess([], $module, 'canCreate');
+        $this->checkActionAccess([], $module, 'canUpdate');
+
+        if (! Yii::app()->session['isAdmin']) {
+            header('HTTP/1.0 403 Forbidden');
+            echo json_encode([
+                $this->nameSuccess => false,
+                $this->nameMsg     => Yii::t('zii', 'Not allowed'),
+            ]);
+            return;
+        }
+
         $this->isNewRecord = true;
         $values            = $this->getAttributesRequest();
 
-        $_GET['filter'] = $values['filters'];
+        $id_user   = isset($values['id_user']) ? (int) $values['id_user'] : 0;
+        $modelUser = $id_user > 0 ? $this->findAuthorizedBulkDestinationUser($id_user) : null;
+        if (! isset($modelUser->id)) {
+            header('HTTP/1.0 404 Not Found');
+            echo json_encode([
+                $this->nameSuccess => false,
+                $this->nameMsg     => $this->msgRecordNotFound,
+            ]);
+            return;
+        }
 
-        $id_user = $values['id_user'];
+        $values['id_user'] = $id_user = (int) $modelUser->id;
+
+        $bulkFilters = isset($values['filters']) && is_string($values['filters'])
+            ? json_decode($values['filters'])
+            : null;
+        if (! $this->hasOnlyAllowedBulkDidFilters($bulkFilters)) {
+            header('HTTP/1.0 400 Bad Request');
+            echo json_encode([
+                $this->nameSuccess => false,
+                $this->nameMsg     => 'Invalid DID filter',
+            ]);
+            return;
+        }
+
+        $_GET['filter'] = $values['filters'];
 
         $this->setfilter($_GET);
 
-        $modelDid = Did::model()->findAll($this->filter, $this->paramsFilter);
+        $modelDid = $this->findAuthorizedDidsForBulkDestination($this->filter, $this->paramsFilter);
 
         foreach ($modelDid as $key => $did) {
 
@@ -271,6 +307,91 @@ class DiddestinationController extends Controller
             $this->nameSuccess => $this->success,
             $this->nameMsg     => $this->msg,
         ]);
+    }
+
+    protected function hasOnlyAllowedBulkDidFilters($filters)
+    {
+        if (! is_array($filters) || count($filters) === 0) {
+            return false;
+        }
+
+        $metadata = Did::model()->getMetaData();
+        if (! isset($metadata->columns) || ! is_array($metadata->columns)) {
+            return false;
+        }
+
+        $allowedFields = array_fill_keys(array_keys($metadata->columns), true);
+        $allowedRelationFields = ['idUser.username' => true];
+
+        foreach ($filters as $filter) {
+            if (! is_object($filter)
+                || ! isset($filter->type)
+                || ! isset($filter->field)
+                || ! is_string($filter->field)) {
+                return false;
+            }
+
+            $field = trim($filter->field);
+            if (! isset($allowedFields[$field]) && ! isset($allowedRelationFields[$field])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected function findAuthorizedBulkDestinationUser($idUser)
+    {
+        $condition = 't.id = :bulkDestinationUserId';
+        $params    = [':bulkDestinationUserId' => (int) $idUser];
+
+        if (! Yii::app()->session['isAdmin']) {
+            $condition .= ' AND 1 = 0';
+        } elseif (Yii::app()->session['adminLimitUsers'] == true) {
+            $condition .= ' AND t.id_group IN ('
+                . 'SELECT gug.id_group FROM pkg_group_user_group gug '
+                . 'WHERE gug.id_group_user = :bulkDestinationAdminGroup)';
+            $params[':bulkDestinationAdminGroup'] = (int) Yii::app()->session['id_group'];
+        }
+
+        return User::model()->find([
+            'condition' => $condition,
+            'params'    => $params,
+        ]);
+    }
+
+    protected function findAuthorizedDidsForBulkDestination($condition, $params = [])
+    {
+        if (! Yii::app()->session['isAdmin']) {
+            return [];
+        }
+
+        $candidates = Did::model()->findAll([
+            'condition' => $condition,
+            'params'    => $params,
+        ]);
+
+        if (Yii::app()->session['adminLimitUsers'] != true) {
+            return $candidates;
+        }
+
+        $candidateIds = array_map(function ($candidate) {
+            return (int) $candidate->id;
+        }, $candidates);
+        if (count($candidateIds) === 0) {
+            return [];
+        }
+
+        $criteria = new CDbCriteria();
+        $criteria->addInCondition('t.id', $candidateIds);
+        $criteria->addCondition(
+            't.id_user IN (SELECT id FROM pkg_user WHERE id_group IN ('
+            . 'SELECT gug.id_group FROM pkg_group_user_group gug '
+            . 'WHERE gug.id_group_user = :bulkDestinationDidAdminGroup))'
+        );
+        $criteria->params[':bulkDestinationDidAdminGroup'] = (int) Yii::app()->session['id_group'];
+
+        return Did::model()->findAll($criteria);
     }
 
     public function afterSave($model, $values)

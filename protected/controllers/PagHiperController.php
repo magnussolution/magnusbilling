@@ -140,28 +140,9 @@ class PagHiperController extends Controller
             //FIM - NAO ALTERAR//
 
             if ($confirmado) {
-                $idPlataforma     = $_POST['idPlataforma'];
-                $dataFromPagHiper = explode("-", $idPlataforma);
-                $usuario          = trim($dataFromPagHiper[1]);
-                $id_user          = trim($dataFromPagHiper[2]);
-                $StatusTransacao  = $_POST['status'];
-                $monto            = str_replace(",", ".", $_POST['valorTotal']);
-
-                $description = "Pagamento confirmado, PAGHIPER:" . $transacaoID;
-                Yii::log('description=' . $description, 'error');
-                Yii::log('status=' . $status, 'error');
-                if ($status == 'Aprovado') {
-                    $modelUser = User::model()->find(
-                        "username = :usuario AND id = :key",
-                        [
-                            ':usuario' => $usuario,
-                            ':key'     => $id_user]
-                    );
-
-                    if (isset($modelUser->id) && Refill::model()->countRefill($transacaoID, $modelUser->id) == 0) {
-                        Yii::log('teste liberar credito=' . $modelUser->id, 'error');
-                        UserCreditManager::releaseUserCredit($modelUser->id, $monto, $description, 1, $transacaoID);
-                    }
+                $providerTransaction = $this->getPagHiperTransactionStatus($apiKey, $token, $transacaoID);
+                if (! $this->creditVerifiedPagHiperTransaction($providerTransaction, $transacaoID)) {
+                    Yii::log('PAGHIPER: verified callback did not match a pending refill intent', 'error');
                 }
                 header("HTTP/1.1 200 OK");
             } else {
@@ -170,6 +151,96 @@ class PagHiperController extends Controller
         } else {
             echo '<h3>Obrigado por efetuar a compra.</h3>';
             header("HTTP/1.1 200 OK");
+        }
+    }
+
+    protected function getPagHiperTransactionStatus($apiKey, $token, $transactionId)
+    {
+        if (trim((string) $apiKey) === '' || trim((string) $token) === '' || trim((string) $transactionId) === '') {
+            return null;
+        }
+
+        $ch = curl_init('https://api.paghiper.com/transaction/status/');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+            'apiKey'        => $apiKey,
+            'token'         => $token,
+            'transaction_id' => $transactionId,
+        ]));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Accept: application/json',
+            'Content-Type: application/json',
+        ]);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($response === false || $httpCode < 200 || $httpCode >= 300) {
+            return null;
+        }
+
+        $decoded = json_decode($response);
+        return isset($decoded->status_request) ? $decoded->status_request : null;
+    }
+
+    protected function creditVerifiedPagHiperTransaction($providerTransaction, $transactionId)
+    {
+        if (! is_object($providerTransaction)
+            || ! isset($providerTransaction->result, $providerTransaction->status)
+            || ! isset($providerTransaction->order_id, $providerTransaction->value_cents)
+            || $providerTransaction->result !== 'success'
+            || ! in_array($providerTransaction->status, ['paid', 'completed'], true)
+            || ! is_numeric($providerTransaction->value_cents)) {
+            return false;
+        }
+
+        $modelRefill = Refill::model()->find(
+            'invoice_number = :orderId AND payment = 0',
+            [':orderId' => (string) $providerTransaction->order_id]
+        );
+        if (! isset($modelRefill->id)) {
+            return false;
+        }
+
+        $expectedCents = (int) round(((float) $modelRefill->credit) * 100);
+        if ($expectedCents !== (int) $providerTransaction->value_cents) {
+            return false;
+        }
+
+        $transaction = Yii::app()->db->beginTransaction();
+        try {
+            $description = 'Pagamento confirmado, PAGHIPER:' . $transactionId;
+            $command = Yii::app()->db->createCommand(
+                'UPDATE pkg_refill SET payment = 1, description = :description '
+                . 'WHERE id = :id AND payment = 0'
+            );
+            $command->bindValue(':description', $description, PDO::PARAM_STR);
+            $command->bindValue(':id', (int) $modelRefill->id, PDO::PARAM_INT);
+            if ($command->execute() !== 1) {
+                $transaction->rollBack();
+                return false;
+            }
+
+            UserCreditManager::releaseUserCredit(
+                (int) $modelRefill->id_user,
+                $modelRefill->credit,
+                $description,
+                2,
+                $transactionId
+            );
+            $transaction->commit();
+            return true;
+        } catch (Exception $e) {
+            if ($transaction->active) {
+                $transaction->rollBack();
+            }
+            Yii::log('PAGHIPER credit failed: ' . $e->getMessage(), 'error');
+            return false;
         }
     }
 }

@@ -573,6 +573,9 @@ class UserController extends Controller
     public function actionResendActivationEmail()
     {
 
+        if (!Yii::app()->session['isAdmin']) {
+            return;
+        }
         $modelUser = User::model()->findByPk((int) $_POST['id']);
         $mail      = new Mail(Mail::$TYPE_SIGNUPCONFIRM, $modelUser->id);
         try {

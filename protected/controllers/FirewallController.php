@@ -25,6 +25,11 @@ class FirewallController extends Controller
 
     public function actionDestroy()
     {
+        if (! AccessManager::getInstance($this->instanceModel->getModule())->canDelete()) {
+            header('HTTP/1.0 401 Unauthorized');
+            die('Access denied to unban in module:' . $this->instanceModel->getModule());
+        }
+
         $values = $this->getAttributesRequest();
         $namePk = 'id';
         $ids    = array();

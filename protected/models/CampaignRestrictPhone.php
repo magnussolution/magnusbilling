@@ -87,11 +87,17 @@ class CampaignRestrictPhone extends Model
         }
     }
 
-    public function deleteNumbers($sqlNumbersDelete)
+    public function deleteNumbers(array $numbers)
     {
-        $sql = 'DELETE FROM pkg_campaign_restrict_phone WHERE number IN (' . substr($sqlNumbersDelete, 0, -2) . ');';
+        if (count($numbers) === 0) {
+            return true;
+        }
+
+        $criteria = new CDbCriteria();
+        $criteria->addInCondition('number', array_values($numbers));
+
         try {
-            Yii::app()->db->createCommand($sql)->execute();
+            $this->deleteAll($criteria);
             return true;
         } catch (Exception $e) {
             return $e;

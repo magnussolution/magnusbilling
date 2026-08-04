@@ -128,12 +128,12 @@ class PhoneNumberController extends Controller
 
         $nameFileCsv = $this->nameFileReport . time();
         $this->convertRelationFilter();
-        $header = '';
+        $header = [];
         foreach ($columns as $key => $value) {
-            $header .= '"' . ($value['header']) . '",';
+            $header[] = $value['header'];
         }
 
-        $sql = "SELECT " . substr($header, 0, -1) . " UNION ALL SELECT " . $this->getColumnsFromReport($columns) . " FROM " . $this->abstractModel->tableName() . " t $this->join WHERE $this->filter";
+        $sql = "SELECT " . $this->getColumnsFromReport($columns) . " FROM " . $this->abstractModel->tableName() . " t $this->join WHERE $this->filter";
 
         $command = Yii::app()->db->createCommand($sql);
         if ((is_array($this->paramsFilter) || is_object($this->paramsFilter)) && count($this->paramsFilter)) {
@@ -145,6 +145,7 @@ class PhoneNumberController extends Controller
 
         //create a file pointer
         $f = fopen('php://memory', 'w');
+        fputcsv($f, $header, ';');
 
         foreach ($command->queryAll() as $key => $fields) {
             $fieldsCsv = [];

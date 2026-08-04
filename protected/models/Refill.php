@@ -85,16 +85,16 @@ class Refill extends Model
         return parent::beforeSave();
     }
 
-    public function getRefillChart($filter)
+    public function getRefillChart($filter, $condition = '1 = 0', $params = [])
     {
-        if (isset($filter) && $filter[0]->value == 'day') {
-            $sql = "SELECT id, DATE_FORMAT( DATE,  '%Y-%m-%d' ) AS CreditMonth , SUM( credit ) AS sumCreditMonth
-                    FROM pkg_refill WHERE 1 GROUP BY DATE_FORMAT( DATE,  '%Y%m%d' ) ORDER BY id DESC LIMIT 30";
+        if (is_array($filter) && isset($filter[0]->value) && $filter[0]->value == 'day') {
+            $sql = "SELECT id, DATE_FORMAT(r.date, '%Y-%m-%d') AS CreditMonth, SUM(r.credit) AS sumCreditMonth
+                    FROM pkg_refill r WHERE $condition GROUP BY DATE_FORMAT(r.date, '%Y%m%d') ORDER BY id DESC LIMIT 30";
         } else {
-            $sql = "SELECT id, DATE_FORMAT( DATE,  '%Y-%m' ) AS CreditMonth , SUM(credit) AS sumCreditMonth
-                    FROM pkg_refill WHERE 1 GROUP BY EXTRACT(YEAR_MONTH FROM date)  ORDER BY id DESC LIMIT 20 ";
+            $sql = "SELECT id, DATE_FORMAT(r.date, '%Y-%m') AS CreditMonth, SUM(r.credit) AS sumCreditMonth
+                    FROM pkg_refill r WHERE $condition GROUP BY EXTRACT(YEAR_MONTH FROM r.date) ORDER BY id DESC LIMIT 20";
         }
-        return Yii::app()->db->createCommand($sql)->queryAll();
+        return Yii::app()->db->createCommand($sql)->queryAll(true, $params);
     }
 
     public function countRefill($code, $id_user)

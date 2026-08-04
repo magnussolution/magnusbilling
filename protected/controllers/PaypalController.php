@@ -57,6 +57,12 @@ class PaypalController extends Controller
                 exit;
             }
 
+            if (! $this->isConfiguredPaypalReceiver($_POST, $modelMethodpay->username)) {
+                Yii::log('EPAYMENT PAYPAL: receiver does not match configured merchant', 'error');
+                header("HTTP/1.1 200 OK");
+                return;
+            }
+
             // assign posted variables to local variables
             $item_name        = $_POST['item_name'];
             $payment_status   = $_POST['payment_status'];
@@ -117,6 +123,26 @@ class PaypalController extends Controller
             Yii::log('EPAYMENT PAYPAL: VERIFICATION FAILED', 'info');
         }
         header("HTTP/1.1 200 OK");
+    }
+
+    protected function isConfiguredPaypalReceiver($ipn, $configuredReceiver)
+    {
+        $configuredReceiver = strtolower(trim((string) $configuredReceiver));
+        if ($configuredReceiver === '' || ! is_array($ipn)) {
+            return false;
+        }
+
+        foreach (['receiver_email', 'business'] as $receiverField) {
+            if (! isset($ipn[$receiverField]) || trim((string) $ipn[$receiverField]) === '') {
+                continue;
+            }
+
+            if (hash_equals($configuredReceiver, strtolower(trim((string) $ipn[$receiverField])))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
 

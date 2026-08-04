@@ -10,17 +10,17 @@ Ext.define('MBilling.view.user.Form', {
     autoHeight: 300,
     bodyPadding: 0,
     fieldsHideUpdateLot: ['username', 'password', 'id_group_agent', 'id_offer', 'callingcard_pin', 'contract_value'],
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         haveServiceMenu = false;
-        Ext.each(App.user.menu, function(item) {
+        Ext.each(App.user.menu, function (item) {
             if (item.text == "t('Services')") haveServiceMenu = true;
         });
         me.extraButtons = [{
             text: t('Resend') + ' Email',
             iconCls: 'x-fa fa-envelope',
             handler: 'onResendActivation',
-            width: 130
+            hidden: !App.user.isAdmin
         }];
         me.items = [{
             xtype: 'tabpanel',

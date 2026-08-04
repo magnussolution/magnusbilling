@@ -246,17 +246,65 @@ class IvrController extends Controller
     public function actionDeleteAudio()
     {
 
-        if (! is_numeric($_POST['id_ivr'])) {
+        $this->checkActionAccess([], $this->instanceModel->getModule(), 'canUpdate');
+
+        if (! isset($_POST['id_ivr']) || ! is_numeric($_POST['id_ivr'])) {
             return;
         }
 
-        unlink($this->uploaddir . 'idIvrDidWork_' . $_POST['id_ivr'] . '.gsm');
-        unlink($this->uploaddir . 'idIvrDidNoWork_' . $_POST['id_ivr'] . '.gsm');
-        unlink($this->uploaddir . 'idIvrDidWork_' . $_POST['id_ivr'] . '.wav');
-        unlink($this->uploaddir . 'idIvrDidNoWork_' . $_POST['id_ivr'] . '.wav');
+        $modelIvr = $this->findAuthorizedIvrForAudioDelete((int) $_POST['id_ivr']);
+        if (! isset($modelIvr->id)) {
+            header('HTTP/1.0 404 Not Found');
+            echo json_encode([
+                $this->nameSuccess => false,
+                $this->nameMsg     => $this->msgRecordNotFound,
+            ]);
+            return;
+        }
+
+        foreach (['DidWork_', 'DidNoWork_'] as $audioType) {
+            foreach (['gsm', 'wav'] as $extension) {
+                $audioFile = $this->uploaddir . 'idIvr' . $audioType . $modelIvr->id . '.' . $extension;
+                if (is_file($audioFile)) {
+                    unlink($audioFile);
+                }
+            }
+        }
         echo json_encode([
             $this->nameSuccess => true,
             $this->nameMsg     => $this->msgSuccess,
         ]);
+    }
+
+    protected function findAuthorizedIvrForAudioDelete($idIvr)
+    {
+        return $this->findAuthorizedOwnedModel(Ivr::model(), (int) $idIvr);
+    }
+
+    protected function findAuthorizedOwnedModel($model, $id)
+    {
+        $condition = 't.id = :recordId';
+        $params    = [':recordId' => (int) $id];
+
+        if (Yii::app()->session['isClient']) {
+            $condition .= ' AND t.id_user = :authenticatedUser';
+            $params[':authenticatedUser'] = (int) Yii::app()->session['id_user'];
+        } elseif (Yii::app()->session['isAgent']) {
+            $condition .= ' AND t.id_user IN ('
+                . 'SELECT id FROM pkg_user WHERE id_user = :authenticatedAgent)';
+            $params[':authenticatedAgent'] = (int) Yii::app()->session['id_user'];
+        } elseif (Yii::app()->session['isAdmin']) {
+            if (Yii::app()->session['adminLimitUsers'] == true) {
+                $condition .= ' AND t.id_user IN ('
+                    . 'SELECT id FROM pkg_user WHERE id_group IN ('
+                    . 'SELECT gug.id_group FROM pkg_group_user_group gug '
+                    . 'WHERE gug.id_group_user = :authenticatedGroup))';
+                $params[':authenticatedGroup'] = (int) Yii::app()->session['id_group'];
+            }
+        } else {
+            $condition .= ' AND 1 = 0';
+        }
+
+        return $model->find(['condition' => $condition, 'params' => $params]);
     }
 }

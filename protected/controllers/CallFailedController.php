@@ -139,7 +139,11 @@
                 }
 
                 $type  = $f->type;
-                $field = $f->field;
+                $field = isset($f->field) ? $f->field : null;
+
+                if (! $this->isAllowedCallFailedFilterField($field)) {
+                    throw new CHttpException(400, Yii::t('zii', 'Invalid filter field.'));
+                }
 
                 if ($this->actionName != 'destroy' && ! preg_match("/^id[A-Z]/", $field)) {
 
@@ -418,6 +422,40 @@
             }
 
             return $condition;
+        }
+
+        protected function isAllowedCallFailedFilterField($field)
+        {
+            if (! is_string($field) || $field === '') {
+                return false;
+            }
+
+            $hasTableAlias = strpos($field, 't.') === 0;
+            if ($hasTableAlias) {
+                $field = substr($field, 2);
+            }
+
+            if (! preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)?$/', $field)) {
+                return false;
+            }
+
+            $fieldParts = explode('.', $field);
+            if (count($fieldParts) === 1) {
+                $columns = $this->abstractModel->getMetaData()->columns;
+                return isset($columns[$field]);
+            }
+
+            if ($hasTableAlias) {
+                return false;
+            }
+
+            list($relationName, $relatedField) = $fieldParts;
+            if (! isset($this->extraValues[$relationName])) {
+                return false;
+            }
+
+            $exposedFields = explode(',', $this->extraValues[$relationName]);
+            return in_array($relatedField, $exposedFields, true);
         }
 
         public function actionCallInfo()

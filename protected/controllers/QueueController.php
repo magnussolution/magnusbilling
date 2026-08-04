@@ -109,9 +109,18 @@ class QueueController extends Controller
 
     public function actionDeleteMusicOnHold()
     {
-        $modelQueue = Queue::model()->findByPk((int) $_POST['id_queue']);
+        $this->checkActionAccess([], $this->instanceModel->getModule(), 'canUpdate');
+
+        if (! isset($_POST['id_queue']) || ! is_numeric($_POST['id_queue'])) {
+            return;
+        }
+
+        $modelQueue = $this->findAuthorizedQueueForMusicDelete((int) $_POST['id_queue']);
         if (isset($modelQueue->id)) {
-            rmdir('/var/lib/asterisk/moh/' . $modelQueue->name);
+            $musicDirectory = '/var/lib/asterisk/moh/' . $modelQueue->name;
+            if (is_dir($musicDirectory)) {
+                rmdir($musicDirectory);
+            }
             echo json_encode([
                 $this->nameSuccess => true,
                 $this->nameMsg     => 'All musiconhold deleted from queue',
@@ -122,6 +131,33 @@ class QueueController extends Controller
                 $this->nameMsg     => 'Queue not found',
             ]);
         }
+    }
+
+    protected function findAuthorizedQueueForMusicDelete($idQueue)
+    {
+        $condition = 't.id = :queueId';
+        $params    = [':queueId' => (int) $idQueue];
+
+        if (Yii::app()->session['isClient']) {
+            $condition .= ' AND t.id_user = :authenticatedUser';
+            $params[':authenticatedUser'] = (int) Yii::app()->session['id_user'];
+        } elseif (Yii::app()->session['isAgent']) {
+            $condition .= ' AND t.id_user IN ('
+                . 'SELECT id FROM pkg_user WHERE id_user = :authenticatedAgent)';
+            $params[':authenticatedAgent'] = (int) Yii::app()->session['id_user'];
+        } elseif (Yii::app()->session['isAdmin']) {
+            if (Yii::app()->session['adminLimitUsers'] == true) {
+                $condition .= ' AND t.id_user IN ('
+                    . 'SELECT id FROM pkg_user WHERE id_group IN ('
+                    . 'SELECT gug.id_group FROM pkg_group_user_group gug '
+                    . 'WHERE gug.id_group_user = :authenticatedGroup))';
+                $params[':authenticatedGroup'] = (int) Yii::app()->session['id_group'];
+            }
+        } else {
+            $condition .= ' AND 1 = 0';
+        }
+
+        return Queue::model()->find(['condition' => $condition, 'params' => $params]);
     }
 
     public function actionResetQueueStats()

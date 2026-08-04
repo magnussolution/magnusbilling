@@ -33,6 +33,23 @@ $modelUser->doc = preg_replace('/-|\.|\//', '', $modelUser->doc);
 
 $cpf_cnpj = new ValidaCPFCNPJ($modelUser->doc);
 
+$pendingRefill = Refill::model()->find(
+    'invoice_number = :orderId AND id_user = :idUser AND payment = 0',
+    [':orderId' => $reference, ':idUser' => (int) $modelUser->id]
+);
+if (! isset($pendingRefill->id)) {
+    $pendingRefill                 = new Refill();
+    $pendingRefill->id_user        = (int) $modelUser->id;
+    $pendingRefill->credit         = (float) $_GET['amount'];
+    $pendingRefill->description    = 'Pagamento pendente, PAGHIPER order:' . $reference;
+    $pendingRefill->invoice_number = $reference;
+    $pendingRefill->payment        = 0;
+    if (! $pendingRefill->save()) {
+        echo Yii::t('zii', 'Unable to create payment intent');
+        return;
+    }
+}
+
 $params = array(
     "email_loja"          => $modelMethodPay->username,
     "urlRetorno"          => $protocol . $_SERVER['HTTP_HOST'] . '/mbilling/index.php/pagHiper' . $agent,

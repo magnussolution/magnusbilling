@@ -84,6 +84,8 @@ class GroupUserController extends Controller
             exit;
         }
 
+        $this->checkActionAccess([], $this->instanceModel->getModule(), 'canCreate');
+
         $success          = false;
         $this->msgSuccess = 'invalid group';
         if (isset($_POST['id'])) {

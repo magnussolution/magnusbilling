@@ -40,9 +40,23 @@ class CallOnlineChartController extends Controller
     {
         $filter = isset($_GET['filter']) ? json_decode($_GET['filter']) : null;
 
-        $hours = isset($filter[0]) ? $filter[0]->value : 1;
+        $hoursValue = isset($filter[0]) && isset($filter[0]->value) ? $filter[0]->value : 1;
+        $isPositiveInteger = is_int($hoursValue)
+            || (is_string($hoursValue) && preg_match('/^[1-9][0-9]*$/D', $hoursValue));
+        $hours = $isPositiveInteger
+            ? filter_var($hoursValue, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]])
+            : false;
 
-        $filter = 'date >= date_sub(NOW(), interval ' . $hours . ' hour)';
+        if ($hours === false) {
+            header('HTTP/1.0 400 Bad Request');
+            echo json_encode([
+                $this->nameSuccess => false,
+                $this->nameMsg     => 'Invalid hours filter',
+            ]);
+            return;
+        }
+
+        $filter = 'date >= date_sub(NOW(), interval :hours hour)';
 
         $dateFormat = 'DATE_FORMAT( date, \'%D %H:%i\' ) date';
         $select     = 'id, ' . $dateFormat . ', MAX(total) total, MAX(answer) answer';
@@ -70,6 +84,7 @@ class CallOnlineChartController extends Controller
             'order'     => 'id DESC',
             'group'     => $group,
             'condition' => $filter,
+            'params'    => [':hours' => $hours],
         ]);
 
         # envia o json requisitado

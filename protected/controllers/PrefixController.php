@@ -127,7 +127,11 @@ class PrefixController extends Controller
         if (isset($_GET['filter']) && Yii::app()->session['isAdmin']) {
             if (preg_match('/^1 AND t.destination LIKE/', $filter)) {
                 $getFilter = json_decode($_GET['filter']);
-                $filter .= " OR prefix  LIKE '" . strtolower($getFilter[0]->value) . "%'  OR prefix  LIKE '" . strtolower($getFilter[0]->value) . "%'  ";
+                if (is_array($getFilter) && isset($getFilter[0]->value) && is_scalar($getFilter[0]->value)) {
+                    $filter = '(' . $filter . ' OR t.prefix LIKE :prefixLookupSearch)';
+                    $this->paramsFilter['prefixLookupSearch'] =
+                        strtolower((string) $getFilter[0]->value) . '%';
+                }
             }
         }
 
