@@ -21,6 +21,9 @@
 
 class AuthenticationController extends Controller
 {
+    const MFA_PENDING_TIMEOUT = 300;
+    const MFA_MAX_ATTEMPTS    = 5;
+
     private $menu = [];
 
     public function actionLogin()
@@ -97,27 +100,10 @@ class AuthenticationController extends Controller
             return;
         }
 
-        $idUserType = $modelUser->idGroup->idUserType->id;
-
-        Yii::app()->session['isAdmin']             = $idUserType == 1 ? true : false;
-        Yii::app()->session['isAgent']             = $idUserType == 2 ? true : false;
-        Yii::app()->session['isClient']            = $idUserType == 3 ? true : false;
-        Yii::app()->session['isClientAgent']       = isset($modelUser->id_user) && $modelUser->id_user > 1 ? true : false;
-        Yii::app()->session['id_plan']             = $modelUser->id_plan;
-        Yii::app()->session['credit']              = isset($modelUser->credit) ? $modelUser->credit : 0;
-        Yii::app()->session['username']            = $modelUser->username;
-        Yii::app()->session['logged']              = true;
-        Yii::app()->session['id_user']             = $modelUser->id;
-        Yii::app()->session['id_agent']            = is_null($modelUser->id_user) ? 1 : $modelUser->id_user;
-        Yii::app()->session['name_user']           = $modelUser->firstname . ' ' . $modelUser->lastname;
-        Yii::app()->session['id_group']            = $modelUser->id_group;
-        Yii::app()->session['user_type']           = $idUserType;
-        Yii::app()->session['systemName']          = $_SERVER['SCRIPT_FILENAME'];
-        Yii::app()->session['session_start']       = time();
-        Yii::app()->session['userCount']           = User::model()->count("credit != 0");
-        Yii::app()->session['hidden_prices']       = $modelUser->idGroup->hidden_prices;
-        Yii::app()->session['hidden_batch_update'] = $modelUser->idGroup->hidden_batch_update;
-        Yii::app()->session['sipuser_login']             = isset($sipuser_login) ? $sipuser_login : false;
+        $checkGoogleAuthenticator = false;
+        $googleAuthenticatorKey   = false;
+        $newGoogleAuthenticator   = false;
+        $showGoogleCode           = false;
 
         if ($modelUser->googleAuthenticator_enable > 0) {
 
@@ -135,19 +121,18 @@ class AuthenticationController extends Controller
                 $modelUser->google_authenticator_key   = $secret;
                 $modelUser->googleAuthenticator_enable = 3;
                 $modelUser->save();
-                Yii::app()->session['newGoogleAuthenticator']   = true;
-                Yii::app()->session['googleAuthenticatorKey']   = $ga->getQRCodeGoogleUrl('VoIP-' . $modelUser->username . '-' . $modelUser->id, $secret);
-                Yii::app()->session['checkGoogleAuthenticator'] = true;
-                Yii::app()->session['showGoogleCode']           = true;
+                $newGoogleAuthenticator = true;
+                $googleAuthenticatorKey = $ga->getQRCodeGoogleUrl('VoIP-' . $modelUser->username . '-' . $modelUser->id, $secret);
+                $checkGoogleAuthenticator = true;
+                $showGoogleCode = true;
             } else {
-                $secret                                       = $modelUser->google_authenticator_key;
-                Yii::app()->session['newGoogleAuthenticator'] = false;
+                $secret = $modelUser->google_authenticator_key;
                 if ($modelUser->googleAuthenticator_enable == 2) {
-                    Yii::app()->session['showGoogleCode'] = true;
+                    $showGoogleCode = true;
                 } else {
-                    Yii::app()->session['showGoogleCode'] = false;
+                    $showGoogleCode = false;
                 }
-                Yii::app()->session['googleAuthenticatorKey'] = $ga->getQRCodeGoogleUrl('VoIP-' . $modelUser->username . '-' . $modelUser->id, $secret);
+                $googleAuthenticatorKey = $ga->getQRCodeGoogleUrl('VoIP-' . $modelUser->username . '-' . $modelUser->id, $secret);
 
                 $modelLogUsers = LogUsers::model()->count(
                     'id_user = :key AND ip = :key1 AND description = :key2 AND date > :key3',
@@ -159,29 +144,104 @@ class AuthenticationController extends Controller
                     ]
                 );
                 if ($modelLogUsers > 0) {
-                    Yii::app()->session['checkGoogleAuthenticator'] = false;
+                    $checkGoogleAuthenticator = false;
                 } else {
-                    Yii::app()->session['checkGoogleAuthenticator'] = true;
+                    $checkGoogleAuthenticator = true;
                 }
             }
-        } else {
-            Yii::app()->session['showGoogleCode']           = false;
-            Yii::app()->session['newGoogleAuthenticator']   = false;
-            Yii::app()->session['checkGoogleAuthenticator'] = false;
-            MagnusLog::insertLOG(1, 'Username Login on the panel - User ' . Yii::app()->session['username']);
         }
 
-        if (isset($_REQUEST['securityLogin'])) {
+        if ($checkGoogleAuthenticator) {
+            // A pending MFA session must never contain fields accepted as authenticated by BaseController.
+            $this->beginPendingAuthentication(
+                $modelUser,
+                isset($sipuser_login) ? $sipuser_login : false
+            );
+        } else {
+            $this->establishAuthenticatedSession(
+                $modelUser,
+                isset($sipuser_login) ? $sipuser_login : false
+            );
+            MagnusLog::insertLOG(1, 'Username Login on the panel - User ' . $modelUser->username);
+        }
+
+        if (! $checkGoogleAuthenticator && isset($_REQUEST['securityLogin'])) {
             header("Location: ../../../");
         }
 
-        if (isset($_REQUEST['remote'])) {
+        if (! $checkGoogleAuthenticator && isset($_REQUEST['remote'])) {
             header("Location: ../..");
         }
         echo json_encode([
-            'success' => Yii::app()->session['username'],
-            'msg'     => Yii::app()->session['name_user'],
+            'success'                  => $modelUser->username,
+            'msg'                      => $modelUser->firstname . ' ' . $modelUser->lastname,
+            'checkGoogleAuthenticator' => $checkGoogleAuthenticator,
+            'googleAuthenticatorKey'   => $googleAuthenticatorKey,
+            'newGoogleAuthenticator'   => $newGoogleAuthenticator,
+            'showGoogleCode'           => $showGoogleCode,
         ]);
+    }
+
+    protected function beginPendingAuthentication($modelUser, $sipuserLogin = false)
+    {
+        Yii::app()->session->clear();
+        Yii::app()->session->regenerateID(true);
+
+        Yii::app()->session['pending_2fa_user_id']       = (int) $modelUser->id;
+        Yii::app()->session['pending_2fa_since']         = time();
+        Yii::app()->session['pending_2fa_attempts']      = 0;
+        Yii::app()->session['pending_2fa_sipuser_login'] = $sipuserLogin;
+        Yii::app()->session['logged']                    = false;
+    }
+
+    protected function establishAuthenticatedSession($modelUser, $sipuserLogin = false)
+    {
+        Yii::app()->session->clear();
+        Yii::app()->session->regenerateID(true);
+
+        $idUserType = $modelUser->idGroup->idUserType->id;
+
+        Yii::app()->session['isAdmin']             = $idUserType == 1;
+        Yii::app()->session['isAgent']             = $idUserType == 2;
+        Yii::app()->session['isClient']            = $idUserType == 3;
+        Yii::app()->session['isClientAgent']       = isset($modelUser->id_user) && $modelUser->id_user > 1;
+        Yii::app()->session['id_plan']             = $modelUser->id_plan;
+        Yii::app()->session['credit']              = isset($modelUser->credit) ? $modelUser->credit : 0;
+        Yii::app()->session['username']            = $modelUser->username;
+        Yii::app()->session['logged']              = true;
+        Yii::app()->session['id_user']             = $modelUser->id;
+        Yii::app()->session['id_agent']            = is_null($modelUser->id_user) ? 1 : $modelUser->id_user;
+        Yii::app()->session['name_user']           = $modelUser->firstname . ' ' . $modelUser->lastname;
+        Yii::app()->session['id_group']            = $modelUser->id_group;
+        Yii::app()->session['user_type']           = $idUserType;
+        Yii::app()->session['systemName']          = $_SERVER['SCRIPT_FILENAME'];
+        Yii::app()->session['session_start']       = time();
+        Yii::app()->session['userCount']           = User::model()->count("credit != 0");
+        Yii::app()->session['hidden_prices']       = $modelUser->idGroup->hidden_prices;
+        Yii::app()->session['hidden_batch_update'] = $modelUser->idGroup->hidden_batch_update;
+        Yii::app()->session['sipuser_login']       = $sipuserLogin;
+        Yii::app()->session['showGoogleCode']      = false;
+        Yii::app()->session['newGoogleAuthenticator'] = false;
+        Yii::app()->session['checkGoogleAuthenticator'] = false;
+    }
+
+    protected function getPendingAuthenticationUserId()
+    {
+        $idUser   = (int) Yii::app()->session['pending_2fa_user_id'];
+        $since    = (int) Yii::app()->session['pending_2fa_since'];
+        $attempts = (int) Yii::app()->session['pending_2fa_attempts'];
+
+        if (
+            $idUser < 1 ||
+            $since < 1 ||
+            time() - $since > self::MFA_PENDING_TIMEOUT ||
+            $attempts >= self::MFA_MAX_ATTEMPTS
+        ) {
+            Yii::app()->session->clear();
+            return false;
+        }
+
+        return $idUser;
     }
 
     private function mountMenu()
@@ -398,27 +458,47 @@ class AuthenticationController extends Controller
 
         $ga = new PHPGangsta_GoogleAuthenticator();
 
-        $modelUser = User::model()->findByPk((int) Yii::app()->session['id_user']);
+        $pendingUserId = $this->getPendingAuthenticationUserId();
+        if (! $pendingUserId) {
+            echo json_encode([
+                'success' => false,
+                'msg'     => 'Authentication expired',
+            ]);
+            return;
+        }
 
-        //Yii::log(print_r($sql,true),'info');
+        $modelUser = User::model()->findByPk($pendingUserId);
+        if (! isset($modelUser->id)) {
+            Yii::app()->session->clear();
+            echo json_encode([
+                'success' => false,
+                'msg'     => 'Authentication expired',
+            ]);
+            return;
+        }
+
         $secret      = $modelUser->google_authenticator_key;
-        $oneCodePost = $_POST['oneCode'];
+        $oneCodePost = isset($_POST['oneCode']) ? $_POST['oneCode'] : '';
 
         $checkResult = $ga->verifyCode($secret, $oneCodePost, 2);
 
         if ($checkResult) {
-            $sussess                                        = true;
-            Yii::app()->session['checkGoogleAuthenticator'] = false;
+            $sipuserLogin = Yii::app()->session['pending_2fa_sipuser_login'];
+            $this->establishAuthenticatedSession($modelUser, $sipuserLogin);
+
+            $success = true;
             $modelUser->googleAuthenticator_enable          = 1;
             $modelUser->save();
-            MagnusLog::insertLOG(1, 'Username Login on the panel - User ' . Yii::app()->session['username']);
+            MagnusLog::insertLOG(1, 'Username Login on the panel - User ' . $modelUser->username);
         } else {
-            $sussess = false;
+            Yii::app()->session['pending_2fa_attempts'] =
+                (int) Yii::app()->session['pending_2fa_attempts'] + 1;
+            $success = false;
         }
-        //$sussess = true;
+
         echo json_encode([
-            'success' => $sussess,
-            'msg'     => Yii::app()->session['name_user'],
+            'success' => $success,
+            'msg'     => $modelUser->firstname . ' ' . $modelUser->lastname,
         ]);
     }
 

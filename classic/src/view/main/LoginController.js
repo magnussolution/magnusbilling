@@ -28,6 +28,18 @@ Ext.define('MBilling.view.main.LoginController', {
             success: function(response) {
                 response = Ext.decode(response.responseText);
                 if (response.success) {
+                    if (response.checkGoogleAuthenticator) {
+                        loginWin.setLoading(false);
+                        loginWin.close();
+                        App.user.logged = false;
+                        Ext.widget('googleauthenticator', {
+                            keyGoogle: response.googleAuthenticatorKey,
+                            newKey: response.newGoogleAuthenticator,
+                            username: response.success,
+                            showGoogleCode: response.showGoogleCode
+                        });
+                        return;
+                    }
                     loginWin.setLoading(me.msgEnteringInSystem);
                     App.init();
                     loginWin.setLoading(false);
