@@ -289,9 +289,24 @@ class DidController extends Controller
         $id_did  = isset($_POST['id']) ? json_decode($_POST['id']) : null;
         $id_user = isset($_POST['id_user']) ? json_decode($_POST['id_user']) : Yii::app()->session['id_user'];
 
-        $modelDid = Did::model()->findByPk((int) $id_did);
+        $modelUser = $this->findAuthorizedDidPurchaseUser((int) $id_user);
+        if (! isset($modelUser->id)) {
+            echo json_encode([
+                $this->nameSuccess => false,
+                $this->nameMsg     => Yii::t('zii', 'Not allowed'),
+            ]);
+            return;
+        }
 
-        $modelUser = User::model()->findByPk((int) $id_user);
+        $id_user = (int) $modelUser->id;
+        $modelDid = Did::model()->findByPk((int) $id_did);
+        if (! isset($modelDid->id)) {
+            echo json_encode([
+                $this->nameSuccess => false,
+                $this->nameMsg     => $this->msgRecordNotFound,
+            ]);
+            return;
+        }
 
         $totalDid = $modelDid->fixrate + $modelDid->connection_charge;
 
@@ -360,6 +375,34 @@ class DidController extends Controller
         echo json_encode([
             $this->nameSuccess => $success,
             $this->nameMsg     => $this->msgSuccess,
+        ]);
+    }
+
+    protected function findAuthorizedDidPurchaseUser($idUser)
+    {
+        $condition = 't.id = :purchaseUserId';
+        $params    = [':purchaseUserId' => (int) $idUser];
+
+        if (Yii::app()->session['isClient']) {
+            $condition .= ' AND t.id = :authenticatedUser';
+            $params[':authenticatedUser'] = (int) Yii::app()->session['id_user'];
+        } elseif (Yii::app()->session['isAgent']) {
+            $condition .= ' AND (t.id = :authenticatedAgent OR t.id_user = :authenticatedAgent)';
+            $params[':authenticatedAgent'] = (int) Yii::app()->session['id_user'];
+        } elseif (Yii::app()->session['isAdmin']) {
+            if (Yii::app()->session['adminLimitUsers'] == true) {
+                $condition .= ' AND t.id_group IN ('
+                    . 'SELECT gug.id_group FROM pkg_group_user_group gug '
+                    . 'WHERE gug.id_group_user = :authenticatedGroup)';
+                $params[':authenticatedGroup'] = (int) Yii::app()->session['id_group'];
+            }
+        } else {
+            $condition .= ' AND 1 = 0';
+        }
+
+        return User::model()->find([
+            'condition' => $condition,
+            'params'    => $params,
         ]);
     }
 
@@ -438,6 +481,8 @@ class DidController extends Controller
 
     public function actionLiberar()
     {
+        $this->checkActionAccess([], $this->instanceModel->getModule(), 'canUpdate');
+
         if (isset($_POST['ids']) || isset($_POST['filter'])) {
 
             if (isset($_POST['filter'])) {
@@ -453,8 +498,26 @@ class DidController extends Controller
                 $ids = json_decode($_POST['ids']);
             }
 
+            if (! is_array($ids)) {
+                echo json_encode([
+                    $this->nameSuccess => false,
+                    $this->nameMsg     => 'Did not selected',
+                ]);
+                return;
+            }
+
+            $authorizedDids = [];
             foreach ($ids as $key => $id) {
-                $modelDid = Did::model()->findByPk((int) $id);
+                $modelDid = $this->findAuthorizedDidForRelease((int) $id);
+                if (! isset($modelDid->id)) {
+                    header('HTTP/1.0 404 Not Found');
+                    echo json_encode([
+                        $this->nameSuccess => false,
+                        $this->nameMsg     => $this->msgRecordNotFound,
+                    ]);
+                    return;
+                }
+                $authorizedDids[(int) $modelDid->id] = $modelDid;
 
                 if (isset($modelDid->id) && isset($modelDid->idUser->did_days) && $modelDid->idUser->did_days > 0) {
                     $didUse = DidUse::model()->find('id_did = :key AND releasedate = :key1 AND status = 1', [
@@ -475,7 +538,7 @@ class DidController extends Controller
             }
 
             foreach ($ids as $key => $id) {
-                $modelDid = Did::model()->findByPk((int) $id);
+                $modelDid = $authorizedDids[(int) $id];
                 if ($modelDid->reserved == 1 && $modelDid->id_user > 0) {
                     Did::model()->updateByPk(
                         $id,
@@ -535,6 +598,36 @@ class DidController extends Controller
                 $this->nameMsg     => 'Did not selected',
             ]);
         }
+    }
+
+    protected function findAuthorizedDidForRelease($idDid)
+    {
+        $condition = 't.id = :releaseDidId';
+        $params    = [':releaseDidId' => (int) $idDid];
+
+        if (Yii::app()->session['isClient']) {
+            $condition .= ' AND t.id_user = :authenticatedUser';
+            $params[':authenticatedUser'] = (int) Yii::app()->session['id_user'];
+        } elseif (Yii::app()->session['isAgent']) {
+            $condition .= ' AND t.id_user IN ('
+                . 'SELECT id FROM pkg_user WHERE id = :authenticatedAgent OR id_user = :authenticatedAgent)';
+            $params[':authenticatedAgent'] = (int) Yii::app()->session['id_user'];
+        } elseif (Yii::app()->session['isAdmin']) {
+            if (Yii::app()->session['adminLimitUsers'] == true) {
+                $condition .= ' AND t.id_user IN ('
+                    . 'SELECT id FROM pkg_user WHERE id_group IN ('
+                    . 'SELECT gug.id_group FROM pkg_group_user_group gug '
+                    . 'WHERE gug.id_group_user = :authenticatedGroup))';
+                $params[':authenticatedGroup'] = (int) Yii::app()->session['id_group'];
+            }
+        } else {
+            $condition .= ' AND 1 = 0';
+        }
+
+        return Did::model()->find([
+            'condition' => $condition,
+            'params'    => $params,
+        ]);
     }
 
     public function beforeDestroy($values)

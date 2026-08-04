@@ -326,10 +326,13 @@ class CampaignController extends Controller
 
     public function actionTestCampaign()
     {
+        $this->checkActionAccess([], $this->instanceModel->getModule(), 'canUpdate');
+
         $idCampaign = isset($_POST['id']) ? (int) $_POST['id'] : 0;
-        $campaign   = $idCampaign > 0 ? $this->abstractModel->findByPk($idCampaign) : null;
+        $campaign   = $idCampaign > 0 ? $this->findAuthorizedCampaignForDispatch($idCampaign) : null;
 
         if (! isset($campaign->id)) {
+            header('HTTP/1.0 404 Not Found');
             echo json_encode([
                 $this->nameSuccess => false,
                 $this->nameMsg     => Yii::t('zii', 'Select a saved campaign before starting the dispatch.'),
@@ -353,6 +356,36 @@ class CampaignController extends Controller
             $this->nameMsg     => $exitCode === 0
             ? ($message !== '' ? $message : Yii::t('zii', 'The campaign was processed successfully.'))
             : ($message !== '' ? $message : Yii::t('zii', 'The campaign could not be processed. Review its settings and try again.')),
+        ]);
+    }
+
+    protected function findAuthorizedCampaignForDispatch($idCampaign)
+    {
+        $condition = 't.id = :campaignId';
+        $params    = [':campaignId' => (int) $idCampaign];
+
+        if (Yii::app()->session['isClient']) {
+            $condition .= ' AND t.id_user = :authenticatedUser';
+            $params[':authenticatedUser'] = (int) Yii::app()->session['id_user'];
+        } elseif (Yii::app()->session['isAgent']) {
+            $condition .= ' AND t.id_user IN ('
+                . 'SELECT id FROM pkg_user WHERE id_user = :authenticatedAgent)';
+            $params[':authenticatedAgent'] = (int) Yii::app()->session['id_user'];
+        } elseif (Yii::app()->session['isAdmin']) {
+            if (Yii::app()->session['adminLimitUsers'] == true) {
+                $condition .= ' AND t.id_user IN ('
+                    . 'SELECT id FROM pkg_user WHERE id_group IN ('
+                    . 'SELECT gug.id_group FROM pkg_group_user_group gug '
+                    . 'WHERE gug.id_group_user = :authenticatedGroup))';
+                $params[':authenticatedGroup'] = (int) Yii::app()->session['id_group'];
+            }
+        } else {
+            $condition .= ' AND 1 = 0';
+        }
+
+        return Campaign::model()->find([
+            'condition' => $condition,
+            'params'    => $params,
         ]);
     }
 }

@@ -133,11 +133,10 @@ class BuyCreditController extends Controller
         $criteria->addInCondition('id', $ids);
 
         $modelServicesUse = ServicesUse::model()->findAll($criteria);
+        $total            = $this->getAuthoritativeServiceTotal($modelServicesUse);
 
         if (Yii::app()->session['isAdmin']) {
-            $total = 0;
             foreach ($modelServicesUse as $key => $value) {
-                $total += $modelServicesUse[0]->idServices->price;
                 if ($value->id_user != $modelServicesUse[0]->id_user) {
                     $this->render('payservicelink', [
                         'model'   => $model,
@@ -187,10 +186,6 @@ class BuyCreditController extends Controller
         }
 
         if ($_POST) {
-
-            $total = explode(" ", $_POST['ServicesUse']['total']);
-            $total = floatval($total[1]);
-
             if (isset($_POST['ServicesUse']['use_credit']) && $_POST['ServicesUse']['use_credit'] == 1) {
 
                 if ($modelServicesUse[0]->idUser->typepaid == 1) {
@@ -265,6 +260,19 @@ class BuyCreditController extends Controller
             'modelServicesUse' => $modelServicesUse,
             'currency'         => Yii::app()->session['currency'],
         ]);
+    }
+
+    protected function getAuthoritativeServiceTotal($modelServicesUse)
+    {
+        $total = 0.0;
+
+        foreach ($modelServicesUse as $modelServiceUse) {
+            if (isset($modelServiceUse->idServices->price)) {
+                $total += (float) $modelServiceUse->idServices->price;
+            }
+        }
+
+        return $total;
     }
 
 

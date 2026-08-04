@@ -82,10 +82,10 @@ class CallShopController extends Controller
 
     public function actionLiberar()
     {
+        $this->checkActionAccess([], $this->instanceModel->getModule(), 'canUpdate');
 
         if (isset($_GET['id'])) {
-            $id = (int) $_GET['id'];
-            Sip::model()->updateByPk((int) $id, ['status' => 2]);
+            $modelSip = $this->findAuthorizedCallShopSip((int) $_GET['id']);
         } else {
 
             if (isset($_GET['name'])) {
@@ -94,17 +94,57 @@ class CallShopController extends Controller
                 $filter = json_decode($_POST['filter'], true);
             }
 
-            $modelSip         = Sip::model()->find("name = :name ", [':name' => $filter[0]['value']]);
-            $modelSip->status = 2;
-            $modelSip->save();
-
+            $name     = isset($filter[0]['value']) ? $filter[0]['value'] : '';
+            $modelSip = $this->findAuthorizedCallShopSip(null, $name);
         }
+
+        if (! isset($modelSip->id)) {
+            header('HTTP/1.0 404 Not Found');
+            echo json_encode([
+                $this->nameSuccess => false,
+                $this->nameMsg     => $this->msgRecordNotFound,
+            ]);
+            return;
+        }
+
+        $modelSip->status = 2;
+        $modelSip->save();
 
         echo json_encode([
             $this->nameSuccess => true,
             $this->nameMsg     => $this->msgSuccess,
         ]);
 
+    }
+
+    protected function findAuthorizedCallShopSip($id = null, $name = null)
+    {
+        $condition = $id !== null ? 't.id = :sipId' : 't.name = :sipName';
+        $params    = $id !== null ? [':sipId' => (int) $id] : [':sipName' => $name];
+
+        if (Yii::app()->session['isClient']) {
+            $condition .= ' AND t.id_user = :authenticatedUser';
+            $params[':authenticatedUser'] = (int) Yii::app()->session['id_user'];
+        } elseif (Yii::app()->session['isAgent']) {
+            $condition .= ' AND t.id_user IN ('
+                . 'SELECT id FROM pkg_user WHERE id = :authenticatedAgent OR id_user = :authenticatedAgent)';
+            $params[':authenticatedAgent'] = (int) Yii::app()->session['id_user'];
+        } elseif (Yii::app()->session['isAdmin']) {
+            if (Yii::app()->session['adminLimitUsers'] == true) {
+                $condition .= ' AND t.id_user IN ('
+                    . 'SELECT id FROM pkg_user WHERE id_group IN ('
+                    . 'SELECT gug.id_group FROM pkg_group_user_group gug '
+                    . 'WHERE gug.id_group_user = :authenticatedGroup))';
+                $params[':authenticatedGroup'] = (int) Yii::app()->session['id_group'];
+            }
+        } else {
+            $condition .= ' AND 1 = 0';
+        }
+
+        return Sip::model()->find([
+            'condition' => $condition,
+            'params'    => $params,
+        ]);
     }
 
     public function actionCobrar()

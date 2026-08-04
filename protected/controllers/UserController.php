@@ -412,7 +412,7 @@ class UserController extends Controller
             exit;
         }
 
-        $modelUser = $this->findAuthorizedCreditUser((int) ($_POST['id'] ?? 0));
+        $modelUser = $this->findAuthorizedCreditUser((int) Yii::app()->session['id_user']);
         if (! isset($modelUser->id)) {
             header('HTTP/1.0 404 Not Found');
             echo json_encode([

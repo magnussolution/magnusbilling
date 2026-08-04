@@ -392,6 +392,8 @@ class SipController extends Controller
             exit;
         }
 
+        $this->checkActionAccess([], $this->instanceModel->getModule(), 'canCreate');
+
         $secret = $_POST['secret'] == "Leave blank to auto generate" ? '' : $_POST['secret'];
 
         if (strlen($secret) > 0 && strlen($secret) < 6 && strlen($secret) < 25) {
@@ -418,9 +420,14 @@ class SipController extends Controller
             exit;
         }
 
-        $modelUser = User::model()->findByPk((int) $_POST['id_user']);
+        $modelUser = $this->findAuthorizedBulkSipUser((int) $_POST['id_user']);
 
-        if ($modelUser->idGroup->idUserType->id != 3) {
+        if (! isset($modelUser->id) || $modelUser->idGroup->idUserType->id != 3) {
+            header('HTTP/1.0 404 Not Found');
+            echo json_encode([
+                $this->nameSuccess => false,
+                $this->nameMsg     => $this->msgRecordNotFound,
+            ]);
             return;
         }
 
@@ -449,6 +456,31 @@ class SipController extends Controller
         echo json_encode([
             $this->nameSuccess => true,
             $this->nameMsg     => $this->msgSuccess,
+        ]);
+    }
+
+    protected function findAuthorizedBulkSipUser($idUser)
+    {
+        $condition = 't.id = :bulkSipUserId';
+        $params    = [':bulkSipUserId' => (int) $idUser];
+
+        if (Yii::app()->session['isAgent']) {
+            $condition .= ' AND t.id_user = :authenticatedAgent';
+            $params[':authenticatedAgent'] = (int) Yii::app()->session['id_user'];
+        } elseif (Yii::app()->session['isAdmin']) {
+            if (Yii::app()->session['adminLimitUsers'] == true) {
+                $condition .= ' AND t.id_group IN ('
+                    . 'SELECT gug.id_group FROM pkg_group_user_group gug '
+                    . 'WHERE gug.id_group_user = :authenticatedGroup)';
+                $params[':authenticatedGroup'] = (int) Yii::app()->session['id_group'];
+            }
+        } else {
+            $condition .= ' AND 1 = 0';
+        }
+
+        return User::model()->find([
+            'condition' => $condition,
+            'params'    => $params,
         ]);
     }
 
