@@ -10,6 +10,8 @@
 class UserController extends Controller
 {
 
+    const MAX_BULK_USERS = 1000;
+
     public $attributeOrder = 't.credit DESC';
     public $titleReport    = 'User';
     public $subTitleReport = 'User';
@@ -500,47 +502,88 @@ class UserController extends Controller
 
     public function actionBulk()
     {
+        $this->checkActionAccess([], $this->instanceModel->getModule(), 'canCreate');
+
+        if (! Yii::app()->session['isAdmin'] && ! Yii::app()->session['isAgent']) {
+            $this->bulkError(Yii::t('zii', 'Access denied.'));
+            return;
+        }
+
         $values = $this->getAttributesRequest();
+        $totalToCreate = $this->parseBulkPositiveInteger(
+            isset($values['totalToCreate']) ? $values['totalToCreate'] : null,
+            self::MAX_BULK_USERS
+        );
+        $credit = $this->parseBulkCredit(isset($_POST['credit']) ? $_POST['credit'] : 0);
+        $idPlan = $this->parseBulkPositiveInteger(isset($values['id_plan']) ? $values['id_plan'] : null);
+        $language = isset($values['language']) ? trim((string) $values['language']) : '';
+        $active = isset($values['active']) ? filter_var(
+            $values['active'],
+            FILTER_VALIDATE_INT,
+            ['options' => ['min_range' => 0, 'max_range' => 1]]
+        ) : false;
 
-        if (Yii::app()->session['user_type'] == 3) {
-            exit;
-        } else if (Yii::app()->session['user_type'] == 2) {
-            $id_user = Yii::app()->getSession()->get('id_user');
+        if ($totalToCreate === null || $credit === null || $idPlan === null
+            || ! preg_match('/^[A-Za-z_]{2,5}$/D', $language)
+            || $active === false
+        ) {
+            $this->bulkError(Yii::t('zii', 'Invalid bulk user data.'));
+            return;
+        }
 
-            $sql     = "SELECT id_group_agent FROM pkg_user WHERE id = :id";
-            $command = Yii::app()->db->createCommand($sql);
-            $command->bindValue(":id", $id_user, PDO::PARAM_INT);
-            $result = $command->queryAll();
-
-            $values['id_group'] = $result[0]['id_group_agent'];
+        if (Yii::app()->session['isAgent']) {
+            $id_user = (int) Yii::app()->session['id_user'];
+            $modelAgent = User::model()->findByPk($id_user);
+            $values['id_group'] = isset($modelAgent->id) ? (int) $modelAgent->id_group_agent : 0;
+            $planOwner = $id_user;
         } else {
             $id_user = 1;
+            $values['id_group'] = $this->parseBulkPositiveInteger(
+                isset($values['id_group']) ? $values['id_group'] : null
+            );
+            $planOwner = 1;
         }
 
-        $modelGroupUser = GroupUser::model()->findByPk((int) $values['id_group']);
+        $modelGroupUser = $this->findAuthorizedBulkUserGroup($values['id_group']);
+        $modelPlan = Plan::model()->find(
+            'id = :idPlan AND id_user = :planOwner',
+            [':idPlan' => $idPlan, ':planOwner' => $planOwner]
+        );
 
-        if ($modelGroupUser->id_user_type != 3) {
-            echo json_encode([
-                $this->nameSuccess => false,
-                $this->nameMsg     => 'Only allowed create user. you try create admin or agent',
-            ]);
-            exit;
+        if (! isset($modelGroupUser->id) || (int) $modelGroupUser->id_user_type !== 3
+            || ! isset($modelPlan->id)
+        ) {
+            $this->bulkError($this->msgRecordNotFound, 404);
+            return;
         }
-        for ($i = 0; $i < $values['totalToCreate']; $i++) {
 
-            $modelUser                  = new User();
-            $modelUser->username        = Util::getNewUsername();
-            $modelUser->password        = Util::generatePassword(8, true, true, true, false);
-            $modelUser->callingcard_pin = Util::generatePinCallingcard();
-            $modelUser->id_group        = $values['id_group'];
-            $modelUser->language        = $values['language'];
-            $modelUser->id_plan         = $values['id_plan'];
-            $modelUser->active          = $values['active'];
-            $modelUser->id_user         = $id_user;
-            $modelUser->credit          = $values['credit'] > 0 ? $values['credit'] : 0;
-            $modelUser->save();
+        $transaction = Yii::app()->db->beginTransaction();
+        try {
+            if (Yii::app()->session['isAgent'] && $credit > 0) {
+                $limitError = $this->validateBulkAgentCredit($id_user, $credit * $totalToCreate);
+                if ($limitError !== null) {
+                    $transaction->rollBack();
+                    $this->bulkError($limitError);
+                    return;
+                }
+            }
 
-            if ($modelUser->idGroup->idUserType->id == 3) {
+            for ($i = 0; $i < $totalToCreate; $i++) {
+                $modelUser                  = new User();
+                $modelUser->username        = Util::getNewUsername();
+                $modelUser->password        = Util::generatePassword(8, true, true, true, false);
+                $modelUser->callingcard_pin = Util::generatePinCallingcard();
+                $modelUser->id_group        = (int) $modelGroupUser->id;
+                $modelUser->language        = $language;
+                $modelUser->id_plan         = (int) $modelPlan->id;
+                $modelUser->active          = $active;
+                $modelUser->id_user         = $id_user;
+                $modelUser->credit          = $credit;
+
+                if (! $modelUser->save()) {
+                    throw new RuntimeException(json_encode($modelUser->getErrors()));
+                }
+
                 $modelSip              = new Sip();
                 $modelSip->id_user     = $modelUser->id;
                 $modelSip->name        = $modelUser->username;
@@ -549,17 +592,30 @@ class UserController extends Controller
                 $modelSip->insecure    = 'no';
                 $modelSip->defaultuser = $modelUser->username;
                 $modelSip->secret      = $modelUser->password;
-                $modelSip->save();
+                if (! $modelSip->save()) {
+                    throw new RuntimeException(json_encode($modelSip->getErrors()));
+                }
+
+                if ($credit > 0) {
+                    $modelRefill              = new Refill();
+                    $modelRefill->id_user     = $modelUser->id;
+                    $modelRefill->payment     = 1;
+                    $modelRefill->credit      = $credit;
+                    $modelRefill->description = Yii::t('zii', 'Automatic credit');
+                    if (! $modelRefill->save()) {
+                        throw new RuntimeException(json_encode($modelRefill->getErrors()));
+                    }
+                }
             }
 
-            if ($values['credit'] > 0) {
-                $modelRefill              = new Refill();
-                $modelRefill->id_user     = $modelUser->id;
-                $modelRefill->payment     = 1;
-                $modelRefill->credit      = $values['credit'];
-                $modelRefill->description = Yii::t('zii', 'Automatic credit');
-                $modelRefill->save();
+            $transaction->commit();
+        } catch (Exception $e) {
+            if ($transaction->active) {
+                $transaction->rollBack();
             }
+            Yii::log('Bulk user creation failed: ' . $e->getMessage(), 'error');
+            $this->bulkError(Yii::t('zii', 'Unable to create bulk users.'), 500);
+            return;
         }
 
         AsteriskAccess::instance()->generateSipPeers();
@@ -567,6 +623,92 @@ class UserController extends Controller
         echo json_encode([
             $this->nameSuccess => true,
             $this->nameMsg     => $this->msgSuccess,
+        ]);
+    }
+
+    protected function parseBulkPositiveInteger($value, $maximum = PHP_INT_MAX)
+    {
+        if (is_int($value)) {
+            $parsed = $value;
+        } elseif (is_string($value) && preg_match('/^[1-9][0-9]*$/D', $value)) {
+            $parsed = filter_var($value, FILTER_VALIDATE_INT);
+        } else {
+            return null;
+        }
+
+        return $parsed !== false && $parsed > 0 && $parsed <= $maximum ? (int) $parsed : null;
+    }
+
+    protected function parseBulkCredit($value)
+    {
+        if (is_int($value) || is_float($value)) {
+            $value = (string) $value;
+        }
+        if (! is_string($value) || ! preg_match('/^[0-9]{1,11}(?:\.[0-9]{1,4})?$/D', $value)) {
+            return null;
+        }
+
+        return round((float) $value, 4);
+    }
+
+    protected function findAuthorizedBulkUserGroup($idGroup)
+    {
+        if (! is_int($idGroup) || $idGroup <= 0) {
+            return null;
+        }
+
+        $condition = 't.id = :idGroup AND t.id_user_type = 3';
+        $params = [':idGroup' => $idGroup];
+        if (Yii::app()->session['isAdmin'] && Yii::app()->session['adminLimitUsers'] == true) {
+            $condition .= ' AND t.id IN (SELECT gug.id_group FROM pkg_group_user_group gug '
+                . 'WHERE gug.id_group_user = :authenticatedGroup)';
+            $params[':authenticatedGroup'] = (int) Yii::app()->session['id_group'];
+        }
+
+        return GroupUser::model()->find($condition, $params);
+    }
+
+    protected function validateBulkAgentCredit($idAgent, $requestedCredit)
+    {
+        $sql = 'SELECT credit, creditlimit, typepaid FROM pkg_user WHERE id = :idAgent';
+        if (Yii::app()->db->getDriverName() === 'mysql') {
+            $sql .= ' FOR UPDATE';
+        }
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(':idAgent', (int) $idAgent, PDO::PARAM_INT);
+        $agent = $command->queryRow();
+        if (! is_array($agent)) {
+            return $this->msgRecordNotFound;
+        }
+
+        $command = Yii::app()->db->createCommand(
+            'SELECT COALESCE(SUM(credit), 0) FROM pkg_user WHERE id_user = :idAgent'
+        );
+        $command->bindValue(':idAgent', (int) $idAgent, PDO::PARAM_INT);
+        $customerCredit = (float) $command->queryScalar();
+        $availableAgentCredit = (float) $agent['credit'];
+        if ((int) $agent['typepaid'] === 1) {
+            $availableAgentCredit += (float) $agent['creditlimit'];
+        }
+
+        $configuredMultiplier = isset($this->config['global']['agent_limit_refill'])
+            ? $this->config['global']['agent_limit_refill']
+            : 0;
+        $limitMultiplier = max(0, (float) $configuredMultiplier);
+        $maximumCredit = $limitMultiplier * $availableAgentCredit;
+        if ($customerCredit + $requestedCredit > $maximumCredit + 0.00001) {
+            return Yii::t('zii', 'Limit refill exceeded, your limit is') . ' ' . $maximumCredit;
+        }
+
+        return null;
+    }
+
+    private function bulkError($message, $status = 400)
+    {
+        http_response_code($status);
+        echo json_encode([
+            $this->nameSuccess => false,
+            $this->nameMsg     => $message,
         ]);
     }
 

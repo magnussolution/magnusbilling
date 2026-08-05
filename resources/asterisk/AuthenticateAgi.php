@@ -128,12 +128,14 @@ class AuthenticateAgi
             if ($agi->debugMode) {
                 $from = $modelSip->host;
             } else {
-                $from = $agi->get_variable("SIP_HEADER(Contact)", true);
-
-                $from = explode('@', $from);
-                $from = explode('>', $from[1]);
-                $from = explode(':', $from[0]);
-                $from = $from[0];
+                $remoteAddress = $agi->get_variable('CHANNEL(pjsip,remote_addr)', true);
+                if (preg_match('/^\[([^\]]+)\](?::\d+)?$/', $remoteAddress, $matches)) {
+                    // IPv6: [2001:db8::1]:5060
+                    $from = $matches[1];
+                } elseif (preg_match('/^([^:]+)(?::\d+)?$/', $remoteAddress, $matches)) {
+                    // IPv4: 192.168.10.20:5060
+                    $from = $matches[1];
+                }
             }
             $agi->verbose('Try accountcode + techprefix authentication tech=' . $tech . ' SIPhost=' . $modelSip->host . ' from=' . $from, 15);
 
@@ -179,20 +181,31 @@ class AuthenticateAgi
 
     public static function sipProxyAuthenticate(&$MAGNUS, &$agi, $authentication)
     {
-        if ($authentication != true && ! filter_var($agi->get_variable("SIP_HEADER(X-AUTH-IP)", true), FILTER_VALIDATE_IP) === false) {
+        if ($authentication != true && ! filter_var($agi->get_variable("X_AUTH_IP", true), FILTER_VALIDATE_IP) === false) {
             $agi->verbose("TRY Authentication via Proxy ");
-            $agi->verbose($agi->get_variable("SIP_HEADER(P-Accountcode)", true), 1);
-            $proxyServer = explode("@", $agi->get_variable("SIP_HEADER(to)", true));
-            $proxyServer = isset($proxyServer[1]) ? substr($proxyServer[1], 0, -1) : '';
+            $agi->verbose($agi->get_variable("P_Accountcode", true), 1);
+
+            $remoteAddress = $agi->get_variable(
+                'CHANNEL(pjsip,remote_addr)',
+                true
+            );
+
+            $proxyServer = '';
+            if (preg_match('/^\[([^\]]+)\](?::\d+)?$/', $remoteAddress, $matches)) {
+                $proxyServer = $matches[1];
+            } elseif (preg_match('/^([^:]+)(?::\d+)?$/', $remoteAddress, $matches)) {
+                $proxyServer = $matches[1];
+            }
+
 
             $sql = "SELECT id FROM pkg_servers WHERE host = '$proxyServer'  LIMIT 1";
             $agi->verbose($sql, 25);
             $modelServers = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
 
             if (isset($modelServers->id)) {
-                if ($agi->get_variable("SIP_HEADER(P-Accountcode)", true) == '<null>') {
+                if ($agi->get_variable("P-Accountcode", true) == '<null>') {
 
-                    $sql = "SELECT * FROM pkg_sip WHERE host = '" . $agi->get_variable("SIP_HEADER(X-AUTH-IP)", true) . "'  LIMIT 1";
+                    $sql = "SELECT * FROM pkg_sip WHERE host = '" . $agi->get_variable("X-AUTH-IP", true) . "'  LIMIT 1";
                     $agi->verbose($sql, 25);
                     $modelSip = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
 
@@ -203,10 +216,10 @@ class AuthenticateAgi
 
                         AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser, $modelSip, 'sipproxy');
                         $authentication = true;
-                        $agi->verbose("AUTHENTICATION BY X-AUTH-IP header (" . $agi->get_variable("SIP_HEADER(X-AUTH-IP)", true) . "), accountcode" . $MAGNUS->accountcode);
+                        $agi->verbose("AUTHENTICATION BY X-AUTH-IP header (" . $agi->get_variable("X-AUTH-IP", true) . "), accountcode" . $MAGNUS->accountcode);
                     }
                 } else {
-                    $MAGNUS->accountcode = $agi->get_variable("SIP_HEADER(P-Accountcode)", true);
+                    $MAGNUS->accountcode = $agi->get_variable("P-Accountcode", true);
                     $sql                 = "SELECT *, u.id id, u.id_user id_user FROM pkg_user u INNER JOIN pkg_plan p ON u.id_plan = p.id WHERE username = '$MAGNUS->accountcode' LIMIT 1";
                     $agi->verbose($sql, 25);
                     $modelUser = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
