@@ -257,6 +257,30 @@ class UpdateMysqlCommand extends CConsoleCommand
             $version = '8.0.0.7';
             $this->update($version);
         }
+
+        //2026-08-05
+        if ($version == '8.0.0.7') {
+            $this->logMessage('Applying database migration 8.0.0.7 -> 8.0.0.8.');
+            if (! $this->columnExists('pkg_sipura', 'provision_token_hash')) {
+                $this->executeDB(
+                    "ALTER TABLE `pkg_sipura` ADD `provision_token_hash` CHAR(64) NOT NULL DEFAULT '' AFTER `macadr`"
+                );
+            }
+            if (! $this->columnExists('pkg_sipura', 'provision_token_created_at')) {
+                $this->executeDB(
+                    'ALTER TABLE `pkg_sipura` ADD `provision_token_created_at` DATETIME NULL DEFAULT NULL AFTER `provision_token_hash`'
+                );
+            }
+            if (! $this->indexExists('pkg_sipura', 'idx_pkg_sipura_provision')) {
+                $this->executeDB(
+                    'ALTER TABLE `pkg_sipura` ADD KEY `idx_pkg_sipura_provision` (`macadr`, `provision_token_hash`)'
+                );
+            }
+            // Existing rows intentionally receive no token. MAC-only provisioning is
+            // disabled until an administrator rotates the token and updates the ATA.
+            $version = '8.0.0.8';
+            $this->update($version);
+        }
     }
 
     private function columnExists($table, $column)

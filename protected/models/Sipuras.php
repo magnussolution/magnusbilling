@@ -54,7 +54,7 @@ class Sipuras extends Model
     {
         $rules = [
             ['macadr, id_user', 'required'],
-            ['macadr', 'length', 'max' => 12],
+            ['macadr', 'match', 'pattern' => '/^[A-Fa-f0-9]{12}$/', 'message' => Yii::t('zii', 'MAC must contain exactly 12 hexadecimal characters.')],
             ['senha_admin, senha_user, Use_Pref_Codec_Only_1, Use_Pref_Codec_Only_2, Preferred_Codec_1, Preferred_Codec_2', 'length', 'max' => 8],
             ['antireset, altera, Enable_Web_Server, STUN_Enable,
                 NAT_Keep_Alive_Enable_1_, NAT_Keep_Alive_Enable_2_, NAT_Mapping_Enable_1_,

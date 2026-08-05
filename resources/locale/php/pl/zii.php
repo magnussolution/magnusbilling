@@ -375,11 +375,14 @@ return array(
     'Enter a valid destination number.' => 'Wprowadź prawidłowy numer docelowy.',
     'Add credit or review the account credit limit.' => 'Dodaj środki lub sprawdź limit kredytowy konta.',
     'Create and activate a destination for the DID.' => 'Utwórz i aktywuj cel dla DID.',
-    'Authentication' => 'Uwierzytelnianie', 'DID' => 'DID', 'Rate' => 'Taryfa', 'Call' => 'Połączenie',
+    'Authentication' => 'Uwierzytelnianie',
+    'DID' => 'DID',
+    'Rate' => 'Taryfa',
+    'Call' => 'Połączenie',
     'Authenticating the call owner.' => 'Uwierzytelnianie właściciela połączenia.',
     'Call owner authenticated successfully.' => 'Właściciel połączenia został uwierzytelniony.',
     'Authenticated using an authorized CallerID.' => 'Uwierzytelniono za pomocą autoryzowanego CallerID.',
-    'Authenticated using the provider tech prefix.' => 'Uwierzytelniono za pomocą Techprefix operatora.',
+    'Authenticated using the SIP user tech prefix.' => 'Uwierzytelniono za pomocą Techprefix SIP USER.',
     'Authenticated using the account code.' => 'Uwierzytelniono za pomocą kodu konta.',
     'Trunk skipped because provider credit is exhausted.' => 'Łącze pominięto z powodu braku środków operatora.',
     'Trunk skipped because it is inactive.' => 'Łącze pominięto, ponieważ jest nieaktywne.',
@@ -539,4 +542,4 @@ return array(
     'The failed CDR records the call result as Cancel.' => 'CDR nieudanego połączenia zapisuje wynik jako Anulowane.',
     'No trunk configuration change is indicated. Retry only if the caller did not intend to cancel the call.' => 'Zmiana konfiguracji trunku nie jest wskazana. Spróbuj ponownie tylko wtedy, gdy użytkownik nie zamierzał anulować połączenia.',
 ) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
-  + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php');
+    + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php');

@@ -379,7 +379,7 @@ return array(
     'Authenticating the call owner.' => 'Authenticating the call owner.',
     'Call owner authenticated successfully.' => 'Call owner authenticated successfully.',
     'Authenticated using an authorized CallerID.' => 'Authenticated using an authorized CallerID.',
-    'Authenticated using the provider tech prefix.' => 'Authenticated using the provider Techprefix.',
+    'Authenticated using the SIP user tech prefix.' => 'Authenticated using the SIP user Techprefix.',
     'Authenticated using the account code.' => 'Authenticated using the account code.',
     'Trunk skipped because provider credit is exhausted.' => 'Trunk skipped because provider credit is exhausted.',
     'Trunk skipped because it is inactive.' => 'Trunk skipped because it is inactive.',
@@ -575,4 +575,4 @@ return array(
     'The failed CDR records the call result as Cancel.' => 'The failed CDR records the call result as Cancel.',
     'No trunk configuration change is indicated. Retry only if the caller did not intend to cancel the call.' => 'No trunk configuration change is indicated. Retry only if the caller did not intend to cancel the call.',
 ) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
-  + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php');
+    + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php');

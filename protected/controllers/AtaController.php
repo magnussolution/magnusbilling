@@ -18,11 +18,11 @@
  *
  */
 /**
- * Add in Linksys, menu Provisioning, option Profile Rule: http://your_magnusbilling_ip/mbilling/index.php/ata?mac=$MAC
+ * ATA provisioning requires a per-device token. See wiki/en/security/ata_provisioning.rst.
  *
  *
  * to force update
- * http://linksys_ip/admin/resync?http://your_magnusbilling_ip/mbilling/index.php/ata?mac=$MAC
+ * Never restore the legacy MAC-only provisioning URL: a MAC address is not a secret.
  *
  *
  */
@@ -31,32 +31,49 @@ class AtaController extends Controller
 
     public function actionIndex()
     {
+        $this->setPrivateResponseHeaders();
 
-        $config = LoadConfig::getConfig();
-        $mac    = isset($_GET['mac']) ? $_GET['mac'] : null;
-        $date   = date("Y-m-d H:i:s");
-        $mac    = strtoupper(preg_replace("/:/", "", $mac));
-        $mac    = substr($mac, 0);
-
-        $proxy        = $this->config['global']['ip_servers'];
-        $Profile_Rule = "http://" . $proxy . "/mbilling/index.php/ata?mac=$mac";
-        $modelo       = explode(" ", $_SERVER["HTTP_USER_AGENT"]);
-
-        $modelSipuras = Sipuras::model()->find('macadr = :mac', [':mac' => $mac]);
-
-        if ( ! isset($modelSipuras->id)) {
-            echo 'Ata no found';
-            $info = 'Username or password is wrong - User ' . $mac . ' from IP - ' . $_SERVER['REMOTE_ADDR'];
-            Yii::log($info, 'error');
-            MagnusLog::insertLOG(1, $info);
-            exit;
+        if (! AtaProvisioningAuth::isSecureRequest($_SERVER)) {
+            $this->denyProvisioningRequest();
         }
+
+        $mac   = AtaProvisioningAuth::normalizeMac(isset($_GET['mac']) ? $_GET['mac'] : null);
+        $token = AtaProvisioningAuth::normalizeToken(isset($_GET['token']) ? $_GET['token'] : null);
+        if ($mac === null || $token === null) {
+            $this->denyProvisioningRequest();
+        }
+
+        $date   = date("Y-m-d H:i:s");
+        $tokenHash = AtaProvisioningAuth::hashToken($token);
+        $modelSipuras = Sipuras::model()->find(
+            'macadr = :mac AND provision_token_hash = :tokenHash',
+            [':mac' => $mac, ':tokenHash' => $tokenHash]
+        );
+
+        if (! isset($modelSipuras->id)
+            || ! AtaProvisioningAuth::matches($token, $modelSipuras->provision_token_hash)
+        ) {
+            $this->denyProvisioningRequest();
+        }
+
+        try {
+            $Profile_Rule = AtaProvisioningAuth::buildProfileRule(
+                $this->config['global']['ip_servers'],
+                $mac,
+                $token
+            );
+        } catch (InvalidArgumentException $e) {
+            Yii::log('Invalid ATA provisioning server configuration.', 'error');
+            $this->denyProvisioningRequest();
+        }
+
+        $modelo = explode(' ', isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'unknown');
+        $remoteAddress = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
 
         if ($modelSipuras->altera == 'si') {
             $modelSipuras->fultmov      = $date;
             $modelSipuras->fultlig      = $date;
-            $modelSipuras->Profile_Rule = $Profile_Rule;
-            $modelSipuras->last_ip      = $_SERVER["REMOTE_ADDR"];
+            $modelSipuras->last_ip      = $remoteAddress;
             $modelSipuras->fultlig      = $date;
             $modelSipuras->obs          = $modelo[0];
             $modelSipuras->fultlig      = $date;
@@ -86,8 +103,6 @@ class AtaController extends Controller
 
             $modelSipuras->remote = true;
             $modelSipuras->save();
-
-            Yii::log(print_r($modelSipuras->getAttributes(), true), 'error');
 
             $xml = '<?xml version="1.0" encoding="iso-8859-2"?>';
             $xml .= '<flat-profile>';
@@ -146,7 +161,9 @@ class AtaController extends Controller
             //$xml .='<Resync_Random_Delay  ua="na">2</Resync_Random_Delay>';
             $xml .= '<Resync_Periodic ua="na">1800</Resync_Periodic >';
             $xml .= '<Resync_Error_Retry_Delay ua="na">1800</Resync_Error_Retry_Delay>';
-            $xml .= '<Profile_Rule ua="na">' . $Profile_Rule . '</Profile_Rule>';
+            $xml .= '<Profile_Rule ua="na">'
+                . htmlspecialchars($Profile_Rule, ENT_QUOTES | ENT_XML1, 'ISO-8859-1')
+                . '</Profile_Rule>';
             //firewall update
             $xml .= '<Upgrade_Enable ua="na">' . $modelSipuras->Upgrade_Enable . '</Upgrade_Enable>';
             $xml .= '<Upgrade_Rule ua="na">' . $modelSipuras->Upgrade_Rule . '</Upgrade_Rule>';
@@ -288,7 +305,22 @@ class AtaController extends Controller
 
             $xml .= '</flat-profile>';
 
+            header('Content-Type: application/xml; charset=ISO-8859-1');
             echo $xml;
         }
+    }
+
+    private function setPrivateResponseHeaders()
+    {
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Pragma: no-cache');
+        header('X-Content-Type-Options: nosniff');
+        header('Referrer-Policy: no-referrer');
+    }
+
+    private function denyProvisioningRequest()
+    {
+        http_response_code(404);
+        exit;
     }
 }

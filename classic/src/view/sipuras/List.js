@@ -24,6 +24,13 @@ Ext.define('MBilling.view.sipuras.List', {
     store: 'Sipuras',
     initComponent: function() {
         var me = this;
+        me.extraButtons = [{
+            text: t('Rotate provisioning token'),
+            handler: 'onRotateProvisionToken',
+            reference: 'buttonRotateProvisionToken',
+            disabled: true,
+            hidden: !me.allowUpdate
+        }];
         me.columns = [{
             header: t('ID'),
             dataIndex: 'id',
