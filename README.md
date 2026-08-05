@@ -147,7 +147,7 @@ Detailed contributor setup, standards, and the pull-request checklist are in
 
 ## Community and support
 
-Use [GitHub Issues](https://github.com/magnussolution/magnusbilling8/issues) for
+Use [GitHub Issues](https://github.com/magnussolution/magnusbilling/issues) for
 reproducible bugs and feature proposals. Use the channels listed in
 [SUPPORT.md](SUPPORT.md) for installation and configuration questions.
 
@@ -174,5 +174,5 @@ MagnusBilling is distributed under the
 MagnusBilling was created by
 [Adilson Magnus](https://github.com/magnussolution) / MagnusSolution.
 See the repository
-[contributors](https://github.com/magnussolution/magnusbilling8/contributors)
+[contributors](https://github.com/magnussolution/magnusbilling/contributors)
 for everyone who has helped improve the project.

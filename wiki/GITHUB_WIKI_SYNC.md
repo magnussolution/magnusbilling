@@ -26,7 +26,7 @@ The exporter:
 GitHub stores the Wiki in a separate Git repository:
 
 ```bash
-git clone https://github.com/magnussolution/magnusbilling8.wiki.git
+git clone https://github.com/magnussolution/magnusbilling.wiki.git
 ```
 
 The repository exists only after the first Wiki page has been created in the

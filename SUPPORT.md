@@ -4,7 +4,7 @@
 
 ### Bugs
 
-Use [GitHub Issues](https://github.com/magnussolution/magnusbilling8/issues)
+Use [GitHub Issues](https://github.com/magnussolution/magnusbilling/issues)
 when current MagnusBilling code behaves incorrectly and the problem can be
 reproduced. Search first, then include the version or commit, operating system,
 expected behavior, actual behavior, minimal reproduction, and sanitized logs.
@@ -19,7 +19,7 @@ impact when relevant.
 
 Use the project documentation and community channels:
 
-- [MagnusBilling 8 GitHub Wiki](https://github.com/magnussolution/magnusbilling8/wiki)
+- [MagnusBilling 8 GitHub Wiki](https://github.com/magnussolution/magnusbilling/wiki)
 - [MagnusBilling website](https://magnusbilling.org)
 - [YouTube channel](https://www.youtube.com/channel/UCish_6Lxfkh29n4CLVEd90Q)
 - [Telegram — English](https://t.me/joinchat/NXwoZRPGpG6rPqp3yssLzQ)

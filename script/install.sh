@@ -225,42 +225,26 @@ sleep 1
 cd /usr/src
 rm -rf asterisk*
 clear
-if [ -d "/etc/asterisk" ]; then
-  mkdir -p /etc/asterisk2
-  cp -a /etc/asterisk/. /etc/asterisk2/
-fi
 
-ASTERISK_ARCHIVE="asterisk-20-current.tar.gz"
-if ! wget -O "${ASTERISK_ARCHIVE}" \
-    "https://downloads.asterisk.org/pub/telephony/asterisk/${ASTERISK_ARCHIVE}"; then
-    echo "Unable to download the current Asterisk 20 LTS source archive."
-    exit 1
-fi
-if ! tar xzf "${ASTERISK_ARCHIVE}"; then
-    echo "Unable to extract the Asterisk source archive."
-    exit 1
-fi
-rm -f "${ASTERISK_ARCHIVE}"
+wget https://raw.githubusercontent.com/magnussolution/magnusbilling/source/script/asterisk-20.9.2.tar.gz
+tar xzvf asterisk-20.9.2.tar.gz
+rm -rf asterisk-20.9.2.tar.gz
 cd asterisk-*
-if ! id -u asterisk >/dev/null 2>&1; then
-  useradd -r -d /var/lib/asterisk -s /usr/sbin/nologin -c 'Asterisk PBX' asterisk
-fi
-install -d -o asterisk -g asterisk -m 0755 /var/run/asterisk /var/log/asterisk
+useradd -r -d /var/lib/asterisk -s /usr/sbin/nologin -c 'Asterisk PBX' asterisk
+mkdir /var/run/asterisk
+mkdir /var/log/asterisk
 chown -R asterisk:asterisk /var/run/asterisk
 chown -R asterisk:asterisk /var/log/asterisk
-if ! make clean \
-    || ! contrib/scripts/install_prereq install \
-    || ! ./configure --with-jansson-bundled --with-pjproject-bundled \
-    || ! make menuselect.makeopts \
-    || ! menuselect/menuselect --enable res_config_mysql menuselect.makeopts \
-    || ! make \
-    || ! make install \
-    || ! make samples \
-    || ! make config \
-    || ! ldconfig; then
-    echo "Asterisk compilation or installation failed."
-    exit 1
-fi
+make clean
+contrib/scripts/install_prereq install
+./configure --with-jansson-bundled --with-pjproject-bundled
+make menuselect.makeopts
+menuselect/menuselect --enable res_config_mysql  menuselect.makeopts
+make
+make install
+make samples
+make config
+ldconfig
 
  echo '
 noload => chan_sip.so

@@ -24,7 +24,7 @@ LANGUAGES = {
 SKIP_PARTS = {"_build", ".venv", "__pycache__", "ntemplates", "_templates"}
 PUBLIC_EXCLUDED_ROOTS = {"modules"}
 HEADING_CHARS = {"=": "#", "-": "##", "~": "###", "+": "###", "^": "####", '"': "####"}
-REPOSITORY_URL = "https://github.com/magnussolution/magnusbilling8"
+REPOSITORY_URL = "https://github.com/magnussolution/magnusbilling"
 
 
 def page_slug(language: str, relative: Path) -> str:

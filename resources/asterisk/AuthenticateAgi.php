@@ -34,16 +34,18 @@ class AuthenticateAgi
         //AUTHENTICATION VIA TECHPREFIX
         $authentication = AuthenticateAgi::techPrefixAuthenticate($MAGNUS, $agi, $authentication);
 
-        /*TRY WITH THE ACCOUNTCODE AUTHENTICATION*/
-        $authentication = AuthenticateAgi::accountcodeAuthenticate($MAGNUS, $agi, $authentication);
+        if (! $MAGNUS->techPrefixAuthenticationRejected) {
+            /*TRY WITH THE ACCOUNTCODE AUTHENTICATION*/
+            $authentication = AuthenticateAgi::accountcodeAuthenticate($MAGNUS, $agi, $authentication);
 
-        /*TRY WITH THE SIPPROXY AUTHENTICATION*/
-        $authentication = AuthenticateAgi::sipProxyAuthenticate($MAGNUS, $agi, $authentication);
+            /*TRY WITH THE SIPPROXY AUTHENTICATION*/
+            $authentication = AuthenticateAgi::sipProxyAuthenticate($MAGNUS, $agi, $authentication);
 
-        /* AUTHENTICATE BY PIN */
-        $authentication = AuthenticateAgi::callingCardAuthenticate($MAGNUS, $agi, $authentication);
+            /* AUTHENTICATE BY PIN */
+            $authentication = AuthenticateAgi::callingCardAuthenticate($MAGNUS, $agi, $authentication);
 
-        $authentication = AuthenticateAgi::checkIfCallShopCall($MAGNUS, $agi, $authentication);
+            $authentication = AuthenticateAgi::checkIfCallShopCall($MAGNUS, $agi, $authentication);
+        }
 
         if ($authentication == false || $MAGNUS->active == 0 || $MAGNUS->active == 2) {
             $agi->verboseEvent('Authentication', 'AUTH_FAILED', 'Call authentication failed or the user account is inactive.', 1, [
@@ -102,7 +104,7 @@ class AuthenticateAgi
 
                 $MAGNUS->sip_account = $modelSip->name;
 
-                AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser, $modelSip);
+                AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser, $modelSip, 'callerid');
 
                 $agi->verboseEvent('Authentication', 'AUTH_BY_CALLERID', 'Authenticated using an authorized CallerID.', 3, [
                     'callerid' => $MAGNUS->CallerID,
@@ -116,7 +118,6 @@ class AuthenticateAgi
 
     public static function techPrefixAuthenticate(&$MAGNUS, &$agi, $authentication)
     {
-
         $tech = substr($MAGNUS->dnid, 0, $MAGNUS->config['global']['ip_tech_length']);
         $sql  = "SELECT * FROM pkg_sip WHERE techprefix = '$tech' AND host != 'dynamic' LIMIT 1";
         $agi->verbose($sql, 25);
@@ -124,14 +125,17 @@ class AuthenticateAgi
 
         if ($authentication != true && isset($modelSip->id)) {
 
-            $agi->verbose('Try accountcode + techprefix authentication ' . $tech, 15);
+            if ($agi->debugMode) {
+                $from = $modelSip->host;
+            } else {
+                $from = $agi->get_variable("SIP_HEADER(Contact)", true);
 
-            $from = $agi->get_variable("SIP_HEADER(Contact)", true);
-
-            $from = explode('@', $from);
-            $from = explode('>', $from[1]);
-            $from = explode(':', $from[0]);
-            $from = $from[0];
+                $from = explode('@', $from);
+                $from = explode('>', $from[1]);
+                $from = explode(':', $from[0]);
+                $from = $from[0];
+            }
+            $agi->verbose('Try accountcode + techprefix authentication tech=' . $tech . ' SIPhost=' . $modelSip->host . ' from=' . $from, 15);
 
             if ($modelSip->host == $from) {
 
@@ -139,10 +143,10 @@ class AuthenticateAgi
                 $agi->verbose($sql, 25);
                 $modelUser = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
 
-                AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser, $modelSip);
+                AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser, $modelSip, 'siptech');
                 $MAGNUS->sip_account = $modelSip->name;
                 $MAGNUS->dnid        = substr($MAGNUS->dnid, $MAGNUS->config['global']['ip_tech_length']);
-                $agi->verboseEvent('Authentication', 'AUTH_BY_TECHPREFIX', 'Authenticated using the provider tech prefix.', 3, [
+                $agi->verboseEvent('Authentication', 'AUTH_BY_TECHPREFIX', 'Authenticated using the SIP user tech prefix.', 3, [
                     'techPrefix' => $tech,
                     'username' => $MAGNUS->username,
                     'destination' => $MAGNUS->dnid,
@@ -163,7 +167,7 @@ class AuthenticateAgi
             $modelUser = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
 
             if (isset($modelUser->id)) {
-                AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser);
+                AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser, [], 'accountcode');
                 $agi->verboseEvent('Authentication', 'AUTH_BY_ACCOUNTCODE', 'Authenticated using the account code.', 3, [
                     'username' => $MAGNUS->username,
                 ]);
@@ -197,7 +201,7 @@ class AuthenticateAgi
                         $agi->verbose($sql, 25);
                         $modelUser = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
 
-                        AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser, $modelSip);
+                        AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser, $modelSip, 'sipproxy');
                         $authentication = true;
                         $agi->verbose("AUTHENTICATION BY X-AUTH-IP header (" . $agi->get_variable("SIP_HEADER(X-AUTH-IP)", true) . "), accountcode" . $MAGNUS->accountcode);
                     }
@@ -207,7 +211,7 @@ class AuthenticateAgi
                     $agi->verbose($sql, 25);
                     $modelUser = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
                     if (isset($modelUser->id)) {
-                        AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser);
+                        AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser, [], 'sipproxy');
                         $authentication = true;
                         $agi->verbose("AUTHENTICATION BY P-Accountcode header " . $MAGNUS->accountcode);
                     }
@@ -228,7 +232,7 @@ class AuthenticateAgi
         $modelUser = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
 
         if (isset($modelUser->id)) {
-            AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser);
+            AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser, [], 'pin');
             $agi->verbose("AUTHENTICATION BY PIN:" . $pin, 6);
             $authentication = true;
         }
@@ -275,7 +279,7 @@ class AuthenticateAgi
             $agi->verbose($sql, 25);
             $modelUser = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
 
-            AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser);
+            AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $modelUser, [], 'voucher');
             $authentication = true;
         }
         return $authentication;
@@ -474,7 +478,7 @@ class AuthenticateAgi
         return $authentication;
     }
 
-    public static function setMagnusAttrubutes(&$MAGNUS, &$agi, $model, $modelSip = null)
+    public static function setMagnusAttrubutes(&$MAGNUS, &$agi, $model, $modelSip, $type)
     {
 
         if (! isset($model->removeinterprefix)) {
@@ -527,6 +531,16 @@ class AuthenticateAgi
             $MAGNUS->modelSip = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
         } else {
             $MAGNUS->modelSip = $modelSip;
+        }
+
+
+        if ($MAGNUS->modelSip->techprefix > 0 && $type != 'siptech') {
+            $agi->verboseEvent('Authentication', 'AUTH_TECHPREFIX_REQUIRED', 'The SIP account requires its tech prefix.', 1, [
+                'sipAccount' => $MAGNUS->sip_account,
+                'destination' => $MAGNUS->dnid,
+            ]);
+            $agi->execute('congestion', 'Congestion');
+            $MAGNUS->hangup($agi);
         }
 
         $MAGNUS->sip_id_trunk_group = $MAGNUS->modelSip->id_trunk_group;
