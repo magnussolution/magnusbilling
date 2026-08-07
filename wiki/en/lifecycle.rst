@@ -47,8 +47,7 @@ Compatibility summary
   through December 31, 2026.
 * **MagnusBilling 7 legacy / CentOS 7 / Asterisk 13 / chan_sip:** unsupported;
   migrate to a new Debian server.
-* **MagnusBilling 8 / Debian / Asterisk 20 / PJSIP:** active development.
-* **MagnusBilling 8 planned / Ubuntu:** not yet supported.
+* **MagnusBilling 8 / Debian or Ubuntu / Asterisk 20 / PJSIP:** active development.
 
 See :doc:`Migrating from MagnusBilling 7 <get_started/migrate_from_mb7>` for
 the supported migration procedure.
