@@ -16,104 +16,51 @@ echo "														                 ";
 echo "============================== UPDATE =================================";
 echo
 
-sleep 2
+set -euo pipefail
 
-if [[ -e /var/www/html/mbilling/protected/commands/update2.sh ]]; then
-	/var/www/html/mbilling/protected/commands/update2.sh
-	exit;
-fi
+MBILLING_DIR="/var/www/html/mbilling"
+PACKAGE_NAME="MagnusBilling8-current.tar.gz"
+PACKAGE_URL="https://magnusbilling.org/download/$PACKAGE_NAME"
+UPDATE_COMMAND="$MBILLING_DIR/protected/commands/updateCommand.sh"
+LOCK_FILE="/run/lock/magnusbilling-update.lock"
 
-
-get_linux_distribution ()
-{ 
-    if [ -f /etc/debian_version ]; then
-        DIST="DEBIAN"
-        HTTP_DIR="/etc/apache2/"
-        HTTP_CONFIG=${HTTP_DIR}"apache2.conf"
-        MYSQL_CONFIG="/etc/mysql/mariadb.conf.d/50-server.cnf"
-        SERVICE='apache2'
-        APACHE_USER="www-data"
-    else
-        DIST="OTHER"
-        echo 'MagnusBilling 8 currently supports Debian only.'
-        exit 1
-    fi
+# Impede atualizações simultâneas
+exec 9>"$LOCK_FILE"
+flock -n 9 || {
+    echo "Another MagnusBilling update is already running."
+    exit 1
 }
 
+if [[ -e "$MBILLING_DIR/protected/commands/update2.sh" ]]; then
+    bash "$MBILLING_DIR/protected/commands/update2.sh"
+    exit
+fi
 
+cd "$MBILLING_DIR"
 
-get_linux_distribution
+rm -f -- "$PACKAGE_NAME"
 
+wget \
+    --https-only \
+    --output-document="$PACKAGE_NAME" \
+    "$PACKAGE_URL"
 
-cd /var/www/html/mbilling
-rm -rf MagnusBilling8-current.tar.gz
-wget --no-check-certificate https://magnusbilling.org/download/MagnusBilling8-current.tar.gz
-tar xzf MagnusBilling8-current.tar.gz
+# Confirma que o download é um arquivo TAR válido
+tar tzf "$PACKAGE_NAME" >/dev/null
 
+tar xzf "$PACKAGE_NAME"
 
-## remove unnecessary directories
-rm -rf /var/www/html/mbilling/doc
-rm -rf /var/www/html/mbilling/script
-rm -rf /var/www/html/mbilling/assets/*
-/var/www/html/mbilling/protected/commands/clear_memory
-
-usermod -aG asterisk $APACHE_USER
-systemctl restart $SERVICE
-sed -i "s/^User .*/User $APACHE_USER/" $HTTP_CONFIG
-sed -i "s/^Group .*/Group $APACHE_USER/" $HTTP_CONFIG
-
-
-
-
-## set default permissions 
-find /etc/asterisk -name "*magnus*" -exec chown asterisk:asterisk {} \;
-find /etc/asterisk -name "*magnus*" -exec chmod 660 {} \;
-find /etc/asterisk -name "*mbilling*" -exec chown asterisk:asterisk {} \;
-find /etc/asterisk -name "*mbilling*" -exec chmod 660 {} \;
-
-mkdir -p /var/spool/asterisk/outgoing/.magnusbilling-tmp
-chown root:asterisk /var/spool/asterisk/outgoing
-chmod 775 /var/spool/asterisk/outgoing
-chown $APACHE_USER:asterisk /var/spool/asterisk/outgoing/.magnusbilling-tmp
-chmod 770 /var/spool/asterisk/outgoing/.magnusbilling-tmp
-chown -R root:asterisk /usr/local/src/magnus
-chmod -R 775 /usr/local/src/magnus
-chown -R root:asterisk /var/lib/asterisk/moh
-chmod -R 775 /var/lib/asterisk/moh
-chown root:asterisk /etc/asterisk/res_config_mysql.conf
-chmod 0640 /etc/asterisk/res_config_mysql.conf
-
-chown -R root:root /var/www/html/mbilling
-find /var/www/html/mbilling -type d -exec chmod 755 {} \;
-find /var/www/html/mbilling -type f -exec chmod 644 {} \;
-
-for d in protected/runtime assets tmp resources/reports resources/images; do
-  mkdir -p "/var/www/html/mbilling/$d"
-  chown -R $APACHE_USER:$APACHE_USER "/var/www/html/mbilling/$d"
-  find "/var/www/html/mbilling/$d" -type d -exec chmod 750 {} \;
-  find "/var/www/html/mbilling/$d" -type f -exec chmod 640 {} \;
-done
-
-
-chown -R asterisk:asterisk /var/www/html/mbilling/resources/asterisk
-find /var/www/html/mbilling/resources/asterisk \
-  -type d -exec chmod 550 {} \;
-
-find /var/www/html/mbilling/resources/asterisk \
-  -type f -exec chmod 440 {} \;
-
-chmod 550 /var/www/html/mbilling/resources/asterisk/mbilling.php
-
-
-
-chmod +x /var/www/html/mbilling/protected/commands/*.sh
-
-##update database
-if ! php /var/www/html/mbilling/cron.php UpdateMysql; then
-    echo "The database migration failed. The MagnusBilling update was aborted."
+if [[ ! -f "$UPDATE_COMMAND" ]]; then
+    echo "ERROR: updateCommand.sh was not found in the package."
     exit 1
 fi
 
-if [[ -e /var/www/html/mbilling/protected/commands/update3.sh ]]; then
-	/var/www/html/mbilling/protected/commands/update3.sh
+chmod 755 "$MBILLING_DIR"/protected/commands/*.sh
+
+bash "$UPDATE_COMMAND"
+
+if [[ -e "$MBILLING_DIR/protected/commands/update3.sh" ]]; then
+    bash "$MBILLING_DIR/protected/commands/update3.sh"
 fi
+
+echo "MagnusBilling updated successfully."

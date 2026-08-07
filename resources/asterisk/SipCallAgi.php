@@ -33,7 +33,7 @@ class SipCallAgi
             $record_call = 1;
         }
 
-        AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $MAGNUS->modelUser);
+        AuthenticateAgi::setMagnusAttrubutes($MAGNUS, $agi, $MAGNUS->modelUser, $MAGNUS->modelSip, 'sipcall');
 
         if ($MAGNUS->modelSip->record_call == 1 || $record_call == 1) {
             $MAGNUS->record_call = 1;

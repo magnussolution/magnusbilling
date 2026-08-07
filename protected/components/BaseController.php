@@ -50,6 +50,7 @@ class BaseController extends CController
     public $isNewRecord;
     public $isUpdateAll;
     public $filter;
+    private $trustedFilter;
     public $limit;
     public $group = 1;
     public $msgError;
@@ -402,7 +403,9 @@ class BaseController extends CController
 
         $criteria = new CDbCriteria();
         $criteria->addCondition($this->filter);
-
+        if ($this->trustedFilter !== '') {
+            $criteria->addCondition($this->trustedFilter);
+        }
         $criteria->select = $this->select;
         $criteria->join   = $this->join;
         $criteria->params = $this->paramsFilter;
@@ -440,6 +443,9 @@ class BaseController extends CController
         } else {
             $criteria = new CDbCriteria();
             $criteria->addCondition($this->filter);
+            if ($this->trustedFilter !== '') {
+                $criteria->addCondition($this->trustedFilter);
+            }
             $criteria->select = "COUNT('*') AS " . $this->abstractModel->primaryKey();
             $criteria->join   = $this->join;
             $criteria->params = $this->paramsFilter;
@@ -515,7 +521,10 @@ class BaseController extends CController
             SqlInject::sanitize($this->filter);
             SqlInject::sanitize($this->group);
             SqlInject::sanitize($this->limit);
-            $sql = "SELECT $this->select FROM  " . $this->abstractModel->tableName() . " t $this->join WHERE $this->filter GROUP BY $this->group LIMIT $this->limit";
+
+            $where = $this->filter . ' ' . $this->trustedFilter;
+
+            $sql = "SELECT $this->select FROM  " . $this->abstractModel->tableName() . " t $this->join WHERE $where GROUP BY $this->group LIMIT $this->limit";
             try {
                 $command = Yii::app()->db->createCommand($sql);
                 if (is_array($this->paramsFilter)) {

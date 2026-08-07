@@ -85,7 +85,14 @@ class ServersController extends Controller
             $con->active = true;
 
             $sql = "TRUNCATE $dbname.$table";
-            $con->createCommand($sql)->execute();
+            try {
+                $con->createCommand($sql)->execute();
+            } catch (Exception $e) {
+                echo json_encode([
+                    'success' => false,
+                    'errors'  => Yii::t('zii', 'The SIPPROXY have a error') . ' -> ' . $proxy->host . "</br>" . print_r($e)
+                ]);
+            }
 
             $modelServerAS = ServersServers::model()->findAll("id_proxy = :key", [':key' => $proxy->id]);
 
