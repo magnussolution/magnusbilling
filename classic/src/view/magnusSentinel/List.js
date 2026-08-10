@@ -164,7 +164,13 @@ Ext.define('MBilling.view.magnusSentinel.List', {
                     ['proxy_runtime_probe_unavailable',
                         t('Proxy probe unavailable')],
                     ['proxy_dispatcher_unreachable',
-                        t('Proxy destination unavailable')]
+                        t('Proxy destination unavailable')],
+                    ['dns_resolution_degradation',
+                        t('DNS resolution degradation')],
+                    ['pjsip_dns_search_suffix_risk',
+                        t('PJSIP DNS search suffix risk')],
+                    ['pjsip_trunk_dns_failure',
+                        t('PJSIP trunk DNS failure')]
                 ],
                 listeners: {
                     change: 'onFilterChange'
