@@ -274,6 +274,8 @@ class AsteriskAccess
             foreach ($rows as $key => $data) {
                 $line         = "\n";
 
+                $port = isset($data['port']) && is_numeric($data['port']) ? $data['port'] : '5060';
+
                 //registrar tronco
                 if (preg_match("/^[^:]+:[^@]+@[^\/]+\/?.*$/", $data['register_string'])) {
 
@@ -300,7 +302,7 @@ class AsteriskAccess
                 $line .= "\n[" . $data[$head_field] . "]\n";
                 $line .= "type = aor\n";
                 if (strlen($data['user'])) {
-                    $line .= "contact = sip:" . $data['user'] . '@' . $data['host'] . "\n";
+                    $line .= "contact = sip:" . $data['name'] . "@" . $data['host'] . ":" . $port . "\n";
                 } else {
                     $line .= "contact = sip:" . $data['host'] . "\n";
                 }
@@ -377,7 +379,7 @@ class AsteriskAccess
                     $line .=  "\n\n[" . $trunkName . "]\n";
                     $line .= "type = aor\n";
 
-                    $line .= "contact = sip:" . $data['name'] . "@" . $data['host'] . "\n";
+                    $line .= "contact = sip:" . $data['name'] . "@" . $data['host'] . ":" . $port . "\n";
                     $line .= "qualify_frequency = 60\n";
                     $line .= "max_contacts = 1\n";
 
