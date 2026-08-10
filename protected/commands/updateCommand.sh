@@ -76,7 +76,7 @@ find /var/www/html/mbilling/resources/asterisk \
 
 chmod 550 /var/www/html/mbilling/resources/asterisk/mbilling.php
 
-
+chmod 755 /var/www/html/mbilling/protected/commands/*.sh
 
 ##update database
 if ! php /var/www/html/mbilling/cron.php UpdateMysql; then

@@ -164,22 +164,44 @@ Ext.define('Overrides.ux.desktop.Desktop', {
         var me = this,
             modules,
             module,
-            win;
+            win,
+            openWindow;
 
         if (!me.hasMacDashboardAccess()) {
             return;
         }
-        module = me.app.getModule('dashboardwindow') || me.app.getModule('dashboard');
-        if (!module) {
-            modules = me.app.getModules ? me.app.getModules() : [];
-            module = Ext.Array.findBy(modules, function (item) {
-                return item && item.module && item.module.module === 'dashboard';
-            });
+        openWindow = function () {
+            module = me.app.getModule('dashboardwindow') || me.app.getModule('dashboard');
+            if (!module) {
+                modules = me.app.getModules ? me.app.getModules() : [];
+                module = Ext.Array.findBy(modules, function (item) {
+                    return item && item.module && item.module.module === 'dashboard';
+                });
+            }
+            if (!module) {
+                module = Ext.create('Ext.ux.desktop.Module', {
+                    app: me.app,
+                    id: 'dashboardwindow',
+                    module: {
+                        title: t('Dashboard'),
+                        iconCls: window.isMac && me.app.getMacDockIcon ? me.app.getMacDockIcon(t('Dashboard'), 'dashboard') : 'x-fa fa-dashboard',
+                        xtype: 'dashboardmodule',
+                        module: 'dashboard',
+                        titleModule: t('Dashboard')
+                    }
+                });
+                me.app.modules.push(module);
+            }
+            win = module && module.createWindow();
+            if (win) {
+                me.restoreWindow(win);
+            }
+        };
+        if (!Ext.ClassManager.get('MBilling.view.dashboard.Module')) {
+            Ext.require('MBilling.view.dashboard.Module', openWindow);
+            return;
         }
-        win = module && module.createWindow();
-        if (win) {
-            me.restoreWindow(win);
-        }
+        openWindow();
     },
     loadMacDashboardWidgets: function () {
         var me = this;

@@ -403,7 +403,7 @@ class BaseController extends CController
 
         $criteria = new CDbCriteria();
         $criteria->addCondition($this->filter);
-        if ($this->trustedFilter !== '') {
+        if (strlen($this->trustedFilter)) {
             $criteria->addCondition($this->trustedFilter);
         }
         $criteria->select = $this->select;
@@ -443,7 +443,7 @@ class BaseController extends CController
         } else {
             $criteria = new CDbCriteria();
             $criteria->addCondition($this->filter);
-            if ($this->trustedFilter !== '') {
+            if (strlen($this->trustedFilter)) {
                 $criteria->addCondition($this->trustedFilter);
             }
             $criteria->select = "COUNT('*') AS " . $this->abstractModel->primaryKey();

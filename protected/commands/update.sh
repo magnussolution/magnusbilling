@@ -55,8 +55,6 @@ if [[ ! -f "$UPDATE_COMMAND" ]]; then
     exit 1
 fi
 
-chmod 755 "$MBILLING_DIR"/protected/commands/*.sh
-
 bash "$UPDATE_COMMAND"
 
 if [[ -e "$MBILLING_DIR/protected/commands/update3.sh" ]]; then
