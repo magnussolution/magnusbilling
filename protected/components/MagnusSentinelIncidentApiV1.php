@@ -85,6 +85,21 @@ class MagnusSentinelIncidentApiV1
         'proxy_host',
         'error_code',
         'error_class',
+        'resolver',
+        'query_type',
+        'query',
+        'duration_ms',
+        'timed_out',
+        'dns_status',
+        'configured_search_domains',
+        'resolver_options',
+        'inferred_search_domain',
+        'provider_search_suffix',
+        'affected_trunk_hosts',
+        'trunk_host',
+        'dns_statuses',
+        'probe_limits',
+        'all_resolvers_unavailable',
     ];
 
     public static function parseListParams($input)

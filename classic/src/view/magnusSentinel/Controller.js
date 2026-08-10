@@ -309,7 +309,22 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
             runtime_state_verified: t('Runtime verified'),
             proxy_host: t('Proxy address'),
             error_code: t('Error code'),
-            error_class: t('Technical error category')
+            error_class: t('Technical error category'),
+            resolver: t('DNS resolver'),
+            query_type: t('DNS query type'),
+            query: t('DNS query'),
+            duration_ms: t('DNS duration'),
+            timed_out: t('DNS timeout'),
+            dns_status: t('DNS status'),
+            configured_search_domains: t('Configured search domains'),
+            resolver_options: t('Resolver options'),
+            inferred_search_domain: t('Inferred search domain'),
+            provider_search_suffix: t('Provider search suffix'),
+            affected_trunk_hosts: t('Affected PJSIP hosts'),
+            trunk_host: t('PJSIP trunk host'),
+            dns_statuses: t('DNS statuses'),
+            probe_limits: t('Probe limits'),
+            all_resolvers_unavailable: t('All resolvers unavailable')
         };
         var help = {
             current_asr: t('Percentage of answered calls in the current 15-minute window: answered calls divided by total attempts.'),
@@ -360,7 +375,22 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
             runtime_state_verified: t('Indicates whether the Sentinel verified the state actually loaded in memory.'),
             proxy_host: t('Address of the proxy related to this diagnosis.'),
             error_code: t('Safe identifier for the failure found by the probe.'),
-            error_class: t('Technical exception category. Credentials and sensitive messages are not exposed.')
+            error_class: t('Technical exception category. Credentials and sensitive messages are not exposed.'),
+            resolver: t('Nameserver tested individually. It does not contain credentials.'),
+            query_type: t('DNS record type queried: A, AAAA or SRV.'),
+            query: t('Sanitized DNS name used by the bounded probe.'),
+            duration_ms: t('Total DNS response duration in milliseconds.'),
+            timed_out: t('Indicates that the resolver did not answer within one second.'),
+            dns_status: t('Sanitized DNS status. A fast NXDOMAIN confirms that the resolver answered.'),
+            configured_search_domains: t('Explicit search or domain policy read from resolv.conf.'),
+            resolver_options: t('Relevant resolv.conf options limited to timeout, attempts, ndots and rotate.'),
+            inferred_search_domain: t('Domain inferred from the hostname when no explicit search policy exists.'),
+            provider_search_suffix: t('Known provider suffix found in the inferred domain.'),
+            affected_trunk_hosts: t('PJSIP hosts extracted locally without username, password or full URI.'),
+            trunk_host: t('Sanitized PJSIP hostname that did not receive an A or AAAA address.'),
+            dns_statuses: t('DNS statuses returned for the trunk host.'),
+            probe_limits: t('Effective resolver, host, query, concurrency and timeout limits.'),
+            all_resolvers_unavailable: t('Indicates that no configured nameserver answered the bounded probe.')
         };
         return {
             label: labels[item.key] || item.key,
