@@ -54,7 +54,10 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
                 try {
                     payload = Ext.decode(response.responseText);
                     if (payload && payload.success === true) {
-                        me.getView().down('magnussentinelresources').setResources(payload.data);
+                        var resources = me.getView().down('magnussentinelresources');
+                        if (resources) {
+                            resources.setResources(payload.data);
+                        }
                     }
                 } catch (ignore) {}
             }
@@ -92,20 +95,13 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
         var reader = store.getProxy().getReader();
         var raw = reader.rawData || {};
         var data = raw.data || {};
-        var summary = resultSet && resultSet.getMetadata ?
-            resultSet.getMetadata() : null;
         var state = me.lookupReference('stateFilter').getValue();
         if (!successful) {
             return;
         }
-        var metadata = summary || data || {};
+        var metadata = resultSet && resultSet.getMetadata ?
+            resultSet.getMetadata() || data : data;
         var health = metadata.health || null;
-        summary = metadata.summary || {};
-        me.getView().down('magnussentinelsummary').setSummary(
-            summary,
-            state === 'resolved' || state === 'false_positive'
-        );
-        me.getView().down('magnussentinelhealth').setHealth(health);
         me.list.setHealthEmptyState(health, state);
         me.list.getSelectionModel().deselectAll();
         me.detail.clearIncident();
