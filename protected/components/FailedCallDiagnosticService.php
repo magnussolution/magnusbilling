@@ -12,6 +12,7 @@ class FailedCallDiagnosticService
     const CONTRACT = 'magnusbilling.call-diagnostic/v1';
     const CATALOG = 'magnusbilling.call-diagnostic-catalog/v1';
     const EVENT_LIMIT = 50;
+    const EVENT_WINDOW_MARGIN_SECONDS = 300;
 
     private $db;
     private $healthResolver;
@@ -64,7 +65,12 @@ class FailedCallDiagnosticService
             );
         }
 
-        $eventParams = [':uniqueid' => (string) $cdr['uniqueid']];
+        $eventWindow = $this->eventWindow($cdr);
+        $eventParams = [
+            ':uniqueid' => (string) $cdr['uniqueid'],
+            ':event_window_start' => $eventWindow['start'],
+            ':event_window_end' => $eventWindow['end'],
+        ];
         if ($cdr['id_server'] === null) {
             $serverCondition = 'e.id_server IS NULL';
         } else {
@@ -81,6 +87,8 @@ class FailedCallDiagnosticService
             LEFT JOIN pkg_servers s ON s.id=e.id_server
             WHERE e.uniqueid=:uniqueid
               AND " . $serverCondition . "
+              AND e.event_time BETWEEN :event_window_start
+                                   AND :event_window_end
             ORDER BY e.event_time ASC,e.id ASC
             LIMIT 51
             ",
@@ -291,6 +299,7 @@ class FailedCallDiagnosticService
                 ),
                 'catalog' => self::CATALOG,
                 'queryOrder' => ['event_time', 'id'],
+                'eventWindow' => $eventWindow,
             ],
         ];
     }
@@ -783,6 +792,43 @@ class FailedCallDiagnosticService
             'at' => $date->format('Y-m-d H:i:s'),
             'unixTimestamp' => $epoch,
             'source' => 'uniqueid_epoch',
+        ];
+    }
+
+    /**
+     * Bounds the indexed uniqueid lookup to the observed call interval.
+     * Time is never used as a fallback correlation key: uniqueid and server
+     * equality remain mandatory in the SQL query.
+     */
+    private function eventWindow(array $cdr)
+    {
+        $invite = $this->inviteTime(
+            (string) $cdr['uniqueid'],
+            (string) $cdr['starttime']
+        );
+        $inviteTimestamp = strtotime((string) $invite['at']);
+        $cdrTimestamp = strtotime((string) $cdr['starttime']);
+
+        if ($inviteTimestamp === false && $cdrTimestamp === false) {
+            $inviteTimestamp = $cdrTimestamp = 0;
+        } elseif ($inviteTimestamp === false) {
+            $inviteTimestamp = $cdrTimestamp;
+        } elseif ($cdrTimestamp === false) {
+            $cdrTimestamp = $inviteTimestamp;
+        }
+
+        return [
+            'start' => date(
+                'Y-m-d H:i:s',
+                min($inviteTimestamp, $cdrTimestamp)
+                    - self::EVENT_WINDOW_MARGIN_SECONDS
+            ),
+            'end' => date(
+                'Y-m-d H:i:s',
+                max($inviteTimestamp, $cdrTimestamp)
+                    + self::EVENT_WINDOW_MARGIN_SECONDS
+            ),
+            'marginSeconds' => self::EVENT_WINDOW_MARGIN_SECONDS,
         ];
     }
 
