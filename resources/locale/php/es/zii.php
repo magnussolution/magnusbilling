@@ -1378,6 +1378,7 @@ return array(
     'The fixed-IP endpoint is configured to require credentials, but Asterisk has no inbound authentication loaded for it.' => 'El endpoint de IP fija está configurado para exigir credenciales, pero Asterisk no tiene cargada autenticación entrante para él.',
     'Regenerate the MagnusBilling PJSIP configuration and verify that the account password is valid.' => 'Regenerar la configuración PJSIP desde MagnusBilling y verificar que la contraseña de la cuenta sea válida.',
     'The caller cancelled the call before it was answered.' => 'El usuario canceló la llamada antes de que fuera atendida.',
+    'The caller cancelled the call after {seconds} seconds, before it was answered.' => 'El usuario canceló la llamada después de {seconds} segundos, antes de que fuera atendida.',
     'The originating user ended the call before it was answered.' => 'El usuario que originó la llamada colgó antes de que fuera atendida.',
     'The failed CDR records the call result as Cancel.' => 'El CDR fallido registra el resultado de la llamada como Cancelada.',
     'No trunk configuration change is indicated. Retry only if the caller did not intend to cancel the call.' => 'No se indica ningún cambio en la troncal. Reintente solo si el usuario no pretendía cancelar la llamada.',

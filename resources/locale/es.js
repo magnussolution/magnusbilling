@@ -1200,6 +1200,7 @@ Locale.load({
     'Application error line': '',
     'Call ended': 'Llamada finalizada',
     'The caller cancelled the call before it was answered.': 'El usuario canceló la llamada antes de que fuera atendida.',
+    'The caller cancelled the call after {seconds} seconds, before it was answered.': 'El usuario canceló la llamada después de {seconds} segundos, antes de que fuera atendida.',
     'The originating user ended the call before it was answered.': 'El usuario que originó la llamada colgó antes de que fuera atendida.',
     'The failed CDR records the call result as Cancel.': 'El CDR fallido registra el resultado de la llamada como Cancelada.',
     'No trunk configuration change is indicated. Retry only if the caller did not intend to cancel the call.': 'No se indica ningún cambio en la troncal. Reintente solo si el usuario no pretendía cancelar la llamada.',

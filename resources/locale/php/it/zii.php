@@ -810,6 +810,7 @@ return array(
         'The campaign could not be processed. Review its settings and try again.' => 'Impossibile elaborare la campagna. Controlla le impostazioni e riprova.',
         'This legacy call detail action is disabled. Use Diagnose call.' => 'Questa azione precedente è disabilitata. Usa Diagnostica chiamata.',
         'The caller cancelled the call before it was answered.' => 'L’utente ha annullato la chiamata prima della risposta.',
+        'The caller cancelled the call after {seconds} seconds, before it was answered.' => 'L’utente ha annullato la chiamata dopo {seconds} secondi, prima della risposta.',
         'The originating user ended the call before it was answered.' => 'L’utente che ha originato la chiamata ha riagganciato prima della risposta.',
         'The failed CDR records the call result as Cancel.' => 'Il CDR non riuscito registra il risultato della chiamata come Annullata.',
         'No trunk configuration change is indicated. Retry only if the caller did not intend to cancel the call.' => 'Non è indicata alcuna modifica al trunk. Riprovare solo se l’utente non intendeva annullare la chiamata.',

@@ -1208,6 +1208,7 @@ Locale.load({
     'Application error line': '',
     'Call ended': 'Вызов завершён',
     'The caller cancelled the call before it was answered.': 'Пользователь отменил вызов до ответа.',
+    'The caller cancelled the call after {seconds} seconds, before it was answered.': 'Пользователь отменил вызов через {seconds} секунд, до ответа.',
     'The originating user ended the call before it was answered.': 'Инициировавший вызов пользователь завершил его до ответа.',
     'The failed CDR records the call result as Cancel.': 'CDR неудачного вызова содержит результат «Отменён».',
     'No trunk configuration change is indicated. Retry only if the caller did not intend to cancel the call.': 'Изменение настроек транка не требуется. Повторите вызов, только если пользователь не намеревался его отменять.',

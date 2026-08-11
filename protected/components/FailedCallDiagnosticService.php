@@ -661,6 +661,7 @@ class FailedCallDiagnosticService
                 'key' => $cdrOutcome['key'],
                 'label' => $cdrOutcome['label'],
                 'terminateCauseId' => (int) $cdr['terminatecauseid'],
+                'durationSeconds' => $cdrOutcome['durationSeconds'],
             ] : null,
             'user' => $this->entity($cdr['id_user'], $cdr['username']),
             'plan' => $this->entity($cdr['id_plan'], $cdr['plan_name']),
@@ -751,12 +752,30 @@ class FailedCallDiagnosticService
             return null;
         }
 
+        $invite = $this->inviteTime(
+            (string) $cdr['uniqueid'],
+            (string) $cdr['starttime']
+        );
+        $durationSeconds = $invite['source'] === 'uniqueid_epoch'
+            ? $this->secondsBetween(
+                $invite['at'],
+                (string) $cdr['starttime']
+            )
+            : null;
+        $summary = $durationSeconds !== null
+            ? self::translate(
+                'The caller cancelled the call after {seconds} seconds, before it was answered.',
+                ['{seconds}' => $durationSeconds]
+            )
+            : self::translate(
+                'The caller cancelled the call before it was answered.'
+            );
+
         return [
             'key' => 'caller_cancelled',
             'label' => self::translate('Cancel'),
-            'summary' => self::translate(
-                'The caller cancelled the call before it was answered.'
-            ),
+            'summary' => $summary,
+            'durationSeconds' => $durationSeconds,
             'causeKey' => 'caller_cancelled_before_answer',
             'cause' => self::translate(
                 'The originating user ended the call before it was answered.'
