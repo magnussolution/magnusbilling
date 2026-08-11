@@ -162,7 +162,11 @@ Fluxo proposto, sem mudança de schema:
 3. verificar a existência das tabelas Sentinel por metadados;
 4. buscar eventos com
    `WHERE uniqueid = :uniqueid AND id_server = :id_server
+   AND event_time BETWEEN :event_window_start AND :event_window_end
    ORDER BY event_time ASC, id ASC LIMIT :limit`;
+   a janela cobre do horário do INVITE ao horário persistido no CDR, com cinco
+   minutos de margem em cada lado; horário nunca é usado como correlação ou
+   fallback;
 5. usar `ix_uniqueid`; o plano verificado no piloto foi `ref`, estimativa de
    uma linha;
 6. obter saúde apenas da pequena
@@ -457,8 +461,8 @@ Implementado:
 - `POST index.php/callDiagnostic/cdrFailed`, exclusivo para administrador e
   com `cdrFailedId` como único dado de negócio aceito;
 - `FailedCallDiagnosticService`, determinístico, local e versionado;
-- consulta exata por `uniqueid + id_server`, usando `ix_uniqueid`, ordenada e
-  limitada;
+- consulta exata por `uniqueid + id_server`, usando `ix_uniqueid`, limitada à
+  janela temporal da chamada, ordenada e limitada;
 - estados de ausência, expiração, saúde da pipeline e truncamento;
 - catálogo explícito sem regra genérica para códigos `>=500`;
 - códigos internos 612–618 preservados como `internal_unknown`;
