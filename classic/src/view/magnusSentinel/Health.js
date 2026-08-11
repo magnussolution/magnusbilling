@@ -11,8 +11,10 @@ Ext.define('MBilling.view.magnusSentinel.Health', {
     store: {
         fields: [
             'component', 'server_name', 'health_status', 'heartbeat_at',
+            'heartbeat_at_display', 'display_timezone',
             'heartbeat_age_seconds', 'pending_events', 'ingest_lag_seconds',
-            'health_reasons', 'last_error_at', 'last_error_code',
+            'health_reasons', 'last_error_at', 'last_error_at_display',
+            'last_error_code',
             'last_error_message', 'filesystem_status', 'filesystem_reason',
             'filesystem_path', 'filesystem_used_percent',
             'filesystem_available_bytes',
@@ -60,11 +62,14 @@ Ext.define('MBilling.view.magnusSentinel.Health', {
             renderer: Ext.util.Format.htmlEncode
         }, {
             text: t('Last heartbeat'),
-            dataIndex: 'heartbeat_at',
+            dataIndex: 'heartbeat_at_display',
             flex: 2,
             minWidth: 155,
-            renderer: function(value) {
-                return Ext.util.Format.htmlEncode(me.formatDate(value));
+            renderer: function(value, metadata, record) {
+                return Ext.util.Format.htmlEncode(me.formatDate(
+                    value,
+                    record.get('display_timezone')
+                ));
             }
         }, {
             text: t('Data age'),
@@ -124,7 +129,7 @@ Ext.define('MBilling.view.magnusSentinel.Health', {
             }
         }, {
             text: t('Last error'),
-            dataIndex: 'last_error_at',
+            dataIndex: 'last_error_at_display',
             flex: 2,
             minWidth: 170,
             renderer: function(value, metadata, record) {
@@ -134,7 +139,7 @@ Ext.define('MBilling.view.magnusSentinel.Health', {
                 var code = record.get('last_error_code');
                 var translated = me.reasonLabel(code);
                 return Ext.util.Format.htmlEncode(
-                    me.formatDate(value) +
+                    me.formatDate(value, record.get('display_timezone')) +
                     (code ?
                         ' — ' + (
                             translated !== code ?
@@ -169,7 +174,10 @@ Ext.define('MBilling.view.magnusSentinel.Health', {
                 this.statusLabel(health.health_status)
             ) + '</b> &nbsp; ' +
             Ext.util.Format.htmlEncode(
-                t('Evaluated at') + ': ' + this.formatDate(health.evaluated_at)
+                t('Evaluated at') + ': ' + this.formatDate(
+                    health.evaluated_at_display,
+                    health.display_timezone
+                )
             )
         );
     },
@@ -239,10 +247,11 @@ Ext.define('MBilling.view.magnusSentinel.Health', {
         }
         return Math.floor(value / 60) + ' ' + t('minutes');
     },
-    formatDate: function(value) {
+    formatDate: function(value, timezone) {
         if (!value) {
             return t('Not informed');
         }
-        return String(value).replace(/\.\d+$/, '') + ' ' + t('UTC');
+        return String(value).replace(/\.\d+$/, '') +
+            (timezone ? ' ' + timezone : '');
     }
 });

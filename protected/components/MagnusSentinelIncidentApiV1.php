@@ -428,6 +428,10 @@ class MagnusSentinelIncidentApiV1
             'health_status' => $aggregateStatus,
             'health_reasons' => $aggregateReasons,
             'evaluated_at' => $evaluatedAt,
+            'evaluated_at_display' => self::displayDatabaseTimestamp(
+                $evaluatedAt
+            ),
+            'display_timezone' => self::displayTimezone(),
             'components' => $components,
             'servers' => array_values($servers),
         ];
@@ -688,6 +692,7 @@ class MagnusSentinelIncidentApiV1
             'id_server' => (int) $idServer,
             'server_name' => (string) $serverName,
             'heartbeat_at' => null,
+            'heartbeat_at_display' => null,
             'process_started_at' => null,
             'last_cycle_success_at' => null,
             'last_event_seen_at' => null,
@@ -696,6 +701,7 @@ class MagnusSentinelIncidentApiV1
             'oldest_pending_event_at' => null,
             'consecutive_database_failures' => 0,
             'last_error_at' => null,
+            'last_error_at_display' => null,
             'last_error_code' => null,
             'last_error_message' => null,
             'stale_after_seconds' => (int) $staleAfter,
@@ -713,6 +719,10 @@ class MagnusSentinelIncidentApiV1
             'health_status' => 'UNKNOWN',
             'health_reasons' => ['heartbeat_missing'],
             'evaluated_at' => $evaluatedAt,
+            'evaluated_at_display' => self::displayDatabaseTimestamp(
+                $evaluatedAt
+            ),
+            'display_timezone' => self::displayTimezone(),
         ];
     }
 
@@ -813,6 +823,9 @@ class MagnusSentinelIncidentApiV1
                 )
             ),
             'heartbeat_at' => $row['heartbeat_at'],
+            'heartbeat_at_display' => self::displayDatabaseTimestamp(
+                $row['heartbeat_at']
+            ),
             'process_started_at' => $row['process_started_at'],
             'last_cycle_success_at' => $row['last_cycle_success_at'],
             'last_event_seen_at' => $row['last_event_seen_at'],
@@ -821,6 +834,9 @@ class MagnusSentinelIncidentApiV1
             'oldest_pending_event_at' => $row['oldest_pending_event_at'],
             'consecutive_database_failures' => $failures,
             'last_error_at' => $row['last_error_at'],
+            'last_error_at_display' => self::displayDatabaseTimestamp(
+                $row['last_error_at']
+            ),
             'last_error_code' => $row['last_error_code'],
             'last_error_message' => (
                 $row['last_error_message'] !== null
@@ -877,6 +893,10 @@ class MagnusSentinelIncidentApiV1
             'health_status' => $status,
             'health_reasons' => $reasons,
             'evaluated_at' => $evaluatedAt,
+            'evaluated_at_display' => self::displayDatabaseTimestamp(
+                $evaluatedAt
+            ),
+            'display_timezone' => self::displayTimezone(),
         ];
     }
 
