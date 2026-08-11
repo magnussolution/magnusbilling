@@ -30,6 +30,14 @@ class CallChartStatusCommand extends ConsoleCommand
                     Servers::model()->updateAll(['status' => 1], 'status = 2');
                 }
                 $channels = AsteriskAccess::getStatusChannels(! $dryRun);
+                if ($channels === null) {
+                    echo "AMI Status incomplete; keeping the previous call-online snapshot\n";
+                    if (! $once) {
+                        sleep(4);
+                        continue;
+                    }
+                    return 1;
+                }
                 $rows = $this->buildRows($channels, $dryRun);
                 $this->saveSnapshot($rows, $dryRun);
             } catch (Exception $e) {
@@ -118,7 +126,7 @@ class CallChartStatusCommand extends ConsoleCommand
                 }
                 continue;
             }
-            if (! in_array($lastApp, ['Dial', 'Mbilling', 'AGI', 'AppDial2', 'Queue'], true)) {
+            if (! in_array($lastApp, ['Dial', 'Mbilling', 'AGI', 'AppDial', 'AppDial2', 'Queue'], true)) {
                 continue;
             }
             if (($lastApp === 'Dial' || $lastApp === 'Mbilling') && $status === 'Ringing') {
@@ -130,7 +138,7 @@ class CallChartStatusCommand extends ConsoleCommand
             $peerEndpoint = $peer ? $this->endpoint($peer) : '';
             $dialed = $this->dialedNumber($call);
             $codec = $this->codec($call);
-            $uniqueid = null;
+            $uniqueid = $this->field($call, 'Uniqueid') ?: null;
             $trunk = $peerEndpoint;
             $sipAccount = $endpoint;
             $idUser = null;
@@ -157,7 +165,7 @@ class CallChartStatusCommand extends ConsoleCommand
                         $trunk = $this->dialTarget($call);
                     }
                 }
-            } elseif ($lastApp === 'AGI' || $lastApp === 'AppDial2') {
+            } elseif ($lastApp === 'AGI' || $lastApp === 'AppDial' || $lastApp === 'AppDial2') {
                 $campaignSource = $this->campaignSource($call, $endpoint);
                 if ($campaignSource !== '') {
                     list($idUser, $trunk) = $this->campaignOwner($campaignSource);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * =======================================
  * ###################################
@@ -39,7 +40,7 @@ class PickupAgi
             $channelsData = explode("\n", $calls["data"]);
             $channel      = '';
             foreach ($channelsData as $key => $line) {
-                if (preg_match("/^SIP\/($modelSip->name)-/", $line) && preg_match("/Ringing/", $line)) {
+                if (preg_match("/^PJSIP\/($modelSip->name)-/", $line) && preg_match("/Ringing/", $line)) {
                     $channel = explode("!", $line);
                     $channel = $channel[0];
                     break;
@@ -49,12 +50,10 @@ class PickupAgi
                 $agi->verbose("pickup channel $channel");
                 $agi->execute('PickupChan', $channel);
             }
-
         } else {
             $agi->verbose('Pickup module - SipAccount ' . $MAGNUS->accountcode . ' try pickup from another user extension ' . $modelSip->name, 1);
         }
 
         $MAGNUS->hangup($agi);
-
     }
 }

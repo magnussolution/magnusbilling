@@ -7,8 +7,9 @@ class CallDiagnosticController extends Controller
         parent::init();
         $this->applySessionLanguage();
         header('Content-Type: application/json; charset=utf-8');
-        if (empty(Yii::app()->session['isAdmin'])
-            || !AccessManager::getInstance('callDiagnostic')->canRead()
+        if (
+            empty(Yii::app()->session['isAdmin'])
+            || !AccessManager::getInstance('callfailed')->canRead()
         ) {
             $this->respond(false, null, Yii::t('zii', 'Access denied.'), 403);
         }

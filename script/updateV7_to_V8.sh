@@ -186,39 +186,16 @@ touch /etc/asterisk/voicemail_magnus.conf
 touch /etc/asterisk/mbilling.conf
 
 
-echo $'[billing]
-exten => _[*0-9].,1,AGI("/var/www/html/mbilling/resources/asterisk/mbilling.php")
-  same => n,Hangup()
-
-exten => _+X.,1,Goto(billing,${EXTEN:1},1)
-
-exten => h,1,hangup()
-
-exten => *111,1,VoiceMailMain(${CHANNEL(peername)}@billing)
-  same => n,Hangup()
-
-[trunk_answer_handler]
-exten => s,1,Set(MASTER_CHANNEL(TRUNKANSWERTIME)=${EPOCH})
-  same => n,Return()
-
-' > /etc/asterisk/extensions_magnus.conf
+cp -rf /etc/asterisk_1.3/res_config_mysql.conf /etc/asterisk/
+cp -rf /etc/asterisk_1.3/extensions.ael /etc/asterisk/
+cp -rf /etc/asterisk_1.3/res_odbc.conf /etc/asterisk
+cp -rf /etc/asterisk_1.3/func_odbc.conf /etc/asterisk
+cp -rf /etc/asterisk_1.3/logger.conf /etc/asterisk/logger.conf
+cp -rf /etc/asterisk_1.3/manager.conf /etc/asterisk/manager.conf
+cp -rf /etc/asterisk_1.3/extensions_magnus.conf /etc/asterisk/extensions_magnus.conf
 
 
-echo "
-[general]
-enabled = yes
 
-port = 5038
-bindaddr = 0.0.0.0
-displayconnects = no
-
-[magnus]
-secret = magnussolution
-deny=0.0.0.0/0.0.0.0
-permit=127.0.0.1/255.255.255.0
-read = system,call,log,verbose,agent,user,config,dtmf,reporting,cdr,dialplan
-write = system,call,agent,user,config,command,reporting,originate
-" > /etc/asterisk/manager.conf
 
 
 echo "#include extensions_magnus.conf" >> /etc/asterisk/extensions.conf
@@ -300,6 +277,86 @@ echo "
     chown -R "${ASTERISK_USER}:${ASTERISK_USER}" /var/lib/asterisk /var/log/asterisk /var/spool/asterisk /var/run/asterisk
     chown root:"${ASTERISK_USER}" "${ASTERISK_ETC}"/*
     chmod 0640 "${ASTERISK_ETC}"/*.conf
+}
+
+migrate_legacy_network_settings() {
+    local legacy_sip="/etc/asterisk_1.3/sip.conf"
+    local pjsip_config="${ASTERISK_ETC}/pjsip.conf"
+    local setting value
+    local externip=""
+    local externaddr=""
+    local media_address=""
+    local migrated_settings
+    local updated_pjsip
+    local -a localnets=()
+
+    if [[ ! -f "${legacy_sip}" ]]; then
+        log "Legacy ${legacy_sip} not found; skipping SIP network migration."
+        return
+    fi
+
+    while IFS='=' read -r setting value; do
+        setting="${setting//[[:space:]]/}"
+        value="${value%%;*}"
+        value="${value%%#*}"
+        value="${value#"${value%%[![:space:]]*}"}"
+        value="${value%"${value##*[![:space:]]}"}"
+        [[ -n "${value}" ]] || continue
+
+        case "${setting,,}" in
+            localnet)
+                localnets+=("${value}")
+                ;;
+            externip)
+                externip="${value}"
+                ;;
+            externaddr)
+                externaddr="${value}"
+                ;;
+            media_address)
+                media_address="${value}"
+                ;;
+        esac
+    done < <(sed -nE '/^[[:space:]]*[;#]/d; /^[[:space:]]*(localnet|externip|externaddr|media_address)[[:space:]]*=/Ip' "${legacy_sip}")
+
+    if [[ ${#localnets[@]} -eq 0 && -z "${externip}" && -z "${externaddr}" && -z "${media_address}" ]]; then
+        log "No legacy localnet or external IP settings found in ${legacy_sip}."
+        return
+    fi
+
+    migrated_settings="$(mktemp)"
+    updated_pjsip="$(mktemp)"
+    {
+        for value in "${localnets[@]}"; do
+            printf 'local_net = %s\n' "${value}"
+        done
+
+        value="${externaddr:-${externip:-${media_address}}}"
+        [[ -z "${value}" ]] || printf 'external_signaling_address = %s\n' "${value}"
+
+        value="${media_address:-${externaddr:-${externip}}}"
+        [[ -z "${value}" ]] || printf 'external_media_address = %s\n' "${value}"
+    } > "${migrated_settings}"
+
+    awk -v settings_file="${migrated_settings}" '
+        !inserted && /^#include[[:space:]]/ {
+            while ((getline line < settings_file) > 0) print line
+            print ""
+            close(settings_file)
+            inserted = 1
+        }
+        { print }
+        END {
+            if (!inserted) {
+                while ((getline line < settings_file) > 0) print line
+                close(settings_file)
+            }
+        }
+    ' "${pjsip_config}" > "${updated_pjsip}"
+    install -o root -g "${ASTERISK_USER}" -m 0640 "${updated_pjsip}" "${pjsip_config}"
+    rm -f "${migrated_settings}" "${updated_pjsip}"
+
+    log "Migrated legacy SIP network settings to ${pjsip_config}."
 }
 
 write_systemd_unit() {
@@ -463,6 +520,7 @@ main() {
     installCodec
     fix_codec_execstack
     write_configuration
+    migrate_legacy_network_settings
     write_systemd_unit
     replateM7ToM8
     systemctl restart asterisk

@@ -474,6 +474,9 @@ class AsteriskAccess
 
     public static function callFileValue($value)
     {
+        if (!strlen($value)) {
+            return $value;
+        }
         if (! is_scalar($value)) {
             throw new InvalidArgumentException('Invalid Asterisk call-file value');
         }

@@ -25,24 +25,6 @@ Ext.define('MBilling.view.magnusSentinel.Module', {
         var mobile = window.isMobileLayout ||
             window.isTablet || window.isTablets;
         me.items = [{
-            xtype: 'container',
-            region: 'north',
-            height: mobile ? 470 : 390,
-            layout: {
-                type: 'vbox',
-                align: 'stretch'
-            },
-            items: [{
-                xtype: 'magnussentinelhealth',
-                height: mobile ? 218 : 158
-            }, {
-                xtype: 'magnussentinelresources',
-                height: 140
-            }, {
-                xtype: 'magnussentinelsummary',
-                height: 92
-            }]
-        }, {
             xtype: 'magnussentinellist'
         }, {
             xtype: 'magnussentineldetail',

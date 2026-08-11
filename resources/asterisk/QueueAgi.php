@@ -232,7 +232,7 @@ class QueueAgi
     {
 
         $agi->verbose('recIvrQueue');
-        $operator = preg_replace("/SIP\//", "", $agi->get_variable("MEMBERNAME", true));
+        $operator = preg_replace("/PJSIP\//", "", $agi->get_variable("MEMBERNAME", true));
 
         $MAGNUS->uniqueid    = $agi->get_variable("UNIQUEID", true);
         $MAGNUS->destination = $agi->request['agi_extension'];
