@@ -1,7 +1,7 @@
-document.addEventListener('gesturestart', e => e.preventDefault());
-document.addEventListener('gesturechange', e => e.preventDefault());
-document.addEventListener('gestureend', e => e.preventDefault());
-document.addEventListener('touchmove', e => e.preventDefault(), {
+document.addEventListener('gesturestart', e => !window.disableMobileTemplate && e.preventDefault());
+document.addEventListener('gesturechange', e => !window.disableMobileTemplate && e.preventDefault());
+document.addEventListener('gestureend', e => !window.disableMobileTemplate && e.preventDefault());
+document.addEventListener('touchmove', e => !window.disableMobileTemplate && e.preventDefault(), {
     passive: false
 }); (function () {
     var _constants = {};

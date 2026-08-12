@@ -47,6 +47,16 @@ class SiteController extends Controller
         echo 'window.layout = ' . json_encode($layout) . ';';
         Yii::app()->session['layout'] = $layout;
 
+        $disableMobileTemplate = isset($this->config['global']['disable_mobile_template'])
+            ? (int) $this->config['global']['disable_mobile_template']
+            : 0;
+        echo 'window.disableMobileTemplate = ' . json_encode($disableMobileTemplate === 1) . ';';
+        if ($disableMobileTemplate === 1) {
+            echo "Object.defineProperty(window, 'isTablet', { configurable: true, get: function () { return false; }, set: function () {} });";
+            echo "Object.defineProperty(window, 'isMobileLayout', { configurable: true, get: function () { return false; }, set: function () {} });";
+            echo "document.querySelector('meta[name=viewport]').setAttribute('content', 'width=device-width, initial-scale=1, user-scalable=yes');";
+        }
+
         $wallpaper = $this->config['global']['wallpaper'];
         echo 'window.wallpaper = ' . json_encode($wallpaper) . ';';
         Yii::app()->session['wallpaper'] = $wallpaper;

@@ -281,6 +281,23 @@ class UpdateMysqlCommand extends CConsoleCommand
             $version = '8.0.0.8';
             $this->update($version);
         }
+
+        //2026-08-12
+        if ($version == '8.0.0.8') {
+            $this->logMessage('Applying database migration 8.0.0.8 -> 8.0.0.9.');
+            $this->executeDB(
+                "INSERT INTO pkg_configuration
+                    (config_title, config_key, config_value, config_description, config_group_title, status)
+                 SELECT 'Disable mobile template', 'disable_mobile_template', '0',
+                    'Set to 1 to always use the desktop template on mobile devices.', 'global', 1
+                 FROM DUAL
+                 WHERE NOT EXISTS (
+                    SELECT 1 FROM pkg_configuration WHERE config_key = 'disable_mobile_template'
+                 )"
+            );
+            $version = '8.0.0.9';
+            $this->update($version);
+        }
     }
 
     private function columnExists($table, $column)
