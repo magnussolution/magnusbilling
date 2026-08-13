@@ -1,0 +1,26 @@
+# Configuração DINÂMICA do Traefik (file provider) para o painel MagnusBilling.
+# Necessária porque o serviço "app" roda em REDE HOST e não é descoberto por
+# labels do Traefik. Coloque este arquivo no diretório de dynamic config do seu
+# Traefik (ex.: /etc/traefik/dynamic/) — o caminho depende da sua instalação.
+#
+# Ajuste:
+#   - <IP_DO_NÓ_MB>: IP que o container do Traefik consegue alcançar do nó MB
+#     (IP da LAN/overlay do nó, ou o público). Porta 8080 = Apache do container.
+#   - entryPoints e certResolver: use os nomes que já existem no seu Traefik.
+
+http:
+  routers:
+    magnusbilling:
+      rule: "Host(`mb.di4e.com.br`)"
+      entryPoints:
+        - websecure
+      service: magnusbilling
+      tls:
+        certResolver: letsencrypt   # troque pelo nome do seu resolver
+
+  services:
+    magnusbilling:
+      loadBalancer:
+        servers:
+          - url: "http://<IP_DO_NÓ_MB>:8080"
+        passHostHeader: true

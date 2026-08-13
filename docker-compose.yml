@@ -1,0 +1,101 @@
+# =====================================================================
+# MagnusBilling 8 — Docker Swarm stack (Easynet / mb.di4e.com.br)
+# Node alvo: MB   |   Rede interna: MBNTW   |   Traefik + Portainer já instalados
+#
+# LEIA O DEPLOY.md ANTES. Duas decisões críticas embutidas aqui:
+#   1) O serviço "app" (Asterisk+Apache+PHP) roda em REDE HOST (network: hostnet).
+#      Isso é OBRIGATÓRIO para VoIP: SIP/RTP não podem passar pela ingress mesh do
+#      Swarm nem pelo Traefik (Traefik é só HTTP). Rede host preserva o IP de
+#      origem e evita áudio mudo / one-way audio.
+#   2) O painel web NÃO é publicado por label do Traefik (serviço host-net não é
+#      descoberto por label). Ele é exposto em <IP_DO_NÓ_MB>:8080 e o Traefik
+#      roteia via arquivo dinâmico (ver traefik-dynamic-mb.yml).
+# =====================================================================
+version: "3.8"
+
+networks:
+  MBNTW:
+    external: true          # já existe no seu Swarm
+  hostnet:
+    external: true
+    name: host              # rede host predefinida do Docker (para o Asterisk)
+
+volumes:
+  mb_db:                    # dados MariaDB
+  mb_etc_asterisk:          # /etc/asterisk (configs _magnus geradas pelo painel)
+  mb_recordings:            # gravações
+  mb_www_data:              # assets/tmp graváveis do painel
+
+services:
+
+  db:
+    image: mariadb:10.11
+    command:
+      - --sql-mode=NO_ENGINE_SUBSTITUTION          # app legado (Yii1): evita STRICT quebrando INSERTs
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+      - --max-allowed-packet=64M
+      - --innodb-buffer-pool-size=512M
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASS}
+      MARIADB_DATABASE: mbilling
+      MARIADB_USER: mbillingUser
+      MARIADB_PASSWORD: ${DB_PASS}
+    volumes:
+      - mb_db:/var/lib/mysql
+    networks:
+      - MBNTW
+    ports:
+      # host-mode para o app (que está em rede host) alcançar o banco em 127.0.0.1:3306.
+      # FECHE a 3306 no firewall para a internet (ver DEPLOY.md).
+      - target: 3306
+        published: 3306
+        protocol: tcp
+        mode: host
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == MB
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 1G
+
+  app:
+    image: ghcr.io/alvarovasques/magnusbilling:latest
+    # Rede host: Asterisk usa 5060/UDP+TCP e a faixa RTP direto nas interfaces do nó.
+    networks:
+      - hostnet
+    environment:
+      DB_HOST: 127.0.0.1        # via host-mode publish do serviço db (mesmo nó)
+      DB_PORT: "3306"
+      DB_NAME: mbilling
+      DB_USER: mbillingUser
+      DB_PASS: ${DB_PASS}
+      PUBLIC_IP: ${PUBLIC_IP}   # IP público do nó MB (SDP/NAT do PJSIP)
+      RTP_START: ${RTP_START:-10000}
+      RTP_END: ${RTP_END:-20000}
+      HTTP_PORT: "8080"         # Apache; Traefik roteia para <IP_MB>:8080
+      AMI_SECRET: ${AMI_SECRET}
+      TZ: America/Cuiaba
+    volumes:
+      - mb_etc_asterisk:/etc/asterisk
+      - mb_recordings:/var/spool/asterisk/monitor
+      - mb_www_data:/var/www/html/mbilling/tmp
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == MB
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 2G
+    # cap_add/sysctls úteis ao Asterisk sob carga (host net já dá o essencial)
+    ulimits:
+      nofile:
+        soft: 500000
+        hard: 500000

@@ -1,0 +1,25 @@
+[global]
+type = global
+
+[transport-udp]
+type = transport
+protocol = udp
+bind = 0.0.0.0:5060
+; IP público do nó MB — essencial p/ SDP correto atrás de NAT (áudio)
+external_media_address = ${PUBLIC_IP}
+external_signaling_address = ${PUBLIC_IP}
+; ajuste a(s) sua(s) rede(s) local(is) se houver clientes internos:
+local_net = 10.0.0.0/8
+local_net = 172.16.0.0/12
+local_net = 192.168.0.0/16
+
+[transport-tcp]
+type = transport
+protocol = tcp
+bind = 0.0.0.0:5060
+external_media_address = ${PUBLIC_IP}
+external_signaling_address = ${PUBLIC_IP}
+
+; Endpoints/trunks/auths são gerados pelo painel MagnusBilling:
+#include pjsip_magnus.conf
+#include pjsip_magnus_user.conf

@@ -1,0 +1,4 @@
+[general]
+rtpstart = ${RTP_START}
+rtpend = ${RTP_END}
+; ICE/STUN normalmente desnecessário em VPS com IP público direto.
