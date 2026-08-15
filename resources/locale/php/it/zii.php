@@ -815,4 +815,5 @@ return array(
         'The failed CDR records the call result as Cancel.' => 'Il CDR non riuscito registra il risultato della chiamata come Annullata.',
         'No trunk configuration change is indicated. Retry only if the caller did not intend to cancel the call.' => 'Non è indicata alcuna modifica al trunk. Riprovare solo se l’utente non intendeva annullare la chiamata.',
 ) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
-        + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php');
+        + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php')
+        + (require dirname(__DIR__) . '/call_diagnostic_register.php');

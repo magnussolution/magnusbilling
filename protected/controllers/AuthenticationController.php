@@ -449,7 +449,42 @@ class AuthenticationController extends Controller
             'hidden_prices'            => $hidden_prices,
             'hidden_batch_update'      => $hidden_batch_update,
             'sipuser_login'             => $sipuser_login,
+            'githubStarPromptDismissed' => isset($this->config['global']['github_star_prompt_dismissed'])
+                && (int) $this->config['global']['github_star_prompt_dismissed'] === 1,
         ]);
+    }
+
+    public function actionDismissGithubStarPrompt()
+    {
+        if (! Yii::app()->request->isPostRequest || ! Yii::app()->session['logged'] || ! Yii::app()->session['isAdmin']) {
+            echo json_encode([
+                'success' => false,
+                'msg'     => 'Permission denied',
+            ]);
+            return;
+        }
+
+        $affected = Yii::app()->db->createCommand(
+            "UPDATE pkg_configuration SET config_value = '1' WHERE config_key = 'github_star_prompt_dismissed'"
+        )->execute();
+
+        if ($affected === 0) {
+            $exists = (int) Yii::app()->db->createCommand(
+                "SELECT COUNT(*) FROM pkg_configuration WHERE config_key = 'github_star_prompt_dismissed'"
+            )->queryScalar();
+
+            if ($exists === 0) {
+                Yii::app()->db->createCommand(
+                    "INSERT INTO pkg_configuration
+                        (config_title, config_key, config_value, config_description, config_group_title, status)
+                     VALUES
+                        ('GitHub star prompt dismissed', 'github_star_prompt_dismissed', '1',
+                         'Internal flag set after an administrator confirms support on GitHub.', 'global', 0)"
+                )->execute();
+            }
+        }
+
+        echo json_encode(['success' => true]);
     }
 
     public function actionGoogleAuthenticator()

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="170" viewBox="0 0 600 170">
+  <rect width="600" height="170" rx="12" fill="#0d1117"/>
+  <rect width="600" height="54" rx="12" fill="#010409"/>
+  <circle cx="28" cy="27" r="11" fill="#f0f6fc"/>
+  <path d="M24 21h8v3h-8zm0 5h8v3h-8zm0 5h5v3h-5z" fill="#010409"/>
+  <text x="52" y="34" fill="#f0f6fc" font-family="Arial, sans-serif" font-size="18" font-weight="700">GitHub</text>
+  <text x="28" y="104" fill="#58a6ff" font-family="Arial, sans-serif" font-size="22">magnussolution</text>
+  <text x="185" y="104" fill="#8b949e" font-family="Arial, sans-serif" font-size="22">/</text>
+  <text x="202" y="104" fill="#58a6ff" font-family="Arial, sans-serif" font-size="22" font-weight="700">magnusbilling</text>
+  <rect x="418" y="75" width="154" height="50" rx="8" fill="#21262d" stroke="#8b949e" stroke-width="2"/>
+  <path d="M445 86l4 10 11 1-8 7 2 11-9-6-10 6 3-11-9-7 12-1z" fill="#f2cc60"/>
+  <text x="467" y="108" fill="#f0f6fc" font-family="Arial, sans-serif" font-size="20" font-weight="700">Star</text>
+</svg>

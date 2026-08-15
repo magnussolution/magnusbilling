@@ -1485,5 +1485,7 @@ return array(
     'The originating user ended the call before it was answered.' => 'O usuário que originou a chamada desligou antes de ela ser atendida.',
     'The failed CDR records the call result as Cancel.' => 'O CDR de falha registra o resultado da chamada como Cancelada.',
     'No trunk configuration change is indicated. Retry only if the caller did not intend to cancel the call.' => 'Nenhuma alteração no tronco é indicada. Tente novamente somente se o usuário não pretendia cancelar a chamada.',
-) + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
-    + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php');
+) + (require dirname(__DIR__) . '/call_diagnostic_register_pt_BR.php')
+    + (require dirname(__DIR__) . '/call_diagnostic_failures.php')
+    + (require dirname(__DIR__) . '/call_diagnostic_pjsip_auth.php')
+    + (require dirname(__DIR__) . '/call_diagnostic_register.php');
