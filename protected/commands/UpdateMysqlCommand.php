@@ -298,6 +298,43 @@ class UpdateMysqlCommand extends CConsoleCommand
             $version = '8.0.0.9';
             $this->update($version);
         }
+
+                //2026-08-14
+        if ($version == '8.0.0.9') {
+            $this->logMessage('Applying database migration 8.0.0.9 -> 8.0.0.10.');
+            $this->executeDB(
+                "CREATE TABLE IF NOT EXISTS pkg_trace (
+                id int(11) NOT NULL AUTO_INCREMENT,
+                filter varchar(50) NOT NULL,
+                status tinyint(1) NOT NULL DEFAULT '1',
+                timeout int(11) NOT NULL DEFAULT '60',
+                in_use tinyint(1) DEFAULT NULL,
+                port varchar(7) NOT NULL DEFAULT '5060',
+                PRIMARY KEY (id)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"
+            );  
+
+           $WAN_IF = trim(shell_exec(
+                "ip -4 route show default | awk '{for(i=1;i<=NF;i++) if(\$i==\"dev\"){print \$(i+1); exit}}'"
+            ));
+
+            $command = 'php /var/www/html/mbilling/cron.php SipTrace';
+
+            $cronLine = '*/2 * * * * root flock -n /tmp/siptrace.lock '
+                    . $command
+                    . ($WAN_IF !== '' ? ' ' . $WAN_IF : '');
+
+            exec(
+                "grep -F " . escapeshellarg($command) . " /etc/crontab "
+                . "| grep -qv '^[[:space:]]*#' "
+                . "|| printf '%s\n' " . escapeshellarg($cronLine)
+                . " >> /etc/crontab"
+            );
+       
+            $version = '8.0.0.10';
+            $this->update($version);
+        }
+
     }
 
     private function columnExists($table, $column)

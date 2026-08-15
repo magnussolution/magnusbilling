@@ -61,6 +61,132 @@ class CallDiagnosticController extends Controller
         });
     }
 
+    public function actionRegister()
+    {
+        $this->requirePost();
+        $sipId = filter_input(INPUT_POST, 'sipId', FILTER_VALIDATE_INT);
+        if (!$sipId) {
+            $this->respond(false, null, Yii::t('zii', 'Invalid diagnostic input.'), 422);
+        }
+        try {
+            $service = new SipRegisterDiagnosticService(Yii::app()->db);
+            $result = $service->diagnose((int) $sipId);
+            MagnusLog::insertLOG(1, sprintf(
+                'REGISTER diagnostic admin=%d sip=%d',
+                (int) Yii::app()->session['id_user'],
+                (int) $sipId
+            ));
+            $this->respond(true, $result);
+        } catch (Throwable $e) {
+            Yii::log('REGISTER diagnostic failed: ' . $e->getMessage(), CLogger::LEVEL_ERROR, 'callDiagnostic');
+            if (isset($service) && $service instanceof SipRegisterDiagnosticService) {
+                $this->respond(true, $service->unexpectedFailure($e));
+            }
+            $this->respond(false, null, Yii::t('zii', 'The diagnostic could not be completed safely.'), 500);
+        }
+    }
+
+    public function actionStartRegisterCapture()
+    {
+        $this->requirePost();
+        $sipId = filter_input(INPUT_POST, 'sipId', FILTER_VALIDATE_INT);
+        if (!$sipId) $this->respond(false, null, Yii::t('zii', 'Invalid diagnostic input.'), 422);
+        $sip = Yii::app()->db->createCommand(
+            'SELECT id,name FROM pkg_sip WHERE id=:id LIMIT 1'
+        )->queryRow(true, [':id' => (int) $sipId]);
+        if (!$sip || !preg_match('/^[A-Za-z0-9_.@+-]{1,50}$/D', (string) $sip['name'])) {
+            $this->respond(false, null, Yii::t('zii', 'Invalid SIP account for capture.'), 422);
+        }
+        $existingCapture = Yii::app()->session['registerCapture'];
+        if (is_array($existingCapture)
+            && (int) $existingCapture['sipId'] === (int) $sipId
+            && !empty($existingCapture['token'])
+            && time() < (int) $existingCapture['deadline']) {
+            $this->respond(true, [
+                'token' => (string) $existingCapture['token'],
+                'timeout' => max(1, (int) $existingCapture['deadline'] - time()),
+                'port' => (int) $existingCapture['port'],
+                'message' => Yii::t('zii', 'The existing SIP capture was resumed.'),
+            ]);
+        }
+        if (SipTrace::model()->find() !== null) {
+            $this->respond(false, null, Yii::t('zii', 'Another SIP capture is active. Wait for it to finish and try again.'), 409);
+        }
+        $path = '/var/www/html/mbilling/resources/reports/siptrace.log';
+        clearstatcache(true, $path);
+        $offset = is_file($path) ? (int) filesize($path) : 0;
+        $port = $this->pjsipCapturePort();
+        $trace = new SipTrace();
+        $trace->filter = (string) $sip['name'];
+        $trace->timeout = 120;
+        $trace->port = $port;
+        $trace->status = 1;
+        $trace->in_use = 0;
+        if (!$trace->save()) {
+            $this->respond(false, null, Yii::t('zii', 'The SIP capture could not be started.'), 500);
+        }
+        $token = bin2hex(random_bytes(16));
+        Yii::app()->session['registerCapture'] = [
+            'token' => $token, 'sipId' => (int) $sipId, 'username' => (string) $sip['name'],
+            'traceId' => (int) $trace->id, 'offset' => $offset,
+            'started' => time(), 'deadline' => time() + 125, 'port' => $port,
+        ];
+        MagnusLog::insertLOG(1, sprintf('REGISTER capture started admin=%d sip=%d port=%d',
+            (int) Yii::app()->session['id_user'], (int) $sipId, $port));
+        $this->respond(true, [
+            'token' => $token, 'timeout' => 120, 'port' => $port,
+            'message' => Yii::t('zii', 'Capture started. Try to register the SIP account now.'),
+        ]);
+    }
+
+    public function actionRegisterCaptureStatus()
+    {
+        $this->requirePost();
+        $sipId = filter_input(INPUT_POST, 'sipId', FILTER_VALIDATE_INT);
+        $token = trim((string) Yii::app()->request->getPost('token', ''));
+        $capture = Yii::app()->session['registerCapture'];
+        if (!$sipId || !is_array($capture) || !isset($capture['token'])
+            || !hash_equals((string) $capture['token'], $token)
+            || (int) $capture['sipId'] !== (int) $sipId) {
+            $this->respond(false, null, Yii::t('zii', 'The REGISTER capture session is invalid or expired.'), 422);
+        }
+        $timedOut = time() >= (int) $capture['deadline'];
+        $service = new SipRegisterCaptureService();
+        $result = $service->analyze(
+            '/var/www/html/mbilling/resources/reports/siptrace.log',
+            (int) $capture['offset'],
+            (string) $capture['username'],
+            $timedOut
+        );
+        $result['diagnosticId'] = substr((string) $capture['token'], 0, 8) . '-capture';
+        $result['type'] = 'register-capture';
+        if (!empty($result['complete'])) {
+            if (!empty($capture['traceId'])) SipTrace::model()->deleteByPk((int) $capture['traceId']);
+            unset(Yii::app()->session['registerCapture']);
+        }
+        $this->respond(true, $result);
+    }
+
+    private function pjsipCapturePort()
+    {
+        $path = '/etc/asterisk/pjsip.conf';
+        if (!is_file($path) || !is_readable($path)) return 5060;
+        $section = '';
+        foreach (file($path, FILE_IGNORE_NEW_LINES) as $line) {
+            $line = trim($line);
+            if (preg_match('/^\[([^\]]+)\]$/', $line, $match)) {
+                $section = strtolower($match[1]);
+                continue;
+            }
+            if ($section === 'transport-udp'
+                && preg_match('/^bind\s*=\s*(?:\[[^\]]+\]|[^:;\s]+)?:(\d+)\s*(?:;.*)?$/i', $line, $match)
+                && (int) $match[1] >= 1 && (int) $match[1] <= 65535) {
+                return (int) $match[1];
+            }
+        }
+        return 5060;
+    }
+
     public function actionFailedCalls()
     {
         $this->requirePost();

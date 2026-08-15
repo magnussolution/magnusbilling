@@ -292,6 +292,9 @@ class SipController extends Controller
                     $attributes[$i]['lineStatus'] = $status;
 
                     if (preg_match('/Avail/', $value['Status'])) {
+                        if (isset($value['RTT']) && is_numeric($value['RTT'])) {
+                            $attributes[$i]['lineStatus'] .= ' (' . intval($value['RTT']) . ' ms)';
+                        }
                         $attributes[$i]['lineStatus'] .= ' ' . $value['server'];
                         break;
                     }

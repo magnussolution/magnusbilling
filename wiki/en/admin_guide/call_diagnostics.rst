@@ -59,6 +59,51 @@ identifies Techprefix-based authentication or plan selection, the normalized
 number, trunk group, selected trunk and the number that would be sent to the
 trunk.
 
+Check REGISTER
+--------------
+
+The **Check REGISTER** button is displayed beside **Run diagnostic** in the
+Check User window. It reads a bounded recent portion of
+``/var/log/asterisk/messages`` and correlates the selected SIP account with
+the latest REGISTER event and source IP. The result distinguishes invalid
+credentials, an endpoint that is not loaded, an address rejected by access
+rules, the normal authentication challenge, and a successful contact update.
+
+For each source IP found, the diagnostic checks active block records in
+``pkg_firewall`` (including IPv4 CIDR entries) and the live Fail2Ban jail
+status. It never removes a block. Confirm that an address belongs to the
+customer before using the normal firewall administration tools to unban it.
+
+The web service needs read access to the Asterisk messages log. Live Fail2Ban
+verification uses the read-only commands ``fail2ban-client status`` and
+``fail2ban-client status JAIL`` with a short timeout. If either source is not
+readable, that check is marked inconclusive instead of guessing the cause.
+Raw log lines, passwords and authentication payloads are not returned to the
+browser.
+
+The same on-demand check reads only the selected account sections from
+``/etc/asterisk/pjsip_magnus_user.conf``. It validates the generated AOR,
+endpoint, auth and identify objects against the database account, including
+context, ``aors``, ``identify_by``, authentication username, password presence,
+``max_contacts`` and codecs. Password values are replaced before any result is
+constructed. It also queries the endpoint and AOR currently loaded in Asterisk
+to distinguish a stale reload from a generation error and to report whether a
+contact currently exists.
+
+After the first REGISTER analysis, **Capture SIP packets** starts the existing
+SipTrace worker for the selected account and the UDP bind port configured in
+``pjsip.conf``. After confirmation, the administrator has 120 seconds to ask
+the customer to register the device. The window polls the capture and explains
+the live REGISTER exchange: no packet reached the server, 401 challenge not
+answered, authenticated request rejected, endpoint not found, forbidden,
+interval too brief, no Asterisk response, or successful 200 OK.
+
+Capture analysis starts at the file offset recorded for that request and
+correlates packets by Call-ID. Endpoint identity is matched exactly in SIP
+headers, so an ngrep textual match for ``test12323`` is never attributed to
+``test1``. Similar names are reported explicitly as a different username.
+Authorization and digest response values are never returned to the browser.
+
 Check DID
 ---------
 
@@ -145,6 +190,7 @@ stage.
 The main implementation files are:
 
 * ``protected/components/CallDiagnosticService.php``;
+* ``protected/components/SipRegisterDiagnosticService.php``;
 * ``protected/controllers/CallDiagnosticController.php``;
 * ``classic/src/view/callDiagnostic/Window.js``;
 * ``classic/src/view/sip/Form.js``;

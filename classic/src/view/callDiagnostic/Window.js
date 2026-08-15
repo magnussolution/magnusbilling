@@ -45,6 +45,21 @@ Ext.define('MBilling.view.callDiagnostic.Window', {
                 handler: function() {
                     me.runDiagnostic();
                 }
+            }, {
+                text: t('Check REGISTER'),
+                iconCls: 'x-fa fa-sign-in',
+                hidden: inbound,
+                handler: function() {
+                    me.runRegisterDiagnostic();
+                }
+            }, {
+                text: t('Capture SIP packets'),
+                iconCls: 'x-fa fa-exchange',
+                hidden: true,
+                reference: 'captureRegisterButton',
+                handler: function() {
+                    me.confirmRegisterCapture();
+                }
             }]
         }, {
             region: 'center',
@@ -121,6 +136,127 @@ Ext.define('MBilling.view.callDiagnostic.Window', {
                     Ext.ux.Alert.alert(t('Error'), payload.msg, 'error');
                     return;
                 }
+                me.renderResult(payload.result);
+            },
+            failure: function(response) {
+                var payload;
+                try { payload = Ext.decode(response.responseText); } catch (e) { payload = {}; }
+                Ext.ux.Alert.alert(t('Error'), payload.msg || t('The diagnostic could not be completed safely.'), 'error');
+            }
+        });
+    },
+
+    confirmRegisterCapture: function() {
+        var me = this;
+        Ext.Msg.confirm(
+            t('Capture SIP packets'),
+            Ext.String.format(
+                t('After confirming, try to register SIP account {0} on the MagnusBilling server within the next 120 seconds.'),
+                Ext.htmlEncode(me.recordLabel)
+            ),
+            function(answer) {
+                if (answer === 'yes') me.startRegisterCapture();
+            }
+        );
+    },
+
+    startRegisterCapture: function() {
+        var me = this,
+            captureButton = me.down('[reference=captureRegisterButton]');
+        captureButton && captureButton.disable();
+        me.setLoading(t('Starting SIP capture'));
+        Ext.Ajax.request({
+            url: 'index.php/callDiagnostic/startRegisterCapture',
+            method: 'POST',
+            params: {
+                sipId: me.recordId,
+                language: App.lang || window.lang || 'en'
+            },
+            callback: function() { me.setLoading(false); },
+            success: function(response) {
+                var payload = Ext.decode(response.responseText);
+                if (!payload.success) {
+                    captureButton && captureButton.enable();
+                    Ext.ux.Alert.alert(t('Error'), payload.msg, 'error');
+                    return;
+                }
+                me.captureToken = payload.result.token;
+                me.captureDeadline = Date.now() + ((payload.result.timeout || 120) + 8) * 1000;
+                me.pollRegisterCapture();
+            },
+            failure: function(response) {
+                var payload;
+                try { payload = Ext.decode(response.responseText); } catch (e) { payload = {}; }
+                captureButton && captureButton.enable();
+                Ext.ux.Alert.alert(t('Error'), payload.msg || t('The SIP capture could not be started.'), 'error');
+            }
+        });
+    },
+
+    pollRegisterCapture: function() {
+        var me = this;
+        if (me.destroyed || !me.captureToken) return;
+        Ext.Ajax.request({
+            url: 'index.php/callDiagnostic/registerCaptureStatus',
+            method: 'POST',
+            params: {
+                sipId: me.recordId,
+                token: me.captureToken,
+                language: App.lang || window.lang || 'en'
+            },
+            success: function(response) {
+                var payload = Ext.decode(response.responseText), result;
+                if (!payload.success) {
+                    me.captureToken = null;
+                    var invalidButton = me.down('[reference=captureRegisterButton]');
+                    invalidButton && invalidButton.enable();
+                    Ext.ux.Alert.alert(t('Error'), payload.msg, 'error');
+                    return;
+                }
+                result = payload.result;
+                me.renderResult(result);
+                if (result.complete) {
+                    me.captureToken = null;
+                    var completeButton = me.down('[reference=captureRegisterButton]');
+                    completeButton && completeButton.enable();
+                    return;
+                }
+                Ext.defer(function() { me.pollRegisterCapture(); }, 2000);
+            },
+            failure: function() {
+                if (Date.now() < me.captureDeadline) {
+                    Ext.defer(function() { me.pollRegisterCapture(); }, 3000);
+                } else {
+                    me.captureToken = null;
+                    var failedButton = me.down('[reference=captureRegisterButton]');
+                    failedButton && failedButton.enable();
+                    Ext.ux.Alert.alert(t('Error'), t('The SIP capture status could not be read.'), 'error');
+                }
+            }
+        });
+    },
+
+    runRegisterDiagnostic: function() {
+        var me = this;
+        me.setLoading(t('Checking REGISTER'));
+        Ext.Ajax.request({
+            url: 'index.php/callDiagnostic/register',
+            method: 'POST',
+            params: {
+                sipId: me.recordId,
+                language: App.lang || (window.localStorage && localStorage.getItem('lang')) || window.lang || 'en'
+            },
+            callback: function() {
+                me.setLoading(false);
+            },
+            success: function(response) {
+                var payload = Ext.decode(response.responseText);
+                if (!payload.success) {
+                    Ext.ux.Alert.alert(t('Error'), payload.msg, 'error');
+                    return;
+                }
+                var captureButton = me.down('[reference=captureRegisterButton]');
+                captureButton && captureButton.show();
                 me.renderResult(payload.result);
             },
             failure: function(response) {
@@ -267,6 +403,12 @@ Ext.define('MBilling.view.callDiagnostic.Window', {
         if (details.stdout) {
             html += '<details class="advanced"><summary>' + Ext.htmlEncode(t('Process output')) +
                 '</summary><pre>' + Ext.htmlEncode(details.stdout) + '</pre></details>';
+        }
+        if (details.sipPackets && details.sipPackets.length) {
+            html += '<details class="advanced"><summary>' +
+                Ext.htmlEncode(t('SIP packets supporting the diagnosis')) +
+                ' (' + details.sipPackets.length + ')</summary><pre>' +
+                Ext.htmlEncode(details.sipPackets.join('\n\n')) + '</pre></details>';
         }
         return html + '</div></details>';
     },

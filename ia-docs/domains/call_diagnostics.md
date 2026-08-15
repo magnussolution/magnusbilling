@@ -27,6 +27,8 @@ covered without maintaining a second implementation.
   `classic/src/view/callDiagnostic/Window.js`
 - Form toolbar buttons:
   `classic/src/view/sip/Form.js` and `classic/src/view/did/Form.js`
+- REGISTER log/firewall diagnosis:
+  `protected/components/SipRegisterDiagnosticService.php`
 - AGI adapter and structured events:
   `resources/asterisk/AGI.Class.php`
 - Dry-run stop boundary:
@@ -137,6 +139,36 @@ or free-form text.
   `noload => res_pjsip_endpoint_identifier_anonymous.so` to `modules.conf`.
   The update does not restart Asterisk automatically; a controlled restart is
   required before unidentified INVITEs stop reaching the anonymous endpoint.
+
+## Check REGISTER
+
+- This is an administrator-only action beside **Run diagnostic** in the Check
+  User window and posts only the selected `sipId`.
+- Read no more than the last 4 MiB of `/var/log/asterisk/messages`.
+- Correlate events using `pkg_sip.name` and `defaultuser`; never return raw log
+  lines or authentication material to the browser.
+- Classify the latest matching evidence, so an older authentication failure
+  does not override a newer successful contact update.
+- Extract validated source IPs and check both exact/CIDR entries in
+  `pkg_firewall` and live Fail2Ban jails.
+- Fail2Ban access is read-only (`status` only), bounded to 20 validated jail
+  names and a short process timeout. Never unban automatically.
+- Missing log or Fail2Ban permissions produce an inconclusive step; they do
+  not imply that the address is clear or blocked.
+- Read the selected endpoint/AOR/auth/identify objects from
+  `/etc/asterisk/pjsip_magnus_user.conf`, redact password-like values, and
+  compare them with `pkg_sip` expectations.
+- Query the runtime endpoint and AOR through AMI. Report generated-but-not-
+  loaded configuration separately from an endpoint loaded without a contact.
+- The post-analysis **Capture SIP packets** action creates the existing
+  `SipTrace` model with the exact SIP name, 120-second timeout, and UDP bind
+  port parsed from `pjsip.conf`.
+- Record the starting `siptrace.log` offset and correlate only new packets by
+  exact SIP identity and Call-ID. Never use the ngrep substring match as proof
+  that a packet belongs to the selected endpoint.
+- Treat the first 401 as a normal digest challenge. Report bad credentials
+  only after an authenticated REGISTER is rejected; preserve `stale=true` as
+  a retryable challenge. Never expose Authorization/digest content.
 
 ## JSON Result Contract
 
