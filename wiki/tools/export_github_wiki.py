@@ -476,6 +476,7 @@ billing, Asterisk 20, PJSIP, campaigns, and integrations.
     ("Troubleshoot calls without audio", "admin_guide/troubleshooting_no_audio"),
     ("Troubleshoot errors when saving", "admin_guide/troubleshooting_save_errors"),
     ("Firewall and security", "security/iptables"),
+    ("Configure STIR/SHAKEN on OpenSIPS 3.6", "security/stir_shaken_opensips"),
     ("Technical architecture guide", "ai_codebase_guide"),
 ])}
 
@@ -509,6 +510,7 @@ billing, Asterisk 20, PJSIP, campaigns, and integrations.
             ("No-audio troubleshooting", "admin_guide/troubleshooting_no_audio"),
             ("Save-error troubleshooting", "admin_guide/troubleshooting_save_errors"),
             ("Security", "security/iptables"),
+            ("STIR/SHAKEN", "security/stir_shaken_opensips"),
         ]),
         ("Billing", [
             ("Price calculation", "price_calculation"),

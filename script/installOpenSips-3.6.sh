@@ -99,6 +99,14 @@ apt -y install opensips-cli
 apt -y install opensips-stir-shaken-module
 apt -y install opensips-mysql-dbschema
 
+# STIR/SHAKEN certificate store.  A real STI certificate/private key may be
+# supplied non-interactively through STIR_SHAKEN_CERT_PATH,
+# STIR_SHAKEN_KEY_PATH and STIR_SHAKEN_X5U before running this installer.
+install -d -o opensips -g opensips -m 0755 /etc/opensips/stir-shaken
+cp /etc/ssl/certs/ca-certificates.crt /etc/opensips/stir-shaken/ca-list.pem
+chown opensips:opensips /etc/opensips/stir-shaken/ca-list.pem
+chmod 0640 /etc/opensips/stir-shaken/ca-list.pem
+
 touch /var/log/opensips.log
 chown opensips:opensips /var/log/opensips.log
 
@@ -174,6 +182,54 @@ mysql -u root -p$(awk '{print $1}' /root/passwordMysql.log) opensips -e "ALTER T
 mysql -u root -p$(awk '{print $1}' /root/passwordMysql.log) opensips -e "ALTER TABLE subscriber ADD  cpslimit INT( 11 ) NOT NULL DEFAULT  '-1'"
 mysql -u root -p$(awk '{print $1}' /root/passwordMysql.log) opensips -e "ALTER TABLE address CHANGE context_info  context_info CHAR( 70 ) NULL DEFAULT NULL ;"
 
+# Runtime STIR/SHAKEN policy and credentials. Verification is enabled in
+# monitor-only mode by default; signing remains disabled until an STI
+# certificate, its EC private key and a public HTTPS x5u URL are configured.
+mysql -u root -p$(awk '{print $1}' /root/passwordMysql.log) opensips <<'SQL'
+CREATE TABLE IF NOT EXISTS stir_shaken_config (
+    id TINYINT UNSIGNED NOT NULL PRIMARY KEY,
+    sign_enabled TINYINT(1) NOT NULL DEFAULT 0,
+    verify_enabled TINYINT(1) NOT NULL DEFAULT 1,
+    verify_reject TINYINT(1) NOT NULL DEFAULT 0,
+    attestation ENUM('A','B','C') NOT NULL DEFAULT 'C',
+    x5u VARCHAR(1024) NOT NULL DEFAULT '',
+    certificate LONGTEXT NULL,
+    private_key LONGTEXT NULL,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+INSERT IGNORE INTO stir_shaken_config (id) VALUES (1);
+SQL
+
+if [ -n "${STIR_SHAKEN_CERT_PATH:-}" ] || [ -n "${STIR_SHAKEN_KEY_PATH:-}" ] || [ -n "${STIR_SHAKEN_X5U:-}" ]; then
+  stir_x5u_regex='^https://[-A-Za-z0-9._~:/?#@!$&()*+,;=%]+$'
+  if [ ! -r "${STIR_SHAKEN_CERT_PATH:-}" ] || [ ! -r "${STIR_SHAKEN_KEY_PATH:-}" ] || [[ ! "${STIR_SHAKEN_X5U:-}" =~ $stir_x5u_regex ]]; then
+    echo "ERROR: STIR/SHAKEN requires readable certificate/key files and an HTTPS STIR_SHAKEN_X5U URL"
+    exit 1
+  fi
+
+  if ! openssl x509 -in "$STIR_SHAKEN_CERT_PATH" -noout >/dev/null 2>&1 || ! openssl pkey -in "$STIR_SHAKEN_KEY_PATH" -check -noout >/dev/null 2>&1; then
+    echo "ERROR: invalid STIR/SHAKEN X.509 certificate or private key"
+    exit 1
+  fi
+
+  install -o root -g mysql -m 0640 "$STIR_SHAKEN_CERT_PATH" /etc/opensips/stir-shaken/certificate.pem
+  install -o root -g mysql -m 0640 "$STIR_SHAKEN_KEY_PATH" /etc/opensips/stir-shaken/private-key.pem
+
+  stir_attestation="${STIR_SHAKEN_ATTESTATION:-C}"
+  case "$stir_attestation" in A|B|C) ;; *) stir_attestation="C" ;; esac
+  stir_verify_reject="${STIR_SHAKEN_VERIFY_REJECT:-0}"
+  case "$stir_verify_reject" in 0|1) ;; *) stir_verify_reject="0" ;; esac
+
+  mysql -u root -p$(awk '{print $1}' /root/passwordMysql.log) opensips \
+    --execute="SET @stir_cert=LOAD_FILE('/etc/opensips/stir-shaken/certificate.pem'); SET @stir_key=LOAD_FILE('/etc/opensips/stir-shaken/private-key.pem'); UPDATE stir_shaken_config SET sign_enabled=IF(@stir_cert IS NOT NULL AND @stir_key IS NOT NULL,1,0), verify_enabled=1, verify_reject=$stir_verify_reject, attestation='$stir_attestation', x5u='$STIR_SHAKEN_X5U', certificate=@stir_cert, private_key=@stir_key WHERE id=1"
+  chown opensips:opensips /etc/opensips/stir-shaken/certificate.pem /etc/opensips/stir-shaken/private-key.pem
+
+  if [ "$(mysql -N -s -u root -p$(awk '{print $1}' /root/passwordMysql.log) opensips --execute='SELECT sign_enabled FROM stir_shaken_config WHERE id=1')" != "1" ]; then
+    echo "ERROR: MySQL could not load the STIR/SHAKEN certificate or private key"
+    exit 1
+  fi
+fi
+
 cd /root
 wget https://raw.githubusercontent.com/magnussolution/magnusbilling7/source/script/sync_opensips_reload.sh
 
@@ -184,11 +240,9 @@ grep -q "/root/sync_opensips_reload.sh" /etc/crontab || echo "* * * * * root flo
 
 cd /etc/opensips/
 mv opensips.cfg opensips.cfg_old
-if [ -f "$SCRIPT_DIR/opensips-3.1.cfg" ]; then
-  cp "$SCRIPT_DIR/opensips-3.1.cfg" opensips.cfg
-else
-  wget -O opensips.cfg https://raw.githubusercontent.com/magnussolution/magnusbilling/source/script/opensips-3.1.cfg
-fi
+
+wget -O opensips.cfg https://raw.githubusercontent.com/magnussolution/magnusbilling/source/script/opensips-3.6.cfg
+
 sed -i "s/MYSQLUSER:MYSQLPASS/root:$password/g" /etc/opensips/opensips.cfg
 sed -i "s/MYIP/$proxyip/g" /etc/opensips/opensips.cfg
 sed -i "s/LOCALIP/$localIP/g" /etc/opensips/opensips.cfg

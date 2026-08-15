@@ -81,6 +81,7 @@ Welcome to MagnusBilling 8 wiki.
 
    security/iptables.rst
    security/ata_provisioning.rst
+   security/stir_shaken_opensips.rst
 
 .. toctree::
    :caption: Administration

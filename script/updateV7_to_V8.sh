@@ -1,73 +1,13 @@
 #!/usr/bin/env bash
 
-set -Eeuo pipefail
-umask 022
-
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly DEFAULT_VERSION="20.9.2"
 readonly ASTERISK_USER="asterisk"
 readonly ASTERISK_ETC="/etc/asterisk"
 
 VERSION="${ASTERISK_VERSION:-${DEFAULT_VERSION}}"
 SOURCE_ARCHIVE="${SCRIPT_DIR}/asterisk-${VERSION}.tar.gz"
-CONFIGURE_FIREWALL=0
-ALLOW_EXISTING=0
 
-usage() {
-    cat <<EOF
-Install Asterisk ${DEFAULT_VERSION} for a MagnusBilling 7 to 8 migration.
 
-Usage:
-  $(basename "$0") [options]
-
-Options:
-  --version VERSION       Asterisk version (default: ${DEFAULT_VERSION})
-  --source FILE           Local Asterisk tarball (default: script tarball)
-  --configure-firewall   Open SIP 5060/udp and RTP 10000-20000/udp when firewalld is active
-  --allow-existing       Kept for compatibility; existing files are archived automatically
-  -h, --help              Show this help
-
-This script supports Debian only. It installs Asterisk 20 with PJSIP and
-creates a clean MagnusBilling-compatible configuration. It never imports a
-MagnusBilling 7 /etc/asterisk directory.
-
-IMPORTANT - MIGRATION RESPONSIBILITY
-This script is provided as-is, without warranty. You are solely responsible
-for creating and verifying backups, validating compatibility, and reviewing
-the result of the migration. MagnusSolution and the MagnusBilling team are not
-responsible for data loss, service interruption, configuration problems, or
-any other damage resulting from an update performed with this script.
-
-If you prefer the migration to be planned and performed by the MagnusBilling
-team, contact MagnusSolution to purchase professional migration support:
-https://magnussolution.com | info@magnussolution.com
-EOF
-}
-
-die() { echo "ERROR: $*" >&2; exit 1; }
-log() { echo "[install_asterisk20] $*"; }
-
-show_migration_notice() {
-    cat >&2 <<'EOF'
-
-===============================================================================
- IMPORTANT - READ BEFORE MIGRATING MAGNUSBILLING 7 TO MAGNUSBILLING 8
-===============================================================================
- This script is provided as-is, without warranty. You are solely responsible
- for creating and verifying backups, validating compatibility, and reviewing
- the migration result.
-
- MagnusSolution and the MagnusBilling team are not responsible for data loss,
- service interruption, configuration problems, or any other damage resulting
- from an update performed with this script.
-
- If you want the MagnusBilling team to plan and perform the migration, paid
- professional support is available:
- https://magnussolution.com | info@magnussolution.com
-===============================================================================
-
-EOF
-}
 
 require_root() {
     [[ ${EUID} -eq 0 ]] || die "Run this installer as root."
@@ -75,41 +15,9 @@ require_root() {
     [[ "${VERSION}" =~ ^20\. ]] || die "This installer only supports Asterisk 20.x."
 }
 
-parse_args() {
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            --version)
-                [[ $# -ge 2 ]] || die "--version requires a value."
-                VERSION="$2"
-                SOURCE_ARCHIVE="${SCRIPT_DIR}/asterisk-${VERSION}.tar.gz"
-                shift 2
-                ;;
-            --source)
-                [[ $# -ge 2 ]] || die "--source requires a file."
-                SOURCE_ARCHIVE="$2"
-                shift 2
-                ;;
-            --configure-firewall)
-                CONFIGURE_FIREWALL=1
-                shift
-                ;;
-            --allow-existing)
-                ALLOW_EXISTING=1
-                shift
-                ;;
-            -h|--help)
-                usage
-                exit 0
-                ;;
-            *)
-                die "Unknown option: $1"
-                ;;
-        esac
-    done
-}
 
 install_dependencies() {
-    log "Installing Debian build dependencies."
+    echo "Installing Debian build dependencies."
     apt-get update --allow-releaseinfo-change
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         autoconf automake bison build-essential ca-certificates curl flex \
@@ -126,7 +34,7 @@ prepare_user_and_directories() {
         useradd --system --home-dir /var/lib/asterisk --shell /usr/sbin/nologin \
             --comment "Asterisk PBX" "${ASTERISK_USER}"
     else
-        log "Using existing ${ASTERISK_USER} system user."
+        echo "Using existing ${ASTERISK_USER} system user."
     fi
     usermod --home /var/lib/asterisk --shell /usr/sbin/nologin "${ASTERISK_USER}"
     install -d -o "${ASTERISK_USER}" -g "${ASTERISK_USER}" \
@@ -134,19 +42,16 @@ prepare_user_and_directories() {
     install -d -o root -g "${ASTERISK_USER}" -m 0750 "${ASTERISK_ETC}"
 }
 
-preserve_existing_config() {
-    if [[ ! -d "${ASTERISK_ETC}" ]] || [[ -z "$(find "${ASTERISK_ETC}" -mindepth 1 -maxdepth 1 -print -quit 2>/dev/null)" ]]; then
-        return
-    fi
 
-    systemctl stop asterisk >/dev/null 2>&1 || true
-    cp -rf /etc/asterisk /etc/asterisk_1.3
-}
 
 
 build_asterisk() {
-
+    mv /etc/asterisk/ /etc/asterisk_1.3
     rm -rf /usr/lib/asterisk/modules/
+    cd /usr/src
+    rm -rf asterisk*
+    clear
+
     cd /usr/src
     rm -rf asterisk*
     clear
@@ -167,7 +72,20 @@ build_asterisk() {
     make samples
     make config
     ldconfig
-    cp -rf /etc/asterisk_1.3/res_config_mysql.conf /etc/asterisk/
+
+    if grep -Fq 'Set(CHANNEL(accountcode)=${SIP_HEADER(P-Accountcode)});' /etc/asterisk/extensions.ael; then
+  sed -i \
+    -e 's#Set(CHANNEL(accountcode)=${SIP_HEADER(P-Accountcode)});#Set(MB_ACC=${PJSIP_HEADER(read,P-Accountcode)});#' \
+    -e 's#Set(CALLERID(name)=${CUT(SIP_HEADER(P-CallerID),|,1)});#Set(CALLERID(name)=${CUT(PJSIP_HEADER(read,P-CallerID),|,1)});#' \
+    -e '/Set(CALLERID(num)=${CUT(SIP_HEADER(P-CallerID),|,2)});/c\
+      Set(CALLERID(num)=${CUT(PJSIP_HEADER(read,P-CallerID),|,2)});\
+      Set(P_Accountcode=${CHANNEL(accountcode)});\
+      Set(X_AUTH_IP=${PJSIP_HEADER(read,X-AUTH-IP)});\
+      Set(P_SipAccount=${PJSIP_HEADER(read,P-SipAccount)});' \
+    /etc/asterisk/extensions.ael
+fi
+chown -R asterisk:asterisk /var/log/asterisk
+
 }
 
 
@@ -193,7 +111,7 @@ cp -rf /etc/asterisk_1.3/func_odbc.conf /etc/asterisk
 cp -rf /etc/asterisk_1.3/logger.conf /etc/asterisk/logger.conf
 cp -rf /etc/asterisk_1.3/manager.conf /etc/asterisk/manager.conf
 cp -rf /etc/asterisk_1.3/extensions_magnus.conf /etc/asterisk/extensions_magnus.conf
-
+cp -rf /etc/asterisk_1.3/res_odbc.conf /etc/asterisk/res_odbc.conf
 
 
 
@@ -291,7 +209,7 @@ migrate_legacy_network_settings() {
     local -a localnets=()
 
     if [[ ! -f "${legacy_sip}" ]]; then
-        log "Legacy ${legacy_sip} not found; skipping SIP network migration."
+        echo "Legacy ${legacy_sip} not found; skipping SIP network migration."
         return
     fi
 
@@ -320,7 +238,7 @@ migrate_legacy_network_settings() {
     done < <(sed -nE '/^[[:space:]]*[;#]/d; /^[[:space:]]*(localnet|externip|externaddr|media_address)[[:space:]]*=/Ip' "${legacy_sip}")
 
     if [[ ${#localnets[@]} -eq 0 && -z "${externip}" && -z "${externaddr}" && -z "${media_address}" ]]; then
-        log "No legacy localnet or external IP settings found in ${legacy_sip}."
+        echo "No legacy localnet or external IP settings found in ${legacy_sip}."
         return
     fi
 
@@ -356,7 +274,7 @@ migrate_legacy_network_settings() {
     install -o root -g "${ASTERISK_USER}" -m 0640 "${updated_pjsip}" "${pjsip_config}"
     rm -f "${migrated_settings}" "${updated_pjsip}"
 
-    log "Migrated legacy SIP network settings to ${pjsip_config}."
+    echo "Migrated legacy SIP network settings to ${pjsip_config}."
 }
 
 write_systemd_unit() {
@@ -500,7 +418,7 @@ fix_codec_execstack()
     local codec
     for codec in /usr/lib/asterisk/modules/codec_g729.so /usr/lib/asterisk/modules/codec_g723.so; do
         if [ -f "${codec}" ]; then
-            log "Clearing executable-stack flag from ${codec}."
+            echo "Clearing executable-stack flag from ${codec}."
             patchelf --clear-execstack "${codec}"
         fi
     done
@@ -510,12 +428,9 @@ fix_codec_execstack()
 
 
 main() {
-    parse_args "$@"
-    show_migration_notice
     require_root
     install_dependencies
     prepare_user_and_directories
-    preserve_existing_config
     build_asterisk
     installCodec
     fix_codec_execstack
@@ -529,7 +444,7 @@ main() {
     install -d -m 0755 /etc/magnusbilling
     printf 'asterisk_version=%s\ninstalled_utc=%s\n' "${VERSION}" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
         > /etc/magnusbilling/asterisk20-install.manifest
-    log "Asterisk ${VERSION} is ready for MagnusBilling 8 migration."
+    echo "Asterisk ${VERSION} is ready for MagnusBilling 8 migration."
 }
 
 main "$@"
