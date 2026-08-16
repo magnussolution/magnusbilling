@@ -113,10 +113,16 @@ class CallChartCommand extends ConsoleCommand
 
                 $uniqueid    = null;
                 $trunk       = null;
-                if (preg_match('/^PJSIP\/([^-\s]+)/', $channel, $m)) {
+                if (preg_match('/^PJSIP\/(.+)-[0-9a-f]+(?:;[12])?$/i', $channel, $m)) {
                     $sip_account = $m[1];
                 } else {
                     $sip_account = '';
+                }
+
+                // Browser WebRTC endpoints use the <sip-account>-web name.
+                // Resolve them to the originating Magnus SIP account for Calls Online.
+                if (substr($sip_account, -4) === '-web') {
+                    $sip_account = substr($sip_account, 0, -4);
                 }
                 $ndiscado    = trim($call[2]);
 
@@ -127,7 +133,7 @@ class CallChartCommand extends ConsoleCommand
 
 
                 $chan = trim($call[9] ?? '');
-                if (preg_match('#^[^/]+/([^-]+)-#', $chan, $m)) {
+                if (preg_match('#^[^/]+/(.+)-[0-9a-f]+(?:;[12])?$#i', $chan, $m)) {
 
                     $des_chan    = $trunk =  $m[1];
                 } else {

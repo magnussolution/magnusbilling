@@ -271,6 +271,13 @@ class CallChartStatusCommand extends ConsoleCommand
 
     private function endpoint(array $call)
     {
+        // Asterisk can expose a shortened CHANNEL(endpoint) value (for example
+        // "ProviderA") even when the PJSIP channel contains the full trunk name.
+        $channel = $this->field($call, 'Channel');
+        if (preg_match('#^(?:PJSIP|SIP|IAX2?)/(.+)-[0-9a-f]+(?:;[12])?$#i', $channel, $match)) {
+            return $match[1];
+        }
+
         $variable = $this->field($call, 'Variable');
         if (preg_match('/^CHANNEL\(endpoint\)=(.*)$/', $variable, $match)) {
             $endpoint = trim($match[1]);
@@ -278,10 +285,7 @@ class CallChartStatusCommand extends ConsoleCommand
                 return $endpoint;
             }
         }
-        $channel = $this->field($call, 'Channel');
-        return preg_match('#^(?:PJSIP|SIP|IAX2?)/(.+)-[0-9a-f]+(?:;[12])?$#i', $channel, $match)
-            ? $match[1]
-            : '';
+        return '';
     }
 
     private function dialedNumber(array $call)
