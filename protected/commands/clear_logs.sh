@@ -1,7 +1,6 @@
 #!/bin/bash
 
 cd /var/log
-
 rm -rf *202*
 rm -rf asterisk/*202*
 rm -rf httpd/*202*
@@ -10,7 +9,10 @@ rm -rf apache2/access.log.*
 rm -rf apache2/error.log.*
 rm -rf asterisk/messages.*
 rm -rf /var/www/html/mbilling/protected/runtime/*.log.*
+rm -rf *.1 && rm -rf *.2 && rm -rf *.3 && rm -rf *.gz
+rm -rf asterisk/*.1 && rm -rf asterisk/*.2 && rm -rf asterisk/*.3 && rm -rf asterisk/*.gz
 
+echo '' > /var/log/syslog
 echo '' > /var/log/fail2ban.log
 echo '' > /var/log/messages
 echo '' > /var/log/opensips*

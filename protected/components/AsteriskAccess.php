@@ -302,7 +302,7 @@ class AsteriskAccess
                 $line .= "\n[" . $data[$head_field] . "]\n";
                 $line .= "type = aor\n";
                 if (strlen($data['user'])) {
-                    $line .= "contact = sip:" . $data['name'] . "@" . $data['host'] . ":" . $port . "\n";
+                    $line .= "contact = sip:" . $data['user'] . "@" . $data['host'] . ":" . $port . "\n";
                 } else {
                     $line .= "contact = sip:" . $data['host'] . "\n";
                 }

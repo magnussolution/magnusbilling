@@ -73,18 +73,8 @@ build_asterisk() {
     make config
     ldconfig
 
-    if grep -Fq 'Set(CHANNEL(accountcode)=${SIP_HEADER(P-Accountcode)});' /etc/asterisk/extensions.ael; then
-  sed -i \
-    -e 's#Set(CHANNEL(accountcode)=${SIP_HEADER(P-Accountcode)});#Set(MB_ACC=${PJSIP_HEADER(read,P-Accountcode)});#' \
-    -e 's#Set(CALLERID(name)=${CUT(SIP_HEADER(P-CallerID),|,1)});#Set(CALLERID(name)=${CUT(PJSIP_HEADER(read,P-CallerID),|,1)});#' \
-    -e '/Set(CALLERID(num)=${CUT(SIP_HEADER(P-CallerID),|,2)});/c\
-      Set(CALLERID(num)=${CUT(PJSIP_HEADER(read,P-CallerID),|,2)});\
-      Set(P_Accountcode=${CHANNEL(accountcode)});\
-      Set(X_AUTH_IP=${PJSIP_HEADER(read,X-AUTH-IP)});\
-      Set(P_SipAccount=${PJSIP_HEADER(read,P-SipAccount)});' \
-    /etc/asterisk/extensions.ael
-fi
-chown -R asterisk:asterisk /var/log/asterisk
+
+    chown -R asterisk:asterisk /var/log/asterisk
 
 }
 
@@ -113,6 +103,17 @@ cp -rf /etc/asterisk_1.3/manager.conf /etc/asterisk/manager.conf
 cp -rf /etc/asterisk_1.3/extensions_magnus.conf /etc/asterisk/extensions_magnus.conf
 cp -rf /etc/asterisk_1.3/res_odbc.conf /etc/asterisk/res_odbc.conf
 
+if grep -Fq 'Set(CHANNEL(accountcode)=${SIP_HEADER(P-Accountcode)});' /etc/asterisk/extensions.ael; then
+  sed -i \
+    -e 's#Set(CHANNEL(accountcode)=${SIP_HEADER(P-Accountcode)});#Set(MB_ACC=${PJSIP_HEADER(read,P-Accountcode)});#' \
+    -e 's#Set(CALLERID(name)=${CUT(SIP_HEADER(P-CallerID),|,1)});#Set(CALLERID(name)=${CUT(PJSIP_HEADER(read,P-CallerID),|,1)});#' \
+    -e '/Set(CALLERID(num)=${CUT(SIP_HEADER(P-CallerID),|,2)});/c\
+      Set(CALLERID(num)=${CUT(PJSIP_HEADER(read,P-CallerID),|,2)});\
+      Set(P_Accountcode=${CHANNEL(accountcode)});\
+      Set(X_AUTH_IP=${PJSIP_HEADER(read,X-AUTH-IP)});\
+      Set(P_SipAccount=${PJSIP_HEADER(read,P-SipAccount)});' \
+    /etc/asterisk/extensions.ael
+fi
 
 
 
