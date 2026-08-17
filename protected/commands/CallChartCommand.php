@@ -127,7 +127,9 @@ class CallChartCommand extends ConsoleCommand
 
 
                 $chan = trim($call[9] ?? '');
-                if (preg_match('#^[^/]+/([^-]+)-#', $chan, $m)) {
+                // The final token is Asterisk's hexadecimal channel suffix.
+                // Keep dashes that are part of the configured PJSIP endpoint.
+                if (preg_match('#^[^/]+/(.+)-[0-9a-f]+(?:;[12])?$#i', $chan, $m)) {
 
                     $des_chan    = $trunk =  $m[1];
                 } else {
