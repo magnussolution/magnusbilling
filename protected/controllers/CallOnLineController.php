@@ -57,8 +57,17 @@ class CallOnLineController extends Controller
     public function actionGetChannelDetails()
     {
         $channel = AsteriskAccess::getCoreShowChannel($_POST['channel'], null, $_POST['server']);
+        $channel = is_array($channel) ? $channel : [];
 
-        $sipcallid = explode("\n", $channel['SIPCALLID']['data']);
+        // Asterisk 20/PJSIP does not expose every legacy chan_sip field.
+        // Keep the details panel available when those fields are absent.
+        $value = function ($key, $default = '') use ($channel) {
+            return isset($channel[$key]) && ! is_array($channel[$key]) ? $channel[$key] : $default;
+        };
+        $sipCallId = isset($channel['SIPCALLID']['data']) ? $channel['SIPCALLID']['data'] : '';
+        $sipcallid = explode("\n", $sipCallId);
+        $from_ip = '';
+        $reinvite = '';
 
         foreach ($sipcallid as $key => $line) {
             if (preg_match("/Received Address/", $line)) {
@@ -72,32 +81,40 @@ class CallOnLineController extends Controller
             }
         }
 
-        if (preg_match('/^MC\!/', $channel['accountcode'])) {
+        $accountcode = $value('Accountcode', $value('accountcode'));
+        $callerId = $value('Caller ID', $value('CallerID'));
+        $dialedNumber = $value('DNID Digits', $value('dnid', $value('Extension')));
+        $codec = $value('WriteFormat', $value('ReadFormat'));
+        $billsec = $value('billsec', $value('Billsec'));
+        $reinviteValue = $reinvite === '' || preg_match("/local/", $reinvite) ? 'no' : 'yes';
 
-            $modelPhonenumber = PhoneNumber::model()->find('number = :key', [':key' => $channel['Caller ID']]);
+        if (preg_match('/^MC\!/', $accountcode)) {
+
+            $modelPhonenumber = PhoneNumber::model()->find('number = :key', [':key' => $callerId]);
+            $callerName = $modelPhonenumber ? $modelPhonenumber->name . ' ' . $modelPhonenumber->city : $callerId;
 
             echo json_encode([
                 'success'     => true,
                 'msg'         => 'success',
                 'description' => Yii::app()->session['isAdmin'] ? print_r($channel, true) : '',
-                'codec'       => $channel['WriteFormat'],
-                'billsec'     => $channel['billsec'],
-                'callerid'    => $modelPhonenumber->name . ' ' . $modelPhonenumber->city,
+                'codec'       => $codec,
+                'billsec'     => $billsec,
+                'callerid'    => $callerName,
                 'from_ip'     => $from_ip,
-                'reinvite'    => preg_match("/local/", $reinvite) ? 'no' : 'yes',
-                'ndiscado'    => $channel['Caller ID'],
+                'reinvite'    => $reinviteValue,
+                'ndiscado'    => $callerId,
             ]);
         } else {
             echo json_encode([
                 'success'     => true,
                 'msg'         => 'success',
                 'description' => Yii::app()->session['isAdmin'] ? print_r($channel, true) : '',
-                'codec'       => $channel['WriteFormat'],
-                'billsec'     => $channel['billsec'],
-                'callerid'    => $channel['Caller ID'],
+                'codec'       => $codec,
+                'billsec'     => $billsec,
+                'callerid'    => $callerId,
                 'from_ip'     => $from_ip,
-                'reinvite'    => preg_match("/local/", $reinvite) ? 'no' : 'yes',
-                'ndiscado'    => $channel['dnid'],
+                'reinvite'    => $reinviteValue,
+                'ndiscado'    => $dialedNumber,
             ]);
         }
     }
