@@ -1154,6 +1154,12 @@ class AsteriskAccess
                     if (isset($sip->max_contacts) && strlen($sip->max_contacts) > 0) {
                         $line .= "max_contacts=" . trim($sip->max_contacts) . "\n";
                     }
+                    if ($host == 'dynamic') {
+                        // Replace stale registrations without changing the
+                        // account's configured maximum number of contacts.
+                        $line .= "remove_existing=yes\n";
+                        $line .= "remove_unavailable=yes\n";
+                    }
                     if ($host != 'dynamic') {
 
                         // peer por IP
