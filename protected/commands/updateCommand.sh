@@ -84,3 +84,12 @@ if ! php /var/www/html/mbilling/cron.php UpdateMysql; then
     exit 1
 fi
 
+## Refresh optional Magnus Sentinel state only after a successful update.
+SENTINEL_POST_UPDATE=/opt/magnus-sentinel/refresh-after-mbilling-update
+if [ -x "$SENTINEL_POST_UPDATE" ]; then
+    echo "Refreshing Magnus Sentinel after the MagnusBilling update."
+    if ! "$SENTINEL_POST_UPDATE"; then
+        echo "WARNING: MagnusBilling was updated, but Magnus Sentinel refresh failed." >&2
+        echo "Run $SENTINEL_POST_UPDATE after correcting the reported error." >&2
+    fi
+fi
