@@ -84,6 +84,17 @@ if ! php /var/www/html/mbilling/cron.php UpdateMysql; then
     exit 1
 fi
 
+## Install or update Magnus Sentinel only on servers using app_mbilling in C.
+SENTINEL_MODULE=/usr/lib/asterisk/modules/app_mbilling.so
+SENTINEL_LIFECYCLE=/var/www/html/mbilling/protected/commands/magnusSentinelCommand.sh
+if [ -f "$SENTINEL_MODULE" ] && [ ! -L "$SENTINEL_MODULE" ] &&
+   [ -x "$SENTINEL_LIFECYCLE" ]; then
+    if ! "$SENTINEL_LIFECYCLE"; then
+        echo "WARNING: MagnusBilling was updated, but Magnus Sentinel installation/update failed." >&2
+        echo "Run $SENTINEL_LIFECYCLE after correcting the reported error." >&2
+    fi
+fi
+
 ## Refresh optional Magnus Sentinel state only after a successful update.
 SENTINEL_POST_UPDATE=/opt/magnus-sentinel/refresh-after-mbilling-update
 if [ -x "$SENTINEL_POST_UPDATE" ]; then
