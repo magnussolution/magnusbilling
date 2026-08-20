@@ -166,6 +166,10 @@ or free-form text.
 - Record the starting `siptrace.log` offset and correlate only new packets by
   exact SIP identity and Call-ID. Never use the ngrep substring match as proof
   that a packet belongs to the selected endpoint.
+- Keep the capture window open and the polling active for the full capture.
+  While waiting, show this requirement to the administrator. If no exact
+  REGISTER packet is found after 120 seconds, return a completed timeout
+  result and re-enable the capture button for a new attempt.
 - Treat the first 401 as a normal digest challenge. Report bad credentials
   only after an authenticated REGISTER is rejected; preserve `stale=true` as
   a retryable challenge. Never expose Authorization/digest content.

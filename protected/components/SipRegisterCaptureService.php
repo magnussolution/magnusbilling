@@ -65,8 +65,9 @@ class SipRegisterCaptureService
             }
             return $timedOut
                 ? $this->result(true, 'failed', 'REGISTER_CAPTURE_NO_PACKETS',
-                    'No REGISTER packet for the exact SIP account reached the MagnusBilling server during the 120-second capture.', [
+                    'The 120-second capture ended, and no SIP REGISTER packet from the selected SIP account was identified.', [
                         ['label' => Yii::t('zii', 'Expected SIP username'), 'value' => $username],
+                        ['label' => Yii::t('zii', 'Capture duration'), 'value' => Yii::t('zii', '120 seconds')],
                     ])
                 : $this->result(false, 'warning', 'REGISTER_CAPTURE_WAITING',
                     'Capture is active. Waiting for REGISTER from the exact SIP account.', []);
@@ -204,7 +205,10 @@ class SipRegisterCaptureService
                 'message' => Yii::t('zii', $message), 'displayDetails' => $details,
                 'resolution' => ['message' => Yii::t('zii', $this->action($code))],
             ]],
-            'warnings' => [], 'technicalDetails' => ['sipPackets' => $this->evidencePackets],
+            'warnings' => $complete ? [] : [
+                Yii::t('zii', 'Do not close this window while the capture is running, or the diagnostic will be interrupted.'),
+            ],
+            'technicalDetails' => ['sipPackets' => $this->evidencePackets],
         ];
     }
 

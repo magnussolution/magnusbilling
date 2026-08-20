@@ -151,7 +151,7 @@ Ext.define('MBilling.view.callDiagnostic.Window', {
         Ext.Msg.confirm(
             t('Capture SIP packets'),
             Ext.String.format(
-                t('After confirming, try to register SIP account {0} on the MagnusBilling server within the next 120 seconds.'),
+                t('After confirming, try to register SIP account {0} on the MagnusBilling server within the next 120 seconds. Do not close this window while the capture is running, or the diagnostic will be interrupted.'),
                 Ext.htmlEncode(me.recordLabel)
             ),
             function(answer) {
@@ -182,6 +182,7 @@ Ext.define('MBilling.view.callDiagnostic.Window', {
                 }
                 me.captureToken = payload.result.token;
                 me.captureDeadline = Date.now() + ((payload.result.timeout || 120) + 8) * 1000;
+                me.renderCaptureWaiting();
                 me.pollRegisterCapture();
             },
             failure: function(response) {
@@ -191,6 +192,17 @@ Ext.define('MBilling.view.callDiagnostic.Window', {
                 Ext.ux.Alert.alert(t('Error'), payload.msg || t('The SIP capture could not be started.'), 'error');
             }
         });
+    },
+
+    renderCaptureWaiting: function() {
+        var me = this,
+            html = '<h2 style="color:#ef6c00">' + Ext.htmlEncode(t('SIP packet capture is active.')) + '</h2>' +
+                '<p>' + Ext.htmlEncode(Ext.String.format(
+                    t('Try to register SIP account {0} now. The capture will wait up to 120 seconds.'),
+                    me.recordLabel
+                )) + '</p>' +
+                '<p><strong>' + Ext.htmlEncode(t('Do not close this window while the capture is running, or the diagnostic will be interrupted.')) + '</strong></p>';
+        me.renderSelectableHtml(html);
     },
 
     pollRegisterCapture: function() {
