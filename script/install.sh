@@ -1046,10 +1046,12 @@ ProtectHome=yes
 RuntimeDirectory=asterisk
 RuntimeDirectoryMode=0750
 StandardOutput=null
-StandardError=null
+StandardError=journal
 ReadWritePaths=/var/lib/asterisk /var/spool/asterisk /var/log/asterisk
-
 SyslogIdentifier=asterisk
+LogLevelMax=notice
+SyslogLevel=err
+
 
 [Install]
 WantedBy=multi-user.target
