@@ -202,7 +202,7 @@ apt_install apache2 dnsutils
 apt_install autoconf automake devscripts gawk ntpsec g++ curl wget ca-certificates sudo xmlstarlet libjansson-dev git "${ODBC_RUNTIME_PACKAGE}" odbcinst unixodbc unixodbc-dev patchelf
 apt_install php-fpm php php-dev php-common php-cli php-gd php-pear php-sqlite3 php-curl php-mbstring php-xml php-mysql libapache2-mod-php
 apt_install unzip uuid-dev libxml2-dev openssl libcurl4-openssl-dev gettext gcc sqlite3 libsqlite3-dev subversion mpg123
-apt_install libncurses-dev mariadb-server htop sngrep firewalld fail2ban cron rsyslog whiptail libblocksruntime-dev iproute2 iptables
+apt_install libncurses-dev mariadb-server htop sngrep firewalld fail2ban cron rsyslog whiptail libblocksruntime-dev iproute2 iptables ngrep
 
 configure_pjsip_dns
 
