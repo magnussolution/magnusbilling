@@ -959,6 +959,14 @@ EOF
 done
 chmod +x /var/www/html/mbilling/protected/commands/*.sh
 
+# SSH-managed panel IP allowlists live outside the document root and database.
+install -d -o root -g "$APACHE_USER" -m 0750 /etc/magnusbilling/panel-ip-access
+for command_name in addmyip delmyip releaseAll; do
+  install -o root -g root -m 0755 \
+    /var/www/html/mbilling/protected/commands/panelIpAccessCommand.sh \
+    "/usr/local/sbin/$command_name"
+done
+
 
 mkdir -p /usr/local/src/magnus/monitor
 mkdir -p /usr/local/src/magnus/sounds

@@ -78,6 +78,14 @@ chmod 550 /var/www/html/mbilling/resources/asterisk/mbilling.php
 
 chmod 755 /var/www/html/mbilling/protected/commands/*.sh
 
+## Install/update the SSH commands that manage panel IP allowlists.
+install -d -o root -g "$APACHE_USER" -m 0750 /etc/magnusbilling/panel-ip-access
+for command_name in addmyip delmyip releaseAll; do
+  install -o root -g root -m 0755 \
+    /var/www/html/mbilling/protected/commands/panelIpAccessCommand.sh \
+    "/usr/local/sbin/$command_name"
+done
+
 ##update database
 if ! php /var/www/html/mbilling/cron.php UpdateMysql; then
     echo "The database migration failed. The MagnusBilling update was aborted."

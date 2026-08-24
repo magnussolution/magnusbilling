@@ -85,6 +85,24 @@ class AuthenticationController extends Controller
             return;
         }
 
+        $remoteAddress = isset($_SERVER['REMOTE_ADDR']) ? (string) $_SERVER['REMOTE_ADDR'] : '';
+        $panelIpAccess = new PanelIpAccess();
+        if (! $panelIpAccess->isAllowed($modelUser->username, $remoteAddress)) {
+            Yii::app()->session->clear();
+            Yii::app()->session['logged'] = false;
+            echo json_encode([
+                'success' => false,
+                'msg'     => 'Login is not authorized from IP ' . $remoteAddress,
+            ]);
+
+            $info = 'Panel login denied by SSH IP allowlist - User: '
+                . $modelUser->username . ' IP: ' . $remoteAddress;
+            Yii::log($info, 'warning');
+            MagnusLog::insertLOG(1, $info);
+
+            return;
+        }
+
         $this->checkCaptcha();
 
         if ($modelUser->active == 0) {

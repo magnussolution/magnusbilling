@@ -80,6 +80,7 @@ Welcome to MagnusBilling 8 wiki.
    :name: sec-Security
 
    security/iptables.rst
+   security/root_panel_ip_allowlist.rst
    security/ata_provisioning.rst
    security/stir_shaken_opensips.rst
 
