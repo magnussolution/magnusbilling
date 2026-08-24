@@ -788,6 +788,7 @@ CREATE TABLE `pkg_cdr_summary_day_agent` (
   `agent_lucro` float NOT NULL DEFAULT '0',
   `asr` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_day_agent` (`day`,`id_user`),
   KEY `day` (`day`),
   KEY `id_user` (`id_user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
@@ -822,6 +823,7 @@ CREATE TABLE `pkg_cdr_summary_day_trunk` (
   `lucro` float DEFAULT '0',
   `asr` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_day_trunk` (`day`,`id_trunk`),
   KEY `day` (`day`),
   KEY `id_trunk` (`id_trunk`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
@@ -858,6 +860,7 @@ CREATE TABLE `pkg_cdr_summary_day_user` (
   `agent_bill` float NOT NULL DEFAULT '0',
   `asr` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_day_user` (`day`,`id_user`),
   KEY `day` (`day`),
   KEY `id_user` (`id_user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
@@ -881,11 +884,13 @@ DROP TABLE IF EXISTS `pkg_cdr_summary_ids`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pkg_cdr_summary_ids` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `summary_name` varchar(100) NOT NULL,
   `day` date NOT NULL,
-  `cdr_id` int NOT NULL,
-  `cdr_falide_id` int NOT NULL,
+  `cdr_id` bigint unsigned NOT NULL,
+  `cdr_falide_id` bigint unsigned NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `day` (`day`)
+  UNIQUE KEY `uq_summary_name` (`summary_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -946,6 +951,7 @@ CREATE TABLE `pkg_cdr_summary_month_did` (
   `nbcall` int NOT NULL,
   `sessionbill` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_month_id_did` (`month`,`id_did`),
   KEY `month` (`month`),
   KEY `id_did` (`id_did`),
   CONSTRAINT `pkg_cdr_summary_month_did_ibfk_1` FOREIGN KEY (`id_did`) REFERENCES `pkg_did` (`id`)
@@ -959,6 +965,37 @@ CREATE TABLE `pkg_cdr_summary_month_did` (
 LOCK TABLES `pkg_cdr_summary_month_did` WRITE;
 /*!40000 ALTER TABLE `pkg_cdr_summary_month_did` DISABLE KEYS */;
 /*!40000 ALTER TABLE `pkg_cdr_summary_month_did` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pkg_cdr_summary_month_did_stage`
+--
+
+DROP TABLE IF EXISTS `pkg_cdr_summary_month_did_stage`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pkg_cdr_summary_month_did_stage` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `month` varchar(20) NOT NULL,
+  `id_did` int NOT NULL,
+  `sessiontime` int NOT NULL,
+  `aloc_all_calls` int NOT NULL,
+  `nbcall` int NOT NULL,
+  `sessionbill` float NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_month_id_did` (`month`,`id_did`),
+  KEY `month` (`month`),
+  KEY `id_did` (`id_did`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pkg_cdr_summary_month_did_stage`
+--
+
+LOCK TABLES `pkg_cdr_summary_month_did_stage` WRITE;
+/*!40000 ALTER TABLE `pkg_cdr_summary_month_did_stage` DISABLE KEYS */;
+/*!40000 ALTER TABLE `pkg_cdr_summary_month_did_stage` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -981,6 +1018,7 @@ CREATE TABLE `pkg_cdr_summary_month_trunk` (
   `lucro` float DEFAULT '0',
   `asr` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_month_trunk` (`month`,`id_trunk`),
   KEY `month` (`month`),
   KEY `id_trunk` (`id_trunk`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
@@ -1017,6 +1055,7 @@ CREATE TABLE `pkg_cdr_summary_month_user` (
   `agent_bill` float NOT NULL DEFAULT '0',
   `asr` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_month_user` (`month`,`id_user`),
   KEY `month` (`month`),
   KEY `id_user` (`id_user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
@@ -1050,6 +1089,7 @@ CREATE TABLE `pkg_cdr_summary_trunk` (
   `lucro` float DEFAULT NULL,
   `asr` float DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_summary_trunk` (`id_trunk`),
   KEY `id_trunk` (`id_trunk`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1084,6 +1124,7 @@ CREATE TABLE `pkg_cdr_summary_user` (
   `isAgent` int DEFAULT NULL,
   `agent_bill` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_summary_user` (`id_user`),
   KEY `id_user` (`id_user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;

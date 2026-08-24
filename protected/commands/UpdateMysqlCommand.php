@@ -352,6 +352,88 @@ class UpdateMysqlCommand extends CConsoleCommand
             $this->update($version);
         }
 
+        //2026-08-24
+        if ($version == '8.0.0.11') {
+            $this->logMessage('Applying database migration 8.0.0.11 -> 8.0.0.12.');
+
+            $legacyCheckpointTable = ! $this->columnExists('pkg_cdr_summary_ids', 'summary_name');
+            if ($legacyCheckpointTable) {
+                $this->executeDB(
+                    'ALTER TABLE `pkg_cdr_summary_ids`
+                     ADD `summary_name` VARCHAR(100) NULL AFTER `id`'
+                );
+                // Rows from the old schema are not associated with a specific summary.
+                $this->executeDB('DELETE FROM `pkg_cdr_summary_ids`');
+            } else {
+                $this->executeDB(
+                    "DELETE FROM `pkg_cdr_summary_ids`
+                     WHERE `summary_name` IS NULL OR `summary_name` = ''"
+                );
+            }
+
+            if (! $this->columnExists('pkg_cdr_summary_ids', 'updated_at')) {
+                $this->executeDB(
+                    'ALTER TABLE `pkg_cdr_summary_ids`
+                     ADD `updated_at` DATETIME NULL DEFAULT NULL AFTER `cdr_falide_id`'
+                );
+            }
+
+            $this->executeDB(
+                'ALTER TABLE `pkg_cdr_summary_ids`
+                 MODIFY `summary_name` VARCHAR(100) NOT NULL,
+                 MODIFY `cdr_id` BIGINT UNSIGNED NOT NULL,
+                 MODIFY `cdr_falide_id` BIGINT UNSIGNED NOT NULL'
+            );
+
+            if ($this->indexExists('pkg_cdr_summary_ids', 'day')) {
+                $this->executeDB('ALTER TABLE `pkg_cdr_summary_ids` DROP INDEX `day`');
+            }
+            $this->ensureSummaryUniqueIndex(
+                'pkg_cdr_summary_ids',
+                'uq_summary_name',
+                ['summary_name']
+            );
+
+            $summaryIndexes = [
+                ['pkg_cdr_summary_day_user', 'uq_day_user', ['day', 'id_user']],
+                ['pkg_cdr_summary_day_trunk', 'uq_day_trunk', ['day', 'id_trunk']],
+                ['pkg_cdr_summary_day_agent', 'uq_day_agent', ['day', 'id_user']],
+                ['pkg_cdr_summary_month_user', 'uq_month_user', ['month', 'id_user']],
+                ['pkg_cdr_summary_month_trunk', 'uq_month_trunk', ['month', 'id_trunk']],
+                ['pkg_cdr_summary_month_did', 'uq_month_id_did', ['month', 'id_did']],
+                ['pkg_cdr_summary_user', 'uq_summary_user', ['id_user']],
+                ['pkg_cdr_summary_trunk', 'uq_summary_trunk', ['id_trunk']],
+            ];
+            foreach ($summaryIndexes as $summaryIndex) {
+                $this->ensureSummaryUniqueIndex($summaryIndex[0], $summaryIndex[1], $summaryIndex[2]);
+            }
+
+            if (! $this->tableExists('pkg_cdr_summary_month_did_stage')) {
+                $this->executeDB(
+                    'CREATE TABLE `pkg_cdr_summary_month_did_stage`
+                     LIKE `pkg_cdr_summary_month_did`'
+                );
+            }
+            $this->ensureSummaryUniqueIndex(
+                'pkg_cdr_summary_month_did_stage',
+                'uq_month_id_did',
+                ['month', 'id_did']
+            );
+
+            $version = '8.0.0.12';
+            $this->update($version);
+        }
+
+    }
+
+    private function tableExists($table)
+    {
+        $command = Yii::app()->db->createCommand(
+            'SELECT COUNT(*) FROM information_schema.TABLES
+             WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = :tableName'
+        );
+        $command->bindValue(':tableName', $table, PDO::PARAM_STR);
+        return (int) $command->queryScalar() === 1;
     }
 
     private function columnExists($table, $column)
@@ -374,6 +456,44 @@ class UpdateMysqlCommand extends CConsoleCommand
         $command->bindValue(':tableName', $table, PDO::PARAM_STR);
         $command->bindValue(':indexName', $index, PDO::PARAM_STR);
         return (int) $command->queryScalar() > 0;
+    }
+
+    private function ensureSummaryUniqueIndex($table, $index, array $columns)
+    {
+        if ($this->indexExists($table, $index)) {
+            return;
+        }
+
+        $this->deduplicateSummaryTable($table, $columns);
+        $quotedColumns = [];
+        foreach ($columns as $column) {
+            $quotedColumns[] = '`' . $column . '`';
+        }
+        $this->executeDB(
+            'ALTER TABLE `' . $table . '` ADD UNIQUE KEY `' . $index . '` (' .
+                implode(', ', $quotedColumns) . ')'
+        );
+    }
+
+    private function deduplicateSummaryTable($table, array $columns)
+    {
+        $identifiers = array_merge([$table], $columns);
+        foreach ($identifiers as $identifier) {
+            if (! preg_match('/^[a-z0-9_]+$/i', $identifier)) {
+                throw new InvalidArgumentException('Invalid summary table identifier: ' . $identifier);
+            }
+        }
+
+        $conditions = [];
+        foreach ($columns as $column) {
+            $conditions[] = 'older.`' . $column . '` = newer.`' . $column . '`';
+        }
+        $conditions[] = 'older.`id` < newer.`id`';
+
+        $this->executeDB(
+            'DELETE older FROM `' . $table . '` AS older
+             INNER JOIN `' . $table . '` AS newer ON ' . implode(' AND ', $conditions)
+        );
     }
 
     private function rowExists($table, $column, $value)
