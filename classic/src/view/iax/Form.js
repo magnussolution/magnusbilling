@@ -82,10 +82,6 @@ Ext.define('MBilling.view.iax.Form', {
                         inputValue: 'g729',
                         checked: true
                     }, {
-                        boxLabel: 'g723',
-                        name: 'allow',
-                        inputValue: 'g723'
-                    }, {
                         boxLabel: 'gsm',
                         name: 'allow',
                         inputValue: 'gsm',

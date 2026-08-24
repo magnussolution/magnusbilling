@@ -91,6 +91,7 @@ class Sip extends Model
             ['techprefix', 'checktechprefix'],
             ['host', 'checkHost'],
             ['sip_config', 'length', 'max' => 500],
+            ['webrtc', 'in', 'range' => ['yes', 'no']],
             ['defaultuser', 'uniquePeerName'],
             ['name, callerid, context, fromuser, fromdomain, md5secret, secret, fullcontact,
                 regexten, insecure, regserver, vmexten, callingpres, mohsuggest, allowtransfer,
@@ -138,6 +139,9 @@ class Sip extends Model
     {
 
         $this->cnl = strtoupper($this->cnl);
+        if (trim((string) $this->webrtc) === '') {
+            $this->webrtc = 'no';
+        }
         if ($this->techprefix == 0) {
             $this->techprefix = null;
         }
