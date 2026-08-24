@@ -1053,6 +1053,19 @@ class AsteriskAccess
         return $mask === '128' ? $address : null;
     }
 
+    private static function getPjsipEndpointTransportAndWebrtcConfig($webrtc)
+    {
+        if (strtolower(trim((string) $webrtc)) !== 'yes') {
+            return "transport=transport-udp\n";
+        }
+
+        // WebRTC registrations arrive through the WSS transport configured in
+        // pjsip.conf. Do not pin this endpoint to UDP. The webrtc shortcut
+        // enables AVPF, DTLS media encryption, ICE, received transport usage,
+        // and RTCP mux; Asterisk supplies the endpoint DTLS certificate.
+        return "dtls_auto_generate_cert=yes\nwebrtc=yes\n";
+    }
+
     public function generateSipPeers()
     {
         ini_set('memory_limit', '-1');
@@ -1177,7 +1190,9 @@ class AsteriskAccess
                     // -------- ENDPOINT --------
                     $line .= "\n[" . $endpointName . "]\n";
                     $line .= "type=endpoint\n";
-                    $line .= "transport=transport-udp\n";
+                    $line .= self::getPjsipEndpointTransportAndWebrtcConfig(
+                        isset($sip->webrtc) ? $sip->webrtc : 'no'
+                    );
                     $line .= "identify_by="
                         . PjsipAuthenticationMode::endpointIdentifyBy($sip)
                         . "\n";

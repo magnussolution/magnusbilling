@@ -424,6 +424,19 @@ class UpdateMysqlCommand extends CConsoleCommand
             $this->update($version);
         }
 
+        //2026-08-24
+        if ($version == '8.0.0.12') {
+            $this->logMessage('Applying database migration 8.0.0.12 -> 8.0.0.13.');
+            if (! $this->columnExists('pkg_sip', 'webrtc')) {
+                $this->executeDB(
+                    "ALTER TABLE `pkg_sip` ADD `webrtc` ENUM('yes','no') NOT NULL DEFAULT 'no' AFTER `max_contacts`"
+                );
+            }
+
+            $version = '8.0.0.13';
+            $this->update($version);
+        }
+
     }
 
     private function tableExists($table)

@@ -97,6 +97,19 @@ Ext.define('MBilling.view.sip.List', {
             hidden: true,
             hideable: !App.user.isClient
         }, {
+            header: t('WebRTC'),
+            dataIndex: 'webrtc',
+            hidden: true,
+            hideable: App.user.isAdmin,
+            flex: 2,
+            filter: {
+                type: 'list',
+                options: [
+                    ['no', t('No')],
+                    ['yes', t('Yes')]
+                ]
+            }
+        }, {
             header: t('CallerID'),
             dataIndex: 'callerid',
             hidden: true,

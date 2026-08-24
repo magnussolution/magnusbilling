@@ -234,6 +234,9 @@ Ext.define('MBilling.model.Sip', {
     }, {
         name: 'max_contacts',
         type: 'int'
+    }, {
+        name: 'webrtc',
+        type: 'string'
     }],
     proxy: {
         type: 'uxproxy',

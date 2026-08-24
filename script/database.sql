@@ -2886,6 +2886,7 @@ CREATE TABLE `pkg_sip` (
   `description` varchar(150) DEFAULT NULL,
   `id_trunk_group` int DEFAULT NULL,
   `cnl` varchar(11) NOT NULL DEFAULT '',
+  `webrtc` enum('yes','no') NOT NULL DEFAULT 'no',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_2` (`name`),
   UNIQUE KEY `techprefix` (`techprefix`),

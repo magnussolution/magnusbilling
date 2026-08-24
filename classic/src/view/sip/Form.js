@@ -99,6 +99,13 @@ Ext.define('MBilling.view.sip.Form', {
                     hidden: !App.user.isAdmin,
                     allowBlank: App.user.isClient
                 }, {
+                    xtype: 'noyesstringcombo',
+                    name: 'webrtc',
+                    fieldLabel: t('WebRTC'),
+                    value: 'no',
+                    hidden: !App.user.isAdmin,
+                    allowBlank: App.user.isClient
+                }, {
                     xtype: 'checkboxgroup',
                     name: 'allow',
                     fieldLabel: t('Codec'),
@@ -108,12 +115,7 @@ Ext.define('MBilling.view.sip.Form', {
                         name: 'allow',
                         inputValue: 'g729',
                         checked: window.default_codes.match(/g729/)
-                    }, {
-                        boxLabel: 'g723',
-                        name: 'allow',
-                        inputValue: 'g723',
-                        checked: window.default_codes.match(/g723/)
-                    }, {
+                    },  {
                         boxLabel: 'gsm',
                         name: 'allow',
                         inputValue: 'gsm',
