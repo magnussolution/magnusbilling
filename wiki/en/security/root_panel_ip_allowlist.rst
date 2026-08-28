@@ -19,6 +19,11 @@ creates a user-specific allowlist and activates the restriction for that user.
 Existing users remain unrestricted until this command is run for their exact
 username.
 
+The command also removes the SSH client IP from ``pkg_firewall`` and ``pkg_log``
+and then inserts it into ``pkg_firewall`` with action ``5`` (``IgnoreIP``).
+These database operations run in one transaction; if they fail, the external
+panel allowlist is not changed.
+
 Any panel username can be used, for example::
 
    addmyip administrator

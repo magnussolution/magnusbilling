@@ -65,6 +65,67 @@ ssh_client_ip()
     printf '%s\n' "${client_ip}"
 }
 
+authorize_ip_in_database()
+{
+    local username="$1"
+    local client_ip="$2"
+
+    PANEL_USERNAME="${username}" PANEL_CLIENT_IP="${client_ip}" php -r '
+        $configFile = "/etc/asterisk/res_config_mysql.conf";
+        $config = parse_ini_file($configFile);
+        foreach (["dbhost", "dbname", "dbuser", "dbpass"] as $requiredKey) {
+            if (! is_array($config) || ! array_key_exists($requiredKey, $config)) {
+                fwrite(STDERR, "ERROR: invalid MariaDB configuration in {$configFile}.\n");
+                exit(1);
+            }
+        }
+
+        $ip = getenv("PANEL_CLIENT_IP");
+        $username = getenv("PANEL_USERNAME");
+        if (filter_var($ip, FILTER_VALIDATE_IP) === false || $username === false || $username === "") {
+            fwrite(STDERR, "ERROR: invalid IP or panel username.\n");
+            exit(1);
+        }
+
+        try {
+            $pdo = new PDO(
+                "mysql:host={$config["dbhost"]};dbname={$config["dbname"]};charset=utf8mb4",
+                $config["dbuser"],
+                $config["dbpass"],
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_EMULATE_PREPARES => false,
+                ]
+            );
+            $pdo->beginTransaction();
+
+            $deleteFirewall = $pdo->prepare("DELETE FROM pkg_firewall WHERE ip = :ip");
+            $deleteFirewall->execute([":ip" => $ip]);
+
+            $deleteLog = $pdo->prepare("DELETE FROM pkg_log WHERE ip = :ip");
+            $deleteLog->execute([":ip" => $ip]);
+
+            $insertFirewall = $pdo->prepare(
+                "INSERT INTO pkg_firewall (ip, action, description, jail, id_server)
+                 VALUES (:ip, 5, :description, :jail, 1)"
+            );
+            $insertFirewall->execute([
+                ":ip" => $ip,
+                ":description" => "Authorized by addmyip for panel user " . $username,
+                ":jail" => "IgnoreIP",
+            ]);
+
+            $pdo->commit();
+        } catch (Throwable $error) {
+            if (isset($pdo) && $pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            fwrite(STDERR, "ERROR: unable to authorize IP in MariaDB: " . $error->getMessage() . "\n");
+            exit(1);
+        }
+    ' || fail "database authorization failed; the panel allowlist was not changed."
+}
+
 prepare_directory()
 {
     install -d -o root -g "${WEB_GROUP}" -m 0750 -- "${ACCESS_DIRECTORY}"
@@ -190,6 +251,7 @@ main()
             username="$1"
             validate_username "${username}"
             client_ip="$(ssh_client_ip)"
+            authorize_ip_in_database "${username}" "${client_ip}"
             add_current_ip "${username}" "${client_ip}"
             ;;
         delmyip)

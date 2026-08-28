@@ -26,7 +26,7 @@ install_dependencies() {
         libpq-dev libspeexdsp-dev libsqlite3-dev \
         libssl-dev libtool libtool-bin libvorbis-dev libxml2-dev \
         libxslt1-dev pkg-config subversion uuid-dev wget \
-        unixodbc-dev odbcinst patchelf
+        unixodbc-dev odbcinst patchelf ngrep
 }
 
 prepare_user_and_directories() {
@@ -279,32 +279,52 @@ migrate_legacy_network_settings() {
 }
 
 write_systemd_unit() {
-    cat > /etc/systemd/system/asterisk.service <<'EOF'
+echo '
 [Unit]
 Description=Asterisk PBX (MagnusBilling)
-After=network-online.target
-Wants=network-online.target
+Documentation=man:asterisk(8)
+After=network.target
 
 [Service]
 Type=simple
+
 User=asterisk
 Group=asterisk
+
+Environment=AST_USER=asterisk
+Environment=AST_GROUP=asterisk
 Environment=HOME=/var/lib/asterisk
 WorkingDirectory=/var/lib/asterisk
+
 ExecStart=/usr/sbin/asterisk -f -U asterisk -G asterisk -C /etc/asterisk/asterisk.conf
 ExecStop=/usr/sbin/asterisk -rx "core stop now"
 ExecReload=/usr/sbin/asterisk -rx "core reload"
-Restart=on-failure
+
+Restart=always
 RestartSec=4
+
 LimitNOFILE=500000
+LimitNPROC=500000
 LimitCORE=infinity
+
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
 RuntimeDirectory=asterisk
 RuntimeDirectoryMode=0750
+StandardOutput=null
+StandardError=journal
 ReadWritePaths=/var/lib/asterisk /var/spool/asterisk /var/log/asterisk
+SyslogIdentifier=asterisk
+LogLevelMax=notice
+SyslogLevel=err
+
 
 [Install]
 WantedBy=multi-user.target
-EOF
+
+' > /etc/systemd/system/asterisk.service
     systemctl daemon-reload
     systemctl enable asterisk
 }
@@ -315,6 +335,55 @@ replateM7ToM8() {
     wget --no-check-certificate https://magnusbilling.org/download/MagnusBilling8-current.tar.gz
     tar xzf MagnusBilling8-current.tar.gz
     /var/www/html/mbilling/protected/commands/update.sh
+}
+
+regenerate_pjsip_files() {
+    local mbilling_dir="/var/www/html/mbilling"
+
+    if [[ ! -f "${mbilling_dir}/yii/framework/yii.php" || ! -f "${mbilling_dir}/protected/config/cron.php" ]]; then
+        echo "MagnusBilling 8 bootstrap files were not found in ${mbilling_dir}." >&2
+        return 1
+    fi
+
+    echo "Regenerating PJSIP trunk and SIP account configuration files."
+
+    (
+        cd "${mbilling_dir}"
+        php <<'PHP'
+<?php
+$yii    = __DIR__ . '/yii/framework/yii.php';
+$config = __DIR__ . '/protected/config/cron.php';
+
+require_once $yii;
+Yii::createConsoleApplication($config);
+
+$trunks = Trunk::model()->findAll([
+    'condition' => 'providertech = :providertech AND status = 1',
+    'params'    => [':providertech' => 'pjsip'],
+]);
+
+$asterisk = AsteriskAccess::instance();
+$trunkFile = '/etc/asterisk/pjsip_magnus.conf';
+
+if (count($trunks)) {
+    $asterisk->writeAsteriskFile($trunks, $trunkFile, 'trunkcode');
+} else {
+    file_put_contents($trunkFile, '');
+}
+
+$asterisk->generateSipPeers();
+
+fwrite(
+    STDOUT,
+    sprintf(
+        "Generated %s and /etc/asterisk/pjsip_magnus_user.conf from %d active trunk(s) and %d SIP account(s).\n",
+        $trunkFile,
+        count($trunks),
+        Sip::model()->count()
+    )
+);
+PHP
+    )
 }
 
 
@@ -427,6 +496,10 @@ main() {
     migrate_legacy_network_settings
     write_systemd_unit
     replateM7ToM8
+    if ! regenerate_pjsip_files; then
+        echo "Failed to regenerate the MagnusBilling PJSIP configuration files." >&2
+        exit 1
+    fi
     systemctl restart asterisk
     asterisk -rx 'core show version'
     asterisk -rx 'pjsip show transports'
