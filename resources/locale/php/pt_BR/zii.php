@@ -22,6 +22,10 @@
  * Edit /resources/locale/pt_BR.js
  */
 return array(
+    'Dynamic trunks require a SIP username containing only letters, numbers, dots, underscores and hyphens.' => 'Troncos dinâmicos exigem um usuário SIP contendo apenas letras, números, pontos, sublinhados e hífens.',
+    'Dynamic trunks require a SIP password.' => 'Troncos dinâmicos exigem uma senha SIP.',
+    'Unable to validate registration. Try again.' => 'Não foi possível validar o registro. Tente novamente.',
+    'Check the registration fields before enabling Register.' => 'Verifique os campos de registro antes de ativar Registrar tronco.',
     'Only cdrFailedId is accepted.' => 'Somente cdrFailedId é aceito.',
     'Failed CDR was not found.' => 'O CDR com falha não foi encontrado.',
     'ALERT => Do you really active this service?' => 'ALERTA => Você realmente quer ativar este serviço?',
@@ -979,8 +983,8 @@ return array(
     'This option is exclusive to users' => 'Esta opção é exclusiva para usuários',
     'This password in in use' => 'Esta senha está em uso',
     'This service already is canceled' => 'Este serviço já foi cancelado',
-    'This trunk name is in use by a SIP user' => 'Este nome já está em uso por uma conta SIP',
-    'This username is in use by a trunk' => 'Este usuário já está em uso por uma conta SIP',
+    'This trunk name is in use by a SIP user' => 'Este nome de tronco já está em uso por uma conta SIP',
+    'This username is in use by a trunk' => 'Este usuário já está em uso por um tronco',
     'This will overwrite any backup made today! Are you sure?' => 'Isso substituirá qualquer backup feito hoje! Você tem certeza?',
     'Thursday' => 'Quinta feira',
     'Time' => 'Tempo',
@@ -1312,6 +1316,11 @@ return array(
     'Number of Free calls' => 'Quantidade de chamadas gratuitas',
     'Free minutes' => 'Minutos gratuitos',
     'The rate plan was selected using the plan tech prefix.' => 'O plano tarifário foi selecionado pelo Techprefix do plano.',
+    'Register requires a username of up to 80 letters, numbers, dots, underscores, plus signs or hyphens.' => 'Para registrar, informe um usuário de até 80 caracteres, usando letras, números, ponto, sublinhado, sinal de mais ou hífen.',
+    'Register requires a password of up to 50 characters without whitespace, semicolons or backslashes.' => 'Para registrar, informe uma senha de até 50 caracteres, sem espaços, ponto e vírgula ou barra invertida.',
+    'Register requires a valid IPv4 address or hostname, without a protocol, port or path.' => 'Para registrar, informe um IPv4 ou nome de host válido, sem protocolo, porta ou caminho.',
+    'This username is in use by a SIP user.' => 'Este usuário já está em uso por uma conta SIP.',
+    'Register trunk must be disabled when host is dynamic.' => 'A opção Registrar tronco deve estar desativada quando o host for dynamic.',
     'Authentication method' => 'Método de autenticação',
     'SIP account tech prefix' => 'Techprefix da conta SIP',
     'Tech prefix used' => 'Techprefix utilizado',

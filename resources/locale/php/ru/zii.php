@@ -22,6 +22,19 @@
  * Edit /resources/locale/ru.js
  */
 return array(
+    'Dynamic trunks require a SIP username containing only letters, numbers, dots, underscores and hyphens.' => 'Для динамических транков требуется имя пользователя SIP, содержащее только латинские буквы, цифры, точки, знаки подчёркивания и дефисы.',
+    'Dynamic trunks require a SIP password.' => 'Для динамических транков требуется пароль SIP.',
+    'Register trunk must be disabled when host is dynamic.' => 'Параметр «Регистрация транка» должен быть отключён, если в поле хоста указано dynamic.',
+    'Register requires a username of up to 80 letters, numbers, dots, underscores, plus signs or hyphens.' => 'Для регистрации укажите имя пользователя длиной до 80 символов, используя латинские буквы, цифры, точки, знаки подчёркивания, плюсы или дефисы.',
+    'Register requires a password of up to 50 characters without whitespace, semicolons or backslashes.' => 'Для регистрации укажите пароль длиной до 50 символов, без пробельных символов, точек с запятой и обратных косых черт.',
+    'Register requires a valid IPv4 address or hostname, without a protocol, port or path.' => 'Для регистрации укажите допустимый адрес IPv4 или имя хоста, без протокола, порта и пути.',
+    'This username is in use by a trunk' => 'Это имя пользователя уже используется транком',
+    'This username is in use by a SIP user.' => 'Это имя пользователя уже используется учётной записью SIP.',
+    'This trunk name is in use by a SIP user' => 'Это имя транка уже используется учётной записью SIP',
+    'Invalid register string' => 'Недопустимая строка регистрации',
+    'Unable to validate registration. Try again.' => 'Не удалось проверить параметры регистрации. Попробуйте ещё раз.',
+    'Check the registration fields before enabling Register.' => 'Проверьте поля регистрации перед включением параметра «Регистрация транка».',
+    'Register trunk' => 'Регистрация транка',
         'Yes' => 'Да',
         'No' => 'Нет',
         'CallerID' => 'CallerID',

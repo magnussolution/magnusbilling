@@ -53,15 +53,31 @@ class Model extends CActiveRecord
     {
 
         if (isset($this->name)) {
-            $modelTrunk = Trunk::model()->find('trunkcode = :key', [':key' => $this->name]);
-            if (isset($modelTrunk->id)) {
+            $trunkExists = Trunk::model()->exists(
+                'trunkcode = :key OR (providertech = :tech AND LOWER(TRIM(host)) = :host AND user = :username)',
+                [':key' => $this->name, ':username' => $this->name, ':tech' => 'pjsip', ':host' => 'dynamic']
+            );
+            if ($trunkExists) {
                 $this->addError($attribute, Yii::t('zii', 'This username is in use by a trunk'));
             }
         } else if (isset($this->trunkcode)) {
-
-            $modelSip = Sip::model()->find('name = :key', [':key' => $this->trunkcode]);
-            if (isset($modelSip->id)) {
+            if ($attribute == 'user'
+                && ($this->providertech != 'pjsip' || strtolower(trim((string) $this->host)) !== 'dynamic')
+            ) {
+                return;
+            }
+            $name = $attribute == 'user' ? $this->user : $this->trunkcode;
+            if (! strlen((string) $name)) {
+                return;
+            }
+            if (Sip::model()->exists('name = :key', [':key' => $name])) {
                 $this->addError($attribute, Yii::t('zii', 'This trunk name is in use by a SIP user'));
+            }
+            if (Trunk::model()->exists(
+                'id <> :id AND (trunkcode = :key OR (providertech = :tech AND LOWER(TRIM(host)) = :host AND user = :username))',
+                [':id' => (int) $this->id, ':key' => $name, ':username' => $name, ':tech' => 'pjsip', ':host' => 'dynamic']
+            )) {
+                $this->addError($attribute, Yii::t('zii', 'This username is in use by a trunk'));
             }
         }
 

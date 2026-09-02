@@ -14,6 +14,15 @@
  * 2023
  */
 Locale.load({
+    'Dynamic trunks require a SIP username containing only letters, numbers, dots, underscores and hyphens.': 'Trunki dynamiczne wymagają nazwy użytkownika SIP zawierającej wyłącznie litery, cyfry, kropki, podkreślenia i łączniki.',
+    'Dynamic trunks require a SIP password.': 'Trunki dynamiczne wymagają hasła SIP.',
+    'Register trunk must be disabled when host is dynamic.': 'Opcja Rejestracja trunku musi być wyłączona, gdy host ma wartość dynamic.',
+    'Register requires a username of up to 80 letters, numbers, dots, underscores, plus signs or hyphens.': 'Aby zarejestrować trunk, podaj nazwę użytkownika o długości do 80 znaków, używając liter, cyfr, kropek, podkreśleń, znaków plus lub łączników.',
+    'Register requires a password of up to 50 characters without whitespace, semicolons or backslashes.': 'Aby zarejestrować trunk, podaj hasło o długości do 50 znaków, bez białych znaków, średników ani ukośników odwrotnych.',
+    'Register requires a valid IPv4 address or hostname, without a protocol, port or path.': 'Aby zarejestrować trunk, podaj prawidłowy adres IPv4 lub nazwę hosta, bez protokołu, portu ani ścieżki.',
+    'This username is in use by a SIP user.': 'Ta nazwa użytkownika jest już używana przez konto SIP.',
+    'Unable to validate registration. Try again.': 'Nie udało się zweryfikować rejestracji. Spróbuj ponownie.',
+    'Check the registration fields before enabling Register.': 'Sprawdź pola rejestracji przed włączeniem opcji Rejestracja trunku.',
     '': '',
     ',': '',
     '.': '',
@@ -461,7 +470,7 @@ Locale.load({
     'Invalid message unspecified': 'Nieprawidłowy komunikat, nieokreślony',
     'Invalid number format': 'Niepoprawny format numeru',
     'Invalid plan used to signup': '',
-    'Invalid register string': '',
+    'Invalid register string': 'Nieprawidłowy ciąg rejestracyjny',
     'Invalid register string. Only use register option to Trunk authentication via user and password.': '',
     'Invalidargs': 'Niepoprawne argumenty',
     'Invoice': 'Faktura',
@@ -981,7 +990,7 @@ Locale.load({
     'This option is exclusive to users': 'Ta opcja jest dostępna wyłącznie dla użytkowników',
     'This password in in use': 'To hasło jest w użyciu',
     'This service already is canceled': 'Ta usługa została już anulowana',
-    'This trunk name is in use by a SIP user': 'Ta nazwa trunku jest już używana przez użytkownika SIP',
+    'This trunk name is in use by a SIP user': 'Ta nazwa trunku jest już używana przez konto SIP',
     'This username is in use by a trunk': 'Ta nazwa użytkownika jest już używana przez trunk',
     'This will overwrite any backup made today! Are you sure?': 'To nadpisze wszystkie kopie zapasowe wykonane dzisiaj! Czy jesteś pewny?',
     'Thursday': 'Czwartek',

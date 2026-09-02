@@ -14,15 +14,21 @@
  * 2026
  */
 Locale.load({
+    'Dynamic trunks require a SIP username containing only letters, numbers, dots, underscores and hyphens.': 'Dynamic trunks require a SIP username containing only letters, numbers, dots, underscores and hyphens.',
+    'Dynamic trunks require a SIP password.': 'Dynamic trunks require a SIP password.',
+    'Register trunk must be disabled when host is dynamic.': 'Register trunk must be disabled when host is dynamic.',
+    'Register requires a username of up to 80 letters, numbers, dots, underscores, plus signs or hyphens.': 'Register requires a username of up to 80 letters, numbers, dots, underscores, plus signs or hyphens.',
+    'Register requires a password of up to 50 characters without whitespace, semicolons or backslashes.': 'Register requires a password of up to 50 characters without whitespace, semicolons or backslashes.',
+    'Register requires a valid IPv4 address or hostname, without a protocol, port or path.': 'Register requires a valid IPv4 address or hostname, without a protocol, port or path.',
+    'This username is in use by a SIP user.': 'This username is in use by a SIP user.',
+    'Unable to validate registration. Try again.': 'Unable to validate registration. Try again.',
+    'Check the registration fields before enabling Register.': 'Check the registration fields before enabling Register.',
     '': '',
     '%timeout% is the value of the paramater : Max time to Call a DID no billed': '',
     ',': '',
     '.': '',
-    '0=Disable 
-1=Enable
- Record all calls, the fields record calls will be hidden if this option is activated.': '',
-    '0=Disable 
-1=Enable Remove First Digit of Incoming DID': '',
+    '0=Disable \n1=Enable\n Record all calls, the fields record calls will be hidden if this option is activated.': '',
+    '0=Disable \n1=Enable Remove First Digit of Incoming DID': '',
     'AGI - Answer Call': '',
     'AGI - Backup trunk limit': '',
     'AGI - CID Enable': '',
@@ -57,13 +63,9 @@ Locale.load({
     'Active': '',
     'Active CID authentication': '',
     'Active Paypal on Android Softphone': '',
-    'Active Paypal on Android Softphone
- 0 - Disable 1 - Enable': '',
+    'Active Paypal on Android Softphone\n 0 - Disable 1 - Enable': '',
     'Active paypal for new customer': '',
-    'Active paypal for new customer. 
-
-0 - Disable (RECOMENDED )
-1 - Enable': '',
+    'Active paypal for new customer. \n\n0 - Disable (RECOMENDED )\n1 - Enable': '',
     'Active users': '',
     'Add filters': '',
     'Add new service': '',
@@ -92,14 +94,7 @@ Locale.load({
     'All': '',
     'Allow create muiltiple clients with same email via API': '',
     'Allow login on webpanel with SIP user and password': '',
-    'Allowed values
-USA United States,
-BRL Brasil,
-ARG Argentina,
-NLD Netherlands,
-ESP Spanish,
-ITA Italy,
-MEX Mexico': '',
+    'Allowed values\nUSA United States,\nBRL Brasil,\nARG Argentina,\nNLD Netherlands,\nESP Spanish,\nITA Italy,\nMEX Mexico': '',
     'Allowtransfer': '',
     'Amount': '',
     'And': '',
@@ -373,9 +368,7 @@ MEX Mexico': '',
     'Details': '',
     'Dial Number': '',
     'Dial Tone': '',
-    'Dial paramater for call between users.
-
-by default (3600000  =  1HOUR MAX CALL).': '',
+    'Dial paramater for call between users.\n\nby default (3600000  =  1HOUR MAX CALL).': '',
     'Dial parameter': '',
     'Dial plan': '',
     'Dial timeout': '',
@@ -409,15 +402,10 @@ by default (3600000  =  1HOUR MAX CALL).': '',
     'Emails': '',
     'Emails Templates': '',
     'Enable': '',
-    'Enable CID authentication.
-0 - Não
-1 - Sim
-': '',
+    'Enable CID authentication.\n0 - Não\n1 - Sim\n': '',
     'Enable CNL': '',
     'Enable CallingCard': '',
-    'Enable CallingCard.
- 0 - Disable 
-1 - Enable': '',
+    'Enable CallingCard.\n 0 - Disable \n1 - Enable': '',
     'Enable IAX internal calls': '',
     'Enable STUN': '',
     'Enable Signup Form': '',
@@ -538,12 +526,8 @@ by default (3600000  =  1HOUR MAX CALL).': '',
     'Iax': '',
     'IconCls': '',
     'If anable and have two hidden tariff in de plan, MagnusBilling gonna get the cheape': '',
-    'If enabled the MBilling answers the call that starts.
-Default: 0': '',
-    'If the client does not need active schedule again the number he wish to call after entering the PIN.
-
-1 - Enable (DEFAULT)
-0 - Disable': '',
+    'If enabled the MBilling answers the call that starts.\nDefault: 0': '',
+    'If the client does not need active schedule again the number he wish to call after entering the PIN.\n\n1 - Enable (DEFAULT)\n0 - Disable': '',
     'IgnoreIP': '',
     'Import': '',
     'Import CSV': '',
@@ -574,7 +558,7 @@ Default: 0': '',
     'Invalid number format': '',
     'Invalid plan used to signup': '',
     'Invalid port': '',
-    'Invalid register string': '',
+    'Invalid register string': 'Invalid register string',
     'Invalid register string. Only use register option to Trunk authentication via user and password.': '',
     'Invalid timeout': '',
     'Invalidargs': '',
@@ -726,8 +710,7 @@ Default: 0': '',
     'Number changed': '',
     'Number for authorize': '',
     'Number free calls': '',
-    'Number of attempts to dial the number
- Minimum value 1': '',
+    'Number of attempts to dial the number\n Minimum value 1': '',
     'Number of days to generate low balance warning to customers.': '',
     'Number to forward': '',
     'Numbers': '',
@@ -793,18 +776,9 @@ Default: 0': '',
     'Pie': '',
     'Plan': '',
     'Plans': '',
-    'Play the amount of time that the user can call.
-
-0 - No
-1 - Yes': '',
-    'Play the balance to the user after the call
-
-0 - No
-1 - Yes': '',
-    'Play the initial cost of the tariff.
-
-0 - No
-1 - Yes': '',
+    'Play the amount of time that the user can call.\n\n0 - No\n1 - Yes': '',
+    'Play the balance to the user after the call\n\n0 - No\n1 - Yes': '',
+    'Play the initial cost of the tariff.\n\n0 - No\n1 - Yes': '',
     'Please check your email': '',
     'Please enter with SMS text': '',
     'Please enter with numbers or import CSV file': '',
@@ -898,7 +872,7 @@ Default: 0': '',
     'Refresh rate': '',
     'Register expires': '',
     'Register string': '',
-    'Register trunk': '',
+    'Register trunk': 'Register trunk',
     'Regular expression': '',
     'Reinvite': '',
     'Release': '',
@@ -945,9 +919,7 @@ Default: 0': '',
     'Rings a random interface, but uses the agent\'s penalty as a weight': '',
     'Rings interfaces in the order they are listed in the configuration file. Dynamic members will be rung in the order in which they were added': '',
     'Round robin with memory, remember where we left off last ring pass': '',
-    'Round the lead time as charging sales.
-1: Yes
-0: No': '',
+    'Round the lead time as charging sales.\n1: Yes\n0: No': '',
     'Rounding time calls': '',
     'Routes': '',
     'Russian': '',
@@ -1015,9 +987,7 @@ Default: 0': '',
     'Send a copy to the admin email': '',
     'Send the call to callback': '',
     'Sendrpid': '',
-    'Sends an email to the admin when a new account is created from the signup page 
- 0 - Disable 
-1 - Enable': '',
+    'Sends an email to the admin when a new account is created from the signup page \n 0 - Disable \n1 - Enable': '',
     'Sends an email to the admin when a user signsup': '',
     'Sent': '',
     'Serial': '',
@@ -1041,20 +1011,14 @@ Default: 0': '',
     'Setup price': '',
     'Show Broadcasting DashBoard on User home panel': '',
     'Show CallBack tab on Android Softphone': '',
-    'Show CallBack tab on Android Softphone
- 0 - Disable 
-1 - Enable': '',
+    'Show CallBack tab on Android Softphone\n 0 - Disable \n1 - Enable': '',
     'Show Play icon on CDR': '',
     'Show Play icon on CDR menu. Set to 1 for show the icon': '',
     'Show Signup button on login page': '',
-    'Show Signup button on login page
- 0 - Disable 
-1 - Enable': '',
+    'Show Signup button on login page\n 0 - Disable \n1 - Enable': '',
     'Show desktop': '',
     'Show fields help': '',
-    'Show fields help
- 0 - Disable 
-1 - Enable': '',
+    'Show fields help\n 0 - Disable \n1 - Enable': '',
     'Show in groups': '',
     'Show menu': '',
     'Show name': '',
@@ -1152,8 +1116,8 @@ Default: 0': '',
     'This password in in use': '',
     'This rule will be used when you create a new user or on the Sign up  form. More details about prefix rule on the bellow link https://www.magnusbilling.org/local_prefix': '',
     'This service already is canceled': '',
-    'This trunk name is in use by a SIP user': '',
-    'This username is in use by a trunk': '',
+    'This trunk name is in use by a SIP user': 'This trunk name is in use by a SIP user',
+    'This username is in use by a trunk': 'This username is in use by a trunk',
     'This will overwrite any backup made today! Are you sure?': '',
     'Thursday': '',
     'Time': '',
@@ -1239,10 +1203,7 @@ Default: 0': '',
     'Username or email': '',
     'Users': '',
     'VAT': '',
-    'Valores permitidos
-en English
-es Espanhol
-br Português': '',
+    'Valores permitidos\nen English\nes Espanhol\nbr Português': '',
     'Value': '',
     'Value * Agent credit balance = maximum balance of all the agents users(sum).': '',
     'Variables': '',

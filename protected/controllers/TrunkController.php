@@ -56,20 +56,6 @@ class TrunkController extends Controller
             }
         }
 
-        if ((isset($values['register']) && $values['register'] == 1 && isset($values['register_string']))
-            && ! preg_match("/^.{3}.*:.{3}.*@.{5}.*\/.{3}.*/", $values['register_string'])
-        ) {
-            echo json_encode([
-                'success' => false,
-                'rows'    => [],
-                'errors'  => [
-                    'register'        => Yii::t('zii', 'Invalid register string. Only use register option to Trunk authentication via user and password.'),
-                    'register_string' => Yii::t('zii', 'Invalid register string'),
-                ],
-            ]);
-            exit();
-        }
-
         if (isset($values['providerip'])) {
             $modelTrunk = Trunk::model()->find((int) $values['id']);
             if (isset($values['providertech']) && $values['providertech'] != 'pjsip' && $values['providertech'] != 'iax2') {
@@ -94,6 +80,68 @@ class TrunkController extends Controller
 
         return $values;
     }
+    public function actionValidateRegister()
+    {
+        if (! Yii::app()->request->isPostRequest) {
+            throw new CHttpException(405, 'POST required');
+        }
+        $values = $this->getAttributesRequest();
+        $id = isset($values['id']) ? (int) $values['id'] : 0;
+        $this->checkActionAccess([], 'trunk', $id ? 'canUpdate' : 'canCreate');
+        $model = $id ? Trunk::model()->findByPk($id) : new Trunk;
+        if (! $model) {
+            throw new CHttpException(404, Yii::t('zii', 'Record not found.'));
+        }
+        foreach (['user', 'secret', 'host', 'register_string'] as $attribute) {
+            if (isset($values[$attribute]) && is_scalar($values[$attribute])) {
+                $model->$attribute = $values[$attribute];
+            }
+        }
+        $model->register = 1;
+        $model->checkRegister('register', []);
+        echo json_encode(['success' => ! $model->hasErrors(), 'errors' => $model->getErrors()]);
+    }
+
+    public function beforeUpdateAll($values, $ids)
+    {
+        $registrationFields = ['host', 'register', 'user', 'secret', 'register_string'];
+        if (array_intersect($registrationFields, array_keys($values))) {
+            $models = Trunk::model()->findAllByPk($ids);
+            $usernames = [];
+            foreach ($models as $model) {
+                foreach ($registrationFields as $attribute) {
+                    if (array_key_exists($attribute, $values)) {
+                        $model->$attribute = $values[$attribute];
+                    }
+                }
+                $model->checkRegister('register', []);
+                $username = strtolower((string) $model->user);
+                // The database still contains the old names while validating a batch.
+                if (isset($usernames[$username])
+                    && ((int) $model->register === 1 || $usernames[$username] === 1)
+                ) {
+                    $model->addError('user', Yii::t('zii', 'This username is in use by a trunk'));
+                }
+                $usernames[$username] = (int) $model->register;
+                if ($model->hasErrors()) {
+                    $errors = $model->getErrors();
+                    $first = reset($errors);
+                    echo json_encode([
+                        'success' => false,
+                        'rows' => [],
+                        'msg' => $first[0],
+                        'errors' => $errors,
+                    ]);
+                    Yii::app()->end();
+                }
+            }
+        }
+        if (isset($values['register']) && (int) $values['register'] === 0) {
+            $values['register_string'] = '';
+        }
+        return parent::beforeUpdateAll($values, $ids);
+    }
+
     public function setAttributesModels($attributes, $models)
     {
 

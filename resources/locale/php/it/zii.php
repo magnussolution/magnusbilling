@@ -22,6 +22,16 @@
  * Edit /resources/locale/it.js
  */
 return array(
+    'Dynamic trunks require a SIP username containing only letters, numbers, dots, underscores and hyphens.' => 'I trunk dinamici richiedono un nome utente SIP contenente solo lettere, numeri, punti, trattini bassi e trattini.',
+    'Dynamic trunks require a SIP password.' => 'I trunk dinamici richiedono una password SIP.',
+    'Register trunk must be disabled when host is dynamic.' => 'L’opzione Registra il trunk deve essere disattivata quando l’host è impostato su dynamic.',
+    'Register requires a username of up to 80 letters, numbers, dots, underscores, plus signs or hyphens.' => 'Per registrare, inserisci un nome utente di massimo 80 caratteri, usando lettere, numeri, punti, trattini bassi, segni più o trattini.',
+    'Register requires a password of up to 50 characters without whitespace, semicolons or backslashes.' => 'Per registrare, inserisci una password di massimo 50 caratteri, senza spazi, punti e virgola o barre rovesciate.',
+    'Register requires a valid IPv4 address or hostname, without a protocol, port or path.' => 'Per registrare, inserisci un indirizzo IPv4 o un nome host valido, senza protocollo, porta o percorso.',
+    'This username is in use by a SIP user.' => 'Questo nome utente è già utilizzato da un account SIP.',
+    'Invalid register string' => 'Stringa di registrazione non valida',
+    'Unable to validate registration. Try again.' => 'Impossibile convalidare la registrazione. Riprova.',
+    'Check the registration fields before enabling Register.' => 'Controlla i campi di registrazione prima di attivare Registra il trunk.',
         'No' => 'No',
         'CallerID' => 'CallerID',
         'ALOC all calls' => 'ACD',
@@ -371,8 +381,8 @@ return array(
         'This option is exclusive to users' => 'Questa opzione è esclusiva per gli utenti',
         'This password in in use' => 'Questa password in uso',
         'This service already is canceled' => 'Questo servizio è già cancellato',
-        'This trunk name is in use by a SIP user' => 'Questo nome del tronco è in uso da un utente SIP',
-        'This username is in use by a trunk' => 'Questo nome utente è in uso da un tronco',
+        'This trunk name is in use by a SIP user' => 'Questo nome di trunk è già utilizzato da un account SIP',
+        'This username is in use by a trunk' => 'Questo nome utente è già utilizzato da un trunk',
         'Thursday' => 'giovedi',
         'Time' => 'Tempo',
         'Time for another agent' => 'Tempo per un altro agente',

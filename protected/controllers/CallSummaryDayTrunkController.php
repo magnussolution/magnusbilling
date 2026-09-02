@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Acoes do modulo "Call".
  *
@@ -57,7 +58,8 @@ class CallSummaryDayTrunkController extends Controller
             $records[0]->sumsessiontime += $value['sessiontime'] / 60;
             $records[0]->sumsessionbill += $value['sessionbill'];
             $records[0]->sumbuycost += $value['buycost'];
-            $records[0]->sumaloc_all_calls += $value['sessiontime'] / $value['nbcall'];
+            if ($value['nbcall'] > 0)
+                $records[0]->sumaloc_all_calls += $value['sessiontime'] / $value['nbcall'];
             $records[0]->sumnbcall += $value['nbcall'];
         }
 
@@ -98,7 +100,7 @@ class CallSummaryDayTrunkController extends Controller
                 $arrFields = explode(',', $fields);
                 foreach ($arrFields as $field) {
                     if (isset($item->$relation->$field)) {
-                   
+
                         $attributes[$key][$relation . $field] = $item->$relation->$field;
                         if (Yii::app()->session['idClient']) {
                             foreach ($this->fieldsInvisibleClient as $field) {
@@ -137,5 +139,4 @@ class CallSummaryDayTrunkController extends Controller
             $this->nameSum   => $this->getAttributesModels($recordsSum),
         ));
     }
-
 }

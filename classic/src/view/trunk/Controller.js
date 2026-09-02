@@ -47,28 +47,113 @@ Ext.define('MBilling.view.trunk.Controller', {
     init: function () {
         var me = this;
         me.control({
+            'trunkform': {
+                edit: me.onRegistrationChange
+            },
+            'textfield[name=host], textfield[name=user], textfield[name=secret], textfield[name=register_string]': {
+                change: me.onRegistrationChange
+            },
             'noyescombo[name=register]': {
+                change: me.onRegistrationChange,
                 select: me.onSelectType
             }
         });
         me.callParent(arguments);
     },
-    onSelectType: function (combo, records) {
-        this.showFieldsRelated(records.getData().showFields);
+    onSelectType: function () {
+        this.showFieldsRelated();
+        this.validateRegistration();
     },
-    showFieldsRelated: function (showFields) {
+    onRegistrationChange: function () {
+        this.registrationValidationVersion = (this.registrationValidationVersion || 0) + 1;
+        if (this.registrationValidationPending && this.formPanel) {
+            this.registrationValidationPending = false;
+            this.formPanel.setLoading(false);
+        }
+        this.syncRegistrationFields();
+    },
+    onSave: function () {
+        if (!this.registrationValidationPending) {
+            this.callParent(arguments);
+        }
+    },
+    validateRegistration: function () {
         var me = this,
-            fieldRegisterString = me.formPanel.getForm().findField('register_string'),
-            fieldUser = me.formPanel.getForm().findField('user'),
-            fieldSecret = me.formPanel.getForm().findField('secret'),
-            fieldHost = me.formPanel.getForm().findField('host'),
-            fields = me.formPanel.getForm().getFields();
-        fields.each(function (field) {
-            if (field.name == 'register') {
-                fieldRegisterString.setVisible(field.value == 1)
-                fieldRegisterString.setValue(fieldUser.value + ':' + fieldSecret.value + '@' + fieldHost.value + '/' + fieldUser.value)
+            panel = me.formPanel,
+            form = panel.getForm(),
+            fieldRegister = form.findField('register'),
+            version,
+            params = {id: panel.idRecord || 0};
+        // Bulk saves validate each record using its stored values on the server.
+        if (fieldRegister.getValue() != 1 || panel.isUpdateLot) {
+            return;
+        }
+        Ext.each(['user', 'secret', 'host', 'register_string'], function (name) {
+            params[name] = form.findField(name).getValue();
+        });
+        version = me.registrationValidationVersion = (me.registrationValidationVersion || 0) + 1;
+        me.registrationValidationPending = true;
+        panel.setLoading(true);
+        Ext.Ajax.request({
+            url: 'index.php/trunk/validateRegister',
+            method: 'POST',
+            params: params,
+            callback: function (options, success, response) {
+                if (panel.destroyed || version !== me.registrationValidationVersion) {
+                    return;
+                }
+                var result = success && Ext.decode(response.responseText, true);
+                me.registrationValidationPending = false;
+                panel.setLoading(false);
+                if (result && result.success) {
+                    Ext.each(['user', 'secret', 'host', 'register', 'register_string'], function (name) {
+                        form.findField(name).clearInvalid();
+                    });
+                    return;
+                }
+                fieldRegister.setValue(0);
+                form.findField('register_string').setValue('');
+                form.markInvalid(result && result.errors || {
+                    register: t('Unable to validate registration. Try again.')
+                });
+                Ext.ux.Alert.alert(me.titleWarning, t('Check the registration fields before enabling Register.'), 'warning');
             }
         });
+    },
+    syncRegistrationFields: function () {
+        var me = this,
+            form = me.formPanel && me.formPanel.getForm(),
+            fieldHost = form && form.findField('host'),
+            fieldRegister = form && form.findField('register'),
+            fieldRegisterString = form && form.findField('register_string'),
+            isDynamic;
+        if (!fieldHost || !fieldRegister || !fieldRegisterString) {
+            return false;
+        }
+        isDynamic = Ext.String.trim(String(fieldHost.getValue() || '')).toLowerCase() === 'dynamic';
+        // Read-only fields still submit their value, so changing the host also saves register=0.
+        fieldRegister.setReadOnly(isDynamic);
+        if (isDynamic) {
+            fieldRegister.setValue(0);
+            fieldRegisterString.setValue('');
+            fieldRegister.setFieldLabel(t('Register trunk'));
+        }
+        fieldRegisterString.setVisible(!isDynamic && fieldRegister.getValue() == 1);
+        return isDynamic;
+    },
+    showFieldsRelated: function () {
+        var me = this,
+            fieldRegisterString = me.formPanel.getForm().findField('register_string'),
+            fieldRegister = me.formPanel.getForm().findField('register'),
+            fieldUser = me.formPanel.getForm().findField('user'),
+            fieldSecret = me.formPanel.getForm().findField('secret'),
+            fieldHost = me.formPanel.getForm().findField('host');
+        if (me.syncRegistrationFields()) {
+            return;
+        }
+        fieldRegisterString.setValue(fieldRegister.getValue() == 1
+            ? fieldUser.getValue() + ':' + fieldSecret.getValue() + '@' + fieldHost.getValue() + '/' + fieldUser.getValue()
+            : '');
     }
 
 });

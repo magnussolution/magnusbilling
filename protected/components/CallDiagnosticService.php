@@ -170,9 +170,10 @@ class CallDiagnosticService
         $pjsipAuthenticationStep = $this->pjsipIpAuthenticationProbe !== null
             ? $this->pjsipIpAuthenticationProbe->inspect($sip)
             : null;
+        $number = $this->normalizeOutboundDestination((string) $number);
         $result = $this->executeAgi(
             'outbound',
-            (string) $number,
+            $number,
             (string) $sip['username'],
             $callerId !== null && $callerId !== '' ? (string) $callerId : (string) $sip['callerid'],
             (string) $sip['name']
@@ -189,6 +190,41 @@ class CallDiagnosticService
             }
         }
         return $result;
+    }
+
+    /**
+     * Mirrors the international access-prefix cleanup expected by Check User.
+     * Only a prefix at the beginning is removed; digits elsewhere are kept.
+     */
+    private function normalizeOutboundDestination($number)
+    {
+        $configuration = $this->row(
+            'SELECT config_value FROM pkg_configuration '
+            . 'WHERE config_key=:configKey ORDER BY id LIMIT 1',
+            [':configKey' => 'international_prefixes']
+        );
+        $configured = $configuration && isset($configuration['config_value'])
+            ? (string) $configuration['config_value']
+            : '';
+        return self::stripInternationalPrefix((string) $number, $configured);
+    }
+
+    private static function stripInternationalPrefix($number, $configured)
+    {
+        $prefixes = preg_split('/[,;\s]+/', (string) $configured, -1, PREG_SPLIT_NO_EMPTY);
+        $prefixes[] = '+';
+        $prefixes = array_values(array_unique(array_filter(array_map('trim', $prefixes), function ($prefix) {
+            return $prefix !== '';
+        })));
+        usort($prefixes, function ($left, $right) {
+            return strlen($right) - strlen($left);
+        });
+        foreach ($prefixes as $prefix) {
+            if (strncmp($number, $prefix, strlen($prefix)) === 0 && strlen($number) > strlen($prefix)) {
+                return substr($number, strlen($prefix));
+            }
+        }
+        return $number;
     }
 
     public function inbound($didId, $callerId = null, $at = null)

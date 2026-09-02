@@ -76,6 +76,8 @@ class Trunk extends Model
             ['trunkcode', 'unique', 'caseSensitive' => false],
             ['trunkcode', 'checkTrunkCode'],
             ['trunkcode', 'uniquePeerName'],
+            ['user', 'uniquePeerName'],
+            ['register', 'checkRegister'],
             ['secret, nat, trunkcode, sms_res, trunkprefix, providertech, removeprefix,
                 context, insecure, disallow, providerip, user, fromuser, allow, host,
                 fromdomain, addparameter, block_cid, link_sms, dtmfmode, qualify,
@@ -87,8 +89,60 @@ class Trunk extends Model
 
     public function checkTrunkCode($attribute, $params)
     {
-        if ($this->host == 'dynamic' && $this->trunkcode != $this->user) {
+        if ($this->providertech == 'pjsip' && strtolower(trim((string) $this->host)) === 'dynamic') {
+            // The gateway registers by user; trunkcode remains the outbound endpoint name.
+            if (! preg_match('/\A[a-zA-Z0-9_.-]+\z/', (string) $this->user)) {
+                $this->addError('user', Yii::t('zii', 'Dynamic trunks require a SIP username containing only letters, numbers, dots, underscores and hyphens.'));
+            }
+            if (! strlen((string) $this->secret)) {
+                $this->addError('secret', Yii::t('zii', 'Dynamic trunks require a SIP password.'));
+            }
+        } elseif ($this->host == 'dynamic' && $this->trunkcode != $this->user) {
             $this->addError($attribute, Yii::t('zii', 'When host =dynamic the trunk name and username need be equal.'));
+        }
+    }
+
+    public function checkRegister($attribute, $params)
+    {
+        if (strtolower(trim((string) $this->host)) === 'dynamic' && (int) $this->register !== 0) {
+            $this->addError($attribute, Yii::t('zii', 'Register trunk must be disabled when host is dynamic.'));
+            return;
+        }
+        if ((int) $this->register !== 1) {
+            return;
+        }
+
+        if (! preg_match('/\A[a-zA-Z0-9_.+\-]{1,80}\z/', (string) $this->user)) {
+            $this->addError('user', Yii::t('zii', 'Register requires a username of up to 80 letters, numbers, dots, underscores, plus signs or hyphens.'));
+        }
+        if (! strlen((string) $this->secret) || strlen((string) $this->secret) > 50
+            || preg_match('/[\x00-\x20\x7f;\\\\]/', (string) $this->secret)
+        ) {
+            $this->addError('secret', Yii::t('zii', 'Register requires a password of up to 50 characters without whitespace, semicolons or backslashes.'));
+        }
+        $host = (string) $this->host;
+        $validHost = filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)
+            || (! preg_match('/\A[0-9.]+\z/', $host)
+                && filter_var($host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME));
+        if (! strlen($host) || strlen($host) > 80 || ! $validHost) {
+            $this->addError('host', Yii::t('zii', 'Register requires a valid IPv4 address or hostname, without a protocol, port or path.'));
+        }
+        if (! $this->hasErrors('user')) {
+            if (Trunk::model()->exists(
+                'id <> :id AND (LOWER(user) = :username OR LOWER(trunkcode) = :trunkname)',
+                [':id' => (int) $this->id, ':username' => strtolower($this->user), ':trunkname' => strtolower($this->user)]
+            )) {
+                $this->addError('user', Yii::t('zii', 'This username is in use by a trunk'));
+            }
+            if (Sip::model()->exists(
+                'LOWER(name) = :username OR LOWER(defaultuser) = :authuser',
+                [':username' => strtolower($this->user), ':authuser' => strtolower($this->user)]
+            )) {
+                $this->addError('user', Yii::t('zii', 'This username is in use by a SIP user.'));
+            }
+        }
+        if (! preg_match('/\A[^\s:]+:[^\s]+@[^\s\/]+\/[^\s]+\z/', (string) $this->register_string)) {
+            $this->addError('register_string', Yii::t('zii', 'Invalid register string'));
         }
     }
 

@@ -285,14 +285,16 @@ class SipController extends Controller
 
 
                 if ($value['Aor'] == $name) {
-                    $status = $value['Status'] == 'Avail' ? 'OK' : $value['Status'];
+                    // NonQual means that the contact is registered, but qualify is disabled.
+                    $isRegistered = in_array($value['Status'], ['Avail', 'NonQual'], true);
+                    $status = $isRegistered ? 'OK' : $value['Status'];
                     if ($status == 'Unavail') {
                         $status = 'Unavailable';
                     }
                     $attributes[$i]['lineStatus'] = $status;
 
-                    if (preg_match('/Avail/', $value['Status'])) {
-                        if (isset($value['RTT']) && is_numeric($value['RTT'])) {
+                    if ($isRegistered) {
+                        if ($value['Status'] == 'Avail' && isset($value['RTT']) && is_numeric($value['RTT'])) {
                             $attributes[$i]['lineStatus'] .= ' (' . intval($value['RTT']) . ' ms)';
                         }
                         $attributes[$i]['lineStatus'] .= ' ' . $value['server'];

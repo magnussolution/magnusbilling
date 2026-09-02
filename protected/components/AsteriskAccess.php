@@ -260,8 +260,28 @@ class AsteriskAccess
     {
         $rows = Util::getColumnsFromModel($model);
 
+        $peerNames = [];
         foreach ($rows as $key => $data) {
             AsteriskConfigValue::assertRecord($data, 'asteriskRecord.' . $key);
+            if ($head_field == 'trunkcode') {
+                $names = [$data[$head_field]];
+                if (strtolower(trim((string) $data['host'])) === 'dynamic') {
+                    if (! isset($data['user'], $data['secret'])
+                        || ! preg_match('/\A[a-zA-Z0-9_.-]+\z/', $data['user'])
+                        || strlen($data['secret']) === 0
+                    ) {
+                        throw new InvalidArgumentException('Dynamic trunks require a valid SIP username and password.');
+                    }
+                    $names[] = $data['user'];
+                }
+                foreach ($names as $name) {
+                    $name = strtolower($name);
+                    if (isset($peerNames[$name]) && $peerNames[$name] !== $key) {
+                        throw new InvalidArgumentException('SIP endpoint name is used by more than one trunk.');
+                    }
+                    $peerNames[$name] = $key;
+                }
+            }
         }
 
         $fd = fopen($file, "w");
@@ -276,8 +296,12 @@ class AsteriskAccess
 
                 $port = isset($data['port']) && is_numeric($data['port']) ? $data['port'] : '5060';
 
-                //registrar tronco
-                if (preg_match("/^[^:]+:[^@]+@[^\/]+\/?.*$/", $data['register_string'])) {
+                $isDynamicHost = strtolower(trim((string) $data['host'])) === 'dynamic';
+                $registrationName = $isDynamicHost && $head_field == 'trunkcode'
+                    ? $data['user'] : $data[$head_field];
+
+                // Dynamic gateways register to us; static providers may need outbound registration.
+                if (! $isDynamicHost && preg_match("/^[^:]+:[^@]+@[^\/]+\/?.*$/", $data['register_string'])) {
 
                     $line .= "\n\n[reg_" . $data[$head_field] . '_' . $data['user'] . '_' . $data['host'] . "]\n";
                     $line .= "type = registration\n";
@@ -299,9 +323,12 @@ class AsteriskAccess
                     $line .= "password = " . $data['secret'] . "\n";
                 }
 
-                $line .= "\n[" . $data[$head_field] . "]\n";
+                $line .= "\n[" . $registrationName . "]\n";
                 $line .= "type = aor\n";
-                if (strlen($data['user'])) {
+                if ($isDynamicHost) {
+                    $line .= "max_contacts = 1\n";
+                    $line .= "remove_existing = yes\n";
+                } elseif (strlen($data['user'])) {
                     $line .= "contact = sip:" . $data['user'] . "@" . $data['host'] . ":" . $port . "\n";
                 } else {
                     $line .= "contact = sip:" . $data['host'] . "\n";
@@ -312,17 +339,18 @@ class AsteriskAccess
                     $line .= "qualify_frequency = " . $data['qualify'] . "\n";
                 }
 
-                if (isset($data->max_contacts)) {
+                if (! $isDynamicHost && isset($data->max_contacts)) {
                     $line .= "max_contacts=" . trim($data->max_contacts) . "\n";
                 }
 
-                if (strtok($data['host'], ':') != 'dynamic') {
+                if (! $isDynamicHost) {
 
                     $line .= "\n[" . $data[$head_field] . "]\n";
                     $line .= "type = identify\n";
                     $line .= "endpoint = " . $data[$head_field] . "\n";
                     $line .= "match = " . strtok($data['host'], ':') . "\n";
                 }
+                $endpointOffset = strlen($line);
                 $line .= "\n[" . $data[$head_field] . "]\n";
                 $line .= "type = endpoint\n";
                 $line .= "context = " . $data['context'] . "\n";
@@ -336,7 +364,7 @@ class AsteriskAccess
                 $line .= "language = " . strlen($data['language']) ? $data['language'] : 'en' . "\n";
                 $line .= "allow_subscribe = yes\n";
 
-                $line .= "aors = " . $data[$head_field] . "\n";
+                $line .= "aors = " . $registrationName . "\n";
                 if (strlen($data['fromuser'])) {
                     $line .= "from_user = " . $data['fromuser'] . "\n";
                 }
@@ -348,6 +376,11 @@ class AsteriskAccess
                     $line .= "outbound_auth = auth_reg_" . $data[$head_field] . '_' . $data['user'] . '_' . $data['host'] . "\n";
                 }
 
+                if ($registrationName !== $data[$head_field]) {
+                    // Accept REGISTER by SIP username while keeping trunkcode available for outbound dialing.
+                    $endpointOptions = substr($line, $endpointOffset + strlen("\n[" . $data[$head_field] . "]\n"));
+                    $line .= "\n[" . $registrationName . "]\n" . $endpointOptions;
+                }
 
                 if (fwrite($fd, $line) === false) {
                     echo "Impossible to write to the file";
