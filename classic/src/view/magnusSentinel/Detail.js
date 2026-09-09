@@ -84,7 +84,7 @@ Ext.define('MBilling.view.magnusSentinel.Detail', {
                                     ' style="color:#205493;cursor:help"></span>',
                             '</tpl>',
                         '</td><td style="padding:5px;border-bottom:1px solid #ddd;' +
-                            'font-weight:bold">{value:htmlEncode}</td></tr>',
+                            'font-weight:bold;white-space:pre-wrap;overflow-wrap:anywhere">{value:htmlEncode}</td></tr>',
                     '</tpl>',
                     '</table>',
                 '<tpl else>',

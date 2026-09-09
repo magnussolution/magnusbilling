@@ -36,6 +36,13 @@ class MagnusSentinelIncidentApiV1
         'UNHEALTHY' => 4,
     ];
     private static $evidenceKeys = [
+        'security_summary',
+        'security_reference',
+        'security_differences',
+        'security_comparison',
+        'security_coverage',
+        'security_scopes',
+        'security_hashes',
         'response_code',
         'response_reason',
         'current_asr',
@@ -922,7 +929,7 @@ class MagnusSentinelIncidentApiV1
         $row['detector_version'] = (int) $row['detector_version'];
         $row['entity_id'] = (int) $row['entity_id'];
         $row['occurrence_count'] = (int) $row['occurrence_count'];
-        $row['incident'] = $contract;
+        $row['incident'] = self::withEvidenceDisplay($contract);
         $row['display'] = self::incidentDisplay($row, $contract);
         return $row;
     }
@@ -1034,10 +1041,87 @@ class MagnusSentinelIncidentApiV1
         ];
     }
 
-    private static function displayTimezone()
+    public static function displayTimezone()
     {
-        $name = date_default_timezone_get();
-        return $name !== false && $name !== '' ? $name : 'UTC';
+        return self::resolveDisplayTimezone(
+            date_default_timezone_get(),
+            get_cfg_var('date.timezone'),
+            '/etc/localtime',
+            '/etc/timezone'
+        );
+    }
+
+    private static function resolveDisplayTimezone(
+        $phpTimezone, $configuredTimezone, $localtimePath, $timezonePath
+    ) {
+        // PHP defaults to UTC when date.timezone is absent. In that case use
+        // the server timezone, without changing PHP's global clock for billing.
+        if ($configuredTimezone !== false && trim((string) $configuredTimezone) !== '') {
+            return $phpTimezone;
+        }
+        if ($phpTimezone !== 'UTC') {
+            return $phpTimezone;
+        }
+        // timedatectl updates /etc/localtime; /etc/timezone may be stale.
+        $localtime = realpath($localtimePath);
+        $candidates = [];
+        if ($localtime !== false && strpos($localtime, '/zoneinfo/') !== false) {
+            $candidates[] = preg_replace(
+                '~^.*?/zoneinfo/(?:posix/|right/)?~', '', $localtime
+            );
+        }
+        if (is_readable($timezonePath)) {
+            $candidates[] = trim(file_get_contents($timezonePath));
+        }
+        foreach ($candidates as $candidate) {
+            try {
+                new DateTimeZone($candidate);
+                return $candidate;
+            } catch (Exception $exc) {
+                continue;
+            }
+        }
+        return $phpTimezone;
+    }
+
+    private static function withEvidenceDisplay($contract)
+    {
+        foreach ($contract['evidence'] as &$item) {
+            if (! in_array($item['key'], [
+                'security_reference', 'security_coverage', 'security_scopes',
+            ], true) || ! isset($item['value'])) {
+                continue;
+            }
+            $item['display_value'] = self::displayEvidenceTimestamps($item['value']);
+            $item['display_timezone'] = self::displayTimezone();
+            if (isset($item['description'])) {
+                $item['display_description'] = str_replace(
+                    'UTC', self::displayTimezone(), $item['description']
+                );
+            }
+        }
+        unset($item);
+        return $contract;
+    }
+
+    private static function displayEvidenceTimestamps($value)
+    {
+        if (! is_array($value)) {
+            return $value;
+        }
+        foreach ($value as $key => &$child) {
+            if (in_array($key, [
+                'collected_at', 'captured_at',
+                'reference_collected_at', 'affected_collected_at',
+            ], true)) {
+                $display = self::displayIsoTimestamp($child);
+                $child = $display === null ? null : $display . ' ' . self::displayTimezone();
+            } elseif (is_array($child)) {
+                $child = self::displayEvidenceTimestamps($child);
+            }
+        }
+        unset($child);
+        return $value;
     }
 
     private static function displayDatabaseTimestamp($value)
@@ -1058,11 +1142,14 @@ class MagnusSentinelIncidentApiV1
 
     private static function displayIsoTimestamp($value)
     {
-        if ($value === null || $value === '') {
+        if (! is_string($value) || ! preg_match(
+            '/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})?$/D',
+            $value
+        )) {
             return null;
         }
         try {
-            $date = new DateTime((string) $value);
+            $date = new DateTime((string) $value, new DateTimeZone('UTC'));
         } catch (Exception $exc) {
             return null;
         }
@@ -1071,7 +1158,10 @@ class MagnusSentinelIncidentApiV1
 
     private static function formatDisplayDate($date)
     {
-        if (! $date instanceof DateTime) {
+        $errors = DateTime::getLastErrors();
+        if (! $date instanceof DateTime || ($errors !== false && (
+            $errors['warning_count'] > 0 || $errors['error_count'] > 0
+        ))) {
             return null;
         }
         $date->setTimezone(new DateTimeZone(self::displayTimezone()));

@@ -257,6 +257,13 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
     },
     prepareEvidence: function(item) {
         var labels = {
+            security_summary: t('Configuration comparison summary'),
+            security_reference: t('Comparison reference'),
+            security_differences: t('Configuration differences'),
+            security_comparison: t('Comparison limits'),
+            security_coverage: t('Collection coverage'),
+            security_scopes: t('Collected configuration scopes'),
+            security_hashes: t('Sanitized configuration hashes'),
             response_code: t('Received code'),
             response_reason: t('Received response'),
             current_asr: t('Current ASR'),
@@ -391,7 +398,7 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
         return {
             label: labels[item.key] || item.key,
             value: this.evidenceValue(item),
-            help: item.description || help[item.key] ||
+            help: item.display_description || item.description || help[item.key] ||
                 t('Technical evidence used by the detector to explain this incident.')
         };
     },
@@ -403,9 +410,22 @@ Ext.define('MBilling.view.magnusSentinel.Controller', {
         }[value] || t('Not informed');
     },
     evidenceValue: function(item) {
-        var value = item.value;
+        var value = Object.prototype.hasOwnProperty.call(item, 'display_value') ?
+            item.display_value : item.value;
+        if (item.key === 'security_differences' && Ext.isArray(value)) {
+            return value.map(function(row) {
+                return row.component + ' · ' + (row.file || row.scope) +
+                    ' [' + (row.section || '-') + '] ' +
+                    (row.parameter || row.change) + ': ' +
+                    (row.reference_value === null ? '∅' : row.reference_value) +
+                    ' → ' + (row.affected_value === null ? '∅' : row.affected_value) +
+                    ' (' + row.scope + ', ' + row.change + ')';
+            }).join('\n') || t('None');
+        }
         if (Ext.isArray(value)) {
-            return value.length ? value.join(', ') : t('None');
+            return value.length ? value.map(function(row) {
+                return Ext.isObject(row) ? Ext.encode(row) : String(row);
+            }).join('\n') : t('None');
         }
         if (Ext.isObject(value)) {
             return Ext.encode(value);

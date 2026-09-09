@@ -240,6 +240,7 @@ contrib/scripts/install_prereq install
 ./configure --with-jansson-bundled --with-pjproject-bundled
 make menuselect.makeopts
 menuselect/menuselect --enable res_config_mysql  menuselect.makeopts
+menuselect/menuselect --enable codec_opus menuselect.makeopts
 make
 make install
 make samples

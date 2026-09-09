@@ -126,7 +126,7 @@ class MagnusSentinelIncidentController extends Controller
         echo json_encode([
             'success' => $success,
             'api_version' => MagnusSentinelIncidentApiV1::API_VERSION,
-            'timezone' => date_default_timezone_get(),
+            'timezone' => MagnusSentinelIncidentApiV1::displayTimezone(),
             'data' => $data,
             'error' => $error,
         ]);
