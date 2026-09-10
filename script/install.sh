@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# A non-login root shell (for example, `su` without `-`) may omit sbin.
+# Include administrative commands such as ldconfig and phpenmod for all steps.
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin${PATH:+:${PATH}}"
+
 echo
 echo
 echo

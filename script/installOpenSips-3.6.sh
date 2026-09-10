@@ -94,7 +94,7 @@ echo "deb [signed-by=/usr/share/keyrings/opensips-org.gpg] https://apt.opensips.
 echo "deb [signed-by=/usr/share/keyrings/opensips-org.gpg] https://apt.opensips.org trixie cli-nightly" >/etc/apt/sources.list.d/opensips-cli.list
 apt update
 
-apt -y install opensips opensips-mysql-module opensips-postgres-module opensips-unixodbc-module opensips-jabber-module opensips-cpl-module opensips-radius-modules opensips-presence-modules opensips-xmlrpc-module opensips-perl-modules opensips-snmpstats-module opensips-xmpp-module opensips-carrierroute-module opensips-berkeley-module opensips-ldap-modules opensips-geoip-module opensips-regex-module opensips-identity-module opensips-dbhttp-module opensips-dialplan-module opensips-http-modules opensips-tls-module opensips-cgrates-module opensips-auth-modules
+apt -y install opensips opensips-mysql-module opensips-postgres-module opensips-unixodbc-module opensips-jabber-module opensips-cpl-module opensips-radius-modules opensips-presence-modules opensips-xmlrpc-module opensips-perl-modules opensips-snmpstats-module opensips-xmpp-module opensips-carrierroute-module opensips-berkeley-module opensips-ldap-modules opensips-geoip-module opensips-regex-module opensips-identity-module opensips-dbhttp-module opensips-dialplan-module opensips-http-modules opensips-tls-module opensips-cgrates-module opensips-auth-modules opensips-restclient-module
 apt -y install opensips-cli
 apt -y install opensips-stir-shaken-module
 apt -y install opensips-mysql-dbschema
