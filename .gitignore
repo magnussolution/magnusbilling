@@ -98,3 +98,4 @@ bootstrap.js
 protected/tests
 protected/runtime/application.log
 classic/test
+tests

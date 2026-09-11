@@ -22,7 +22,7 @@ Ext.define('MBilling.view.callFailed.List', {
     extend: 'Ext.ux.grid.Panel',
     alias: 'widget.callfailedlist',
     store: 'CallFailed',
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         me.fieldSearch = App.user.isAdmin ? 'calledstation' : '';
         me.buttonUpdateLot = false;
@@ -127,7 +127,8 @@ Ext.define('MBilling.view.callFailed.List', {
             dataIndex: 'id_server',
             comboFilter: 'serverscombo',
             flex: 3,
-            hidden: !App.user.isAdmin
+            hidden: !App.user.isAdmin || window.isTablet,
+            hideable: App.user.isAdmin
         }]
         me.callParent(arguments);
     }

@@ -437,6 +437,18 @@ class UpdateMysqlCommand extends CConsoleCommand
             $this->update($version);
         }
 
+        //2026-09-10
+        if ($version == '8.0.0.13') {
+            if (! $this->columnExists('pkg_call_online', 'callerid')) {
+                $this->executeDB(
+                    'ALTER TABLE `pkg_call_online` ADD `callerid` VARCHAR(50) DEFAULT NULL AFTER `server`'
+                );
+            }
+
+            $version = '8.0.0.14';
+            $this->update($version);
+        }
+
     }
 
     private function tableExists($table)

@@ -1,0 +1,8 @@
+{
+  "name": "mbilling-webphone",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {"build": "esbuild vendor-entry.js --bundle --minify --platform=browser --target=chrome90,firefox90,safari15 --outfile=vendor.js --legal-comments=linked"},
+  "dependencies": {"jssip": "3.13.8", "webrtc-adapter": "9.0.6"},
+  "devDependencies": {"esbuild": "0.25.12"}
+}

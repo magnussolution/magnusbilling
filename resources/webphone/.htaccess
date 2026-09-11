@@ -1,0 +1,5 @@
+Options -Indexes
+<FilesMatch "^(index\.html|phone\.css|phone\.js|i18n\.js|vendor\.js)$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>

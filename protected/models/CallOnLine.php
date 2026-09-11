@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Modelo para a tabela "CallOnLine".
  * =======================================
@@ -54,12 +55,11 @@ class CallOnLine extends Model
     {
         $rules = [
             ['id_user', 'numerical', 'integerOnly' => true],
-            ['canal, tronco, from_ip, sip_account', 'length', 'max' => 50],
+            ['canal, tronco, from_ip, sip_account, callerid', 'length', 'max' => 50],
             ['ndiscado, status, duration', 'length', 'max' => 16],
             ['codec, reinvite', 'length', 'max' => 5],
         ];
         return $this->getExtraField($rules);
-
     }
 
     /**
@@ -82,5 +82,4 @@ class CallOnLine extends Model
             return $e;
         }
     }
-
 }

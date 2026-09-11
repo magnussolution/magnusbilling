@@ -218,7 +218,7 @@ Ext.define('MBilling.view.call.List', {
             dataIndex: 'id_server',
             comboFilter: 'serverscombo',
             flex: 3,
-            hidden: true,
+            hidden: !App.user.isAdmin || window.isTablet,
             hideable: App.user.isAdmin
         }]
         me.callParent(arguments);

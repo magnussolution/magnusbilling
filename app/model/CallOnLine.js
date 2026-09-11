@@ -30,6 +30,9 @@ Ext.define('MBilling.model.CallOnLine', {
         name: 'uniqueid',
         type: 'string'
     }, {
+        name: 'callerid',
+        type: 'string'
+    }, {
         name: 'canal',
         type: 'string'
     }, {

@@ -39,6 +39,15 @@ class AsteriskAccess
         $this->asmanager->connect($host, $user, $pass);
     }
 
+    public function webphoneReadiness()
+    {
+        return WebphoneReadiness::check(
+            $this->asmanager->Command('http show status'),
+            $this->asmanager->Command('module show like res_http_websocket.so'),
+            $this->asmanager->Command('module show like res_pjsip_transport_websocket.so')
+        );
+    }
+
     public function queueAddMember($member, $queue)
     {
         $this->asmanager->Command("queue add member PJSIP/" . $member . " to " . preg_replace("/ /", "\ ", $queue));
@@ -209,11 +218,6 @@ class AsteriskAccess
     public function cdrShowActive()
     {
         return @$this->asmanager->Command("cdr show active");
-    }
-
-    public function statusShowAll($variables = 'CHANNEL(endpoint)')
-    {
-        return $this->asmanager->StatusList($variables, 'mbilling-callchart-status');
     }
 
     public function coreShowChannelsVerbose()
@@ -437,6 +441,11 @@ class AsteriskAccess
 
                     $line .= "language = " . strlen($data['language']) ? $data['language'] : 'en' . "\n";
                     $line .= "allow_subscribe = yes\n";
+                    if ($data['type'] == 'sipproxy') {
+                        // The proxy dispatcher probes this endpoint without
+                        // SIP credentials. Allow its OPTIONS health checks.
+                        $line .= "allow_unauthenticated_options = yes\n";
+                    }
 
                     $line .= "aors = " . $trunkName . "\n";
                     if (isset($accountcode) && strlen($accountcode)) {
@@ -807,6 +816,55 @@ class AsteriskAccess
             }
         }
 
+        // SIP accounts may register directly on an OpenSIPS proxy instead
+        // of appearing as contacts on any Asterisk server. Read the active
+        // locations in one query per configured proxy and merge them into
+        // the same list consumed by SipController::setAttributesModels().
+        $proxyServers = Yii::app()->db->createCommand(
+            "SELECT * FROM pkg_servers WHERE type = 'sipproxy' AND status = 1"
+        )->queryAll();
+
+        foreach ($proxyServers as $server) {
+            $connection = null;
+            try {
+                $dsn = 'mysql:host=' . $server['host'] . ';dbname=opensips';
+                if (! empty($server['port'])) {
+                    $dsn .= ';port=' . (int) $server['port'];
+                }
+
+                $connection = new CDbConnection($dsn, $server['username'], $server['password']);
+                $connection->active = true;
+                $locations = $connection->createCommand(
+                    'SELECT username FROM location WHERE expires > UNIX_TIMESTAMP()'
+                )->queryAll();
+                foreach ($locations as $location) {
+                    $username = trim((string) $location['username']);
+                    if ($username === '') {
+                        continue;
+                    }
+
+                    $result[] = [
+                        'Aor'    => $username,
+                        'Uri'    => '',
+                        'Hash'   => '',
+                        'Status' => 'Avail',
+                        'RTT'    => '',
+                        'server' => '(Proxy)',
+                    ];
+                }
+            } catch (Exception $e) {
+                Yii::log(
+                    'Unable to read SIP proxy registrations from ' . $server['host'] . ': ' . $e->getMessage(),
+                    CLogger::LEVEL_WARNING,
+                    'asterisk'
+                );
+            }
+
+            if ($connection !== null && $connection->active) {
+                $connection->active = false;
+            }
+        }
+
         return $result;
     }
 
@@ -856,48 +914,6 @@ class AsteriskAccess
                 }
                 $call['server'] = $server['host'];
                 $channels[]     = $call;
-            }
-        }
-
-        return $channels;
-    }
-
-    /**
-     * Return all active channels from every enabled Asterisk server using one
-     * AMI Status action per server.
-     */
-    public static function getStatusChannels($updateServerStatus = true)
-    {
-        $sql = "SELECT * FROM pkg_servers WHERE type = 'asterisk' AND status IN (1,4) AND host != 'localhost'";
-        $modelServers = Yii::app()->db->createCommand($sql)->queryAll();
-
-        $modelServers[] = [
-            'host'     => 'localhost',
-            'username' => 'magnus',
-            'password' => 'magnussolution',
-        ];
-
-        $channels = [];
-        foreach ($modelServers as $server) {
-            $data = AsteriskAccess::instance(
-                $server['host'],
-                $server['username'],
-                $server['password']
-            )->statusShowAll();
-
-            if (! is_array($data)) {
-                if ($updateServerStatus && isset($server['id'])) {
-                    Servers::model()->updateByPk($server['id'], ['status' => 2]);
-                }
-                continue;
-            }
-
-            foreach ($data as $channel) {
-                if (! isset($channel['Channel'])) {
-                    continue;
-                }
-                $channel['server'] = $server['host'];
-                $channels[] = $channel;
             }
         }
 

@@ -25,7 +25,7 @@ Ext.define('MBilling.view.callOnLine.List', {
     store: 'CallOnLine',
     fieldSearch: 'idUser.username',
     refreshTime: 15,
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         me.buttonCsv = false;
         me.allowPrint = false;
@@ -59,7 +59,7 @@ Ext.define('MBilling.view.callOnLine.List', {
             decimalPrecision: 2,
             value: me.refreshTime,
             listeners: {
-                change: function(field) {
+                change: function (field) {
                     if (field.value > 0) {
                         me.refreshTime = field.value;
                         localStorage.setItem('callonlinerefresh', field.value);
@@ -133,21 +133,21 @@ Ext.define('MBilling.view.callOnLine.List', {
             header: t('Server'),
             dataIndex: 'server',
             flex: 3,
-            hidden: !window.slave || !App.user.isAdmin || window.isTablet,
+            hidden: !App.user.isAdmin || window.isTablet,
             hideable: App.user.isAdmin
         }];
-        me.sessionLoad = Ext.create('Ext.util.DelayedTask', function() {
+        me.sessionLoad = Ext.create('Ext.util.DelayedTask', function () {
             me.store.load();
         }, me);
         me.callParent(arguments);
         me.store.on('load', me.onLoadStore, me);
     },
-    onLoadStore: function() {
+    onLoadStore: function () {
         var me = this;
         me.onDeactivateModule();
         me.onActivateModule();
     },
-    onRender: function() {
+    onRender: function () {
         var me = this;
         if (Ext.isObject(me.module)) {
             me.module.on('activate', me.onActivateModule, me);
@@ -156,13 +156,13 @@ Ext.define('MBilling.view.callOnLine.List', {
         };
         me.callParent(arguments);
     },
-    onActivateModule: function() {
+    onActivateModule: function () {
         this.sessionLoad && this.sessionLoad.delay(this.refreshTime * 1000);
     },
-    onDeactivateModule: function() {
+    onDeactivateModule: function () {
         this.sessionLoad && this.sessionLoad.cancel();
     },
-    onCloseModule: function() {
+    onCloseModule: function () {
         this.onDeactivateModule();
         this.sessionLoad = null;
     }
@@ -173,7 +173,7 @@ Ext.define('MBilling.view.callOnLine.List2', {
     store: 'CallOnLine',
     fieldSearch: 'username',
     refreshTime: 10,
-    initComponent: function() {
+    initComponent: function () {
         var me = this;
         me.buttonCsv = false;
         me.allowPrint = false;
@@ -196,7 +196,7 @@ Ext.define('MBilling.view.callOnLine.List2', {
             decimalPrecision: 2,
             value: me.refreshTime,
             listeners: {
-                change: function(field) {
+                change: function (field) {
                     if (field.value > 0) {
                         me.refreshTime = field.value;
                         localStorage.setItem('callonlinerefresh', field.value);
@@ -242,18 +242,18 @@ Ext.define('MBilling.view.callOnLine.List2', {
             hidden: App.user.isClient,
             hideable: !App.user.isClient
         }];
-        me.sessionLoad = Ext.create('Ext.util.DelayedTask', function() {
+        me.sessionLoad = Ext.create('Ext.util.DelayedTask', function () {
             me.store.load();
         }, me);
         me.callParent(arguments);
         me.store.on('load', me.onLoadStore, me);
     },
-    onLoadStore: function() {
+    onLoadStore: function () {
         var me = this;
         me.onDeactivateModule();
         me.onActivateModule();
     },
-    onRender: function() {
+    onRender: function () {
         var me = this;
         if (Ext.isObject(me.module)) {
             me.module.on('activate', me.onActivateModule, me);
@@ -262,13 +262,13 @@ Ext.define('MBilling.view.callOnLine.List2', {
         };
         me.callParent(arguments);
     },
-    onActivateModule: function() {
+    onActivateModule: function () {
         this.sessionLoad && this.sessionLoad.delay(this.refreshTime * 1000);
     },
-    onDeactivateModule: function() {
+    onDeactivateModule: function () {
         this.sessionLoad && this.sessionLoad.cancel();
     },
-    onCloseModule: function() {
+    onCloseModule: function () {
         this.onDeactivateModule();
         this.sessionLoad = null;
     }

@@ -108,9 +108,6 @@ class CallChartCommand extends ConsoleCommand
                     continue;
                 }
 
-
-                print_r($call);
-
                 $uniqueid    = null;
                 $trunk       = null;
                 if (preg_match('/^PJSIP\/([^-\s]+)/', $channel, $m)) {
@@ -142,7 +139,6 @@ class CallChartCommand extends ConsoleCommand
                 $cdr         = trim($call[11]);
                 $originate = $sip_account;
 
-                echo '-' . $last_app . '-' . "\n";
 
                 if ($last_app == 'Dial' || $last_app == 'Mbilling') {
 
@@ -342,7 +338,6 @@ class CallChartCommand extends ConsoleCommand
                         }
                     }
                 } else {
-                    echo "continue because last_app is not valid $last_app\n";
                     continue;
                 }
 
@@ -364,7 +359,6 @@ class CallChartCommand extends ConsoleCommand
 
                 $sql[] = "(NULL,'" . $uniqueid . "', '$sip_account', $id_user, '$channel', '" . utf8_encode($trunk) . "', '$ndiscado', '" . preg_replace('/\(|\)/', '', $codec) . "', '$status', '$cdr', 'no','no', '" . $call['server'] . "')";
 
-                print_r($sql);
                 if (is_array($callShopIds)) {
                     if (in_array($id_user, $callShopIds)) {
 

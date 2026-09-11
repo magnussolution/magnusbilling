@@ -26,6 +26,11 @@ Ext.define('MBilling.view.sip.List', {
     initComponent: function () {
         var me = this;
         me.extraButtons = [{
+            text: t('Webphone'),
+            reference: 'webphone',
+            handler: 'onWebphone',
+            disabled: true
+        }, {
             text: t('Bulk SIP'),
             handler: 'onBulk',
             disabled: false,
