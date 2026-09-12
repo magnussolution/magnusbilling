@@ -376,7 +376,17 @@ class AsteriskAccess
                     $line .= "from_domain = " . $data['fromdomain'] . "\n";
                 }
                 if (strlen($data['user']) && strlen($data['secret'])) {
-                    $line .= "auth = auth_reg_" . $data[$head_field] . '_' . $data['user'] . '_' . $data['host'] . "\n";
+                    // Static providers with insecure=invite authenticate inbound
+                    // calls by their identify IP match, not by SIP credentials.
+                    // Dynamic gateways must still authenticate their registrations.
+                    $insecureOptions = array_map('trim', explode(',', strtolower((string) ($data['insecure'] ?? ''))));
+                    $trustProviderIp = $head_field === 'trunkcode' && ! $isDynamicHost
+                        && in_array('invite', $insecureOptions, true);
+                    if ($trustProviderIp) {
+                        $line .= "identify_by = ip\n";
+                    } else {
+                        $line .= "auth = auth_reg_" . $data[$head_field] . '_' . $data['user'] . '_' . $data['host'] . "\n";
+                    }
                     $line .= "outbound_auth = auth_reg_" . $data[$head_field] . '_' . $data['user'] . '_' . $data['host'] . "\n";
                 }
 
