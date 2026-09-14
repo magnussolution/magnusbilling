@@ -107,7 +107,8 @@ class sqlInject
                                             'rows'  => [],
                                             'count' => 0,
                                             'sum'   => [],
-                                            'msg'   => CHtml::encode($info)
+                                            'success' => false,
+                                            'errors' => Yii::t('zii', 'Invalid request parameters. Check the submitted values.')
                                         ]);
                                         exit;
                                     }
@@ -122,7 +123,8 @@ class sqlInject
                                             'rows'  => [],
                                             'count' => 0,
                                             'sum'   => [],
-                                            'msg'   =>  CHtml::encode($info)
+                                            'success' => false,
+                                            'errors' => Yii::t('zii', 'Invalid request parameters. Check the submitted values.')
                                         ]);
                                         exit;
                                     }
@@ -136,7 +138,8 @@ class sqlInject
                                         'rows'  => [],
                                         'count' => 0,
                                         'sum'   => [],
-                                        'msg'   =>  CHtml::encode($info)
+                                        'success' => false,
+                                        'errors' => Yii::t('zii', 'Invalid request parameters. Check the submitted values.')
                                     ]);
                                     exit;
                                 }
@@ -159,7 +162,8 @@ class sqlInject
                                         'rows'  => [],
                                         'count' => 0,
                                         'sum'   => [],
-                                        'msg'   => CHtml::encode($info)
+                                        'success' => false,
+                                        'errors' => Yii::t('zii', 'Invalid request parameters. Check the submitted values.')
                                     ]);
                                     exit;
                                 }
@@ -174,7 +178,8 @@ class sqlInject
                                 'rows'  => [],
                                 'count' => 0,
                                 'sum'   => [],
-                                'msg'   => CHtml::encode($info)
+                                'success' => false,
+                                'errors' => Yii::t('zii', 'Invalid request parameters. Check the submitted values.')
                             ]);
                             exit;
                         }
@@ -186,7 +191,8 @@ class sqlInject
                                 'rows'  => [],
                                 'count' => 0,
                                 'sum'   => [],
-                                'msg'   => CHtml::encode($info)
+                                'success' => false,
+                                'errors' => Yii::t('zii', 'Invalid request parameters. Check the submitted values.')
                             ]);
                             exit;
                         }
@@ -206,7 +212,8 @@ class sqlInject
                         'rows'  => [],
                         'count' => 0,
                         'sum'   => [],
-                        'msg'   => CHtml::encode($info)
+                        'success' => false,
+                        'errors' => Yii::t('zii', 'Invalid request parameters. Check the submitted values.')
                     ]);
                     exit;
                 }
@@ -218,7 +225,8 @@ class sqlInject
                         'rows'  => [],
                         'count' => 0,
                         'sum'   => [],
-                        'msg'   => CHtml::encode($info)
+                        'success' => false,
+                        'errors' => Yii::t('zii', 'Invalid request parameters. Check the submitted values.')
                     ]);
                     exit;
                 }

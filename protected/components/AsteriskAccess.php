@@ -10,6 +10,8 @@
 class AsteriskAccess
 {
 
+    public $nameSuccess = 'success';
+
     private $asmanager;
     private static $instance;
     private static $config;
@@ -102,11 +104,15 @@ class AsteriskAccess
 
         $rows = Util::getColumnsFromModel($model);
 
-        $fd = fopen($file, "w");
-        file_put_contents($file, '');
+        $fd = @fopen($file, "w");
 
         if (! $fd) {
-            echo "</br><center><b><font color=red>" . gettext("Could not open buddy file") . $file . "</font></b></center>";
+            $message = Yii::t('zii', 'Unable to write Asterisk configuration file "{file}".', ['{file}' => $file]);
+            echo json_encode([
+                $this->nameSuccess => false,
+                'errors' => $message,
+            ]);
+            exit;
         } else {
             foreach ($rows as $key => $data) {
                 $line         = "\n\n[" . $data['name'] . "]\n";
@@ -266,7 +272,8 @@ class AsteriskAccess
 
         $peerNames = [];
         foreach ($rows as $key => $data) {
-            AsteriskConfigValue::assertRecord($data, 'asteriskRecord.' . $key);
+            $data = AsteriskConfigValue::assertRecord($data, 'asteriskRecord.' . $key);
+            $rows[$key] = $data;
             if ($head_field == 'trunkcode') {
                 $names = [$data[$head_field]];
                 if (strtolower(trim((string) $data['host'])) === 'dynamic') {
@@ -274,26 +281,44 @@ class AsteriskAccess
                         || ! preg_match('/\A[a-zA-Z0-9_.-]+\z/', $data['user'])
                         || strlen($data['secret']) === 0
                     ) {
-                        throw new InvalidArgumentException('Dynamic trunks require a valid SIP username and password.');
+                        echo json_encode([
+                            $this->nameSuccess => false,
+                            'errors' => Yii::t('zii', 'Dynamic trunk "{trunk}" requires a valid SIP username and a non-empty password.', [
+                                '{trunk}' => $data[$head_field],
+                            ]),
+                        ]);
+                        exit;
                     }
                     $names[] = $data['user'];
                 }
                 foreach ($names as $name) {
                     $name = strtolower($name);
                     if (isset($peerNames[$name]) && $peerNames[$name] !== $key) {
-                        throw new InvalidArgumentException('SIP endpoint name is used by more than one trunk.');
+                        echo json_encode([
+                            $this->nameSuccess => false,
+                            'errors' => Yii::t('zii', 'SIP name "{name}" is used by trunks "{trunk}" and "{otherTrunk}". Check their names and SIP usernames.', [
+                                '{name}' => $name,
+                                '{trunk}' => $data[$head_field],
+                                '{otherTrunk}' => $rows[$peerNames[$name]][$head_field],
+                            ]),
+                        ]);
+                        exit;
                     }
                     $peerNames[$name] = $key;
                 }
             }
         }
 
-        $fd = fopen($file, "w");
-        file_put_contents($file, '');
+        $fd = @fopen($file, "w");
 
 
         if (! $fd) {
-            echo "</br><center><b><font color=red>" . gettext("Could not open buddy file") . $file . "</font></b></center>";
+            $message = Yii::t('zii', 'Unable to write Asterisk configuration file "{file}".', ['{file}' => $file]);
+            echo json_encode([
+                $this->nameSuccess => false,
+                'errors' => $message,
+            ]);
+            exit;
         } else {
             foreach ($rows as $key => $data) {
                 $line         = "\n";
@@ -1121,10 +1146,10 @@ class AsteriskAccess
         $modelSip = Sip::model()->findAll();
 
         foreach ($modelSip as $sip) {
-            AsteriskConfigValue::assertRecord(
+            $sip->setAttributes(AsteriskConfigValue::assertRecord(
                 $sip->attributes,
                 'sip.' . (isset($sip->id) ? $sip->id : 'new')
-            );
+            ), false);
         }
 
         $pjsipFile     = '/etc/asterisk/pjsip_magnus_user.conf';
@@ -1363,10 +1388,10 @@ class AsteriskAccess
         $modelSip = Sip::model()->findAll();
 
         foreach ($modelSip as $sip) {
-            AsteriskConfigValue::assertRecord(
+            $sip->setAttributes(AsteriskConfigValue::assertRecord(
                 $sip->attributes,
                 'sip.' . (isset($sip->id) ? $sip->id : 'new')
-            );
+            ), false);
         }
 
         $buddyfile = '/etc/asterisk/pjsip_magnus_user.conf';

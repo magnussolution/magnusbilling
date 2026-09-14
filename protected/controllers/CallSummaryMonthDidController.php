@@ -41,7 +41,7 @@ class CallSummaryMonthDidController extends Controller
         foreach ($records as $key => $value) {
             $records[0]->sumsessiontime += $value['sessiontime'] / 60;
             $records[0]->sumsessionbill += $value['sessionbill'];
-            $records[0]->sumaloc_all_calls += $value['sessiontime'] / $value['nbcall'];
+            $records[0]->sumaloc_all_calls += $value['sessiontime'] / ($value['nbcall'] == 0 ? 1 :  $value['nbcall']);
             $records[0]->sumnbcall += $value['nbcall'];
         }
 

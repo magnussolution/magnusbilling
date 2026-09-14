@@ -83,14 +83,14 @@ class TrunkController extends Controller
     public function actionValidateRegister()
     {
         if (! Yii::app()->request->isPostRequest) {
-            throw new CHttpException(405, 'POST required');
+            $this->sendError('Method not allowed.', [], 405);
         }
         $values = $this->getAttributesRequest();
         $id = isset($values['id']) ? (int) $values['id'] : 0;
         $this->checkActionAccess([], 'trunk', $id ? 'canUpdate' : 'canCreate');
         $model = $id ? Trunk::model()->findByPk($id) : new Trunk;
         if (! $model) {
-            throw new CHttpException(404, Yii::t('zii', 'Record not found.'));
+            $this->sendError('Invalid or unauthorized record.', [], 404);
         }
         foreach (['user', 'secret', 'host', 'register_string'] as $attribute) {
             if (isset($values[$attribute]) && is_scalar($values[$attribute])) {

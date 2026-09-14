@@ -26,7 +26,7 @@ class PlayAudioController extends Controller
     public function actionIndex()
     {
         if (!isset($_GET['audio'])) {
-            exit('<center><br>' . Yii::t('zii', 'File not found') . '</center>');
+            $this->sendError('Requested file not found.');
         }
 
         $audio = trim((string) $_GET['audio']);
@@ -42,7 +42,7 @@ class PlayAudioController extends Controller
 
 
         if (!preg_match($pattern, $audio, $matches)) {
-            exit('Invalid audio file 1' . $audio);
+            $this->sendError('Invalid audio file.');
         }
 
         // Normaliza nome (remove qualquer path, por segurança extra)
@@ -55,7 +55,7 @@ class PlayAudioController extends Controller
         if ($id > 0 && $prefix === 'idCampaign_') {
             $modelCampaign = Campaign::model()->findByPk($id);
             if (!isset($modelCampaign->id)) {
-                exit('Invalid audio file 2 ');
+                $this->sendError('Invalid audio file.');
             }
         }
 
@@ -63,7 +63,7 @@ class PlayAudioController extends Controller
         if ($id > 0 && strpos($prefix, 'idIvr') === 0) {
             $modelIvr = Ivr::model()->findByPk($id);
             if (!isset($modelIvr->id)) {
-                exit('Invalid audio file 3');
+                $this->sendError('Invalid audio file.');
             }
         }
 
@@ -73,7 +73,7 @@ class PlayAudioController extends Controller
             . $audio;
 
         if (!file_exists($file_name)) {
-            exit('<center><br>' . Yii::t('zii', 'File not found') . '</center>');
+            $this->sendError('Requested file not found.');
         }
 
         $ext = strtolower(pathinfo($audio, PATHINFO_EXTENSION));
@@ -99,8 +99,8 @@ class PlayAudioController extends Controller
             // remove espaços do caminho de origem (como já fazia)
             $sourcePath = preg_replace('/\s+/', '', $file_name);
 
-            if (!copy($sourcePath, $destPath)) {
-                exit('Error copying audio file');
+            if (!@copy($sourcePath, $destPath)) {
+                $this->sendError('Unable to save the requested file.');
             }
 
             $audioHtml = htmlspecialchars($audio, ENT_QUOTES, 'UTF-8');

@@ -7,21 +7,16 @@ class AsteriskConfigValue
 {
     public static function assertSingleLine($value, $field = 'value')
     {
-        $value = (string) $value;
-        if (preg_match('/[\r\n\x00]/', $value)) {
-            throw new InvalidArgumentException(
-                'Invalid control character in Asterisk configuration field: ' . $field
-            );
-        }
-        return $value;
+        return str_replace(["\r", "\n", "\x00"], '', (string) $value);
     }
 
     public static function assertRecord($values, $context = 'record')
     {
         foreach ($values as $field => $value) {
-            if ($value === null || is_scalar($value)) {
-                self::assertSingleLine($value, $context . '.' . $field);
+            if (is_string($value)) {
+                $values[$field] = self::assertSingleLine($value, $context . '.' . $field);
             }
         }
+        return $values;
     }
 }

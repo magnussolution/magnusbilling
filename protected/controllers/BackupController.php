@@ -83,7 +83,7 @@ class BackupController extends Controller
         }
 
         if (!isset($_GET['file'])) {
-            exit('File not defined');
+            $this->sendError('Invalid backup file or date.');
         }
 
         // Normalize
@@ -93,11 +93,11 @@ class BackupController extends Controller
         $pattern = '/^backup_voip_softswitch\.(\d{2})-(\d{2})-(\d{4})\.tgz$/';
 
         if (!preg_match($pattern, $file, $m)) {
-            exit('Invalid file name');
+            $this->sendError('Invalid backup file or date.');
         }
         // Optional: validate date real
         if (!checkdate((int)$m[2], (int)$m[1], (int)$m[3])) {
-            exit('Invalid date');
+            $this->sendError('Invalid backup file or date.');
         }
 
         // Build path
@@ -109,11 +109,11 @@ class BackupController extends Controller
         $realFile = realpath($fullPath);
 
         if ($realBase === false || $realFile === false || strpos($realFile, $realBase) !== 0) {
-            exit('Invalid path');
+            $this->sendError('Invalid backup file or date.');
         }
 
         if (!is_file($realFile) || !is_readable($realFile)) {
-            exit('File not found');
+            $this->sendError('Requested file not found.');
         }
 
         // Send file safely

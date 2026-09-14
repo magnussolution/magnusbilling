@@ -83,6 +83,23 @@ class BaseController extends CController
     public $fieldsNotUpdateAgent     = [];
     public $config;
     public $addInCondition = [];
+    /** Emit the error envelope consumed by forms, grids and AJAX actions. */
+    public function sendError($message, $params = [], $statusCode = null)
+    {
+        $message = Yii::t('zii', $message, $params);
+        if (!headers_sent()) {
+            header('Content-Type: application/json; charset=utf-8');
+            if ($statusCode !== null) {
+                http_response_code($statusCode);
+            }
+        }
+        echo json_encode([
+            $this->nameSuccess => false,
+            'errors' => $message,
+        ]);
+        Yii::app()->end();
+    }
+
     public function init()
     {
 
@@ -137,7 +154,7 @@ class BaseController extends CController
 
         if (! Yii::app()->session['id_user']) {
             if (! $this->authorizedNoSession($this->addAuthorizedNoSession)) {
-                exit("Access denied to All action in All modules");
+                $this->sendError('Access denied.');
             }
         }
 
@@ -181,7 +198,7 @@ class BaseController extends CController
         ) {
             Yii::app()->session->clear();
             Yii::app()->session->destroy();
-            exit("Access denied to All action in All modules");
+            $this->sendError('Access denied.');
         }
 
         if (isset($_GET['display_errors'])) {
@@ -333,7 +350,7 @@ class BaseController extends CController
         if (isset($_GET[$this->nameParamSort]) && $_GET[$this->nameParamSort] != '[]') {
             $this->sort = $_GET[$this->nameParamSort];
             if ($this->sort && !preg_match('/^[a-zA-Z0-9_\.]+( (ASC|DESC))?(,\s*[a-zA-Z0-9_\.]+( (ASC|DESC))?)*$/i', trim($this->sort))) {
-                exit('sort ' . $this->sort);
+                $this->sendError('Invalid sorting parameters.');
             }
         } else {
             $this->sort = $this->attributeOrder;
@@ -346,7 +363,7 @@ class BaseController extends CController
     {
         $dir         = isset($_GET[$this->nameParamDir]) ? strtoupper(trim($_GET[$this->nameParamDir])) : null;
         if ($dir && !in_array(strtoupper($dir), ['ASC', 'DESC'])) {
-            exit('dir ' . $dir);
+            $this->sendError('Invalid sorting parameters.');
         }
         $this->order =  ! $dir || (strstr($this->sort, ',') !== false)
             ? $this->sort
@@ -565,12 +582,12 @@ class BaseController extends CController
         if ($action == 'canUpdate' || $action == 'canCreate') {
             if (! AccessManager::getInstance($module)->$action()) {
                 header('HTTP/1.0 401 Unauthorized');
-                die("Access denied to $action in module: $module");
+                $this->sendError('Access denied for module "{module}".', ['{module}' => $module]);
             }
         } elseif ($action == 'canRead') {
             if (! AccessManager::getInstance($module)->canRead()) {
                 header('HTTP/1.0 401 Unauthorized');
-                die("Access denied to $action in module:" . $module);
+                $this->sendError('Access denied for module "{module}".', ['{module}' => $module]);
             }
         }
     }
@@ -665,16 +682,16 @@ class BaseController extends CController
                 $modelCheck = $this->abstractModel->findByPk((int) $values[$namePk]);
 
                 if ($modelCheck->idPhonebook->idUser->id != Yii::app()->session['id_user']) {
-                    exit('try edit invalid id');
+                    $this->sendError('Invalid or unauthorized record.');
                 }
             } elseif (! $this->isNewRecord && Yii::app()->session['isClient']) {
                 if ($module == 'user') {
                     if ($model->id != Yii::app()->session['id_user']) {
-                        exit('try edit invalid id');
+                        $this->sendError('Invalid or unauthorized record.');
                     }
                 } else {
                     if ($model->id_user != Yii::app()->session['id_user']) {
-                        exit('try edit invalid id');
+                        $this->sendError('Invalid or unauthorized record.');
                     }
                 }
             } else if (Yii::app()->session['isAgent']) {
@@ -902,7 +919,7 @@ class BaseController extends CController
 
         if (! AccessManager::getInstance($this->instanceModel->getModule())->canRead()) {
             header('HTTP/1.0 401 Unauthorized');
-            die("Access denied to read in module:" . $this->instanceModel->getModule());
+            $this->sendError('Access denied for module "{module}".', ['{module}' => $this->instanceModel ? $this->instanceModel->getModule() : $this->controllerName]);
         }
 
         $orientation = $_GET['orientation'];
@@ -977,7 +994,7 @@ class BaseController extends CController
 
         if ($this->instanceModel === null || ! AccessManager::getInstance($this->instanceModel->getModule())->canRead()) {
             header('HTTP/1.0 401 Unauthorized');
-            die("Access denied to read in module:" . $this->instanceModel->getModule());
+            $this->sendError('Access denied for module "{module}".', ['{module}' => $this->instanceModel ? $this->instanceModel->getModule() : $this->controllerName]);
         }
 
 
@@ -1107,7 +1124,7 @@ class BaseController extends CController
     {
         if (! AccessManager::getInstance($this->instanceModel->getModule())->canDelete()) {
             header('HTTP/1.0 401 Unauthorized');
-            die("Access denied to delete in module:" . $this->instanceModel->getModule());
+            $this->sendError('Access denied for module "{module}".', ['{module}' => $this->instanceModel ? $this->instanceModel->getModule() : $this->controllerName]);
         }
 
         # recebe os parametros da exclusao
@@ -2201,7 +2218,7 @@ class BaseController extends CController
 
         if (! AccessManager::getInstance($module)->canCreate()) {
             header('HTTP/1.0 401 Unauthorized');
-            die("Access denied to save in module: $module");
+            $this->sendError('Access denied for module "{module}".', ['{module}' => $module]);
             exit;
         }
 
@@ -2279,11 +2296,11 @@ class BaseController extends CController
                 if (preg_match('/pkg_plan|pkg_user/', $this->abstractModel->tableName())) {
                     if (isset($modelUser->id) && $modelUser->id != Yii::app()->session['id_user']) {
                         Yii::log('try create with id_user invalid', 'error');
-                        exit('try create with id_user invalid id_user = ' . $values['id_user'] . ' modedel->id' . $modelUser->id);
+                        $this->sendError('Invalid or unauthorized record.');
                     }
                 } else if (isset($modelUser->id) && $modelUser->id_user != Yii::app()->session['id_user']) {
                     Yii::log('try create with id_user invalid', 'error');
-                    exit('try create with id_user invalid id_user = ' . $values['id_user']);
+                    $this->sendError('Invalid or unauthorized record.');
                 }
             }
         } else {
@@ -2309,7 +2326,7 @@ class BaseController extends CController
             }
 
             if ($id_user != Yii::app()->session['id_user']) {
-                exit('try edit invalid id');
+                $this->sendError('Invalid or unauthorized record.');
             }
         }
     }

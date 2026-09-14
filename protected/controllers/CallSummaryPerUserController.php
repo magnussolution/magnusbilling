@@ -60,7 +60,7 @@ class CallSummaryPerUserController extends Controller
             $records[0]->sumsessionbill += $value['sessionbill'];
             $records[0]->sumagent_bill += $value['agent_bill'];
             $records[0]->sumbuycost += $value['buycost'];
-            $records[0]->sumaloc_all_calls += $value['sessiontime'] / $value['nbcall'];
+            $records[0]->sumaloc_all_calls += $value['sessiontime'] / ($value['nbcall'] == 0 ? 1 :  $value['nbcall']);
             $records[0]->sumnbcall += $value['nbcall'];
             $records[0]->sumnbcallfail += $value['nbcall_fail'];
         }

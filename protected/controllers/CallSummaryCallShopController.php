@@ -97,7 +97,7 @@ class CallSummaryCallShopController extends Controller
             $records[0]->sumbuycost += $value['buycost'];
 
             $records[0]->sumlucro += $value['price'] - $value['buycost'];
-            $records[0]->sumaloc_all_calls += $value['sessiontime'] / $value['nbcall'];
+            $records[0]->sumaloc_all_calls += $value['sessiontime'] / ($value['nbcall'] == 0 ? 1 :  $value['nbcall']);
 
             $records[0]->sumnbcall += $value['nbcall'];
         }

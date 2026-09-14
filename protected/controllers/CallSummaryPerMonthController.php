@@ -48,7 +48,7 @@ class CallSummaryPerMonthController extends Controller
             $records[0]->sumsessionbill += Yii::app()->session['isAgent'] ? $value['agent_bill'] : $value['sessionbill'];
             $records[0]->sumbuycost += Yii::app()->session['isAgent'] ? $value['sessionbill'] : $value['buycost'];
             $records[0]->sumlucro += $value['sessionbill'] - $value['buycost'];
-            $records[0]->sumaloc_all_calls += $value['sessiontime'] / $value['nbcall'];
+            $records[0]->sumaloc_all_calls += $value['sessiontime'] / ($value['nbcall'] == 0 ? 1 :  $value['nbcall']);
             $records[0]->sumnbcall += $value['nbcall'];
         }
 

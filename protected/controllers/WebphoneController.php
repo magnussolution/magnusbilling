@@ -26,11 +26,11 @@ class WebphoneController extends CController
         header('Content-Type: application/json; charset=utf-8');
         header('Cache-Control: no-store');
         if (empty(Yii::app()->session['id_user']) || !AccessManager::getInstance('sip')->canRead()) {
-            throw new CHttpException(403, Yii::t('zii', 'Access denied.'));
+            $this->sendError('Access denied.', [], 403);
         }
         if (Yii::app()->request->requestType !== 'GET') {
             header('Allow: GET');
-            throw new CHttpException(405, Yii::t('zii', 'Method not allowed.'));
+            $this->sendError('Method not allowed.', [], 405);
         }
         try {
             $result = AsteriskAccess::instance()->webphoneReadiness();

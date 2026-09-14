@@ -26,7 +26,7 @@ class CallOnlineChartController extends Controller
     public function init()
     {
         if ( ! Yii::app()->session['id_user']) {
-            die("Access denied to save in module: CallOnlineChart");
+            $this->sendError('Access denied for module "{module}".', ['{module}' => 'CallOnlineChart']);
             exit;
         }
 

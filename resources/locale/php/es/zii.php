@@ -22,6 +22,20 @@
  * Edit /resources/locale/es.js
  */
 return array(
+    'Invalid request parameters. Check the submitted values.' => 'Parámetros de solicitud no válidos. Revise los valores enviados.',
+    'Access denied for module "{module}".' => 'Acceso denegado al módulo "{module}".',
+    'Invalid or unauthorized record.' => 'Registro no válido o no autorizado.',
+    'Invalid sorting parameters.' => 'Parámetros de ordenación no válidos.',
+    'Invalid call filter. Check its field and value.' => 'Filtro de llamadas no válido. Revise el campo y el valor.',
+    'Apply filters before downloading multiple recordings.' => 'Aplique filtros antes de descargar varias grabaciones.',
+    'Unable to download the requested file.' => 'No se pudo descargar el archivo solicitado.',
+    'Unable to save the requested file.' => 'No se pudo guardar el archivo solicitado.',
+    'Invalid backup file or date.' => 'Archivo o fecha de copia de seguridad no válido.',
+    'Requested file not found.' => 'No se encontró el archivo solicitado.',
+    'Invalid audio file.' => 'Archivo de audio no válido.',
+    'Unable to write Asterisk configuration file "{file}".' => 'No se pudo escribir el archivo de configuración de Asterisk "{file}".',
+    'Dynamic trunk "{trunk}" requires a valid SIP username and a non-empty password.' => 'El troncal dinámico "{trunk}" requiere un usuario SIP válido y una contraseña no vacía.',
+    'SIP name "{name}" is used by trunks "{trunk}" and "{otherTrunk}". Check their names and SIP usernames.' => 'El nombre SIP "{name}" está en uso por los troncales "{trunk}" y "{otherTrunk}". Revise sus nombres y usuarios SIP.',
     'Phone' => 'Teléfono',
     'Number or SIP address' => 'Número o dirección SIP',
     'Enter destination' => 'Ingrese el destino',

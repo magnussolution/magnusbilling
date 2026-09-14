@@ -27,7 +27,7 @@ class FirewallController extends Controller
     {
         if (! AccessManager::getInstance($this->instanceModel->getModule())->canDelete()) {
             header('HTTP/1.0 401 Unauthorized');
-            die('Access denied to unban in module:' . $this->instanceModel->getModule());
+            $this->sendError('Access denied for module "{module}".', ['{module}' => $this->instanceModel->getModule()]);
         }
 
         $values = $this->getAttributesRequest();

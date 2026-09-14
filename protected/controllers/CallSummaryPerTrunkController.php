@@ -59,7 +59,7 @@ class CallSummaryPerTrunkController extends Controller
             $records[0]->sumsessiontime += $value['sessiontime'] / 60;
             $records[0]->sumsessionbill += $value['sessionbill'];
             $records[0]->sumbuycost += $value['buycost'];
-            $records[0]->sumaloc_all_calls += $value['sessiontime'] / $value['nbcall'];
+            $records[0]->sumaloc_all_calls += $value['sessiontime'] / ($value['nbcall'] == 0 ? 1 :  $value['nbcall']);
             $records[0]->sumnbcall += $value['nbcall'];
             $records[0]->sumnbcallfail += $value['nbcall_fail'];
         }
@@ -123,7 +123,7 @@ class CallSummaryPerTrunkController extends Controller
 
         if (! AccessManager::getInstance($this->instanceModel->getModule())->canRead()) {
             header('HTTP/1.0 401 Unauthorized');
-            die("Access denied to read in module:" . $this->instanceModel->getModule());
+            $this->sendError('Access denied for module "{module}".', ['{module}' => $this->instanceModel->getModule()]);
         }
 
         if (! isset(Yii::app()->session['id_user'])) {

@@ -155,7 +155,7 @@ class CallArchiveController extends Controller
             ]));
 
             if (! isset($modelCall->id)) {
-                echo yii::t('zii', 'Audio no found');
+                $this->sendError('Requested file not found.');
                 exit;
             }
 
@@ -196,7 +196,7 @@ class CallArchiveController extends Controller
 
                     header('Location: ' . $url);
                 } else {
-                    echo yii::t('zii', 'Audio no found');
+                    $this->sendError('Requested file not found.');
                 }
             }
             exit;

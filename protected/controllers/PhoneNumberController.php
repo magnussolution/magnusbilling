@@ -90,7 +90,7 @@ class PhoneNumberController extends Controller
 
         if ( ! AccessManager::getInstance($this->instanceModel->getModule())->canRead()) {
             header('HTTP/1.0 401 Unauthorized');
-            die("Access denied to read in module:" . $this->instanceModel->getModule());
+            $this->sendError('Access denied for module "{module}".', ['{module}' => $this->instanceModel->getModule()]);
         }
 
         if ( ! isset(Yii::app()->session['id_user'])) {
@@ -213,7 +213,7 @@ class PhoneNumberController extends Controller
 
         if ( ! AccessManager::getInstance($module)->canUpdate()) {
             header('HTTP/1.0 401 Unauthorized');
-            die("Access denied to save in module: $module");
+            $this->sendError('Access denied for module "{module}".', ['{module}' => $module]);
         }
 
         # recebe os parametros para o filtro

@@ -23,13 +23,8 @@ class Model extends CActiveRecord
 
     public function validateAsteriskConfigValue($attribute, $params)
     {
-        try {
-            AsteriskConfigValue::assertSingleLine($this->{$attribute}, $attribute);
-        } catch (InvalidArgumentException $e) {
-            $this->addError(
-                $attribute,
-                Yii::t('zii', 'The field contains invalid control characters.')
-            );
+        if (is_string($this->{$attribute})) {
+            $this->{$attribute} = AsteriskConfigValue::assertSingleLine($this->{$attribute}, $attribute);
         }
     }
 

@@ -14,6 +14,20 @@
  * 2026
  */
 Locale.load({
+    "Invalid request parameters. Check the submitted values.": "Ungültige Anfrageparameter. Prüfen Sie die übermittelten Werte.",
+    "Access denied for module \"{module}\".": "Zugriff auf das Modul \"{module}\" verweigert.",
+    "Invalid or unauthorized record.": "Ungültiger Datensatz oder fehlende Zugriffsberechtigung.",
+    "Invalid sorting parameters.": "Ungültige Sortierparameter.",
+    "Invalid call filter. Check its field and value.": "Ungültiger Anruffilter. Prüfen Sie Feld und Wert.",
+    "Apply filters before downloading multiple recordings.": "Wenden Sie Filter an, bevor Sie mehrere Aufnahmen herunterladen.",
+    "Unable to download the requested file.": "Die angeforderte Datei konnte nicht heruntergeladen werden.",
+    "Unable to save the requested file.": "Die angeforderte Datei konnte nicht gespeichert werden.",
+    "Invalid backup file or date.": "Ungültige Sicherungsdatei oder ungültiges Datum.",
+    "Requested file not found.": "Angeforderte Datei nicht gefunden.",
+    "Invalid audio file.": "Ungültige Audiodatei.",
+    "Unable to write Asterisk configuration file \"{file}\".": "Die Asterisk-Konfigurationsdatei \"{file}\" konnte nicht geschrieben werden.",
+    "Dynamic trunk \"{trunk}\" requires a valid SIP username and a non-empty password.": "Der dynamische Trunk \"{trunk}\" erfordert einen gültigen SIP-Benutzernamen und ein nicht leeres Passwort.",
+    "SIP name \"{name}\" is used by trunks \"{trunk}\" and \"{otherTrunk}\". Check their names and SIP usernames.": "Der SIP-Name \"{name}\" wird von den Trunks \"{trunk}\" und \"{otherTrunk}\" verwendet. Prüfen Sie deren Namen und SIP-Benutzernamen.",
     "Phone": "Telefon",
     "Number or SIP address": "Nummer oder SIP-Adresse",
     "Enter destination": "Ziel eingeben",

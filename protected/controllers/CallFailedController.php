@@ -142,7 +142,7 @@
                 $field = isset($f->field) ? $f->field : null;
 
                 if (! $this->isAllowedCallFailedFilterField($field)) {
-                    throw new CHttpException(400, Yii::t('zii', 'Invalid filter field.'));
+                    $this->sendError('Invalid call filter. Check its field and value.', [], 400);
                 }
 
                 if ($this->actionName != 'destroy' && ! preg_match("/^id[A-Z]/", $field)) {

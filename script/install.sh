@@ -730,6 +730,8 @@ Disallow: /mbilling/
 
 systemctl daemon-reload
 
+systemctl enable --now cron
+
 install_fail2ban()
 {
     apt_install fail2ban

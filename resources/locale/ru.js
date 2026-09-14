@@ -14,6 +14,20 @@
  * 2026
  */
 Locale.load({
+    "Invalid request parameters. Check the submitted values.": "Недопустимые параметры запроса. Проверьте отправленные значения.",
+    "Access denied for module \"{module}\".": "Доступ к модулю \"{module}\" запрещён.",
+    "Invalid or unauthorized record.": "Недопустимая запись или нет прав доступа.",
+    "Invalid sorting parameters.": "Недопустимые параметры сортировки.",
+    "Invalid call filter. Check its field and value.": "Недопустимый фильтр звонков. Проверьте поле и значение.",
+    "Apply filters before downloading multiple recordings.": "Примените фильтры перед скачиванием нескольких записей.",
+    "Unable to download the requested file.": "Не удалось скачать запрошенный файл.",
+    "Unable to save the requested file.": "Не удалось сохранить запрошенный файл.",
+    "Invalid backup file or date.": "Недопустимый файл или дата резервной копии.",
+    "Requested file not found.": "Запрошенный файл не найден.",
+    "Invalid audio file.": "Недопустимый аудиофайл.",
+    "Unable to write Asterisk configuration file \"{file}\".": "Не удалось записать файл конфигурации Asterisk \"{file}\".",
+    "Dynamic trunk \"{trunk}\" requires a valid SIP username and a non-empty password.": "Для динамического транка \"{trunk}\" требуются допустимое имя пользователя SIP и непустой пароль.",
+    "SIP name \"{name}\" is used by trunks \"{trunk}\" and \"{otherTrunk}\". Check their names and SIP usernames.": "Имя SIP \"{name}\" используется транками \"{trunk}\" и \"{otherTrunk}\". Проверьте их имена и имена пользователей SIP.",
     "Phone": "Телефон",
     "Number or SIP address": "Номер или SIP-адрес",
     "Enter destination": "Введите номер назначения",

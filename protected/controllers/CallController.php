@@ -156,7 +156,7 @@ class CallController extends Controller
         if (count($ids) == 1) {
             $_GET['id'] = $ids[0];
         } else if (count($ids) > 1) {
-            exit('<center><font color=red>To download more than 1 record, please use filters.</font></center>');
+            $this->sendError('Apply filters before downloading multiple recordings.');
         }
 
         if (isset($_GET['id'])) {
@@ -173,7 +173,7 @@ class CallController extends Controller
             ]));
 
             if (! isset($modelCall->id)) {
-                echo yii::t('zii', 'Audio no found');
+                $this->sendError('Requested file not found.');
                 exit;
             }
 
@@ -189,17 +189,17 @@ class CallController extends Controller
                 $host = $modelCall->idServer->public_ip > 0 ? $modelCall->idServer->public_ip : $modelCall->idServer->host;
                 $url  = 'http://' . $host . '/mbilling/record.php?id=' . $uniqueid . '&u=' . $modelCall->idUser->username;
 
-                $fileContent = file_get_contents($url);
+                $fileContent = @file_get_contents($url);
 
                 if ($fileContent === false) {
-                    die('Failed to download the file.');
+                    $this->sendError('Unable to download the requested file.');
                 }
                 // Save the content in the specified directory
-                $savedSuccessfully = file_put_contents("/var/www/html/mbilling/tmp/" . trim($uniqueid) . ".gsm", $fileContent);
+                $savedSuccessfully = @file_put_contents("/var/www/html/mbilling/tmp/" . trim($uniqueid) . ".gsm", $fileContent);
 
                 // Check if the file was saved correctly
                 if ($savedSuccessfully === false) {
-                    die('Failed to save the file.');
+                    $this->sendError('Unable to save the requested file.');
                 }
 
                 header("Cache-Control: public");
@@ -253,7 +253,7 @@ class CallController extends Controller
 
                     header('Location: ' . $url);
                 } else {
-                    echo yii::t('zii', 'Audio no found');
+                    $this->sendError('Requested file not found.');
                 }
             }
             exit;
@@ -425,7 +425,7 @@ class CallController extends Controller
 
         if (! AccessManager::getInstance($this->instanceModel->getModule())->canRead()) {
             header('HTTP/1.0 401 Unauthorized');
-            die("Access denied to read in module:" . $this->instanceModel->getModule());
+            $this->sendError('Access denied for module "{module}".', ['{module}' => $this->instanceModel->getModule()]);
         }
 
         if (! isset(Yii::app()->session['id_user'])) {
@@ -603,8 +603,7 @@ class CallController extends Controller
                 switch ($type) {
                     case 'date':
                         if ((bool) strtotime($value) == false) {
-                            echo 'Invalid Filter';
-                            exit;
+                            $this->sendError('Invalid call filter. Check its field and value.');
                         }
 
                         switch ($comparison) {
@@ -623,8 +622,7 @@ class CallController extends Controller
                     case 'string':
 
                         if (strlen($value) > 25) {
-                            echo 'Invalid Filter';
-                            exit;
+                            $this->sendError('Invalid call filter. Check its field and value.');
                         }
 
                         $field = isset($f->caseSensitive) && $f->caseSensitive && ! is_array($field) ? "BINARY $field" : $field;
@@ -706,15 +704,13 @@ class CallController extends Controller
                         break;
                     case 'boolean':
                         if (! is_numeric($value)) {
-                            echo 'Invalid Filter';
-                            exit;
+                            $this->sendError('Invalid call filter. Check its field and value.');
                         }
                         $condition .= " AND $field = " . (int) $value . " ";
                         break;
                     case 'numeric':
                         if (! is_numeric($value)) {
-                            echo 'Invalid Filter';
-                            exit;
+                            $this->sendError('Invalid call filter. Check its field and value.');
                         }
                         switch ($comparison) {
                             case 'eq':
@@ -769,8 +765,7 @@ class CallController extends Controller
                         foreach ($value as $keyIn => $v) {
 
                             if (! is_numeric($v)) {
-                                echo 'Invalid Filter';
-                                exit;
+                                $this->sendError('Invalid call filter. Check its field and value.');
                             }
 
                             array_push($paramsIn, $v);
