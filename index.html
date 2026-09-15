@@ -1,108 +1,146 @@
-<!DOCTYPE HTML>
-<html manifest="">
-
+<!doctype html>
+<html lang="en">
 <head>
-    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
-    <link href="resources/images/logo.ico" id="favicon" rel="shortcut icon" type="image/x-icon" />
-    <title>
-        MagnusBilling
-    </title>
-    <script src="index.php">
-    </script>
-    <script src="locale.js">
-    </script>
-    <script src="icons.js">
-    </script>
-
-    <link href="resources/init.css" rel="stylesheet" />
-    <script>
-
-        if (window.agentTitle) {
-            window.show_signup_button = false;
-            window.document.title = window.agentTitle;
-        }
-
-        if (window.reCaptchaKey.length > 15) {
-            document.write('<script async="" defer="" src="https://www.google.com/recaptcha/api.js?render=' + window.reCaptchaKey + '"> <\/script>');
-        }
-    </script>
+  <!--
+    THESIS: Cloudflex turns IT from a recurring fire drill into quiet operational confidence.
+    OWN-WORLD: Deep navy field, icy white space, cyan signal lines, and precise control-room geometry.
+    STORY: A growing business sees proactive coverage, chooses a clear service level, and books a useful first conversation.
+    FIRST VIEWPORT: Sticky navigation, a left-aligned promise, and a right-side resilience console make the mechanism visible immediately.
+    FORM: A control-room-inspired landing page that refuses the generic SaaS card stack; chosen for trust, scanability, and calm authority.
+  -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cloudflex | Proactive IT support for ambitious teams</title>
+  <meta name="description" content="Cloudflex provides proactive managed IT, cybersecurity, cloud, backup, and help desk support for growing businesses.">
+  <meta name="theme-color" content="#071a33">
+  <meta property="og:title" content="Cloudflex | Proactive IT support for ambitious teams">
+  <meta property="og:description" content="Keep your team moving with a calm, secure, always-on IT partner.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="resources/images/cloudflex-logo.jpg">
+  <link rel="icon" href="resources/images/cloudflex-logo.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="marketing.css">
 </head>
-
-</html>
-<div id="loading-mask">
-</div>
-<div id="loading">
-    <div class="loading-indicator">
-        <div style="text-align:center">
-            <img id="loadinggif" src="resources/images/loading.gif" style="vertical-align:top;" width="90px" />
-            <br />
-            <span id="name-system">
-            </span>
-            <br />
-            <span id="text-msg">
-            </span>
-            <br />
-            <span id="loading-msg">
-            </span>
-        </div>
-    </div>
-</div>
-<script type="text/javascript">
-
-    if (window.agentTitle) {
-        document.getElementById('loadinggif').src = 'resources/images/logo_custom_' + window.agentId + '.png';
-    }
-
-
-    document.getElementById('loading-mask').style.backgroundColor = window.backgroundColor;
-    window.theme = window.theme || 'blue-dark';
-    window.themeApp = window.theme;
-    window.isThemeNeptune = window.theme.indexOf('neptune') !== -1;
-    window.isThemeCrisp = window.theme.indexOf('crisp') !== -1;
-    window.isThemeTriton = window.theme.indexOf('triton') !== -1;
-    window.isThemeDark = window.theme.indexOf('dark') !== -1;
-    window.layout = 1;
-</script>
-<script type="text/javascript">
-
-    if (window.agentTitle) {
-        document.getElementById('name-system').innerHTML = window.agentTitle;
-    } else {
-        document.getElementById('name-system').innerHTML = t('MagnusBilling System');
-    }
-
-    document.getElementById('text-msg').innerHTML = 'Voip System';
-    document.getElementById('loading-msg').innerHTML = t('Starting...');
-</script>
-<script type="text/javascript">
-    var defaultLang = localStorage.getItem('lang') && localStorage.getItem('lang') != 'undefined'
-        ? localStorage.getItem('lang')
-        : localStorage.lang = window.lang;
-
-    var lang = defaultLang,
-        localeApp = 'resources/locale/' + lang + '.js';
-    document.write('<script type="text/javaScript" src="resources/help/help_' + lang + '.js"></' + 'script>');
-    document.write('<script type="text/javaScript" src="' + localeApp + '"></' + 'script>');
-</script>
-<script type="text/javascript">
-    var Ext = Ext || {}; // Ext namespace won't be defined yet...
-    Ext.repoDevMode = true;
-    window.wallpapers = 'resources/images/wallpapers/' + window.wallpaper + '.jpg';
-    window.colorMenu = window.colorMenu;
-
-    Ext.beforeLoad = function (tags) {
-        window.isTablet = !tags.desktop;
-        var theme = window.isTablet ? window.theme_color + '-triton' : window.theme;
-
-        Ext.microloaderTags = tags; Ext.Boot.platformTags = Ext.platformTags || {};
-
-        Ext.manifest = theme; // this name must match a build profile name
-    };
-</script>
-<script data-app="69eb1359-905e-4f4c-9e1e-2841e3ec1bda" id="microloader" src="bootstrap.js" type="text/javascript">
-</script>
-
 <body>
+  <header class="site-header" id="top">
+    <div class="container nav-wrap">
+      <a class="brand" href="#top" aria-label="Cloudflex home">
+        <img src="resources/images/cloudflex-logo.jpg" alt="Cloudflex" width="190" height="60">
+      </a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <nav id="site-nav" class="site-nav" aria-label="Primary navigation">
+        <a href="#services">Services</a>
+        <a href="#plans">Plans</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#faq">FAQ</a>
+        <a class="nav-cta" href="#contact">Book an assessment <span aria-hidden="true">↗</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-grid container">
+        <div class="hero-copy">
+          <p class="signal"><span class="signal-dot"></span> Your calm, capable IT partner</p>
+          <h1>IT that keeps your business <em>in motion.</em></h1>
+          <p class="hero-lede">Proactive support, stronger security, and a team that sees around corners—so your people can do their best work without the tech drama.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#contact">Book a free IT assessment <span aria-hidden="true">↗</span></a>
+            <a class="text-link" href="#services">Explore our coverage <span aria-hidden="true">↓</span></a>
+          </div>
+          <div class="hero-note"><span class="check">✓</span> No pressure. Just a clear view of where you stand.</div>
+        </div>
+        <div class="hero-console" aria-label="Illustration of Cloudflex proactive monitoring">
+          <div class="console-top"><span>CF / COMMAND CENTER</span><span class="live"><i></i> ALL SYSTEMS NOMINAL</span></div>
+          <div class="console-main">
+            <div class="orbit"><div class="orbit-core">CF</div><span class="orbit-ring ring-one"></span><span class="orbit-ring ring-two"></span><span class="orbit-signal signal-one"></span><span class="orbit-signal signal-two"></span></div>
+            <div class="console-status"><span class="status-label">Operational confidence</span><strong>98.7<span>%</span></strong><span class="status-caption">last 30 days <b>↗ 4.2%</b></span></div>
+          </div>
+          <div class="console-feed">
+            <div><span class="feed-icon">↗</span><p><b>Threat monitoring</b><small>Scanning 247 endpoints</small></p><span class="feed-ok">CLEAR</span></div>
+            <div><span class="feed-icon">⌁</span><p><b>Cloud health</b><small>Microsoft 365 services</small></p><span class="feed-ok">CLEAR</span></div>
+            <div><span class="feed-icon">◌</span><p><b>Backup integrity</b><small>Last verified 12 min ago</small></p><span class="feed-ok">CLEAR</span></div>
+          </div>
+          <div class="console-footer"><span>Next review in 04:12:08</span><span class="pulse-bar"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+        </div>
+      </div>
+      <div class="hero-glow"></div>
+    </section>
+
+    <section class="proof-strip" aria-label="Cloudflex at a glance">
+      <div class="container proof-grid">
+        <div><strong>15<span>+</span></strong><span>years solving<br>the hard stuff</span></div>
+        <div><strong>24<span>/7</span></strong><span>watchful support<br>when it matters</span></div>
+        <div><strong>1</strong><span>partner for<br>your whole stack</span></div>
+        <p>Built for teams who<br><b>refuse to slow down.</b></p>
+      </div>
+    </section>
+
+    <section class="section services-section" id="services">
+      <div class="container">
+        <div class="section-intro">
+          <p class="section-kicker">One team. Full coverage.</p>
+          <h2>Everything your technology<br><span>needs to run beautifully.</span></h2>
+          <p>From the everyday questions to the existential “what if?” scenarios, Cloudflex brings the expertise and steady hands to handle it all.</p>
+        </div>
+        <div class="services-grid">
+          <article class="service-feature"><span class="service-icon">✦</span><h3>Managed IT</h3><p>Predictable, proactive support that prevents the tickets you never want to write.</p><a href="#contact">See what's covered <span>↗</span></a></article>
+          <article class="service-card"><span class="service-icon">⌁</span><h3>Cybersecurity</h3><p>Layered protection, human guidance, and monitoring that closes the gaps.</p><a href="#contact">Learn more <span>↗</span></a></article>
+          <article class="service-card"><span class="service-icon">☁</span><h3>Cloud &amp; Microsoft 365</h3><p>Make your cloud environment work harder, safer, and more simply.</p><a href="#contact">Learn more <span>↗</span></a></article>
+          <article class="service-card"><span class="service-icon">↺</span><h3>Backup &amp; recovery</h3><p>Resilient, tested recovery plans that keep a bad day from becoming a crisis.</p><a href="#contact">Learn more <span>↗</span></a></article>
+          <article class="service-card"><span class="service-icon">⌕</span><h3>VoIP &amp; UCaaS</h3><p>Clearer conversations and one connected experience for every location.</p><a href="#contact">Learn more <span>↗</span></a></article>
+          <article class="service-card"><span class="service-icon">⌘</span><h3>Network &amp; infrastructure</h3><p>Fast, dependable foundations designed around how your people actually work.</p><a href="#contact">Learn more <span>↗</span></a></article>
+          <article class="service-card"><span class="service-icon">?</span><h3>Help desk</h3><p>Real humans, fast answers, and context that means you never start from zero.</p><a href="#contact">Learn more <span>↗</span></a></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section plans-section" id="plans">
+      <div class="container">
+        <div class="plans-heading"><div><p class="section-kicker">Straightforward by design</p><h2>Choose your level<br><span>of certainty.</span></h2></div><p>Transparent starting points. No mystery bundles. We’ll tailor the right plan to your team, tools, and goals.</p></div>
+        <div class="plans-grid">
+          <article class="plan"><h3>Essentials</h3><p class="plan-for">For teams ready to get ahead of IT.</p><div class="price"><sup>$</sup>99<span>/user/mo</span></div><a class="button button-outline" href="#contact">Start a conversation <span>↗</span></a><ul><li>Business-hours help desk</li><li>Proactive device monitoring</li><li>Patch &amp; update management</li><li>Microsoft 365 support</li><li>Monthly service review</li></ul></article>
+          <article class="plan plan-featured"><div class="popular">MOST POPULAR</div><h3>Secure</h3><p class="plan-for">For teams putting security first.</p><div class="price"><sup>$</sup>169<span>/user/mo</span></div><a class="button button-primary" href="#contact">Start a conversation <span>↗</span></a><ul><li>Everything in Essentials</li><li>24/7 security monitoring</li><li>Managed endpoint protection</li><li>Security awareness training</li><li>Quarterly risk review</li></ul></article>
+          <article class="plan"><h3>Complete</h3><p class="plan-for">For teams that want the full advantage.</p><div class="price"><sup>$</sup>249<span>/user/mo</span></div><a class="button button-outline" href="#contact">Start a conversation <span>↗</span></a><ul><li>Everything in Secure</li><li>Cloud &amp; network management</li><li>Backup &amp; disaster recovery</li><li>Strategic technology roadmap</li><li>Priority response</li></ul></article>
+        </div>
+        <p class="plan-footnote">All plans start with a conversation about your people, priorities, and current environment. <a href="#contact">Let’s make it specific →</a></p>
+      </div>
+    </section>
+
+    <section class="section process-section" id="how-it-works">
+      <div class="container process-grid">
+        <div class="process-copy"><p class="section-kicker">A better starting point</p><h2>No jargon.<br><span>No hard sell.</span></h2><p>We start by listening. Then we make your technology easier to understand, easier to manage, and more aligned with where you’re going.</p><a class="button button-primary" href="#contact">Meet your future IT team <span>↗</span></a></div>
+        <div class="steps"><div class="step"><span>01</span><div><h3>See the full picture</h3><p>A practical assessment of your environment, risks, and opportunities—without the scare tactics.</p></div></div><div class="step"><span>02</span><div><h3>Get a clear game plan</h3><p>We turn findings into priorities, timelines, and an investment you can actually plan around.</p></div></div><div class="step"><span>03</span><div><h3>Feel the difference</h3><p>We take ownership, keep improving, and stay close enough to spot the next thing early.</p></div></div></div>
+      </div>
+    </section>
+
+    <section class="security-band">
+      <div class="container security-grid"><div class="shield-mark" aria-hidden="true">✦</div><div><p class="section-kicker">Confidence, built in</p><h2>Security should feel like<br><span>an advantage—not a worry.</span></h2></div><p>We pair practical controls with plain-English guidance, helping you protect your business and build habits that last. Ask us about your security baseline, compliance readiness, or next best step.</p><a class="text-link light-link" href="#contact">Talk security with us <span>↗</span></a></div>
+    </section>
+
+    <section class="section testimonial-section">
+      <div class="container testimonial-grid"><div><p class="section-kicker">The Cloudflex difference</p><h2>“It feels like<br><span>someone’s got it.”</span></h2></div><figure><blockquote>“Cloudflex took the mystery out of our IT. We went from reacting to every little issue to having a plan we trust. Our team gets quick answers, and I get to stop worrying about what I might be missing.”</blockquote><figcaption><span class="avatar">JM</span><span><strong>Jordan M.</strong><small>Operations lead, professional services</small></span></figcaption></figure></div>
+    </section>
+
+    <section class="section faq-section" id="faq">
+      <div class="container faq-grid"><div><p class="section-kicker">Questions, answered</p><h2>Good to know.</h2><p>Still curious? That’s a good sign. We’ll give you a straight answer.</p><a href="#contact" class="text-link">Ask us anything <span>↗</span></a></div><div class="faq-list">
+        <details open><summary>What does a managed IT partner actually do? <span>+</span></summary><p>We take responsibility for the health, security, and day-to-day support of your technology. That means proactive monitoring and maintenance, responsive help desk support, and a plan for the bigger picture—not just fixing things when they break.</p></details>
+        <details><summary>Do you work with businesses our size? <span>+</span></summary><p>Cloudflex is built for growing teams that need enterprise-grade thinking without an enterprise-sized IT department. We’ll recommend the right level of coverage for your people and environment.</p></details>
+        <details><summary>Can you work with our existing tools? <span>+</span></summary><p>Absolutely. We start with what you have, make it safer and more reliable, and only recommend change where it creates a clear advantage.</p></details>
+        <details><summary>What happens in the free assessment? <span>+</span></summary><p>We’ll ask about your business, listen to what’s frustrating, and review the shape of your current setup. You’ll leave with useful observations and clear next steps, whether or not we work together.</p></details>
+      </div></div>
+    </section>
+
+    <section class="contact-section" id="contact">
+      <div class="container contact-grid"><div class="contact-copy"><p class="section-kicker">Let’s make IT a strength</p><h2>Ready for a<br><em>better baseline?</em></h2><p>Tell us a little about your world. We’ll get back to you within one business day to book a relaxed, useful first conversation.</p><div class="contact-details"><a href="mailto:hello@cloudflex.ca">hello@cloudflex.ca <span>↗</span></a><span>Serving teams across Canada</span></div></div>
+        <form class="contact-form" id="assessment-form"><div class="form-row"><label for="name">Your name<input id="name" name="name" type="text" autocomplete="name" placeholder="Jane Smith" required></label><label for="email">Work email<input id="email" name="email" type="email" autocomplete="email" placeholder="jane@company.com" required></label></div><label for="company">Company name<input id="company" name="company" type="text" autocomplete="organization" placeholder="Your company" required></label><label for="message">What would you like to improve?<textarea id="message" name="message" rows="4" placeholder="A quick note is perfect."></textarea></label><button class="button button-primary" type="submit">Book my free assessment <span>↗</span></button><p class="form-note" id="form-message" role="status">We respect your inbox. No spam, ever.</p></form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="container footer-top"><a class="brand" href="#top" aria-label="Cloudflex home"><img src="resources/images/cloudflex-logo.jpg" alt="Cloudflex" width="170" height="54"></a><p>Proactive managed IT and cybersecurity for Canadian businesses ready to move forward with confidence.</p><div class="footer-links"><a href="#services">Services</a><a href="#plans">Plans</a><a href="#faq">FAQ</a><a href="#contact">Contact</a></div></div><div class="container footer-bottom"><span>© 2025 Cloudflex. Technology, handled.</span><span>Privacy · Terms</span><a href="#top">Back to top ↑</a></div></footer>
+  <script src="marketing.js"></script>
 </body>
+</html>
