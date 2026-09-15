@@ -1,6 +1,18 @@
 const menuToggle = document.querySelector('.menu-toggle');
 const siteNav = document.querySelector('#site-nav');
 
+document.querySelectorAll('.momentum-video').forEach((video) => {
+  const startVideo = () => {
+    video.muted = true;
+    const playback = video.play();
+    if (playback?.catch) playback.catch(() => video.classList.add('video-fallback'));
+  };
+  video.addEventListener('loadedmetadata', startVideo, { once: true });
+  video.addEventListener('canplay', startVideo, { once: true });
+  video.addEventListener('error', () => video.classList.add('video-fallback'));
+  startVideo();
+});
+
 menuToggle?.addEventListener('click', () => {
   const isOpen = siteNav.classList.toggle('open');
   menuToggle.setAttribute('aria-expanded', String(isOpen));
