@@ -98,6 +98,10 @@ class CallDiagnosticController extends Controller
             $this->respond(false, null, Yii::t('zii', 'Invalid SIP account for capture.'), 422);
         }
         $existingCapture = Yii::app()->session['registerCapture'];
+        if (is_array($existingCapture) && !empty($existingCapture['completedResult'])) {
+            unset(Yii::app()->session['registerCapture']);
+            $existingCapture = null;
+        }
         if (is_array($existingCapture)
             && (int) $existingCapture['sipId'] === (int) $sipId
             && !empty($existingCapture['token'])
@@ -150,6 +154,9 @@ class CallDiagnosticController extends Controller
             || (int) $capture['sipId'] !== (int) $sipId) {
             $this->respond(false, null, Yii::t('zii', 'The REGISTER capture session is invalid or expired.'), 422);
         }
+        if (!empty($capture['completedResult']) && is_array($capture['completedResult'])) {
+            $this->respond(true, $capture['completedResult']);
+        }
         $timedOut = time() >= (int) $capture['deadline'];
         $service = new SipRegisterCaptureService();
         $result = $service->analyze(
@@ -162,7 +169,10 @@ class CallDiagnosticController extends Controller
         $result['type'] = 'register-capture';
         if (!empty($result['complete'])) {
             if (!empty($capture['traceId'])) SipTrace::model()->deleteByPk((int) $capture['traceId']);
-            unset(Yii::app()->session['registerCapture']);
+            $capture['traceId'] = null;
+            $capture['completedResult'] = $result;
+            $capture['completedAt'] = time();
+            Yii::app()->session['registerCapture'] = $capture;
         }
         $this->respond(true, $result);
     }
@@ -330,13 +340,20 @@ class CallDiagnosticController extends Controller
     private function enforceRateLimit()
     {
         $now = time();
-        $bucket = Yii::app()->session['callDiagnosticRate'];
+        $path = strtolower(trim((string) Yii::app()->request->getPathInfo(), '/'));
+        $requestUri = strtolower((string) Yii::app()->request->getRequestUri());
+        $captureStatusPath = 'calldiagnostic/registercapturestatus';
+        $isCaptureStatus = substr($path, -strlen($captureStatusPath)) === $captureStatusPath
+            || strpos($requestUri, $captureStatusPath) !== false;
+        $sessionKey = $isCaptureStatus ? 'callDiagnosticCaptureStatusRate' : 'callDiagnosticRate';
+        $limit = $isCaptureStatus ? 60 : 20;
+        $bucket = Yii::app()->session[$sessionKey];
         if (!is_array($bucket) || $now - (int) $bucket['started'] >= 60) {
             $bucket = ['started' => $now, 'count' => 0];
         }
         $bucket['count']++;
-        Yii::app()->session['callDiagnosticRate'] = $bucket;
-        if ($bucket['count'] > 20) {
+        Yii::app()->session[$sessionKey] = $bucket;
+        if ($bucket['count'] > $limit) {
             $this->respond(false, null, Yii::t('zii', 'Diagnostic rate limit exceeded. Try again later.'), 429);
         }
     }

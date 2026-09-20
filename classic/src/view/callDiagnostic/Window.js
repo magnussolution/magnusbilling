@@ -182,6 +182,9 @@ Ext.define('MBilling.view.callDiagnostic.Window', {
                 }
                 me.captureToken = payload.result.token;
                 me.captureDeadline = Date.now() + ((payload.result.timeout || 120) + 8) * 1000;
+                me.captureRetryDeadline = me.captureDeadline + 30000;
+                me.capturePollInFlight = false;
+                me.captureRetryNoticeShown = false;
                 me.renderCaptureWaiting();
                 me.pollRegisterCapture();
             },
@@ -207,45 +210,82 @@ Ext.define('MBilling.view.callDiagnostic.Window', {
 
     pollRegisterCapture: function() {
         var me = this;
-        if (me.destroyed || !me.captureToken) return;
+        if (me.destroyed || !me.captureToken || me.capturePollInFlight) return;
+        me.capturePollInFlight = true;
         Ext.Ajax.request({
             url: 'index.php/callDiagnostic/registerCaptureStatus',
             method: 'POST',
+            timeout: 15000,
             params: {
                 sipId: me.recordId,
                 token: me.captureToken,
                 language: App.lang || window.lang || 'en'
             },
-            success: function(response) {
-                var payload = Ext.decode(response.responseText), result;
-                if (!payload.success) {
-                    me.captureToken = null;
-                    var invalidButton = me.down('[reference=captureRegisterButton]');
-                    invalidButton && invalidButton.enable();
-                    Ext.ux.Alert.alert(t('Error'), payload.msg, 'error');
+            callback: function(options, success, response) {
+                var payload = null,
+                    result,
+                    status = response ? Number(response.status) : 0;
+                me.capturePollInFlight = false;
+                if (me.destroyed || !me.captureToken) return;
+                if (response && response.responseText) {
+                    try {
+                        payload = Ext.decode(response.responseText);
+                    } catch (error) {
+                        payload = null;
+                    }
+                }
+                if (payload && payload.success && payload.result) {
+                    me.captureRetryNoticeShown = false;
+                    result = payload.result;
+                    me.renderResult(result);
+                    if (result.complete) {
+                        me.finishRegisterCapturePolling();
+                        return;
+                    }
+                    me.scheduleRegisterCapturePoll(2000);
                     return;
                 }
-                result = payload.result;
-                me.renderResult(result);
-                if (result.complete) {
-                    me.captureToken = null;
-                    var completeButton = me.down('[reference=captureRegisterButton]');
-                    completeButton && completeButton.enable();
+                if (payload && !payload.success && (status === 401 || status === 403 || status === 422)) {
+                    me.finishRegisterCapturePolling();
+                    Ext.ux.Alert.alert(t('Error'), payload.msg || t('The SIP capture status could not be read.'), 'error');
                     return;
                 }
-                Ext.defer(function() { me.pollRegisterCapture(); }, 2000);
-            },
-            failure: function() {
-                if (Date.now() < me.captureDeadline) {
-                    Ext.defer(function() { me.pollRegisterCapture(); }, 3000);
-                } else {
-                    me.captureToken = null;
-                    var failedButton = me.down('[reference=captureRegisterButton]');
-                    failedButton && failedButton.enable();
-                    Ext.ux.Alert.alert(t('Error'), t('The SIP capture status could not be read.'), 'error');
+                if (Date.now() < me.captureRetryDeadline) {
+                    if (!me.captureRetryNoticeShown) {
+                        me.captureRetryNoticeShown = true;
+                        Ext.ux.Alert.alert(
+                            t('Warning'),
+                            payload && payload.msg ? payload.msg : t('The SIP capture status could not be read.'),
+                            'warning'
+                        );
+                    }
+                    me.scheduleRegisterCapturePoll(3000);
+                    return;
                 }
+                me.finishRegisterCapturePolling();
+                Ext.ux.Alert.alert(t('Error'), t('The SIP capture status could not be read.'), 'error');
             }
         });
+    },
+
+    scheduleRegisterCapturePoll: function(delay) {
+        var me = this;
+        if (me.destroyed || !me.captureToken) return;
+        if (me.capturePollTask) Ext.undefer(me.capturePollTask);
+        me.capturePollTask = Ext.defer(function() {
+            me.capturePollTask = null;
+            me.pollRegisterCapture();
+        }, delay);
+    },
+
+    finishRegisterCapturePolling: function() {
+        var me = this,
+            captureButton = me.down('[reference=captureRegisterButton]');
+        if (me.capturePollTask) Ext.undefer(me.capturePollTask);
+        me.capturePollTask = null;
+        me.capturePollInFlight = false;
+        me.captureToken = null;
+        captureButton && captureButton.enable();
     },
 
     runRegisterDiagnostic: function() {

@@ -170,6 +170,13 @@ or free-form text.
   While waiting, show this requirement to the administrator. If no exact
   REGISTER packet is found after 120 seconds, return a completed timeout
   result and re-enable the capture button for a new attempt.
+- Allow only one status request in flight per window. Retry transient HTTP,
+  empty-response, and invalid-JSON failures through the capture grace period.
+  Cache the completed result in the administrator session so a lost final
+  response or a duplicate status request can retrieve the same result safely.
+- Keep capture-status polling in its own session rate-limit bucket. The normal
+  diagnostic limit of 20 requests per minute is too low for the supported
+  two-second polling interval; capture status permits 60 requests per minute.
 - Treat the first 401 as a normal digest challenge. Report bad credentials
   only after an authenticated REGISTER is rejected; preserve `stale=true` as
   a retryable challenge. Never expose Authorization/digest content.
