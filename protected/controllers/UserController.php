@@ -139,6 +139,31 @@ class UserController extends Controller
         return $values;
     }
 
+    public function beforeUpdateAll($values, $ids)
+    {
+        if (isset($values['id_group'])) {
+            if (! is_scalar($values['id_group']) || ! preg_match('/\A[1-9][0-9]*\z/', (string) $values['id_group'])) {
+                $this->sendError('Invalid or unauthorized record.', [], 400);
+            }
+            if (Yii::app()->session['isAdmin'] && Yii::app()->session['adminLimitUsers']
+                && ! GroupUserGroup::model()->exists('id_group_user = :admin AND id_group = :group', [
+                    ':admin' => Yii::app()->session['id_group'], ':group' => $values['id_group'],
+                ])
+            ) {
+                $this->sendError('Invalid or unauthorized record.', [], 403);
+            }
+            // Check the destination group as well as each account's existing group.
+            $wasNew = $this->isNewRecord;
+            $this->isNewRecord = true;
+            try {
+                $this->checkAdminPermissionAction($values, 'u');
+            } finally {
+                $this->isNewRecord = $wasNew;
+            }
+        }
+        return parent::beforeUpdateAll($values, $ids);
+    }
+
     public function beforeSave($values)
     {
         $this->checkAdminPermissionAction($values, 'u');

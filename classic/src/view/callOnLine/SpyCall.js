@@ -25,9 +25,9 @@ Ext.define('MBilling.view.callOnLine.SpyCall', {
     labelWidthFields: 80,
     channel: 0,
     initComponent: function() {
-        var me = this
+        var me = this, selected;
         if (me.list.getSelectionModel().getSelection().length == 1) {
-            selected = me.list.getSelectionModel().getSelection()[0];
+            selected = me.callRecord = me.list.getSelectionModel().getSelection()[0];
             if (selected.get('canal')) {
                 me.channel = selected.get('canal');
             } else {
@@ -89,9 +89,9 @@ Ext.define('MBilling.view.callOnLine.SpyCall', {
         me.down('form').submit({
             url: 'index.php/callOnLine/spyCall',
             params: {
-                id_sip: selected.get('id_sip'),
-                type: selected.get('Type'),
-                channel: me.channel
+                channel: me.channel,
+                server: me.callRecord.get('server'),
+                id: me.callRecord.get('uniqueid')
             },
             scope: me,
             success: function(form, action) {

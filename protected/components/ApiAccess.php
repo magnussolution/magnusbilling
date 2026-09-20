@@ -194,7 +194,7 @@ class ApiAccess
         } else if ($_POST['action'] == 'resendActivationEmail') {
             $action = 'r';
         } else if ($_POST['action'] == 'spyCall') {
-            $action = 'r';
+            $action = 'd';
         }
 
         if ( ! preg_match('/' . $action . '/', $modelApi->action)) {

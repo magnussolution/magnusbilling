@@ -772,6 +772,15 @@ class BaseController extends CController
             ]);
             exit;
         }
+        $this->checkActionAccess($values, $module, 'canUpdate');
+        $this->isNewRecord = false;
+        // Tenant-scoped users and user-account changes must follow the normal save lifecycle.
+        // Keep the established SQL batch path for other unrestricted administrator modules.
+        if (! Yii::app()->session['isAdmin'] || Yii::app()->session['adminLimitUsers'] || $module === 'user') {
+            $this->saveBulkModels($ids, $values, $namePk);
+            return;
+        }
+        $models = $this->authorizedBulkModels($ids, $values, $namePk);
         $values = $this->beforeUpdateAll($values, $ids);
 
         try {
@@ -779,6 +788,15 @@ class BaseController extends CController
             unset($values['password']);
             $setters = [];
             foreach ($values as $fieldName => $value) {
+                if (! in_array($fieldName, $this->abstractModel->getSafeAttributeNames(), true)) {
+                    $this->sendError('Invalid request parameters. Check the submitted values.', [], 400);
+                }
+                if (is_array($value)) {
+                    $resolvedValue = $this->bulkFieldValue($models[0], $fieldName, $value);
+                    if ($fieldName === 'allow') {
+                        $value = $resolvedValue;
+                    }
+                }
                 if (isset($value['isPercent']) && is_bool($value['isPercent'])) {
                     $v            = $value['value'];
                     $percent      = $v / 100;
@@ -835,6 +853,145 @@ class BaseController extends CController
         if (array_key_exists('subRecords', $values)) {
             $this->saveRelated($values);
         }
+    }
+
+    /** Authorize the entire selection before controller hooks or any writes. */
+    protected function authorizedBulkModels(&$ids, $values, $namePk)
+    {
+        if (! is_array($ids) || ! $ids || (! Yii::app()->session['isAdmin'] && ! Yii::app()->session['isAgent'])) {
+            $this->sendError('Invalid or unauthorized record.', [], 403);
+        }
+        foreach ($ids as $id) {
+            if ((! is_int($id) && ! is_string($id)) || ! preg_match('/\A[1-9][0-9]*\z/', (string) $id)) {
+                $this->sendError('Invalid or unauthorized record.', [], 400);
+            }
+        }
+        $ids = array_values(array_unique($ids));
+        // Lock before loading/authorizing models so concurrent billing cannot be overwritten
+        // by the per-record lifecycle, and ownership cannot change between check and save.
+        $db = Yii::app()->db;
+        if ($db->driverName === 'mysql' && $db->currentTransaction !== null) {
+            $builder = $this->abstractModel->getCommandBuilder();
+            $lockCriteria = $builder->createPkCriteria($this->abstractModel->getTableSchema(), $ids);
+            $command = $builder->createFindCommand($this->abstractModel->getTableSchema(), $lockCriteria);
+            $sql = $command->text;
+            $bindings = $lockCriteria->params;
+            $db->createCommand($sql . ' FOR UPDATE')->queryAll(true, $bindings);
+        }
+        $filter = $this->filter;
+        $params = $this->paramsFilter;
+        $this->filter = '1';
+        $this->paramsFilter = [];
+        $this->applyFilterToLimitedAdmin();
+        $criteria = new CDbCriteria(['condition' => $this->filter, 'params' => $this->paramsFilter]);
+        $this->filter = $filter;
+        $this->paramsFilter = $params;
+        $models = $this->abstractModel->findAllByPk($ids, $criteria);
+        if (count($models) !== count($ids)) {
+            $this->sendError('Invalid or unauthorized record.', [], 403);
+        }
+        foreach ($models as $model) {
+            if (Yii::app()->session['isAgent']) {
+                $this->checkAgentPermission([$namePk => $model->$namePk], $namePk);
+                if ($model->tableName() === 'pkg_rate_agent' && array_key_exists('id_plan', $values)) {
+                    $plan = is_scalar($values['id_plan']) ? Plan::model()->findByPk($values['id_plan']) : null;
+                    if (! $plan || (string) $plan->id_user !== (string) Yii::app()->session['id_user']) {
+                        $this->sendError('Invalid or unauthorized record.', [], 403);
+                    }
+                }
+            }
+            // A scoped bulk update cannot transfer records out of the checked ownership boundary.
+            if ((Yii::app()->session['isAgent'] || Yii::app()->session['adminLimitUsers'])
+                && array_key_exists('id_user', $values) && $model->hasAttribute('id_user')
+                && (! is_scalar($values['id_user']) || (string) $values['id_user'] !== (string) $model->id_user)
+            ) {
+                $this->sendError('Invalid or unauthorized record.', [], 403);
+            }
+        }
+        return $models;
+    }
+
+    /** Resolve the panel's arithmetic descriptor without accepting SQL expressions. */
+    protected function bulkFieldValue($model, $field, $value)
+    {
+        if ($field === 'allow' && is_array($value)) {
+            foreach ($value as $codec) {
+                if (! is_string($codec)) {
+                    $this->sendError('Invalid request parameters. Check the submitted values.', [], 400);
+                }
+            }
+            return implode(',', $value);
+        }
+        if (! is_array($value)) {
+            return $value;
+        }
+        $column = $model->getTableSchema()->getColumn($field);
+        if (! $column || (! in_array($column->type, ['integer', 'double'], true) && ! preg_match('/^(decimal|numeric|bigint)/i', $column->dbType))
+            || ! isset($value['value'], $value['isPercent'], $value['isAdd'], $value['isRemove'])
+            || ! is_bool($value['isPercent']) || ! is_bool($value['isAdd']) || ! is_bool($value['isRemove'])
+            || ($value['isAdd'] && $value['isRemove'])
+            || ! is_scalar($value['value']) || ! is_numeric($value['value']) || ! is_finite((float) $value['value'])
+        ) {
+            $this->sendError('Invalid request parameters. Check the submitted values.', [], 400);
+        }
+        $amount = (float) $value['value'];
+        $current = (float) $model->$field;
+        if ($value['isPercent']) {
+            $amount = $current * $amount / 100;
+        }
+        $result = $value['isAdd'] ? $current + $amount : ($value['isRemove'] ? $current - $amount : $amount);
+        if (! is_finite($result)) {
+            $this->sendError('Invalid request parameters. Check the submitted values.', [], 400);
+        }
+        return $result;
+    }
+
+    protected function saveBulkModels($ids, $values, $namePk)
+    {
+        $transaction = Yii::app()->db->beginTransaction();
+        try {
+            $models = $this->authorizedBulkModels($ids, $values, $namePk);
+            $values = $this->beforeUpdateAll($values, $ids);
+            unset($values[$namePk], $values['password']);
+            $savedValues = [];
+            // Validate all requested rows first; a later failure must not leave a partial batch.
+            foreach ($models as $model) {
+                $row = [];
+                foreach ($values as $field => $value) {
+                    $row[$field] = $this->bulkFieldValue($model, $field, $value);
+                }
+                $row[$namePk] = $model->$namePk;
+                $row = $this->beforeSave($row);
+                $savedValues[$model->$namePk] = $row;
+                unset($row[$namePk], $row['password']);
+                $model->attributes = $row;
+                if (! $model->validate()) {
+                    $transaction->rollback();
+                    echo json_encode(['success' => false, 'errors' => $model->getErrors()]);
+                    return;
+                }
+            }
+            foreach ($models as $model) {
+                // save() runs model beforeSave/afterSave as on the single-record path.
+                if (! $model->save()) {
+                    $transaction->rollback();
+                    echo json_encode(['success' => false, 'errors' => $model->getErrors()]);
+                    return;
+                }
+            }
+            $transaction->commit();
+        } catch (Exception $e) {
+            if ($transaction->active) {
+                $transaction->rollback();
+            }
+            throw $e;
+        }
+        foreach ($models as $model) {
+            $this->afterSave($model, $savedValues[$model->$namePk]);
+        }
+        MagnusLog::insertLOG(6, 'Module: ' . $this->modelName . ' BULK UPDATE ' . json_encode($ids));
+        $this->afterUpdateAll($ids);
+        echo json_encode([$this->nameSuccess => true, $this->nameMsg => $this->msgSuccessLot]);
     }
 
     public function updateGetIdsFromFilter($namePk, $filter)

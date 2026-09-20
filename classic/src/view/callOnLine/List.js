@@ -44,6 +44,7 @@ Ext.define('MBilling.view.callOnLine.List', {
         me.extraButtons = [{
             text: window.isTablet ? '' : t('Spy call'),
             handler: 'onSpyCall',
+            hidden: !App.user.isAdmin,
             width: window.isTablet ? 50 : 120,
             disabled: false
         }, {

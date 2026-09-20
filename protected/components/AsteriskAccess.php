@@ -1045,12 +1045,18 @@ class AsteriskAccess
                 'password' => 'magnussolution',
             ]);
         } else {
-            $modelServers = [];
-            array_push($modelServers, [
-                'host'     => $server,
-                'username' => 'magnus',
-                'password' => 'magnussolution',
-            ]);
+            if (! is_string($server) || $server === '') {
+                return [];
+            }
+            // A requested host must be an active configured Asterisk server.
+            // Use its own credentials rather than the legacy remote defaults.
+            if ($server === 'localhost') {
+                $modelServers = [['host' => 'localhost', 'username' => 'magnus', 'password' => 'magnussolution']];
+            } else {
+                $modelServers = Yii::app()->db->createCommand(
+                    "SELECT * FROM pkg_servers WHERE type = 'asterisk' AND status IN (1,4) AND host = :host"
+                )->queryAll(true, [':host' => $server]);
+            }
         }
 
         $channels = [];

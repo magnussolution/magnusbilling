@@ -1,5 +1,6 @@
 <?php
 return array(
+    'Operation was successful.' => 'Operation was successful.',
     'Invalid request parameters. Check the submitted values.' => 'Invalid request parameters. Check the submitted values.',
     'Access denied for module "{module}".' => 'Access denied for module "{module}".',
     'Invalid or unauthorized record.' => 'Invalid or unauthorized record.',

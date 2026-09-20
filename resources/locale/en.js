@@ -784,7 +784,7 @@ Locale.load({
     'Only PNG format': '',
     'Only SPY': '',
     'Only can call to restricted numbers': '',
-    'Operation was successful.': '',
+    'Operation was successful.': 'Operation was successful.',
     'Options': '',
     'Orange': '',
     'Order': '',

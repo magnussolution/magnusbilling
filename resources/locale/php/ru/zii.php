@@ -22,6 +22,7 @@
  * Edit /resources/locale/ru.js
  */
 return array(
+    'Operation was successful.' => 'Операция была успешной.',
     'Invalid request parameters. Check the submitted values.' => 'Недопустимые параметры запроса. Проверьте отправленные значения.',
     'Access denied for module "{module}".' => 'Доступ к модулю "{module}" запрещён.',
     'Invalid or unauthorized record.' => 'Недопустимая запись или нет прав доступа.',
