@@ -1133,9 +1133,23 @@ class AsteriskAccess
         return $mask === '128' ? $address : null;
     }
 
-    private static function getPjsipEndpointTransportAndWebrtcConfig($webrtc)
+    private static function getPjsipEndpointTransportAndWebrtcConfig($webrtc, $extraConfig = '')
     {
         if (strtolower(trim((string) $webrtc)) !== 'yes') {
+            // Honor per-account SRTP options without copying arbitrary sections/directives.
+            $media = 'no';
+            $optimistic = 'no';
+            foreach (preg_split('/\r\n|\r|\n/', (string) $extraConfig) as $extraLine) {
+                if (preg_match('/^\s*media_encryption\s*=\s*(no|sdes)\s*(?:;.*)?$/i', $extraLine, $match)) {
+                    $media = strtolower($match[1]);
+                }
+                if (preg_match('/^\s*media_encryption_optimistic\s*=\s*(yes|no)\s*(?:;.*)?$/i', $extraLine, $match)) {
+                    $optimistic = strtolower($match[1]);
+                }
+            }
+            if ($media === 'sdes') {
+                return "media_encryption=sdes\nmedia_encryption_optimistic=" . $optimistic . "\n";
+            }
             return "transport=transport-udp\n";
         }
 
@@ -1154,7 +1168,8 @@ class AsteriskAccess
         foreach ($modelSip as $sip) {
             $sip->setAttributes(AsteriskConfigValue::assertRecord(
                 $sip->attributes,
-                'sip.' . (isset($sip->id) ? $sip->id : 'new')
+                'sip.' . (isset($sip->id) ? $sip->id : 'new'),
+                ['sip_config']
             ), false);
         }
 
@@ -1271,7 +1286,8 @@ class AsteriskAccess
                     $line .= "\n[" . $endpointName . "]\n";
                     $line .= "type=endpoint\n";
                     $line .= self::getPjsipEndpointTransportAndWebrtcConfig(
-                        isset($sip->webrtc) ? $sip->webrtc : 'no'
+                        isset($sip->webrtc) ? $sip->webrtc : 'no',
+                        isset($sip->sip_config) ? $sip->sip_config : ''
                     );
                     $line .= "identify_by="
                         . PjsipAuthenticationMode::endpointIdentifyBy($sip)
@@ -1396,7 +1412,8 @@ class AsteriskAccess
         foreach ($modelSip as $sip) {
             $sip->setAttributes(AsteriskConfigValue::assertRecord(
                 $sip->attributes,
-                'sip.' . (isset($sip->id) ? $sip->id : 'new')
+                'sip.' . (isset($sip->id) ? $sip->id : 'new'),
+                ['sip_config']
             ), false);
         }
 

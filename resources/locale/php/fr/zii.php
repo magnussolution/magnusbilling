@@ -22,6 +22,7 @@
  * Edit /resources/locale/fr.js
  */
 return array(
+    'Endpoint Details' => 'Détails du point de terminaison',
     'Invalid request parameters. Check the submitted values.' => 'Paramètres de requête non valides. Vérifiez les valeurs envoyées.',
     'Access denied for module "{module}".' => 'Accès refusé au module "{module}".',
     'Invalid or unauthorized record.' => 'Enregistrement non valide ou non autorisé.',

@@ -14,6 +14,7 @@
  * 2026
  */
 Locale.load({
+    'Endpoint Details': 'Detalles del endpoint',
     "Invalid request parameters. Check the submitted values.": "Parámetros de solicitud no válidos. Revise los valores enviados.",
     "Access denied for module \"{module}\".": "Acceso denegado al módulo \"{module}\".",
     "Invalid or unauthorized record.": "Registro no válido o no autorizado.",

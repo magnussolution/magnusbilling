@@ -440,7 +440,7 @@ Ext.define('MBilling.view.sip.Form', {
                     hidden: !App.user.isAdmin
                 }]
             }, {
-                title: t('SipShowPeer'),
+                title: t('Endpoint Details'),
                 itemId: 'sipshowpeer',
                 bodyPadding: 10,
                 hidden: !App.user.isAdmin,

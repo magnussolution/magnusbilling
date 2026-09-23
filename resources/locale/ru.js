@@ -14,6 +14,7 @@
  * 2026
  */
 Locale.load({
+    'Endpoint Details': 'Сведения о конечной точке',
     "Invalid request parameters. Check the submitted values.": "Недопустимые параметры запроса. Проверьте отправленные значения.",
     "Access denied for module \"{module}\".": "Доступ к модулю \"{module}\" запрещён.",
     "Invalid or unauthorized record.": "Недопустимая запись или нет прав доступа.",

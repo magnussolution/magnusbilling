@@ -10,11 +10,14 @@ class AsteriskConfigValue
         return str_replace(["\r", "\n", "\x00"], '', (string) $value);
     }
 
-    public static function assertRecord($values, $context = 'record')
+    public static function assertRecord($values, $context = 'record', $multilineFields = [])
     {
         foreach ($values as $field => $value) {
             if (is_string($value)) {
-                $values[$field] = self::assertSingleLine($value, $context . '.' . $field);
+                // Explicit configuration blocks may contain multiple directives.
+                $values[$field] = in_array($field, $multilineFields, true)
+                    ? str_replace("\x00", '', $value)
+                    : self::assertSingleLine($value, $context . '.' . $field);
             }
         }
         return $values;

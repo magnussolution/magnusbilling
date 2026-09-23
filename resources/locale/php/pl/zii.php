@@ -1,5 +1,6 @@
 <?php
 return array(
+    'Endpoint Details' => 'Szczegóły punktu końcowego',
     'Operation was successful.' => 'Operacja zakończona sukcesem.',
     'Invalid request parameters. Check the submitted values.' => 'Nieprawidłowe parametry żądania. Sprawdź przesłane wartości.',
     'Access denied for module "{module}".' => 'Odmowa dostępu do modułu "{module}".',

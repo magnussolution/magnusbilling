@@ -56,7 +56,8 @@ class CallOnLineController extends Controller
 
     public function actionGetChannelDetails()
     {
-        $call = $this->authorizedOnlineCall();
+        // Grid IDs may be empty or stale after the online-call snapshot refresh.
+        $call = $this->authorizedOnlineCall(false);
         $channel = AsteriskAccess::getCoreShowChannel($call->canal, null, $call->server);
         $channel = is_array($channel) ? $channel : [];
 
@@ -205,7 +206,7 @@ class CallOnLineController extends Controller
     }
 
     /** Resolve request selectors to a live call before any AMI or call-file operation. */
-    protected function authorizedOnlineCall()
+    protected function authorizedOnlineCall($filterByUniqueid = true)
     {
         $this->checkActionAccess([], 'callonline', 'canRead');
         if (! isset($_POST['channel']) || ! is_string($_POST['channel'])
@@ -216,7 +217,11 @@ class CallOnLineController extends Controller
         $criteria = new CDbCriteria();
         $criteria->addCondition('canal = :channel');
         $criteria->params[':channel'] = $_POST['channel'];
-        foreach (['server' => 'server', 'id' => 'uniqueid'] as $input => $column) {
+        $selectors = ['server' => 'server'];
+        if ($filterByUniqueid) {
+            $selectors['id'] = 'uniqueid';
+        }
+        foreach ($selectors as $input => $column) {
             if (isset($_POST[$input])) {
                 if (! is_string($_POST[$input]) || $_POST[$input] === '') {
                     $this->sendError('Invalid or unauthorized record.', [], 400);

@@ -99,8 +99,7 @@ class Sip extends Model
                 usereqphone, autoframing, DEFAULTip, ipaddr, nat, host, language, mailbox,
                 addparameter, sip_group, deny, permit, type, url_events, description, disallow,
                 forward, allow, setvar, useragent, block_call_reg, voicemail_email, directmedia,
-                alias, defaultuser, cid_number, outboundproxy, sippasswd, techprefix, cnl,
-                sip_config', 'validateAsteriskConfigValue'],
+                alias, defaultuser, cid_number, outboundproxy, sippasswd, techprefix, cnl', 'validateAsteriskConfigValue'],
 
         ];
         return $this->getExtraField($rules);

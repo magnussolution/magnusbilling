@@ -136,7 +136,7 @@ class CallChartCommand extends ConsoleCommand
 
 
                 $last_app    = trim($call[3]);
-                $cdr         = trim($call[11]);
+                $cdr         = trim($call[10]);
                 $originate = $sip_account;
 
 

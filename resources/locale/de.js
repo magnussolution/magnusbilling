@@ -14,6 +14,7 @@
  * 2026
  */
 Locale.load({
+    'Endpoint Details': 'Endpunktdetails',
     "Invalid request parameters. Check the submitted values.": "Ungültige Anfrageparameter. Prüfen Sie die übermittelten Werte.",
     "Access denied for module \"{module}\".": "Zugriff auf das Modul \"{module}\" verweigert.",
     "Invalid or unauthorized record.": "Ungültiger Datensatz oder fehlende Zugriffsberechtigung.",

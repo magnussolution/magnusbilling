@@ -14,6 +14,7 @@
  * 2026
  */
 Locale.load({
+    'Endpoint Details': 'Endpoint Details',
     "Invalid request parameters. Check the submitted values.": "Invalid request parameters. Check the submitted values.",
     "Access denied for module \"{module}\".": "Access denied for module \"{module}\".",
     "Invalid or unauthorized record.": "Invalid or unauthorized record.",

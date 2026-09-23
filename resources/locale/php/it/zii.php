@@ -22,6 +22,7 @@
  * Edit /resources/locale/it.js
  */
 return array(
+    'Endpoint Details' => 'Dettagli dell’endpoint',
     'Invalid request parameters. Check the submitted values.' => 'Parametri della richiesta non validi. Verificare i valori inviati.',
     'Access denied for module "{module}".' => 'Accesso negato al modulo "{module}".',
     'Invalid or unauthorized record.' => 'Record non valido o non autorizzato.',
