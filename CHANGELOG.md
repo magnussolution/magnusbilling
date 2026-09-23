@@ -6,6 +6,13 @@ migration instructions remain authoritative for deployment.
 
 ## Unreleased
 
+### Fixed
+
+- Honor `insecure=invite` (including `port,invite`) for static PJSIP provider
+  trunks with credentials: identify inbound traffic only by the configured
+  provider IP match instead of issuing a SIP authentication challenge. Preserve
+  outbound authentication and registration, and keep dynamic trunks authenticated.
+
 ### Documentation
 
 - Reworked the repository introduction, installation, migration, development,
