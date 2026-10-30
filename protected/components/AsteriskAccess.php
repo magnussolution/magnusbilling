@@ -413,7 +413,12 @@ class AsteriskAccess
                     $line .= "send_pai = yes\n";
                 }
                 if (strlen($data['user']) && strlen($data['secret'])) {
-                    $line .= "auth = auth_reg_" . $data[$head_field] . '_' . $data['user'] . '_' . $data['host'] . "\n";
+                    // Honor insecure=invite for identified static providers while
+                    // retaining inbound authentication for dynamic gateways.
+                    $insecureOptions = preg_split('/[\s,;]+/', strtolower(trim((string) ($data['insecure'] ?? ''))), -1, PREG_SPLIT_NO_EMPTY);
+                    if ($isDynamicHost || ! in_array('invite', $insecureOptions, true)) {
+                        $line .= "auth = auth_reg_" . $data[$head_field] . '_' . $data['user'] . '_' . $data['host'] . "\n";
+                    }
                     $line .= "outbound_auth = auth_reg_" . $data[$head_field] . '_' . $data['user'] . '_' . $data['host'] . "\n";
                 }
 
@@ -1632,6 +1637,7 @@ class AsteriskAccess
 
                         $line .= 'fromdomain=' . $iax->host . "\n";
                         $line .= 'accountcode=' . $iax->idUser->username . "\n";
+                        $line .= 'setvar=MB_ACC=' . $iax->idUser->username . "\n";
                         $line .= 'disallow=' . $iax->disallow . "\n";
 
                         $codecs = explode(",", $iax->allow);

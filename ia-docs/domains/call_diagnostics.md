@@ -18,7 +18,7 @@ covered without maintaining a second implementation.
 ## Entry Points
 
 - CLI dry-run:
-  `php resources/asterisk/mbilling.php debug NUMBER MB_ACC CALLERID`
+  `php resources/asterisk/mbilling.php debug NUMBER MB_ACC CALLERID [SIP_ACCOUNT] [inbound|outbound]`
 - Web orchestration:
   `protected/components/CallDiagnosticService.php`
 - Web access and admin guard:
@@ -48,6 +48,11 @@ covered without maintaining a second implementation.
 - Stop at `Magnus::run_dial()` before Dial, CDR, and charging.
 - Do not stop before route validations that production performs before a
   channel operation.
+- The web orchestrator always passes the diagnostic direction to the AGI.
+  For an `inbound`/Check DID dry-run, DID lookup must use the DID stored in
+  `pkg_did` and must not apply `apply_local_prefix_did_sip` or the owner's
+  `prefix_local`. This exception is diagnostic-only; real inbound calls and
+  outbound/Check User diagnostics preserve production prefix behavior.
 
 ## Structured AGI Events
 

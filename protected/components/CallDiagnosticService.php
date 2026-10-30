@@ -285,6 +285,7 @@ class CallDiagnosticService
             $accountcode,
             $callerId,
             $sipAccount,
+            $type,
         ];
         $descriptors = [
             0 => ['pipe', 'r'],

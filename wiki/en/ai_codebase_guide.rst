@@ -246,7 +246,7 @@ Call diagnostics
 * Diagnostics must execute the production AGI decision flow instead of
   reimplementing routing rules in a web service.
 * The supported CLI diagnostic entrypoint is
-  ``php resources/asterisk/mbilling.php debug NUMBER MB_ACC CALLERID``.
+  ``php resources/asterisk/mbilling.php debug NUMBER MB_ACC CALLERID [SIP_ACCOUNT] [inbound|outbound]``.
 * Debug mode is a dry-run. It may read configuration and database records, but
   must not execute ``Dial``, ``Queue``, audio or channel commands, create CDRs,
   charge accounts, update operational tables, call external integrations, or
@@ -258,6 +258,10 @@ Call diagnostics
   schedules, holidays, audio compatibility, IVR options, Queue existence and
   membership, DID destinations, SIP groups, rates, offers, and trunk
   eligibility must be evaluated by their real AGI paths.
+* Check DID passes ``inbound`` as the diagnostic type. In this mode only, DID
+  lookup uses the number stored in ``pkg_did`` without applying
+  ``apply_local_prefix_did_sip`` or the DID owner's ``prefix_local``. Real
+  calls and Check User keep the normal prefix behavior.
 * Missing optional media or Queue agents may be warnings when the production
   flow can continue. Missing required routing objects or an empty selected
   destination is a blocking error.
