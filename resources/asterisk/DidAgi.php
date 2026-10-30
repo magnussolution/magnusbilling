@@ -53,7 +53,7 @@ class DidAgi
         //check if did call
         $mydnid = $MAGNUS->config['global']['did_ignore_zero_on_did'] == 1 && substr($MAGNUS->dnid, 0, 1) == '0' ? substr($MAGNUS->dnid, 1) : $MAGNUS->dnid;
 
-        if ($MAGNUS->config['global']['apply_local_prefix_did_sip'] == 1) {
+        if ($this->shouldApplyLocalPrefix($agi, $MAGNUS)) {
             $sql = "SELECT * FROM pkg_user WHERE username = '" . $MAGNUS->accountcode . "' AND active = 1 LIMIT 1";
             $agi->verbose($sql, 25);
             $modelDidUser = $agi->query($sql)->fetch(PDO::FETCH_OBJ);
@@ -196,6 +196,14 @@ class DidAgi
                 exit;
             }
         }
+    }
+
+    private function shouldApplyLocalPrefix($agi, $MAGNUS)
+    {
+        $isInboundDiagnostic = $agi->debugMode
+            && $agi->get_variable('MB_DIAGNOSTIC_TYPE', true) === 'inbound';
+        return ! $isInboundDiagnostic
+            && $MAGNUS->config['global']['apply_local_prefix_did_sip'] == 1;
     }
 
     public function getCallsPerDid($did, $agi, $channelsData)

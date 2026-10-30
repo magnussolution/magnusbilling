@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Modelo para a tabela "Rate".
  * =======================================
@@ -54,12 +55,11 @@ class Rate extends Model
     {
 
         $rules = [
-            ['id_plan', 'required'],
-            ['id_plan, id_prefix, id_trunk_group,initblock, billingblock, package_offer, minimal_time_charge ', 'numerical', 'integerOnly' => true],
+            ['id_plan, id_prefix, id_trunk_group,initblock, billingblock, package_offer, minimal_time_charge,rateinitial,connectcharge,disconnectcharge, additional_grace,status', 'required'],
+            ['id_plan, id_prefix, id_trunk_group,initblock, billingblock, package_offer, minimal_time_charge', 'numerical', 'integerOnly' => true],
             ['rateinitial,connectcharge,disconnectcharge, additional_grace,status', 'length', 'max' => 15],
         ];
         return $this->getExtraField($rules);
-
     }
     /**
      * @return array regras de relacionamento.
@@ -72,7 +72,6 @@ class Rate extends Model
             'idPlan'       => [self::BELONGS_TO, 'Plan', 'id_plan'],
             'idPrefix'     => [self::BELONGS_TO, 'Prefix', 'id_prefix'],
         ];
-
     }
 
     public function insertPortabilidadeRates($rates)

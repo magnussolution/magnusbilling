@@ -64,17 +64,22 @@ if (PHP_SAPI === 'cli' && isset($argv[1]) && $argv[1] === 'debug') {
     $mbAcc = isset($argv[3]) ? trim($argv[3]) : '';
     $callerId = isset($argv[4]) ? trim($argv[4]) : '';
     $sipAccount = isset($argv[5]) ? trim($argv[5]) : $mbAcc;
+    $diagnosticType = isset($argv[6]) ? trim($argv[6]) : '';
     if (
         ! preg_match('/^[0-9*#+]{2,40}$/', $number)
         || ! preg_match('/^[A-Za-z0-9_.-]{1,80}$/', $mbAcc)
         || ! preg_match('/^[A-Za-z0-9_.-]{1,80}$/', $sipAccount)
+        || ($diagnosticType !== '' && ! in_array($diagnosticType, ['inbound', 'outbound'], true))
         || strlen($callerId) > 80
     ) {
-        fwrite(STDERR, "Invalid debug arguments. use number user callerid sipuser(optional)\n");
+        fwrite(STDERR, "Invalid debug arguments. use number user callerid sipuser(optional) type(optional)\n");
         exit(2);
     }
     $debugContext = [
-        'variables' => ['MB_ACC' => $mbAcc],
+        'variables' => [
+            'MB_ACC' => $mbAcc,
+            'MB_DIAGNOSTIC_TYPE' => $diagnosticType,
+        ],
         'request' => [
             'agi_extension' => $number,
             'agi_callerid' => $callerId,
@@ -246,7 +251,10 @@ if ($agi->get_variable("SPY", true) == 1) {
     exit;
 }
 
-if (preg_match('/\-/', $MAGNUS->config['global']['apply_local_prefix_did_sip'])) {
+if (
+    ! ($agi->debugMode && $agi->get_variable('MB_DIAGNOSTIC_TYPE', true) === 'inbound')
+    && preg_match('/\-/', $MAGNUS->config['global']['apply_local_prefix_did_sip'])
+) {
     $rules = explode('-', $MAGNUS->config['global']['apply_local_prefix_did_sip']);
     if (substr($MAGNUS->dnid, 0, 1) == $rules['0']) {
         $agi->verbose($MAGNUS->dnid);

@@ -120,6 +120,11 @@ class Magnus
 
         $this->CallerID = $agi->request['agi_callerid'];
         $this->channel  = $agi->request['agi_channel'];
+
+        // IAX peers provide the native channel accountcode, including existing configs without MB_ACC.
+        if (strpos($this->channel, 'IAX2/') === 0 && strlen((string) $this->accountcode) === 0) {
+            $this->accountcode = isset($agi->request['agi_accountcode']) ? $agi->request['agi_accountcode'] : '';
+        }
         $this->uniqueid = $agi->request['agi_uniqueid'];
 
         $this->lastapp = isset($agi->request['agi_lastapp']) ? $agi->request['agi_lastapp'] : null;
