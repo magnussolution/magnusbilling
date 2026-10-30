@@ -56,40 +56,46 @@ class CallOnlineChartController extends Controller
             return;
         }
 
-        $filter = 'date >= date_sub(NOW(), interval :hours hour)';
+        $filter = 't.date >= date_sub(NOW(), interval :hours hour)';
 
-        $dateFormat = 'DATE_FORMAT( date, \'%D %H:%i\' ) date';
-        $select     = 'id, ' . $dateFormat . ', MAX(total) total, MAX(answer) answer';
+        $dateFormat = 'DATE_FORMAT( t.date, \'%D %H:%i\' ) date';
+        $select     = 'MAX(t.id) id, ' . $dateFormat . ', MAX(t.total) total, MAX(t.answer) answer, MAX(status.cps) cps';
 
         if ($hours == 6) {
-            $group = "UNIX_TIMESTAMP(date) DIV 120";
+            $group = "UNIX_TIMESTAMP(t.date) DIV 120";
         } elseif ($hours == 12) {
-            $group = "UNIX_TIMESTAMP(date) DIV 180";
+            $group = "UNIX_TIMESTAMP(t.date) DIV 180";
         } elseif ($hours == 24) {
-            $group = "UNIX_TIMESTAMP(date) DIV 300";
+            $group = "UNIX_TIMESTAMP(t.date) DIV 300";
         } elseif ($hours == 48) {
-            $group = "UNIX_TIMESTAMP(date) DIV 600";
+            $group = "UNIX_TIMESTAMP(t.date) DIV 600";
         } elseif ($hours == 72) {
-            $group = "UNIX_TIMESTAMP(date) DIV 900";
+            $group = "UNIX_TIMESTAMP(t.date) DIV 900";
         } else if ($hours > 12) {
-            $group = "UNIX_TIMESTAMP(date) DIV 720";
+            $group = "UNIX_TIMESTAMP(t.date) DIV 720";
         } else {
-            $dateFormat = 'DATE_FORMAT( date, \'%H:%i\' ) date';
-            $select     = 'id, ' . $dateFormat . ', total, answer';
+            $dateFormat = 'DATE_FORMAT( t.date, \'%H:%i\' ) date';
+            $select     = 't.id, ' . $dateFormat . ', t.total, t.answer, status.cps';
             $group      = 1;
         }
 
         $modelCallOnlineChart = CallOnlineChart::model()->findAll([
             'select'    => $select,
+            'join'      => 'LEFT JOIN pkg_status_system status ON status.date = t.date',
             'order'     => 'id DESC',
             'group'     => $group,
             'condition' => $filter,
             'params'    => [':hours' => $hours],
         ]);
 
+        $rows = $this->getAttributesModels($modelCallOnlineChart, $this->extraValues);
+        foreach ($modelCallOnlineChart as $index => $point) {
+            $rows[$index]['cps'] = $point->cps === null ? null : (int) $point->cps;
+        }
+
         # envia o json requisitado
         echo json_encode([
-            $this->nameRoot  => $this->getAttributesModels($modelCallOnlineChart, $this->extraValues),
+            $this->nameRoot  => $rows,
             $this->nameCount => 0,
         ]);
 

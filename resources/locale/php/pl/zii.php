@@ -1,5 +1,10 @@
 <?php
 return array(
+    'Restore' => 'Przywróć',
+    'Maximize' => 'Maksymalizuj',
+    'ALOC all calls' => 'ACD',
+    'CPS' => 'CPS',
+    'Simultaneous & CPS' => 'Połączenia jednoczesne & CPS',
     'Endpoint Details' => 'Szczegóły punktu końcowego',
     'Operation was successful.' => 'Operacja zakończona sukcesem.',
     'Invalid request parameters. Check the submitted values.' => 'Nieprawidłowe parametry żądania. Sprawdź przesłane wartości.',

@@ -714,6 +714,8 @@ class CalcAgi
                 }
             }
 
+            $previousCauseKeys = explode(',', (string) $agi->get_variable('HANGUPCAUSE_KEYS()', true));
+
             $this->sendCalltoTrunk(
                 $MAGNUS,
                 $agi,
@@ -728,6 +730,8 @@ class CalcAgi
                 $maxuse,
                 $allow_error
             );
+
+            $this->logTrunkResult($agi, $MAGNUS, $previousCauseKeys);
 
             if ($this->dialstatus == "CANCEL" || $this->dialstatus == "NOANSWER" || $this->dialstatus == "BUSY") {
                 $this->real_answeredtime = $this->answeredtime = 0;
@@ -760,6 +764,34 @@ class CalcAgi
             $this->real_answeredtime = $this->answeredtime = 0;
         }
         return true;
+    }
+
+    protected function logTrunkResult($agi, $MAGNUS, $previousCauseKeys)
+    {
+        $causeKeys = explode(',', (string) $agi->get_variable('HANGUPCAUSE_KEYS()', true));
+        foreach (array_diff($causeKeys, $previousCauseKeys) as $channel) {
+            if ($channel === '') {
+                continue;
+            }
+
+            $cause = (string) $agi->get_variable('HANGUPCAUSE(' . $channel . ',tech)', true);
+            $sipCode = 617;
+            $sipReason = 'Unknown';
+            if ($this->dialstatus == 'CANCEL') {
+                $sipCode = 487;
+                $sipReason = 'Request terminated';
+            } elseif (preg_match('/^SIP\s+(\d+)(?:\s+([^\r\n]+))?/', $cause, $matches)) {
+                $sipCode = (int) $matches[1];
+                if (isset($matches[2]) && trim($matches[2]) !== '') {
+                    $sipReason = substr(trim($matches[2]), 0, 127);
+                }
+            }
+
+            // Keep the same machine-readable record as app_mbilling.c.
+            $fields = [$this->usedtrunk, $MAGNUS->uniqueid, $MAGNUS->CallerID, $sipCode, $sipReason];
+            $fields = str_replace(["\r", "\n", '|', '"'], ' ', $fields);
+            $agi->execute('Log', 'DEBUG,"Magnus|' . implode('|', $fields) . '"');
+        }
     }
 
     public function sendCalltoTrunk(

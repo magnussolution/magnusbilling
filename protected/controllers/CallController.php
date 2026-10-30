@@ -526,6 +526,19 @@ class CallController extends Controller
         }
     }
 
+    public function convertRelationFilter()
+    {
+        foreach ($this->relationFilter as $key => $relationFilter) {
+            //convert $this->relationFilter to SQL text;
+            $table     = strtolower(preg_replace("/^id/", 'pkg_', $key));
+            $joinField = strtolower(preg_replace("/^id/", 'id_', $key));
+            $this->join .= ' JOIN ' . $table . ' ' . $key . ' ON t.' . $joinField . ' = ' . $key . '.id';
+
+
+            $this->filter .= ' AND ' . $relationFilter['condition'];
+        }
+    }
+
     protected function hasOnlyAllowedCdrColumns($columns)
     {
         if (! is_array($columns) || count($columns) === 0) {
@@ -549,8 +562,10 @@ class CallController extends Controller
                 $fieldName = substr($fieldName, 2);
             }
 
-            if (! preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $fieldName)
-                || ! isset($allowedColumns[$fieldName])) {
+            if (
+                ! preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $fieldName)
+                || ! isset($allowedColumns[$fieldName])
+            ) {
                 return false;
             }
         }

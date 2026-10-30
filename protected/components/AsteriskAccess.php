@@ -400,6 +400,18 @@ class AsteriskAccess
                 if (strlen($data['fromdomain'])) {
                     $line .= "from_domain = " . $data['fromdomain'] . "\n";
                 }
+                $sendrpid = isset($data['sendrpid']) ? strtolower(trim((string) $data['sendrpid'])) : 'no';
+                $sendrpidOptions = preg_split('/[\s,;|+]+/', $sendrpid, -1, PREG_SPLIT_NO_EMPTY);
+                if (in_array('both', $sendrpidOptions, true) || in_array('all', $sendrpidOptions, true)) {
+                    $sendrpidOptions[] = 'rpid';
+                    $sendrpidOptions[] = 'pai';
+                }
+                if (in_array('yes', $sendrpidOptions, true) || in_array('rpid', $sendrpidOptions, true)) {
+                    $line .= "send_rpid = yes\n";
+                }
+                if (in_array('pai', $sendrpidOptions, true)) {
+                    $line .= "send_pai = yes\n";
+                }
                 if (strlen($data['user']) && strlen($data['secret'])) {
                     $line .= "auth = auth_reg_" . $data[$head_field] . '_' . $data['user'] . '_' . $data['host'] . "\n";
                     $line .= "outbound_auth = auth_reg_" . $data[$head_field] . '_' . $data['user'] . '_' . $data['host'] . "\n";

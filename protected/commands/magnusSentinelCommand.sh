@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-readonly SENTINEL_MODULE=/usr/lib/asterisk/modules/app_mbilling.so
 readonly SENTINEL_CONFIG=/etc/magnus-sentinel/ingest.ini
 readonly SENTINEL_INSTALLER_URL=https://magnusbilling.org/download/MagnusSentinel-current.sh
 readonly SENTINEL_CHECKSUM_URL=${SENTINEL_INSTALLER_URL}.sha256
@@ -37,18 +36,28 @@ ini_value() {
     ' "$SENTINEL_CONFIG"
 }
 
-local_odbc_database() {
-    awk -F= '
+local_database() {
+    local config_file=/etc/odbc.ini
+    local config_section=mbilling-connector
+    local host_key=server
+    if ! grep -Eq '^[[:space:]]*\[magnusbilling\][[:space:]]*$' \
+        /etc/asterisk/res_odbc.conf 2>/dev/null; then
+        config_file=/etc/asterisk/res_config_mysql.conf
+        config_section=general
+        host_key=dbhost
+    fi
+    [[ -r "$config_file" ]] || fail "$config_file não pode ser lido"
+    awk -F= -v wanted_section="$config_section" -v host_key="$host_key" '
         BEGIN { section="" }
         /^[[:space:]]*\[/ {
             section=tolower($0)
             gsub(/^[[:space:]]*\[|\][[:space:]]*$/, "", section)
             next
         }
-        section == "mbilling-connector" {
+        section == wanted_section {
             key=tolower($1)
             gsub(/^[[:space:]]+|[[:space:]]+$/, "", key)
-            if (key == "server") {
+            if (key == host_key) {
                 value=tolower(substr($0, index($0, "=") + 1))
                 gsub(/^[[:space:]]+|[[:space:]]+$/, "", value)
                 if (value == "localhost" || value == "127.0.0.1" || value == "::1")
@@ -56,32 +65,34 @@ local_odbc_database() {
             }
         }
         END { exit(found ? 0 : 1) }
-    ' /etc/odbc.ini
+    ' "$config_file"
 }
 
 [[ "${EUID}" -eq 0 ]] || fail "execute como root"
-[[ -f "$SENTINEL_MODULE" && ! -L "$SENTINEL_MODULE" ]] || {
-    log "app_mbilling.so não encontrada; Sentinel não é aplicável"
-    exit 0
-}
 
 role=master
 database_host=localhost
 server_public_ip=""
 if [[ -x /opt/magnus-sentinel/sentinel_ingest.py ]]; then
-    [[ -r "$SENTINEL_CONFIG" ]] || fail "ingest.ini da instalação existente não pode ser lido"
-    role="$(ini_value source server_role)"
-    database_host="$(ini_value odbc database_host)"
-    server_public_ip="$(ini_value source server_public_ip)"
-    [[ "$role" == "master" || "$role" == "slave" ]] || fail "server_role existente é inválido"
-    [[ -n "$database_host" ]] || fail "database_host existente está vazio"
-    if [[ "$role" == "slave" && -z "$server_public_ip" ]]; then
-        fail "server_public_ip existente está vazio para o slave"
+    if [[ -e "$SENTINEL_CONFIG" ]]; then
+        [[ -f "$SENTINEL_CONFIG" ]] || fail "ingest.ini da instalação existente não é um arquivo regular"
+        [[ -r "$SENTINEL_CONFIG" ]] || fail "ingest.ini da instalação existente não pode ser lido"
+        role="$(ini_value source server_role)"
+        database_host="$(ini_value odbc database_host)"
+        server_public_ip="$(ini_value source server_public_ip)"
+        [[ "$role" == "master" || "$role" == "slave" ]] || fail "server_role existente é inválido"
+        [[ -n "$database_host" ]] || fail "database_host existente está vazio"
+        if [[ "$role" == "slave" && -z "$server_public_ip" ]]; then
+            fail "server_public_ip existente está vazio para o slave"
+        fi
+        log "atualizando instalação existente ($role)"
+    else
+        local_database || fail \
+            "instalação Sentinel incompleta sem ingest.ini; reparo automático exige MASTER com banco local"
+        log "instalação Sentinel incompleta sem ingest.ini; recriando configuração inicial no MASTER"
     fi
-    log "atualizando instalação existente ($role)"
 else
-    [[ -r /etc/odbc.ini ]] || fail "/etc/odbc.ini não pode ser lido"
-    local_odbc_database || fail \
+    local_database || fail \
         "instalação automática nova exige MASTER com banco local; instale slaves manualmente"
     log "instalando no MASTER com banco local"
 fi

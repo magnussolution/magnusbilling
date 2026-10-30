@@ -85,6 +85,8 @@ Locale.load({
     'ALERT: This action was to return the balance, referring to the days not used. Do you confirm?': 'Alarm: Diese Option wird Gutschrift für ungenutzte Tage zurückgeben. Bestätigen Sie das?',
     'ALOC': 'ALOC',
     'ALOC all calls': 'ACD',
+    'CPS': 'CPS',
+    'Simultaneous & CPS': 'Gleichzeitige Anrufe & CPS',
     'AMD': 'AMD',
     'API': 'API',
     'ASR': 'ASR',

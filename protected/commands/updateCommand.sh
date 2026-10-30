@@ -92,23 +92,24 @@ if ! php /var/www/html/mbilling/cron.php UpdateMysql; then
     exit 1
 fi
 
-## Install or update Magnus Sentinel only on servers using app_mbilling in C.
-SENTINEL_MODULE=/usr/lib/asterisk/modules/app_mbilling.so
-SENTINEL_LIFECYCLE=/var/www/html/mbilling/protected/commands/magnusSentinelCommand.sh
-if [ -f "$SENTINEL_MODULE" ] && [ ! -L "$SENTINEL_MODULE" ] &&
-   [ -x "$SENTINEL_LIFECYCLE" ]; then
-    if ! "$SENTINEL_LIFECYCLE"; then
-        echo "WARNING: MagnusBilling was updated, but Magnus Sentinel installation/update failed." >&2
-        echo "Run $SENTINEL_LIFECYCLE after correcting the reported error." >&2
+# Install or update Magnus Sentinel after the database migration.
+update_sentinel() {
+    local lifecycle="/var/www/html/mbilling/protected/commands/magnusSentinelCommand.sh"
+    if [[ ! -f "$lifecycle" ]]; then
+        echo "ERROR: magnusSentinelCommand.sh was not found in the package." >&2
+        return 1
     fi
-fi
+    bash "$lifecycle" || return $?
 
-## Refresh optional Magnus Sentinel state only after a successful update.
-SENTINEL_POST_UPDATE=/opt/magnus-sentinel/refresh-after-mbilling-update
-if [ -x "$SENTINEL_POST_UPDATE" ]; then
-    echo "Refreshing Magnus Sentinel after the MagnusBilling update."
-    if ! "$SENTINEL_POST_UPDATE"; then
-        echo "WARNING: MagnusBilling was updated, but Magnus Sentinel refresh failed." >&2
-        echo "Run $SENTINEL_POST_UPDATE after correcting the reported error." >&2
+    ## Refresh optional Magnus Sentinel state only after a successful update.
+    SENTINEL_POST_UPDATE=/opt/magnus-sentinel/refresh-after-mbilling-update
+    if [ -x "$SENTINEL_POST_UPDATE" ]; then
+        echo "Refreshing Magnus Sentinel after the MagnusBilling update."
+        if ! "$SENTINEL_POST_UPDATE"; then
+            echo "WARNING: MagnusBilling was updated, but Magnus Sentinel refresh failed." >&2
+            echo "Run $SENTINEL_POST_UPDATE after correcting the reported error." >&2
+        fi
     fi
-fi
+}
+
+update_sentinel || exit $?

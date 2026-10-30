@@ -22,6 +22,7 @@
  * Edit /resources/locale/fr.js
  */
 return array(
+    'Maximize' => 'Agrandir',
     'Endpoint Details' => 'Détails du point de terminaison',
     'Invalid request parameters. Check the submitted values.' => 'Paramètres de requête non valides. Vérifiez les valeurs envoyées.',
     'Access denied for module "{module}".' => 'Accès refusé au module "{module}".',
@@ -89,6 +90,8 @@ return array(
         'No' => 'Non',
         'CallerID' => 'CallerID',
         'ALOC all calls' => 'ACD',
+    'CPS' => 'CPS',
+    'Simultaneous & CPS' => 'Simultanées & CPS',
         'Fake Ring' => 'Sonner faux',
         'Offer CDR' => 'Offrir CDR',
         'Offer Use' => 'utilisation',

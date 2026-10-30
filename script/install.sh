@@ -137,21 +137,6 @@ configure_pjsip_dns()
         return
     fi
 
-    # When no search/domain directive exists, libc may infer a search suffix
-    # from a provider hostname such as host.example.net. PJSIP then performs
-    # unnecessary SRV lookups such as _sip._udp.trunk.net.example.net during
-    # every reload. An explicit root search domain prevents that expansion.
-    if ! grep -Eq '^[[:space:]]*(search|domain)[[:space:]]+' "${resolv_file}"; then
-        resolv_backup="${resolv_file}.magnusbilling.$(date +%Y%m%d-%H%M%S).bak"
-        cp -a -- "${resolv_file}" "${resolv_backup}"
-        if sed -i --follow-symlinks '1i search .' "${resolv_file}"; then
-            echo "Configured root DNS search domain for predictable PJSIP SRV lookups."
-            echo "Resolver backup: ${resolv_backup}"
-        else
-            echo "WARNING: Unable to add 'search .' to ${resolv_file}."
-        fi
-    fi
-
     echo "Checking configured DNS servers for PJSIP SRV response..."
     while read -r nameserver; do
         [ -n "${nameserver}" ] || continue
@@ -172,6 +157,137 @@ configure_pjsip_dns()
         echo "WARNING: ${dns_failures} configured DNS server(s) may delay PJSIP reloads."
         echo "Remove or repair non-responsive resolvers before using DNS-based trunks."
     fi
+
+    configure_pjsip_dns_cache
+}
+
+
+configure_pjsip_dns_cache()
+{
+    local resolv_file="/etc/resolv.conf"
+    local cache_dir="/etc/magnusbilling"
+    local cache_config="${cache_dir}/dns-cache.conf"
+    local cache_service="magnusbilling-dns-cache.service"
+    local resolv_dir="/etc/resolvconf/resolv.conf.d"
+    local backup_dir
+    local nameserver
+    local upstream_count=0
+    local use_resolvconf=0
+
+    # A resolver already listening on port 53 may have its own cache and
+    # configuration owner. Never replace it or bind over it automatically.
+    if ! systemctl is-active --quiet "${cache_service}" &&
+        [ -n "$(ss -H -lntu '( sport = :53 )')" ]; then
+        echo "Existing DNS service detected. Keeping its resolver configuration."
+        return
+    fi
+
+    if command -v resolvconf > /dev/null 2>&1 && [ -d "${resolv_dir}" ]; then
+        use_resolvconf=1
+    elif [ -L "${resolv_file}" ] ||
+        systemctl is-active --quiet NetworkManager ||
+        grep -Eqi 'generated|do not edit' "${resolv_file}"; then
+        echo "WARNING: DNS configuration is managed externally; local cache setup skipped."
+        return
+    fi
+
+    # Preserve the site's recursive DNS servers, and exclude loopback to
+    # prevent forwarding queries back into this cache. Keep the config on reruns.
+    if [ ! -f "${cache_config}" ]; then
+        mkdir -p "${cache_dir}" || return 1
+        {
+            echo 'listen-address=127.0.0.1'
+            echo 'bind-interfaces'
+            echo 'no-resolv'
+            echo 'cache-size=4096'
+        } > "${cache_config}" || return 1
+        while read -r nameserver; do
+            case "${nameserver}" in
+                127.*|::1|0.0.0.0|::|'') continue ;;
+            esac
+            if dig +time=2 +tries=1 +short "@${nameserver}" A debian.org |
+                grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'; then
+                echo "server=${nameserver}" >> "${cache_config}"
+                upstream_count=$((upstream_count + 1))
+            fi
+        done < <(awk '/^[[:space:]]*nameserver[[:space:]]+/ { print $2 }' "${resolv_file}")
+        if [ "${upstream_count}" -eq 0 ]; then
+            rm -f "${cache_config}"
+            echo "WARNING: No working external DNS server found; local cache setup skipped."
+            return
+        fi
+    fi
+
+    # dnsmasq-base supplies the binary without starting the distribution's
+    # general-purpose DNS/DHCP service. Use an isolated, DNS-only unit instead.
+    apt_install dnsmasq-base
+    if ! /usr/sbin/dnsmasq --test --conf-file="${cache_config}"; then
+        echo "WARNING: Local DNS cache configuration is invalid; resolver unchanged."
+        return
+    fi
+    cat > "/etc/systemd/system/${cache_service}" <<'EOF'
+[Unit]
+Description=MagnusBilling local DNS cache
+Wants=network-online.target
+After=network-online.target
+Before=asterisk.service
+
+[Service]
+ExecStart=/usr/sbin/dnsmasq --keep-in-foreground --conf-file=/etc/magnusbilling/dns-cache.conf
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    systemctl daemon-reload
+    if ! systemctl enable --now "${cache_service}"; then
+        echo "WARNING: Local DNS cache failed to start; resolver unchanged."
+        return
+    fi
+    if ! dig +time=2 +tries=1 +short @127.0.0.1 A debian.org |
+        grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'; then
+        systemctl disable --now "${cache_service}"
+        echo "WARNING: Local DNS cache did not resolve the test host; resolver unchanged."
+        return
+    fi
+
+    backup_dir=$(mktemp -d /etc/magnusbilling/dns-backup.XXXXXX) || return 1
+    cp -L -- "${resolv_file}" "${backup_dir}/resolv.conf" || return 1
+    if [ "${use_resolvconf}" -eq 1 ]; then
+        cp -a -- "${resolv_dir}" "${backup_dir}/resolv.conf.d" || return 1
+        touch "${resolv_dir}/head" "${resolv_dir}/tail"
+        # head makes localhost the first DNS; tail overrides dynamic search
+        # suffixes. Remove only our exact entries so repeated setup is idempotent.
+        sed -i '/^[[:space:]]*nameserver[[:space:]]*127\.0\.0\.1[[:space:]]*$/d' "${resolv_dir}/head"
+        { echo 'nameserver 127.0.0.1'; cat "${resolv_dir}/head"; } > "${backup_dir}/head.new"
+        cat "${backup_dir}/head.new" > "${resolv_dir}/head"
+        sed -i '/^[[:space:]]*search[[:space:]]*\.[[:space:]]*$/d' "${resolv_dir}/tail"
+        echo 'search .' >> "${resolv_dir}/tail"
+        resolvconf -u
+    else
+        sed -E -i '/^[[:space:]]*(nameserver|search|domain)[[:space:]]/d' "${resolv_file}"
+        echo 'nameserver 127.0.0.1' >> "${resolv_file}"
+        echo 'search .' >> "${resolv_file}"
+    fi
+
+    # Check the generated file as well: a broken resolvconf symlink must not
+    # result in reporting success while Asterisk still uses external DNS.
+    if [ "$(awk '/^[[:space:]]*nameserver[[:space:]]+/ { print $2; exit }' "${resolv_file}")" != '127.0.0.1' ] ||
+        [ "$(awk '/^[[:space:]]*(search|domain)[[:space:]]+/ { value=$0 } END { print value }' "${resolv_file}")" != 'search .' ] ||
+        ! dig +time=2 +tries=1 +short A debian.org |
+            grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'; then
+        if [ "${use_resolvconf}" -eq 1 ]; then
+            cp -a -- "${backup_dir}/resolv.conf.d/." "${resolv_dir}/"
+            # These files may have been created by touch above.
+            [ -f "${backup_dir}/resolv.conf.d/head" ] || rm -f "${resolv_dir}/head"
+            [ -f "${backup_dir}/resolv.conf.d/tail" ] || rm -f "${resolv_dir}/tail"
+            resolvconf -u
+        fi
+        cat "${backup_dir}/resolv.conf" > "${resolv_file}"
+        echo "WARNING: Resolver validation failed; previous DNS configuration restored."
+        return
+    fi
+    echo "Local DNS cache configured for PJSIP. Resolver backup: ${backup_dir}"
 }
 
 

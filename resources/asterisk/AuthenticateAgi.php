@@ -435,7 +435,7 @@ class AuthenticateAgi
             }
 
             $MAGNUS->hangup($agi);
-        } elseif ($MAGNUS->mode == 'standard' && $MAGNUS->user_calllimit >= 0) {
+        } elseif ($MAGNUS->mode == 'standard' && ($MAGNUS->user_calllimit >= 0 || $MAGNUS->modelSip->calllimit > 0)) {
             //check user call limit
             $agi->verbose('check user call limit', 5);
 
@@ -454,13 +454,21 @@ class AuthenticateAgi
             }
 
             $sipAccounts = substr($sipAccounts, 0, -1);
-            $calls       = 0;
+            $calls       = $callsSIP = 0;
             foreach ($channelsData as $key => $line) {
                 if (preg_match("/^PJSIP\/($sipAccounts)-.*(Ring|Up)/", $line) && ! preg_match("/Outgoing Line/", $line)) {
                     $calls++;
                 }
+                if (preg_match("/^PJSIP\/($MAGNUS->sip_account)-.*(Ring|Up)/", $line) && ! preg_match("/Outgoing Line/", $line)) {
+                    $callsSIP++;
+                }
             }
-            if ($calls > $MAGNUS->user_calllimit) {
+
+
+            if (
+                ($MAGNUS->user_calllimit > 0 && $calls > $MAGNUS->user_calllimit)
+                || ($MAGNUS->modelSip->calllimit > 0 && $callsSIP > $MAGNUS->modelSip->calllimit)
+            ) {
                 $agi->verbose("Send Congestion user call limit", 3);
 
                 if ($MAGNUS->modelUser->calllimit_error == 403) {

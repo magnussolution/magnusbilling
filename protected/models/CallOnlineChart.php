@@ -21,6 +21,8 @@
 
 class CallOnlineChart extends Model
 {
+    public $cps;
+
     protected $_module = 'callerid';
     /**
      * Retorna a classe estatica da model.

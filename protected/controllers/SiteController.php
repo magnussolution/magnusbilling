@@ -13,6 +13,7 @@ class SiteController extends Controller
     public function actionIndex()
     {
 
+        header('Content-Type: text/javascript; charset=UTF-8');
         echo 'window.CSRF_TOKEN_NAME = ' . json_encode(Yii::app()->request->csrfTokenName) . ';' . PHP_EOL;
         echo 'window.CSRF_TOKEN = ' . json_encode(Yii::app()->request->csrfToken) . ';' . PHP_EOL;
 

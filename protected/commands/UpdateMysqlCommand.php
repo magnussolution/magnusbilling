@@ -299,7 +299,7 @@ class UpdateMysqlCommand extends CConsoleCommand
             $this->update($version);
         }
 
-                //2026-08-14
+        //2026-08-14
         if ($version == '8.0.0.9') {
             $this->logMessage('Applying database migration 8.0.0.9 -> 8.0.0.10.');
             $this->executeDB(
@@ -312,25 +312,25 @@ class UpdateMysqlCommand extends CConsoleCommand
                 port varchar(7) NOT NULL DEFAULT '5060',
                 PRIMARY KEY (id)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"
-            );  
+            );
 
-           $WAN_IF = trim(shell_exec(
+            $WAN_IF = trim(shell_exec(
                 "ip -4 route show default | awk '{for(i=1;i<=NF;i++) if(\$i==\"dev\"){print \$(i+1); exit}}'"
             ));
 
             $command = 'php /var/www/html/mbilling/cron.php SipTrace';
 
             $cronLine = '*/2 * * * * root flock -n /tmp/siptrace.lock '
-                    . $command
-                    . ($WAN_IF !== '' ? ' ' . $WAN_IF : '');
+                . $command
+                . ($WAN_IF !== '' ? ' ' . $WAN_IF : '');
 
             exec(
                 "grep -F " . escapeshellarg($command) . " /etc/crontab "
-                . "| grep -qv '^[[:space:]]*#' "
-                . "|| printf '%s\n' " . escapeshellarg($cronLine)
-                . " >> /etc/crontab"
+                    . "| grep -qv '^[[:space:]]*#' "
+                    . "|| printf '%s\n' " . escapeshellarg($cronLine)
+                    . " >> /etc/crontab"
             );
-       
+
             $version = '8.0.0.10';
             $this->update($version);
         }
@@ -448,7 +448,46 @@ class UpdateMysqlCommand extends CConsoleCommand
             $this->update($version);
         }
 
+        //2026-09-23
+        if ($version == '8.0.0.15') {
+            // Remove group permissions before deleting the Sentinel menu module.
+            $this->executeDB(
+                "DELETE FROM pkg_group_module WHERE id_module IN (
+                    SELECT id FROM pkg_module WHERE module = 'magnussentinel'
+                )"
+            );
+            $this->executeDB("DELETE FROM pkg_module WHERE module = 'magnussentinel'");
+            $version = '8.0.0.16';
+            $this->update($version);
+        }
+
+        //2026-10-02
+        if ($version == '8.0.0.16') {
+            $this->executeDB("INSERT INTO pkg_configuration VALUES
+                (NULL, 'total_analysis_time', 'total_analysis_time', '2900', 'total_analysis_time', 'global', '1'),
+                (NULL, 'wait_when_silence', 'wait_when_silence', '3900', 'wait_when_silence', 'global', '1'),
+                (NULL, 'min_word_length', 'min_word_length', '150', 'min_word_length', 'global', '1'),
+                (NULL, 'maximum_number_of_words', 'maximum_number_of_words', '2', 'maximum_number_of_words', 'global', '1'),
+                (NULL, 'maximum_number_of_words_ringing', 'maximum_number_of_words_ringing', '6', 'maximum_number_of_words_ringing', 'global', '1'),
+                (NULL, 'total_analysis_time_ringing', 'total_analysis_time_ringing', '40000', 'total_analysis_time_ringing', 'global', '1'),
+                (NULL, 'hangup_after_total_time_ringing', 'hangup_after_total_time_ringing', '1', 'hangup_after_total_time_ringing', 'global', '1');
+                ");
+            $version = '8.0.0.17';
+            $this->update($version);
+        }
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
     private function tableExists($table)
     {

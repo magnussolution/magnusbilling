@@ -85,6 +85,8 @@ Locale.load({
     'ALERT: This action was to return the balance, referring to the days not used. Do you confirm?': 'UWAGA: Ta akcja ma na celu zwrócenie salda za niewykorzystane dni. Czy potwierdzasz?',
     'ALOC': 'ALOC',
     'ALOC all calls': 'ACD',
+    'CPS': 'CPS',
+    'Simultaneous & CPS': 'Połączenia jednoczesne & CPS',
     'AMD': 'AMD',
     'API': 'API',
     'ASR': 'ASR',

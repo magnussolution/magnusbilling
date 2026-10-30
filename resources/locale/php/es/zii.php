@@ -91,6 +91,8 @@ return array(
     'ALERT => Do you really want cancel this service to this user?' => 'ALERTA => Usted realmente desea cancelar este servicio para este usuario?',
     'ALERT => This action was to return the balance, referring to the days not used. Do you confirm?' => 'ALERTA => Esta opción va devolver el crédito referente a los dias no usado. Confirmar esto?',
     'ALOC all calls' => 'ACD',
+    'CPS' => 'CPS',
+    'Simultaneous & CPS' => 'Simultáneas & CPS',
     'AMD' => 'AMD',
     'API' => 'API',
     'ASR' => 'ASR',

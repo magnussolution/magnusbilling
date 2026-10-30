@@ -108,7 +108,7 @@ class CallChartCommand extends ConsoleCommand
                     continue;
                 }
 
-                $uniqueid    = null;
+                $uniqueid    = $call[12];
                 $trunk       = null;
                 if (preg_match('/^PJSIP\/([^-\s]+)/', $channel, $m)) {
                     $sip_account = $m[1];

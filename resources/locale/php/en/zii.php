@@ -1,5 +1,10 @@
 <?php
 return array(
+    'Restore' => 'Restore',
+    'Maximize' => 'Maximize',
+    'ALOC all calls' => 'ACD',
+    'CPS' => 'CPS',
+    'Simultaneous & CPS' => 'Simultaneous & CPS',
     'Endpoint Details' => 'Endpoint Details',
     'Operation was successful.' => 'Operation was successful.',
     'Invalid request parameters. Check the submitted values.' => 'Invalid request parameters. Check the submitted values.',

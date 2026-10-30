@@ -22,6 +22,8 @@
  * Edit /resources/locale/ru.js
  */
 return array(
+    'Restore' => 'Восстановить',
+    'Maximize' => 'Развернуть',
     'Endpoint Details' => 'Сведения о конечной точке',
     'Operation was successful.' => 'Операция была успешной.',
     'Invalid request parameters. Check the submitted values.' => 'Недопустимые параметры запроса. Проверьте отправленные значения.',
@@ -94,6 +96,8 @@ return array(
         'No' => 'Нет',
         'CallerID' => 'CallerID',
         'ALOC all calls' => 'ACD',
+    'CPS' => 'CPS',
+    'Simultaneous & CPS' => 'Одновременные вызовы & CPS',
         'Out work audio' => 'OUT WOOK AUDIO',
         'P2P CustomerSiteID' => 'P2P CombersentityID',
         'P2P KeyID' => 'P2P CeyID',
