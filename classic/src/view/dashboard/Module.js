@@ -10,11 +10,12 @@ Ext.define('MBilling.view.dashboard.Module', {
     autoShow: true,
     xtype: 'container',
     bodyPadding: 5,
-    requires: ['MBilling.view.dashboard.Trunks', 'Ext.ux.layout.ResponsiveColumn', 'MBilling.view.dashboard.Network', 'MBilling.view.dashboard.NetworkChart', 'MBilling.view.dashboard.DashboardController'],
+    requires: ['Ext.ux.layout.ResponsiveColumn', 'MBilling.view.dashboard.Network', 'MBilling.view.dashboard.NetworkChart', 'MBilling.view.dashboard.DashboardController'],
     layout: 'responsivecolumn',
     controller: 'dashboard',
     listeners: {
-        render: 'onRenderModule'
+        render: 'onRenderModule',
+        resize: 'onDashboardResize'
     },
     initComponent: function() {
         var me = this;
@@ -101,15 +102,19 @@ Ext.define('MBilling.view.dashboard.Module', {
                     hidden: App.user.hidden_prices == 1
                 }, {
                     xtype: 'callonlinechartchart',
-                    title: t('Simultaneous calls'),
+                    title: t('Simultaneous & CPS'),
                     cls: 'dashboard-main-chart shadow',
                     height: height,
                     showDownload: false,
                     hiddenButtonsCharts: true,
-                    userCls: 'big-60 small-100'
-                }, {
-                    xtype: 'trunks',
-                    userCls: 'big-40 small-100'
+                    userCls: 'big-100 small-100',
+                    tools: [{
+                        type: 'maximize',
+                        tooltip: t('Maximize'),
+                        callback: function(panel, tool) {
+                            panel.up('dashboardmodule').getController().toggleCallsChart(panel, tool);
+                        }
+                    }]
                 }]
             } else {
                 if (App.user.showMCDashBoard == true && showCampaignDashBoad) {

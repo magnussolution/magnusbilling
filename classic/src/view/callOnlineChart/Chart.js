@@ -23,7 +23,7 @@ Ext.define('MBilling.view.callOnlineChart.Chart', {
     alias: 'widget.callonlinechartchart',
     controller: 'callsummaryperday',
     store: 'CallOnlineChart',
-    fieldValue: ['total', 'answer'],
+    fieldValue: ['total', 'answer', 'cps'],
     fieldDescription: 'date',
     labelYLine: t('Total / Min'),
     labelXLine: t('Time'),
@@ -40,14 +40,36 @@ Ext.define('MBilling.view.callOnlineChart.Chart', {
     insetPadding: 0,
     initComponent: function() {
         var me = this;
+        me.axesLine = [{
+            type: 'numeric',
+            title: t('Simultaneous calls'),
+            position: 'left',
+            fields: ['total', 'answer'],
+            minimum: 0,
+            grid: true
+        }, {
+            type: 'numeric',
+            title: t('CPS'),
+            position: 'right',
+            fields: ['cps'],
+            minimum: 0
+        }, {
+            type: 'category',
+            title: t('Time'),
+            position: 'bottom',
+            fields: ['date']
+        }];
         me.rendererLegend = function(value) {
+            if (value == 'cps') {
+                return t('CPS');
+            }
             if (value == 'answer') {
                 value = 'answered';
             }
             return t(value.charAt(0).toUpperCase() + value.slice(1));
         }
         me.rendererFieldValue = function(axis, label, layoutContext) {
-            return layoutContext.renderer(label);
+            return layoutContext ? layoutContext.renderer(label) : axis;
         };
         me.tbarChart = [{
             text: '1' + ' ' + t('hour'),

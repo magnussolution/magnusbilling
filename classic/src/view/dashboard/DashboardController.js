@@ -22,48 +22,45 @@ Ext.define('MBilling.view.dashboard.DashboardController', {
                     }
                 });
             }, 10000);
-            storeTrunkChart = Ext.create('MBilling.store.TrunkChart');
-            storeTrunkChart.load({
-                scope: me,
-                callback: function(record) {
-                    if (record[0]) {
-                        me.onUpdateDashboardTrunk(record)
-                    }
-                }
-            });
-            setInterval(function() {
-                storeTrunkChart.load({
-                    scope: me,
-                    callback: function(record) {
-                        me.onUpdateDashboardTrunk(record)
-                    }
-                });
-            }, 30000);
         }
     },
-    onUpdateDashboardTrunk: function(record) {
-        var me = this;
-        trunkDetails = '<div class="services-text">' + t('Trunk chart') + '</div>' + '<div class="services-legend">';
-        if (record[0]) {
-            avarege = (record[0].data.sessionbill * 100) / record[0].data.sumsessionbill;
-            me.lookupReference('trunkDashboardFields').items.items[0].update('<div class="left-aligned-div">' + record[0].data.idTrunktrunkcode + '</div><div class="right-aligned-div">' + avarege.toFixed(2) + '%</div>');
-            me.lookupReference('trunkDashboardFields').items.items[1].setValue(avarege / 100);
-            trunkDetails += '<span><div class="legend-trunk1"></div>' + record[0].data.idTrunktrunkcode + '</span>';
+    toggleCallsChart: function(chart, tool) {
+        var me = this,
+            view = me.getView();
+        Ext.suspendLayouts();
+        if (me.maximizedCallsChart) {
+            chart.setHeight(me.callsChartHeight);
+            Ext.each(me.hiddenDashboardItems, function(item) {
+                if (!item.destroyed) {
+                    item.show();
+                }
+            });
+            me.maximizedCallsChart = null;
+            me.hiddenDashboardItems = null;
+            tool.setType('maximize');
+            tool.setTooltip(t('Maximize'));
+        } else {
+            me.callsChartHeight = chart.getHeight();
+            me.hiddenDashboardItems = [];
+            view.items.each(function(item) {
+                if (item !== chart && !item.hidden) {
+                    me.hiddenDashboardItems.push(item);
+                    item.hide();
+                }
+            });
+            me.maximizedCallsChart = chart;
+            me.onDashboardResize();
+            tool.setType('restore');
+            tool.setTooltip(t('Restore'));
         }
-        if (record[1]) {
-            avarege = (record[1].data.sessionbill * 100) / record[0].data.sumsessionbill;
-            me.lookupReference('trunkDashboardFields').items.items[2].update('<div class="left-aligned-div">' + record[1].data.idTrunktrunkcode + '</div><div class="right-aligned-div">' + avarege.toFixed(2) + '%</div>');
-            me.lookupReference('trunkDashboardFields').items.items[3].setValue(avarege / 100);
-            trunkDetails += '<span><div class="legend-trunk2"></div>' + record[1].data.idTrunktrunkcode + '</span>';
+        Ext.resumeLayouts(true);
+    },
+    onDashboardResize: function() {
+        var me = this,
+            view = me.getView();
+        if (me.maximizedCallsChart && view.body) {
+            me.maximizedCallsChart.setHeight(Math.max(250, view.body.getHeight() - 30));
         }
-        if (record[2]) {
-            avarege = (record[2].data.sessionbill * 100) / record[0].data.sumsessionbill;
-            me.lookupReference('trunkDashboardFields').items.items[4].update('<div class="left-aligned-div">' + record[2].data.idTrunktrunkcode + '</div><div class="right-aligned-div">' + avarege.toFixed(2) + '%</div>');
-            me.lookupReference('trunkDashboardFields').items.items[5].setValue(avarege / 100);
-            trunkDetails += '<span><div class="legend-trunk3"></div>' + record[2].data.idTrunktrunkcode + '</span>';
-        }
-        trunkDetails += '<div>';
-        me.lookupReference('trunkDashboardFields').items.items[6].update(trunkDetails);
     },
     onUpdateDashboardNetWork: function(record) {
         var me = this;

@@ -30,6 +30,10 @@ Ext.define('MBilling.model.CallOnlineChart', {
         name: 'answer',
         type: 'int'
     }, {
+        name: 'cps',
+        type: 'int',
+        allowNull: true
+    }, {
         name: 'date',
         type: 'string'
     }],

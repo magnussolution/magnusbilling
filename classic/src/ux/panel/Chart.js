@@ -234,7 +234,7 @@ Ext.define('Ext.ux.panel.Chart', {
             store: me.store,
             legend: me.legend,
             sprites: me.sprites,
-            axes: [{
+            axes: me.axesLine || [{
                 type: 'numeric',
                 title: me.labelYLine,
                 position: 'left',
