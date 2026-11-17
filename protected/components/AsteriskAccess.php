@@ -941,8 +941,26 @@ class AsteriskAccess
 
             $linesCallsResult = explode("\n", $data['data']);
 
+            // Some Magnus Asterisk builds add Callerid after Endpoint.
+            // Keep the legacy Endpoint/number/application/status positions.
+            $hasCallerIdColumn = false;
+            foreach ($linesCallsResult as $line) {
+                $columns = array_map('trim', explode('|', $line));
+                if (count($columns) === 14
+                    && strcasecmp($columns[0], 'Channel') === 0
+                    && strcasecmp($columns[1], 'Endpoint') === 0
+                    && strcasecmp($columns[2], 'Callerid') === 0) {
+                    $hasCallerIdColumn = true;
+                    break;
+                }
+            }
+
             for ($i = 0; $i < count($linesCallsResult) - 1; $i++) {
                 $call = explode("|", $linesCallsResult[$i]);
+
+                if ($hasCallerIdColumn && count($call) === 14) {
+                    array_splice($call, 2, 1);
+                }
 
                 if (!preg_match('/^SIP|^IAX|^PJSIP/', $call[0])) {
                     continue;

@@ -1311,6 +1311,9 @@ for codec in /usr/lib/asterisk/modules/codec_g729.so; do
         else
             echo "This patchelf version cannot clear the executable-stack flag from ${codec}."
         fi
+        # Downloads may inherit umask 077; Asterisk runs without root privileges.
+        chown root:root "${codec}"
+        chmod 0644 "${codec}"
         asterisk -rx "module load $(basename "${codec}")"
     fi
 done

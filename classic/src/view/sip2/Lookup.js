@@ -9,7 +9,7 @@ Ext.define('MBilling.view.sip2.Lookup', {
     alias: 'widget.sip2lookup',
     name: 'id_sip',
     fieldLabel: t('SIP'),
-    displayField: 'id_sip_name',
+    displayField: 'id_pjsip_name',
     displayFieldList: 'name',
     gridConfig: {
         xtype: 'sip2list',

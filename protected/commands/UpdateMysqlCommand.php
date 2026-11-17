@@ -475,18 +475,56 @@ class UpdateMysqlCommand extends CConsoleCommand
             $version = '8.0.0.17';
             $this->update($version);
         }
+
+        //2026-11-11
+        if ($version == '8.0.0.17') {
+            if (! $this->tableExists('pkg_ivr')) {
+                return;
+            }
+
+            foreach (['option_', 'option_out_'] as $prefix) {
+                for ($option = 0; $option <= 10; $option++) {
+                    $column = $prefix . $option;
+                    if (! $this->columnExists('pkg_ivr', $column)) {
+                        continue;
+                    }
+
+                    $this->executeDB(
+                        "UPDATE `pkg_ivr` SET `$column` = CONCAT('pjsip|', SUBSTRING(`$column`, 5))" .
+                            " WHERE LOWER(SUBSTRING(`$column`, 1, 4)) = 'sip|'"
+                    );
+                }
+            }
+            $version = '8.0.0.18';
+            $this->update($version);
+        }
+
+        //2026-11-13
+        if ($version == '8.0.0.18') {
+            if ($this->tableExists('pkg_queue_member') && $this->columnExists('pkg_queue_member', 'interface')) {
+                $this->executeDB(
+                    "UPDATE `pkg_queue_member` SET `interface` = CONCAT('PJSIP/', SUBSTRING(`interface`, 5))" .
+                        " WHERE LOWER(SUBSTRING(`interface`, 1, 4)) = 'sip/'"
+                );
+            }
+
+            $version = '8.0.0.19';
+            $this->update($version);
+        }
+
+        //2026-11-16
+        if ($version == '8.0.0.19') {
+            if ($this->tableExists('pkg_sip') && $this->columnExists('pkg_sip', 'forward')) {
+                $this->executeDB(
+                    "UPDATE `pkg_sip` SET `forward` = CONCAT('pjsip|', SUBSTRING(`forward`, 5))" .
+                        " WHERE LOWER(SUBSTRING(`forward`, 1, 4)) = 'sip|'"
+                );
+            }
+
+            $version = '8.0.0.20';
+            $this->update($version);
+        }
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
     private function tableExists($table)

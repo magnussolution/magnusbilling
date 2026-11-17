@@ -976,9 +976,12 @@ class CalcAgi
             $agi->verbose($sql, 25);
             $agi->exec($sql);
 
-            $sql = "UPDATE pkg_provider SET credit = credit - $this->buycost WHERE id=" . $this->id_provider . " LIMIT 1;";
-            $agi->verbose($sql, 25);
-            $agi->exec($sql);
+            // DID and internal calls may not have an outbound provider.
+            if (is_numeric($this->id_provider) && $this->id_provider > 0) {
+                $sql = "UPDATE pkg_provider SET credit = credit - $this->buycost WHERE id=" . (int) $this->id_provider . " LIMIT 1;";
+                $agi->verbose($sql, 25);
+                $agi->exec($sql);
+            }
 
             if ($returnID == true) {
                 return $agi->lastInsertId();

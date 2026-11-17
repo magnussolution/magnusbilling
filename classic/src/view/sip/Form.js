@@ -115,7 +115,7 @@ Ext.define('MBilling.view.sip.Form', {
                         name: 'allow',
                         inputValue: 'g729',
                         checked: window.default_codes.match(/g729/)
-                    },  {
+                    }, {
                         boxLabel: 'gsm',
                         name: 'allow',
                         inputValue: 'gsm',
@@ -376,9 +376,9 @@ Ext.define('MBilling.view.sip.Form', {
                     }, {
                         xtype: 'sip2lookup',
                         ownerForm: me,
-                        name: 'id_sip',
+                        name: 'id_pjsip',
                         fieldLabel: t('Sip user'),
-                        displayField: 'id_sip_name',
+                        displayField: 'id_pjsip_name',
                         allowBlank: true,
                         hidden: true
                     }, {

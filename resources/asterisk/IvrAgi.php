@@ -288,7 +288,7 @@ class IvrAgi
                     }
                     $dialparams = implode(',', $dialparams);
 
-                    $dialstr = 'PJSIP' . $modelSip->name;
+                    $dialstr = 'PJSIP/' . $modelSip->name;
                     $agi->verbose($dialstr, 25);
                     $MAGNUS->sip_account = $modelSip->name;
                     $MAGNUS->startRecordCall($agi);

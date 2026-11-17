@@ -114,7 +114,7 @@ class SipController extends Controller
 
                 $values['forward'] = $values['type_forward'] . '|' . $values['id_' . $values['type_forward']];
             }
-        } else if ((isset($values['id_sip']) || isset($values['id_ivr']) || isset($values['id_queue'])) &  ! $this->isNewRecord) {
+        } else if ((isset($values['id_pjsip']) || isset($values['id_sip']) || isset($values['id_ivr']) || isset($values['id_queue'])) &  ! $this->isNewRecord) {
 
             $modelSip = Sip::model()->findByPk((int) $values['id']);
 
@@ -319,7 +319,7 @@ class SipController extends Controller
                         } else if (isset($itemOption[1])) {
                             $attributes[$i]['id_' . $itemOption[0]] = end($itemOption);
                             if (is_numeric($itemOption[1])) {
-                                $model = ucfirst($itemOption[0]);
+                                $model = $itemOption[0] == 'pjsip' ? 'Sip' : ucfirst($itemOption[0]);
 
 
                                 if (class_exists($model)) {
