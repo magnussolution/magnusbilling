@@ -770,10 +770,7 @@ class DidAgi
                         /* INSERT CDR  & UPDATE SYSTEM*/
                         $CalcAgi->updateSystem($MAGNUS, $agi, 1, 1);
 
-                        $sql = "UPDATE pkg_did_destination SET secondusedreal = secondusedreal + $CalcAgi->answeredtime
-                                WHERE id = " . $this->modelDestination[0]['id'] . " LIMIT 1";
-                        $agi->verbose($sql, 25);
-                        $agi->exec($sql);
+                        $this->updateDestinationUsage($agi, $this->modelDestination[0]['id'] ?? null, $CalcAgi->answeredtime);
 
                         /* THEN STATUS IS ANSWER*/
                         break;
@@ -807,6 +804,19 @@ class DidAgi
             return 1;
         }
     }
+    protected function updateDestinationUsage($agi, $destinationId, $answeredtime)
+    {
+        // SIP forwarding can use a temporary destination without a database ID.
+        if (! is_numeric($destinationId) || $destinationId <= 0) {
+            return;
+        }
+
+        $sql = "UPDATE pkg_did_destination SET secondusedreal = secondusedreal + $answeredtime
+                    WHERE id = " . (int) $destinationId . " LIMIT 1";
+        $agi->verbose($sql, 25);
+        $agi->exec($sql);
+    }
+
     public function checkBlockCallerID(&$agi, &$MAGNUS)
     {
         $agi->verbose("try blocked", 5);
@@ -1042,12 +1052,14 @@ class DidAgi
         }
         $CalcAgi->saveCDR($agi, $MAGNUS);
 
-        $sql = "UPDATE pkg_did_destination SET secondusedreal = secondusedreal + $answeredtime
-                    WHERE  id = " . $this->modelDestination[0]['id'] . " LIMIT 1;
-                UPDATE pkg_did SET secondusedreal = secondusedreal + $answeredtime
-                    WHERE  id = " . $this->modelDid->id . " LIMIT 1";
-        $agi->verbose($sql, 25);
-        $agi->exec($sql);
+        $this->updateDestinationUsage($agi, $this->modelDestination[0]['id'] ?? null, $answeredtime);
+
+        if (isset($this->modelDid->id) && is_numeric($this->modelDid->id) && $this->modelDid->id > 0) {
+            $sql = "UPDATE pkg_did SET secondusedreal = secondusedreal + $answeredtime
+                    WHERE id = " . (int) $this->modelDid->id . " LIMIT 1";
+            $agi->verbose($sql, 25);
+            $agi->exec($sql);
+        }
 
         if (isset($this->did_voip_model->id)) {
 

@@ -72,11 +72,38 @@ class DiddestinationController extends Controller
     public function beforeSave($values)
     {
 
+        $current = null;
+        if (! $this->isNewRecord) {
+            $current = Diddestination::model()->findByPk((int) $values['id']);
+            if (! isset($current->id)) {
+                $this->sendError('Invalid or unauthorized record.');
+            }
+        } else {
+            // Apply the same default that will be persisted before checking the destination.
+            $values['voip_call'] = isset($values['voip_call']) ? $values['voip_call'] : 1;
+        }
+
+        if (Yii::app()->session['isClient']) {
+            $userId = (int) Yii::app()->session['id_user'];
+            $didId = array_key_exists('id_did', $values)
+                ? $values['id_did'] : ($current !== null ? $current->id_did : null);
+            if ($userId <= 0 || ! is_scalar($didId)
+                || ($current !== null && (int) $current->id_user !== $userId)) {
+                $this->sendError('Invalid or unauthorized record.');
+            }
+            $did = Did::model()->findByPk((int) $didId);
+            // Unassigned, unreserved DIDs can still be purchased through this flow.
+            $available = $this->isNewRecord && isset($did->id)
+                && $did->id_user == null && $did->reserved == 0;
+            if (! isset($did->id) || ((int) $did->id_user !== $userId && ! $available)) {
+                $this->sendError('Invalid or unauthorized record.');
+            }
+            $values['id_user'] = $userId;
+        }
+
         $this->checkRelation($values);
 
         if ($this->isNewRecord) {
-
-            $values['voip_call'] = isset($values['voip_call']) ? $values['voip_call'] : 1;
 
             $did       = Did::model()->findByPk((int) $values['id_did']);
             $modelUser = User::model()->findByPk((int) $values['id_user']);
@@ -127,13 +154,8 @@ class DiddestinationController extends Controller
                     break;
             }
 
-            if (isset($name) && $values['id_user'] != $model->id_user) {
-                echo json_encode([
-                    'success' => false,
-                    'rows'    => [],
-                    'errors'  => ['voip_call' => ['The ' . $name . ' must belong to the DID owner']],
-                ]);
-                exit;
+            if (isset($name) && (! isset($model->id_user) || $values['id_user'] != $model->id_user)) {
+                $this->sendError('Invalid or unauthorized record.');
             }
         } else {
 
@@ -161,13 +183,8 @@ class DiddestinationController extends Controller
                     break;
             }
 
-            if (isset($name) && isset($model->id_user) && $id_user != $model->id_user) {
-                echo json_encode([
-                    'success' => false,
-                    'rows'    => [],
-                    'errors'  => ['voip_call' => ['The ' . $name . ' must belong to the DID owner']],
-                ]);
-                exit;
+            if (isset($name) && (! isset($model->id_user) || $id_user != $model->id_user)) {
+                $this->sendError('Invalid or unauthorized record.');
             }
         }
     }

@@ -995,23 +995,32 @@ class CalcAgi
 
                 $agi->verbose('HANGUPCAUSE_KEYS ' . print_r($keys, true), 5);
                 $tech_string = explode(",", $keys);
+                $TECHSTRING = '';
+                $trunkcode = isset($this->trunkcode) ? $this->trunkcode : '';
                 foreach ($tech_string as $key => $value) {
-                    if (preg_match('/' . $this->trunkcode . '/', $value)) {
+                    if ($value !== '' && ($trunkcode === '' || strpos($value, $trunkcode) !== false)) {
                         $TECHSTRING = $value;
                         break;
                     }
                 }
-                $code   = strlen($TECHSTRING) ? substr($agi->get_variable('HANGUPCAUSE(' . $TECHSTRING . ',tech)', true), 4, 3) : 0;
+                $code = 0;
+                if ($TECHSTRING !== '') {
+                    $cause = trim((string) $agi->get_variable('HANGUPCAUSE(' . $TECHSTRING . ',tech)', true));
+                    if (preg_match('/^SIP\s+([1-6][0-9]{2})(?:\s|$)/', $cause, $matches)) {
+                        $code = (int) $matches[1];
+                    }
+                }
 
-                if ($terminatecauseid == "CANCEL") {
+                if ($this->dialstatus == "CANCEL") {
                     $code = 487;
                 }
+                $idPrefix = is_numeric($this->id_prefix) ? (int) $this->id_prefix : 'NULL';
                 $fields = "uniqueid,id_user,calledstation,id_plan,id_trunk,callerid,src,
                         starttime, terminatecauseid,sipiax,id_prefix,hangupcause";
 
                 $values = "'$MAGNUS->uniqueid', '$MAGNUS->id_user','$MAGNUS->destination','$MAGNUS->id_plan',
                         '$MAGNUS->id_trunk','$MAGNUS->CallerID', '$MAGNUS->sip_account',
-                        '$this->starttime', '$this->terminatecauseid','$this->sipiax',$this->id_prefix,$code";
+                        '$this->starttime', '$this->terminatecauseid','$this->sipiax',$idPrefix,$code";
 
                 if (isset($modelServers->id)) {
                     $fields .= ', id_server';
