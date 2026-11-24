@@ -34,8 +34,7 @@ Ext.define('MBilling.view.main.GoogleAuthenticator', {
     },
     initComponent: function() {
         var me = this;
-        me.height = me.newKey || me.showGoogleCode ? 320 : 140;
-        var secretKey = me.keyGoogle.split('secret%');
+        me.height = me.newKey ? 320 : 140;
         me.title = t('Second authentication factor');
         me.items = [{
             defaultFocus: 'textfield:focusable:not([hidden]):not([disabled]):not([value])',
@@ -68,24 +67,25 @@ Ext.define('MBilling.view.main.GoogleAuthenticator', {
             }, {
                 xtype: 'label',
                 text: t('Scan this code') + ' (' + t('Backup the manual code') + ')',
-                hidden: !me.newKey && !me.showGoogleCode
+                hidden: !me.newKey
             }, {
                 xtype: 'image',
                 height: 220,
                 margin: '0 70 0 70',
-                src: me.keyGoogle,
-                hidden: !me.newKey && !me.showGoogleCode
+                src: me.newKey && typeof me.keyGoogle === 'string' &&
+                    me.keyGoogle.indexOf('data:image/svg+xml;base64,') === 0 ? me.keyGoogle : '',
+                hidden: !me.newKey
             }, {
                 xtype: 'displayfield',
                 fieldLabel: t('Manual code'),
-                value: secretKey[1],
+                value: me.newKey ? Ext.String.htmlEncode(me.manualKeyGoogle || '') : '',
                 allowBlank: true,
-                hidden: !me.newKey && !me.showGoogleCode
+                hidden: !me.newKey
             }, {
                 xtype: 'displayfield',
                 value: '<a target="_black" href="https://www.google.com/search?&q=google+authenticator&oq=google+authenticator"> ' + t('Download APP') + '<a/>',
                 allowBlank: true,
-                hidden: !me.newKey && !me.showGoogleCode
+                hidden: !me.newKey
             }, {
                 xtype: 'displayfield',
                 fieldLabel: t('Code name'),

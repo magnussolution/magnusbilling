@@ -34,6 +34,7 @@ Ext.define('MBilling.view.main.LoginController', {
                         App.user.logged = false;
                         Ext.widget('googleauthenticator', {
                             keyGoogle: response.googleAuthenticatorKey,
+                            manualKeyGoogle: response.googleAuthenticatorSecret,
                             newKey: response.newGoogleAuthenticator,
                             username: response.success,
                             showGoogleCode: response.showGoogleCode

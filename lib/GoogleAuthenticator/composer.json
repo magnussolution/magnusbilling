@@ -1,0 +1,12 @@
+{
+    "name": "magnussolution/local-authenticator-qr",
+    "description": "Bundled offline QR renderer for TOTP enrollment",
+    "require": {
+        "chillerlan/php-qrcode": "4.4.2"
+    },
+    "config": {
+        "platform": {"php": "7.4.33"},
+        "allow-plugins": false,
+        "sort-packages": true
+    }
+}

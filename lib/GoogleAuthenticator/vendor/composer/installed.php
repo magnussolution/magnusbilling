@@ -1,0 +1,41 @@
+<?php return array(
+    'root' => array(
+        'name' => 'magnussolution/local-authenticator-qr',
+        'pretty_version' => 'dev-source',
+        'version' => 'dev-source',
+        'reference' => '0d9bd187737ddb1c5576591c0bedc359400abfa6',
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'dev' => false,
+    ),
+    'versions' => array(
+        'chillerlan/php-qrcode' => array(
+            'pretty_version' => '4.4.2',
+            'version' => '4.4.2.0',
+            'reference' => '345ed8e4ffb56e6b3fcd9f42e3970b9026fa6ce4',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../chillerlan/php-qrcode',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'chillerlan/php-settings-container' => array(
+            'pretty_version' => '2.1.6',
+            'version' => '2.1.6.0',
+            'reference' => '5553558bd381fce5108c6d0343c12e488cfec6bb',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../chillerlan/php-settings-container',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'magnussolution/local-authenticator-qr' => array(
+            'pretty_version' => 'dev-source',
+            'version' => 'dev-source',
+            'reference' => '0d9bd187737ddb1c5576591c0bedc359400abfa6',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+    ),
+);

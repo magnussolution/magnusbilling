@@ -1,0 +1,62 @@
+{
+	"name": "chillerlan/php-qrcode",
+	"description": "A QR code generator with a user friendly API. PHP 7.4+",
+	"homepage": "https://github.com/chillerlan/php-qrcode",
+	"license": "MIT",
+	"minimum-stability": "stable",
+	"type": "library",
+	"keywords": [
+		"QR code", "qrcode", "qr", "qrcode-generator", "phpqrcode"
+	],
+	"authors": [
+		{
+			"name": "Kazuhiko Arase",
+			"homepage": "https://github.com/kazuhikoarase"
+		},
+		{
+			"name": "Smiley",
+			"email": "smiley@chillerlan.net",
+			"homepage": "https://github.com/codemasher"
+		},
+		{
+			"name": "Contributors",
+			"homepage":"https://github.com/chillerlan/php-qrcode/graphs/contributors"
+		}
+	],
+	"require": {
+		"php": "^7.4 || ^8.0",
+		"ext-mbstring": "*",
+		"chillerlan/php-settings-container": "^2.1.6 || ^3.2.1"
+	},
+	"require-dev": {
+		"phan/phan": "^5.4.5",
+		"phpmd/phpmd": "^2.15",
+		"phpunit/phpunit": "^9.6",
+		"setasign/fpdf": "^1.8.2",
+		"squizlabs/php_codesniffer": "^3.11"
+	},
+	"suggest": {
+		"chillerlan/php-authenticator": "Yet another Google authenticator! Also creates URIs for mobile apps.",
+		"setasign/fpdf": "Required to use the QR FPDF output.",
+		"simple-icons/simple-icons": "SVG icons that you can use to embed as logos in the QR Code"
+	},
+	"autoload": {
+		"psr-4": {
+			"chillerlan\\QRCode\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"chillerlan\\QRCodeTest\\": "tests/"
+		}
+	},
+	"scripts": {
+		"phpunit": "@php vendor/bin/phpunit",
+		"phan": "@php vendor/bin/phan"
+	},
+	"config": {
+		"lock": false,
+		"sort-packages": true,
+		"platform-check": true
+	}
+}

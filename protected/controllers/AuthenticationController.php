@@ -28,6 +28,9 @@ class AuthenticationController extends Controller
 
     public function actionLogin()
     {
+        header('Cache-Control: no-store');
+        header('Pragma: no-cache');
+
         $user     = $_REQUEST['user'];
         $password = $_REQUEST['password'];
 
@@ -120,6 +123,7 @@ class AuthenticationController extends Controller
 
         $checkGoogleAuthenticator = false;
         $googleAuthenticatorKey   = false;
+        $googleAuthenticatorSecret = false;
         $newGoogleAuthenticator   = false;
         $showGoogleCode           = false;
 
@@ -130,7 +134,7 @@ class AuthenticationController extends Controller
 
             if (strlen($modelUser->google_authenticator_key) < 5 || $modelUser->googleAuthenticator_enable == 3) {
 
-                if ($modelUser->googleAuthenticator_enable == 3) {
+                if ($modelUser->googleAuthenticator_enable == 3 && strlen($modelUser->google_authenticator_key) >= 5) {
                     $secret = $modelUser->google_authenticator_key;
                 } else {
                     $secret = $ga->createSecret();
@@ -140,17 +144,12 @@ class AuthenticationController extends Controller
                 $modelUser->googleAuthenticator_enable = 3;
                 $modelUser->save();
                 $newGoogleAuthenticator = true;
-                $googleAuthenticatorKey = $ga->getQRCodeGoogleUrl('VoIP-' . $modelUser->username . '-' . $modelUser->id, $secret);
+                $googleAuthenticatorKey = $ga->getQRCodeDataUri('VoIP-' . $modelUser->username . '-' . $modelUser->id, $secret);
+                $googleAuthenticatorSecret = $secret;
                 $checkGoogleAuthenticator = true;
                 $showGoogleCode = true;
             } else {
-                $secret = $modelUser->google_authenticator_key;
-                if ($modelUser->googleAuthenticator_enable == 2) {
-                    $showGoogleCode = true;
-                } else {
-                    $showGoogleCode = false;
-                }
-                $googleAuthenticatorKey = $ga->getQRCodeGoogleUrl('VoIP-' . $modelUser->username . '-' . $modelUser->id, $secret);
+                // An enrolled user's seed must never be returned before MFA verification.
 
                 $modelLogUsers = LogUsers::model()->count(
                     'id_user = :key AND ip = :key1 AND description = :key2 AND date > :key3',
@@ -195,6 +194,7 @@ class AuthenticationController extends Controller
             'msg'                      => $modelUser->firstname . ' ' . $modelUser->lastname,
             'checkGoogleAuthenticator' => $checkGoogleAuthenticator,
             'googleAuthenticatorKey'   => $googleAuthenticatorKey,
+            'googleAuthenticatorSecret' => $googleAuthenticatorSecret,
             'newGoogleAuthenticator'   => $newGoogleAuthenticator,
             'showGoogleCode'           => $showGoogleCode,
         ]);
@@ -356,7 +356,8 @@ class AuthenticationController extends Controller
             $show_playicon_cdr        = Yii::app()->session['show_playicon_cdr'];
             $social_media_network     = Yii::app()->session['social_media_network'];
             $checkGoogleAuthenticator = Yii::app()->session['checkGoogleAuthenticator'];
-            $googleAuthenticatorKey   = Yii::app()->session['googleAuthenticatorKey'];
+            // Provisioning images are only returned by the enrollment login response.
+            $googleAuthenticatorKey   = false;
             $newGoogleAuthenticator   = Yii::app()->session['newGoogleAuthenticator'];
             $showGoogleCode           = Yii::app()->session['showGoogleCode'];
             $hidden_prices            = Yii::app()->session['hidden_prices']            = $modelGroupUser->hidden_prices;

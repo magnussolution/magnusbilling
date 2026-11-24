@@ -67,20 +67,34 @@ class PHPGangsta_GoogleAuthenticator
     }
 
     /**
-     * Get QR-Code URL for image, from google charts
+     * Render an enrollment QR image locally. No enrollment data leaves the server.
      *
      * @param string $name
      * @param string $secret
      * @param string $title
      * @return string
      */
+    public function getQRCodeDataUri($name, $secret, $title = null)
+    {
+        require_once __DIR__ . '/vendor/autoload.php';
+
+        $uri = 'otpauth://totp/' . rawurlencode($name) . '?secret=' . rawurlencode($secret);
+        if (isset($title)) {
+            $uri .= '&issuer=' . rawurlencode($title);
+        }
+        $options = new \chillerlan\QRCode\QROptions([
+            'outputType' => \chillerlan\QRCode\QRCode::OUTPUT_MARKUP_SVG,
+            'imageBase64' => true,
+            'addQuietzone' => true,
+            'quietzoneSize' => 4,
+        ]);
+        return (new \chillerlan\QRCode\QRCode($options))->render($uri);
+    }
+
+    /** Backwards-compatible entry point; returns a local data URI, never a remote URL. */
     public function getQRCodeGoogleUrl($name, $secret, $title = null)
     {
-        $urlencoded = urlencode('otpauth://totp/' . $name . '?secret=' . $secret . '');
-        if (isset($title)) {
-            $urlencoded .= urlencode('&issuer=' . urlencode($title));
-        }
-        return 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . $urlencoded . '';
+        return $this->getQRCodeDataUri($name, $secret, $title);
     }
 
     /**
