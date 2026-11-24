@@ -1395,6 +1395,12 @@ class AsteriskAccess
                     // callerid
                     $line .= "callerid=" . $sip->callerid  . "\n";
 
+                    $sipGroup = trim((string) $sip->sip_group);
+                    if ($sipGroup !== '') {
+                        $line .= "named_call_group=" . $sipGroup . "\n";
+                        $line .= "named_pickup_group=" . $sipGroup . "\n";
+                    }
+
                     // amarra auth/aor
                     $line .= PjsipAuthenticationMode::endpointAuthLine($sip, $authName);
                     $line .= "aors=" . $aorName . "\n";
